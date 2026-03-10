@@ -1,0 +1,105 @@
+2025-10-07 12:21:17	INFO	Enabling FORCE mode because timestamp for last import is empty
+2025-10-07 12:21:18	INFO	Starting XML import from https://angebote.paerke.ch/export/xml/9ceaf7368843dcd510300cb06e72feb1b1eab3fb
+2025-10-07 12:21:18	INFO		Imported offer with ID 49021
+2025-10-07 12:21:18	INFO		Imported offer with ID 49187
+2025-10-07 12:21:18	INFO		Imported offer with ID 51247
+2025-10-07 12:21:18	INFO		Imported offer with ID 50554
+2025-10-07 12:21:18	INFO		Imported offer with ID 51298
+2025-10-07 12:21:18	INFO		Imported offer with ID 49188
+2025-10-07 12:21:18	INFO		Imported offer with ID 49266
+2025-10-07 12:21:18	INFO		Imported offer with ID 49268
+2025-10-07 12:21:18	INFO		Imported offer with ID 49267
+2025-10-07 12:21:18	INFO		Imported offer with ID 39833
+2025-10-07 12:21:18	INFO		Imported offer with ID 39836
+2025-10-07 12:21:18	INFO		Imported offer with ID 48351
+2025-10-07 12:21:18	INFO		Imported offer with ID 39840
+2025-10-07 12:21:18	INFO		Imported offer with ID 48352
+2025-10-07 12:21:18	INFO		Imported offer with ID 48353
+2025-10-07 12:21:18	INFO		Imported offer with ID 48347
+2025-10-07 12:21:18	INFO		Imported offer with ID 39838
+2025-10-07 12:21:18	INFO		Imported offer with ID 49378
+2025-10-07 12:21:18	INFO		Imported offer with ID 49297
+2025-10-07 12:21:18	INFO		Imported offer with ID 49261
+2025-10-07 12:21:18	INFO		Imported offer with ID 49298
+2025-10-07 12:21:18	INFO		Imported offer with ID 39853
+2025-10-07 12:21:18	INFO		Imported offer with ID 49263
+2025-10-07 12:21:18	INFO		Imported offer with ID 49280
+2025-10-07 12:21:18	INFO		Imported offer with ID 39852
+2025-10-07 12:21:18	INFO		Imported offer with ID 50804
+2025-10-07 12:21:18	INFO		Imported offer with ID 50805
+2025-10-07 12:21:18	INFO		Imported offer with ID 48348
+2025-10-07 12:21:18	INFO		Imported offer with ID 49265
+2025-10-07 12:21:18	INFO		Imported offer with ID 49262
+2025-10-07 12:21:18	INFO	Successfully imported 30 offers.
+2025-10-07 12:21:18	INFO	Deleting offers which were not updated...
+2025-10-07 12:21:18	INFO		Nothing to delete
+2025-10-07 12:21:18	INFO	Import finished successfully.
+2025-10-07 12:21:18	INFO	Clean up offers
+2025-10-07 12:21:18	INFO		No inactive offers
+2025-10-07 12:21:30	INFO	Starting XML import from https://angebote.paerke.ch/export/xml/9ceaf7368843dcd510300cb06e72feb1b1eab3fb?since=1759839678
+2025-10-07 12:21:30	INFO		Deleted offer with ID 39396
+2025-10-07 12:21:30	INFO		Deleted offer with ID 39397
+2025-10-07 12:21:30	INFO		Deleted offer with ID 39398
+2025-10-07 12:21:30	INFO		Deleted offer with ID 49184
+2025-10-07 12:21:30	INFO		Deleted offer with ID 50501
+2025-10-07 12:21:30	INFO		Deleted offer with ID 49019
+2025-10-07 12:21:30	INFO		Deleted offer with ID 50517
+2025-10-07 12:21:30	INFO		Deleted offer with ID 50518
+2025-10-07 12:21:30	INFO		Imported offer with ID 49021
+2025-10-07 12:21:30	INFO		Deleted offer with ID 49020
+2025-10-07 12:21:30	INFO		Deleted offer with ID 51000
+2025-10-07 12:21:30	INFO		Deleted offer with ID 50973
+2025-10-07 12:21:30	INFO		Deleted offer with ID 50551
+2025-10-07 12:21:30	INFO		Deleted offer with ID 51130
+2025-10-07 12:21:30	INFO		Deleted offer with ID 50693
+2025-10-07 12:21:30	INFO		Imported offer with ID 50554
+2025-10-07 12:21:30	INFO	Successfully imported 2 offers.
+2025-10-07 12:21:30	INFO	Deleted 14 offers.
+2025-10-07 12:21:30	INFO	Import finished successfully.
+2025-10-07 12:21:30	INFO	Clean up offers
+2025-10-07 12:21:30	INFO		No inactive offers
+2025-10-07 12:21:32	INFO	Starting XML import from https://angebote.paerke.ch/export/xml/9ceaf7368843dcd510300cb06e72feb1b1eab3fb?since=1759839690
+2025-10-07 12:21:32	INFO		Deleted offer with ID 39396
+2025-10-07 12:21:32	INFO		Deleted offer with ID 39397
+2025-10-07 12:21:32	INFO		Deleted offer with ID 39398
+2025-10-07 12:21:32	INFO		Deleted offer with ID 49184
+2025-10-07 12:21:32	INFO		Deleted offer with ID 50501
+2025-10-07 12:21:32	INFO		Deleted offer with ID 49019
+2025-10-07 12:21:32	INFO		Deleted offer with ID 50517
+2025-10-07 12:21:32	INFO		Deleted offer with ID 50518
+2025-10-07 12:21:32	INFO		Imported offer with ID 49021
+2025-10-07 12:21:32	INFO		Deleted offer with ID 49020
+2025-10-07 12:21:32	INFO		Deleted offer with ID 51000
+2025-10-07 12:21:32	INFO		Deleted offer with ID 50973
+2025-10-07 12:21:32	INFO		Deleted offer with ID 50551
+2025-10-07 12:21:32	INFO		Deleted offer with ID 51130
+2025-10-07 12:21:32	INFO		Deleted offer with ID 50693
+2025-10-07 12:21:32	INFO		Imported offer with ID 50554
+2025-10-07 12:21:32	INFO	Successfully imported 2 offers.
+2025-10-07 12:21:32	INFO	Deleted 14 offers.
+2025-10-07 12:21:32	INFO	Import finished successfully.
+2025-10-07 12:21:32	INFO	Clean up offers
+2025-10-07 12:21:32	INFO		No inactive offers
+2025-10-07 14:11:06	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:11:09	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:13:01	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:13:10	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:17:14	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:17:19	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:19:32	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:19:39	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:19:48	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:20:07	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:21:59	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:24:41	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:29:55	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:37:48	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:38:09	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:40:44	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:41:03	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:41:57	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:41:59	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:42:17	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:43:12	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:43:20	INFO	The current API version is out of date. Please update database.
+2025-10-07 14:43:45	INFO	The current API version is out of date. Please update database.

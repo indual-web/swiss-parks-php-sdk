@@ -1,0 +1,929 @@
+2025-07-11 06:11:19	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:11:44	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:11:45	INFO	FORCE mode is enabled
+2025-07-11 06:11:45	INFO	XML is not valid: https://angebote.paerke.ch/export/xml/insert-your-hash-here
+2025-07-11 06:11:45	INFO	XML is not valid: https://angebote.paerke.ch/export/xml/map_layers/insert-your-hash-here
+2025-07-11 06:11:46	INFO	Clean up offers
+2025-07-11 06:11:46	INFO		No inactive offers
+2025-07-11 06:11:49	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:11:53	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:11:55	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:12:58	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:12:59	INFO	FORCE mode is enabled
+2025-07-11 06:12:59	INFO	XML is not valid: https://angebote.paerke.ch/export/xml/insert-your-hash-here
+2025-07-11 06:12:59	INFO	XML is not valid: https://angebote.paerke.ch/export/xml/map_layers/insert-your-hash-here
+2025-07-11 06:13:00	INFO	Clean up offers
+2025-07-11 06:13:00	INFO		No inactive offers
+2025-07-11 06:13:03	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:13:23	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:14:04	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:17:04	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:21:02	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:21:19	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:22:25	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:22:41	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:23:00	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:23:25	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:24:26	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:38:17	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:38:31	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:39:06	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:39:13	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:39:27	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:39:41	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:39:47	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:40:12	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:40:24	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:41:08	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:41:09	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:41:20	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:41:28	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:41:51	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:41:59	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:45:27	INFO	The current API version is out of date. Please update database.
+2025-07-11 06:45:27	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 06:45:27	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 06:51:01	INFO	FORCE mode is enabled
+2025-07-11 06:51:27	INFO	Starting XML import from https://angebote.paerke.ch/export/xml/b5f8cc3daccc5bec1e8ce711f76fb6eef351590a
+2025-07-11 06:51:27	INFO		Imported offer with ID 49737
+2025-07-11 06:51:27	INFO		Imported offer with ID 50329
+2025-07-11 06:51:27	INFO		Imported offer with ID 49112
+2025-07-11 06:51:27	INFO		Imported offer with ID 50004
+2025-07-11 06:51:27	INFO		Imported offer with ID 47743
+2025-07-11 06:51:27	INFO		Imported offer with ID 50808
+2025-07-11 06:51:27	INFO		Imported offer with ID 46386
+2025-07-11 06:51:27	INFO		Imported offer with ID 50005
+2025-07-11 06:51:27	INFO		Imported offer with ID 50006
+2025-07-11 06:51:27	INFO		Imported offer with ID 50007
+2025-07-11 06:51:27	INFO		Imported offer with ID 50697
+2025-07-11 06:51:27	INFO		Imported offer with ID 46473
+2025-07-11 06:51:27	INFO		Imported offer with ID 48714
+2025-07-11 06:51:27	INFO		Imported offer with ID 50008
+2025-07-11 06:51:27	INFO		Imported offer with ID 50009
+2025-07-11 06:51:27	INFO		Imported offer with ID 50010
+2025-07-11 06:51:27	INFO		Imported offer with ID 50648
+2025-07-11 06:51:27	INFO		Imported offer with ID 50011
+2025-07-11 06:51:27	INFO		Imported offer with ID 50012
+2025-07-11 06:51:28	INFO		Imported offer with ID 50013
+2025-07-11 06:51:28	INFO		Imported offer with ID 50014
+2025-07-11 06:51:28	INFO		Imported offer with ID 43762
+2025-07-11 06:51:28	INFO		Imported offer with ID 42541
+2025-07-11 06:51:28	INFO		Imported offer with ID 50698
+2025-07-11 06:51:28	INFO		Imported offer with ID 50918
+2025-07-11 06:51:28	INFO		Imported offer with ID 50015
+2025-07-11 06:51:28	INFO		Imported offer with ID 50055
+2025-07-11 06:51:28	INFO		Imported offer with ID 50016
+2025-07-11 06:51:28	INFO		Imported offer with ID 50056
+2025-07-11 06:51:28	INFO		Imported offer with ID 46509
+2025-07-11 06:51:28	INFO		Imported offer with ID 50057
+2025-07-11 06:51:28	INFO		Imported offer with ID 50017
+2025-07-11 06:51:28	INFO		Imported offer with ID 50159
+2025-07-11 06:51:28	INFO		Imported offer with ID 50058
+2025-07-11 06:51:28	INFO		Imported offer with ID 50018
+2025-07-11 06:51:28	INFO		Imported offer with ID 50059
+2025-07-11 06:51:28	INFO		Imported offer with ID 50909
+2025-07-11 06:51:28	INFO		Imported offer with ID 50019
+2025-07-11 06:51:28	INFO		Imported offer with ID 48691
+2025-07-11 06:51:28	INFO		Imported offer with ID 50667
+2025-07-11 06:51:28	INFO		Imported offer with ID 23406
+2025-07-11 06:51:28	INFO		Imported offer with ID 50020
+2025-07-11 06:51:28	INFO		Imported offer with ID 49482
+2025-07-11 06:51:28	INFO		Imported offer with ID 50021
+2025-07-11 06:51:28	INFO		Imported offer with ID 50907
+2025-07-11 06:51:28	INFO		Imported offer with ID 5271
+2025-07-11 06:51:28	INFO		Imported offer with ID 50022
+2025-07-11 06:51:28	INFO		Imported offer with ID 46387
+2025-07-11 06:51:28	INFO		Imported offer with ID 50023
+2025-07-11 06:51:28	INFO		Imported offer with ID 50024
+2025-07-11 06:51:28	INFO		Imported offer with ID 50162
+2025-07-11 06:51:28	INFO		Imported offer with ID 50025
+2025-07-11 06:51:28	INFO		Imported offer with ID 39214
+2025-07-11 06:51:28	INFO		Imported offer with ID 46325
+2025-07-11 06:51:28	INFO		Imported offer with ID 50163
+2025-07-11 06:51:28	INFO		Imported offer with ID 49330
+2025-07-11 06:51:28	INFO		Imported offer with ID 50026
+2025-07-11 06:51:28	INFO		Imported offer with ID 50158
+2025-07-11 06:51:28	INFO		Imported offer with ID 50027
+2025-07-11 06:51:28	INFO		Imported offer with ID 50908
+2025-07-11 06:51:28	INFO		Imported offer with ID 49498
+2025-07-11 06:51:28	INFO		Imported offer with ID 50028
+2025-07-11 06:51:28	INFO		Imported offer with ID 50156
+2025-07-11 06:51:28	INFO		Imported offer with ID 50029
+2025-07-11 06:51:28	INFO		Imported offer with ID 41583
+2025-07-11 06:51:28	INFO		Imported offer with ID 43210
+2025-07-11 06:51:28	INFO		Imported offer with ID 49774
+2025-07-11 06:51:28	INFO		Imported offer with ID 50030
+2025-07-11 06:51:28	INFO		Imported offer with ID 44796
+2025-07-11 06:51:28	INFO		Imported offer with ID 50699
+2025-07-11 06:51:28	INFO		Imported offer with ID 50919
+2025-07-11 06:51:28	INFO		Imported offer with ID 50031
+2025-07-11 06:51:28	INFO		Imported offer with ID 50700
+2025-07-11 06:51:28	INFO		Imported offer with ID 50157
+2025-07-11 06:51:28	INFO		Imported offer with ID 50032
+2025-07-11 06:51:28	INFO		Imported offer with ID 39298
+2025-07-11 06:51:28	INFO		Imported offer with ID 50033
+2025-07-11 06:51:28	INFO		Imported offer with ID 50185
+2025-07-11 06:51:28	INFO		Imported offer with ID 50160
+2025-07-11 06:51:28	INFO		Imported offer with ID 7655
+2025-07-11 06:51:28	INFO		Imported offer with ID 48789
+2025-07-11 06:51:28	INFO		Imported offer with ID 43974
+2025-07-11 06:51:28	INFO		Imported offer with ID 45749
+2025-07-11 06:51:28	INFO		Imported offer with ID 50701
+2025-07-11 06:51:28	INFO		Imported offer with ID 50703
+2025-07-11 06:51:28	INFO		Imported offer with ID 50462
+2025-07-11 06:51:28	INFO		Imported offer with ID 50929
+2025-07-11 06:51:28	INFO		Imported offer with ID 48823
+2025-07-11 06:51:28	INFO		Imported offer with ID 49943
+2025-07-11 06:51:28	INFO		Imported offer with ID 50969
+2025-07-11 06:51:28	INFO		Imported offer with ID 50337
+2025-07-11 06:51:28	INFO		Imported offer with ID 50890
+2025-07-11 06:51:28	INFO		Imported offer with ID 50702
+2025-07-11 06:51:28	INFO		Imported offer with ID 42653
+2025-07-11 06:51:28	INFO		Imported offer with ID 50524
+2025-07-11 06:51:28	INFO		Imported offer with ID 40112
+2025-07-11 06:51:28	INFO		Imported offer with ID 50525
+2025-07-11 06:51:28	INFO		Imported offer with ID 50526
+2025-07-11 06:51:28	INFO		Imported offer with ID 50527
+2025-07-11 06:51:28	INFO		Imported offer with ID 50338
+2025-07-11 06:51:28	INFO		Imported offer with ID 50528
+2025-07-11 06:51:28	INFO		Imported offer with ID 47091
+2025-07-11 06:51:28	INFO		Imported offer with ID 39256
+2025-07-11 06:51:28	INFO		Imported offer with ID 50515
+2025-07-11 06:51:28	INFO		Imported offer with ID 44067
+2025-07-11 06:51:28	INFO		Imported offer with ID 1197
+2025-07-11 06:51:28	INFO		Imported offer with ID 3488
+2025-07-11 06:51:28	INFO		Imported offer with ID 42038
+2025-07-11 06:51:28	INFO		Imported offer with ID 4750
+2025-07-11 06:51:28	INFO		Imported offer with ID 45876
+2025-07-11 06:51:28	INFO		Imported offer with ID 49940
+2025-07-11 06:51:28	INFO		Imported offer with ID 4819
+2025-07-11 06:51:28	INFO		Imported offer with ID 46166
+2025-07-11 06:51:28	INFO		Imported offer with ID 4818
+2025-07-11 06:51:28	INFO		Imported offer with ID 36677
+2025-07-11 06:51:28	INFO		Imported offer with ID 36507
+2025-07-11 06:51:28	INFO		Imported offer with ID 44004
+2025-07-11 06:51:28	INFO		Imported offer with ID 40400
+2025-07-11 06:51:28	INFO		Imported offer with ID 28749
+2025-07-11 06:51:28	INFO		Imported offer with ID 36761
+2025-07-11 06:51:28	INFO		Imported offer with ID 36762
+2025-07-11 06:51:28	INFO		Imported offer with ID 46753
+2025-07-11 06:51:28	INFO		Imported offer with ID 45669
+2025-07-11 06:51:28	INFO		Imported offer with ID 43848
+2025-07-11 06:51:28	INFO		Imported offer with ID 49086
+2025-07-11 06:51:28	INFO		Imported offer with ID 48977
+2025-07-11 06:51:28	INFO		Imported offer with ID 48978
+2025-07-11 06:51:28	INFO		Imported offer with ID 46728
+2025-07-11 06:51:28	INFO		Imported offer with ID 49625
+2025-07-11 06:51:28	INFO		Imported offer with ID 37573
+2025-07-11 06:51:28	INFO		Imported offer with ID 46996
+2025-07-11 06:51:28	INFO		Imported offer with ID 47000
+2025-07-11 06:51:28	INFO		Imported offer with ID 46997
+2025-07-11 06:51:28	INFO		Imported offer with ID 46998
+2025-07-11 06:51:28	INFO		Imported offer with ID 46999
+2025-07-11 06:51:28	INFO		Imported offer with ID 47001
+2025-07-11 06:51:28	INFO		Imported offer with ID 49746
+2025-07-11 06:51:28	INFO		Imported offer with ID 42204
+2025-07-11 06:51:28	INFO		Imported offer with ID 45449
+2025-07-11 06:51:28	INFO		Imported offer with ID 41212
+2025-07-11 06:51:28	INFO		Imported offer with ID 13925
+2025-07-11 06:51:28	INFO		Imported offer with ID 735
+2025-07-11 06:51:28	INFO		Imported offer with ID 48561
+2025-07-11 06:51:28	INFO		Imported offer with ID 43350
+2025-07-11 06:51:28	INFO		Imported offer with ID 40893
+2025-07-11 06:51:28	INFO		Imported offer with ID 43345
+2025-07-11 06:51:28	INFO		Imported offer with ID 46167
+2025-07-11 06:51:28	INFO		Imported offer with ID 1204
+2025-07-11 06:51:28	INFO		Imported offer with ID 4748
+2025-07-11 06:51:28	INFO		Imported offer with ID 4746
+2025-07-11 06:51:28	INFO		Imported offer with ID 49043
+2025-07-11 06:51:28	INFO		Imported offer with ID 1999
+2025-07-11 06:51:28	INFO		Imported offer with ID 49057
+2025-07-11 06:51:28	INFO		Imported offer with ID 13965
+2025-07-11 06:51:28	INFO		Imported offer with ID 48919
+2025-07-11 06:51:28	INFO		Imported offer with ID 50955
+2025-07-11 06:51:28	INFO		Imported offer with ID 27250
+2025-07-11 06:51:28	INFO		Imported offer with ID 43116
+2025-07-11 06:51:28	INFO		Imported offer with ID 4951
+2025-07-11 06:51:28	INFO		Imported offer with ID 45338
+2025-07-11 06:51:28	INFO		Imported offer with ID 49425
+2025-07-11 06:51:28	INFO		Imported offer with ID 4960
+2025-07-11 06:51:29	INFO		Imported offer with ID 46860
+2025-07-11 06:51:29	INFO		Imported offer with ID 50002
+2025-07-11 06:51:29	INFO		Imported offer with ID 40896
+2025-07-11 06:51:29	INFO		Imported offer with ID 16336
+2025-07-11 06:51:29	INFO		Imported offer with ID 6150
+2025-07-11 06:51:29	INFO		Imported offer with ID 6149
+2025-07-11 06:51:29	INFO		Imported offer with ID 39210
+2025-07-11 06:51:29	INFO		Imported offer with ID 43759
+2025-07-11 06:51:29	INFO		Imported offer with ID 1427
+2025-07-11 06:51:29	INFO		Imported offer with ID 43707
+2025-07-11 06:51:29	INFO		Imported offer with ID 48464
+2025-07-11 06:51:29	INFO		Imported offer with ID 37742
+2025-07-11 06:51:29	INFO		Imported offer with ID 43349
+2025-07-11 06:51:29	INFO		Imported offer with ID 41347
+2025-07-11 06:51:29	INFO		Imported offer with ID 24694
+2025-07-11 06:51:29	INFO		Imported offer with ID 38643
+2025-07-11 06:51:29	INFO		Imported offer with ID 5572
+2025-07-11 06:51:29	INFO		Imported offer with ID 4742
+2025-07-11 06:51:29	INFO		Imported offer with ID 23415
+2025-07-11 06:51:29	INFO		Imported offer with ID 25315
+2025-07-11 06:51:29	INFO		Imported offer with ID 1213
+2025-07-11 06:51:29	INFO		Imported offer with ID 44338
+2025-07-11 06:51:29	INFO		Imported offer with ID 1215
+2025-07-11 06:51:29	INFO		Imported offer with ID 45337
+2025-07-11 06:51:29	INFO		Imported offer with ID 44317
+2025-07-11 06:51:29	INFO		Imported offer with ID 44321
+2025-07-11 06:51:29	INFO		Imported offer with ID 44320
+2025-07-11 06:51:29	INFO		Imported offer with ID 46164
+2025-07-11 06:51:29	INFO		Imported offer with ID 3939
+2025-07-11 06:51:29	INFO		Imported offer with ID 48926
+2025-07-11 06:51:29	INFO		Imported offer with ID 49083
+2025-07-11 06:51:29	INFO		Imported offer with ID 13242
+2025-07-11 06:51:29	INFO		Imported offer with ID 13239
+2025-07-11 06:51:29	INFO		Imported offer with ID 14490
+2025-07-11 06:51:29	INFO		Imported offer with ID 42716
+2025-07-11 06:51:29	INFO		Imported offer with ID 9336
+2025-07-11 06:51:29	INFO		Imported offer with ID 46905
+2025-07-11 06:51:29	INFO		Imported offer with ID 43310
+2025-07-11 06:51:29	INFO		Imported offer with ID 49016
+2025-07-11 06:51:29	INFO		Imported offer with ID 155
+2025-07-11 06:51:29	INFO		Imported offer with ID 49044
+2025-07-11 06:51:29	INFO		Imported offer with ID 3996
+2025-07-11 06:51:29	INFO		Imported offer with ID 44344
+2025-07-11 06:51:29	INFO		Imported offer with ID 48888
+2025-07-11 06:51:29	INFO		Imported offer with ID 18751
+2025-07-11 06:51:29	INFO		Imported offer with ID 4199
+2025-07-11 06:51:29	INFO		Imported offer with ID 39202
+2025-07-11 06:51:29	INFO		Imported offer with ID 43115
+2025-07-11 06:51:29	INFO		Imported offer with ID 28296
+2025-07-11 06:51:29	INFO		Imported offer with ID 40114
+2025-07-11 06:51:29	INFO		Imported offer with ID 42488
+2025-07-11 06:51:29	INFO		Imported offer with ID 26042
+2025-07-11 06:51:29	INFO		Imported offer with ID 25223
+2025-07-11 06:51:29	INFO		Imported offer with ID 48068
+2025-07-11 06:51:29	INFO		Imported offer with ID 42213
+2025-07-11 06:51:29	INFO		Imported offer with ID 2418
+2025-07-11 06:51:29	INFO		Imported offer with ID 13967
+2025-07-11 06:51:29	INFO		Imported offer with ID 13966
+2025-07-11 06:51:30	INFO		Imported offer with ID 13975
+2025-07-11 06:51:30	INFO		Imported offer with ID 4772
+2025-07-11 06:51:30	INFO		Imported offer with ID 5399
+2025-07-11 06:51:30	INFO		Imported offer with ID 39856
+2025-07-11 06:51:30	INFO		Imported offer with ID 39855
+2025-07-11 06:51:30	INFO		Imported offer with ID 39885
+2025-07-11 06:51:30	INFO		Imported offer with ID 39870
+2025-07-11 06:51:30	INFO		Imported offer with ID 44179
+2025-07-11 06:51:30	INFO		Imported offer with ID 42214
+2025-07-11 06:51:30	INFO		Imported offer with ID 22461
+2025-07-11 06:51:30	INFO		Imported offer with ID 4572
+2025-07-11 06:51:30	INFO		Imported offer with ID 38629
+2025-07-11 06:51:30	INFO		Imported offer with ID 1214
+2025-07-11 06:51:30	INFO		Imported offer with ID 1217
+2025-07-11 06:51:30	INFO		Imported offer with ID 29263
+2025-07-11 06:51:30	INFO		Imported offer with ID 43235
+2025-07-11 06:51:30	INFO		Imported offer with ID 36759
+2025-07-11 06:51:30	INFO		Imported offer with ID 4560
+2025-07-11 06:51:30	INFO		Imported offer with ID 45968
+2025-07-11 06:51:30	INFO		Imported offer with ID 50612
+2025-07-11 06:51:30	INFO		Imported offer with ID 49942
+2025-07-11 06:51:30	INFO		Imported offer with ID 24925
+2025-07-11 06:51:30	INFO		Imported offer with ID 40894
+2025-07-11 06:51:30	INFO		Imported offer with ID 43789
+2025-07-11 06:51:30	INFO		Imported offer with ID 2092
+2025-07-11 06:51:30	INFO		Imported offer with ID 2423
+2025-07-11 06:51:30	INFO		Imported offer with ID 27251
+2025-07-11 06:51:30	INFO		Imported offer with ID 47299
+2025-07-11 06:51:30	INFO		Imported offer with ID 2094
+2025-07-11 06:51:30	INFO		Imported offer with ID 5171
+2025-07-11 06:51:30	INFO		Imported offer with ID 25314
+2025-07-11 06:51:30	INFO		Imported offer with ID 43753
+2025-07-11 06:51:30	INFO		Imported offer with ID 7620
+2025-07-11 06:51:30	INFO		Imported offer with ID 47947
+2025-07-11 06:51:30	INFO		Imported offer with ID 39793
+2025-07-11 06:51:30	INFO		Imported offer with ID 49094
+2025-07-11 06:51:30	INFO		Imported offer with ID 49096
+2025-07-11 06:51:30	INFO		Imported offer with ID 49093
+2025-07-11 06:51:30	INFO		Imported offer with ID 49095
+2025-07-11 06:51:30	INFO		Imported offer with ID 49102
+2025-07-11 06:51:30	INFO		Imported offer with ID 49106
+2025-07-11 06:51:30	INFO		Imported offer with ID 49109
+2025-07-11 06:51:30	INFO		Imported offer with ID 49107
+2025-07-11 06:51:30	INFO		Imported offer with ID 4568
+2025-07-11 06:51:30	INFO		Imported offer with ID 43493
+2025-07-11 06:51:30	INFO		Imported offer with ID 42236
+2025-07-11 06:51:30	INFO		Imported offer with ID 38628
+2025-07-11 06:51:30	INFO		Imported offer with ID 38307
+2025-07-11 06:51:30	INFO		Imported offer with ID 48202
+2025-07-11 06:51:30	INFO		Imported offer with ID 49734
+2025-07-11 06:51:30	INFO		Imported offer with ID 2302
+2025-07-11 06:51:30	INFO		Imported offer with ID 49447
+2025-07-11 06:51:30	INFO		Imported offer with ID 4752
+2025-07-11 06:51:30	INFO		Imported offer with ID 39445
+2025-07-11 06:51:30	INFO		Imported offer with ID 50370
+2025-07-11 06:51:30	INFO		Imported offer with ID 2100
+2025-07-11 06:51:30	INFO		Imported offer with ID 50373
+2025-07-11 06:51:30	INFO		Imported offer with ID 50371
+2025-07-11 06:51:30	INFO		Imported offer with ID 2091
+2025-07-11 06:51:30	INFO		Imported offer with ID 39183
+2025-07-11 06:51:30	INFO		Imported offer with ID 4599
+2025-07-11 06:51:30	INFO		Imported offer with ID 41241
+2025-07-11 06:51:30	INFO		Imported offer with ID 48880
+2025-07-11 06:51:30	INFO		Imported offer with ID 4747
+2025-07-11 06:51:30	INFO		Imported offer with ID 49879
+2025-07-11 06:51:30	INFO		Imported offer with ID 29262
+2025-07-11 06:51:30	INFO		Imported offer with ID 4621
+2025-07-11 06:51:30	INFO		Imported offer with ID 4880
+2025-07-11 06:51:30	INFO		Imported offer with ID 49422
+2025-07-11 06:51:30	INFO		Imported offer with ID 27252
+2025-07-11 06:51:30	INFO		Imported offer with ID 44120
+2025-07-11 06:51:30	INFO		Imported offer with ID 49081
+2025-07-11 06:51:30	INFO		Imported offer with ID 50835
+2025-07-11 06:51:30	INFO		Imported offer with ID 40875
+2025-07-11 06:51:30	INFO		Imported offer with ID 42141
+2025-07-11 06:51:30	INFO		Imported offer with ID 45879
+2025-07-11 06:51:30	INFO		Imported offer with ID 38939
+2025-07-11 06:51:30	INFO		Imported offer with ID 40401
+2025-07-11 06:51:30	INFO		Imported offer with ID 50671
+2025-07-11 06:51:30	INFO		Imported offer with ID 48628
+2025-07-11 06:51:30	INFO		Imported offer with ID 49400
+2025-07-11 06:51:30	INFO		Imported offer with ID 41419
+2025-07-11 06:51:30	INFO		Imported offer with ID 40238
+2025-07-11 06:51:30	INFO		Imported offer with ID 40713
+2025-07-11 06:51:30	INFO		Imported offer with ID 38819
+2025-07-11 06:51:30	INFO		Imported offer with ID 49740
+2025-07-11 06:51:30	INFO		Imported offer with ID 42763
+2025-07-11 06:51:30	INFO		Imported offer with ID 43873
+2025-07-11 06:51:30	INFO		Imported offer with ID 28110
+2025-07-11 06:51:30	INFO		Imported offer with ID 43798
+2025-07-11 06:51:30	INFO		Imported offer with ID 50054
+2025-07-11 06:51:30	INFO		Imported offer with ID 2095
+2025-07-11 06:51:30	INFO		Imported offer with ID 2033
+2025-07-11 06:51:30	INFO		Imported offer with ID 27889
+2025-07-11 06:51:30	INFO		Imported offer with ID 37741
+2025-07-11 06:51:30	INFO		Imported offer with ID 27192
+2025-07-11 06:51:30	INFO		Imported offer with ID 2254
+2025-07-11 06:51:30	INFO		Imported offer with ID 4598
+2025-07-11 06:51:30	INFO		Imported offer with ID 4596
+2025-07-11 06:51:30	INFO		Imported offer with ID 43352
+2025-07-11 06:51:30	INFO		Imported offer with ID 43353
+2025-07-11 06:51:30	INFO		Imported offer with ID 590
+2025-07-11 06:51:30	INFO		Imported offer with ID 40233
+2025-07-11 06:51:30	INFO		Imported offer with ID 95
+2025-07-11 06:51:30	INFO		Imported offer with ID 40115
+2025-07-11 06:51:30	INFO		Imported offer with ID 27253
+2025-07-11 06:51:30	INFO		Imported offer with ID 27249
+2025-07-11 06:51:30	INFO		Imported offer with ID 40654
+2025-07-11 06:51:31	INFO		Imported offer with ID 13238
+2025-07-11 06:51:31	INFO		Imported offer with ID 43750
+2025-07-11 06:51:31	INFO		Imported offer with ID 40429
+2025-07-11 06:51:31	INFO		Imported offer with ID 40555
+2025-07-11 06:51:31	INFO		Imported offer with ID 43852
+2025-07-11 06:51:31	INFO		Imported offer with ID 43846
+2025-07-11 06:51:31	INFO		Imported offer with ID 40591
+2025-07-11 06:51:31	INFO		Imported offer with ID 40655
+2025-07-11 06:51:31	INFO		Imported offer with ID 48552
+2025-07-11 06:51:31	INFO		Imported offer with ID 4817
+2025-07-11 06:51:31	INFO		Imported offer with ID 48630
+2025-07-11 06:51:31	INFO		Imported offer with ID 40708
+2025-07-11 06:51:31	INFO		Imported offer with ID 28745
+2025-07-11 06:51:31	INFO		Imported offer with ID 37576
+2025-07-11 06:51:31	INFO		Imported offer with ID 13958
+2025-07-11 06:51:31	INFO		Imported offer with ID 40610
+2025-07-11 06:51:31	INFO		Imported offer with ID 42143
+2025-07-11 06:51:31	INFO		Imported offer with ID 40556
+2025-07-11 06:51:31	INFO		Imported offer with ID 43706
+2025-07-11 06:51:31	INFO		Imported offer with ID 43742
+2025-07-11 06:51:31	INFO		Imported offer with ID 45878
+2025-07-11 06:51:31	INFO		Imported offer with ID 42142
+2025-07-11 06:51:31	INFO		Imported offer with ID 49939
+2025-07-11 06:51:31	INFO		Imported offer with ID 2264
+2025-07-11 06:51:31	INFO		Imported offer with ID 43326
+2025-07-11 06:51:31	INFO		Imported offer with ID 43337
+2025-07-11 06:51:31	INFO		Imported offer with ID 43341
+2025-07-11 06:51:31	INFO		Imported offer with ID 4753
+2025-07-11 06:51:31	INFO		Imported offer with ID 4563
+2025-07-11 06:51:31	INFO		Imported offer with ID 42219
+2025-07-11 06:51:31	INFO		Imported offer with ID 40406
+2025-07-11 06:51:31	INFO		Imported offer with ID 43550
+2025-07-11 06:51:31	INFO		Imported offer with ID 49088
+2025-07-11 06:51:31	INFO		Imported offer with ID 39319
+2025-07-11 06:51:31	INFO		Imported offer with ID 38335
+2025-07-11 06:51:31	INFO		Imported offer with ID 43324
+2025-07-11 06:51:31	INFO		Imported offer with ID 43334
+2025-07-11 06:51:31	INFO		Imported offer with ID 49938
+2025-07-11 06:51:31	INFO		Imported offer with ID 49448
+2025-07-11 06:51:31	INFO		Imported offer with ID 49423
+2025-07-11 06:51:31	INFO		Imported offer with ID 50834
+2025-07-11 06:51:31	INFO		Imported offer with ID 39138
+2025-07-11 06:51:31	INFO		Imported offer with ID 39889
+2025-07-11 06:51:31	INFO		Imported offer with ID 39888
+2025-07-11 06:51:31	INFO		Imported offer with ID 41355
+2025-07-11 06:51:31	INFO		Imported offer with ID 40177
+2025-07-11 06:51:31	INFO		Imported offer with ID 39803
+2025-07-11 06:51:31	INFO		Imported offer with ID 4749
+2025-07-11 06:51:31	INFO		Imported offer with ID 2004
+2025-07-11 06:51:31	INFO		Imported offer with ID 43436
+2025-07-11 06:51:31	INFO		Imported offer with ID 30058
+2025-07-11 06:51:31	INFO		Imported offer with ID 1183
+2025-07-11 06:51:31	INFO		Imported offer with ID 41240
+2025-07-11 06:51:31	INFO		Imported offer with ID 48989
+2025-07-11 06:51:31	INFO		Imported offer with ID 42205
+2025-07-11 06:51:31	INFO		Imported offer with ID 42215
+2025-07-11 06:51:31	INFO		Imported offer with ID 29431
+2025-07-11 06:51:31	INFO		Imported offer with ID 49736
+2025-07-11 06:51:31	INFO		Imported offer with ID 48990
+2025-07-11 06:51:31	INFO		Imported offer with ID 38602
+2025-07-11 06:51:31	INFO		Imported offer with ID 4815
+2025-07-11 06:51:31	INFO		Imported offer with ID 50836
+2025-07-11 06:51:31	INFO		Imported offer with ID 50481
+2025-07-11 06:51:31	INFO		Imported offer with ID 47926
+2025-07-11 06:51:31	INFO		Imported offer with ID 48795
+2025-07-11 06:51:31	INFO		Imported offer with ID 44063
+2025-07-11 06:51:31	INFO		Imported offer with ID 48414
+2025-07-11 06:51:31	INFO		Imported offer with ID 49097
+2025-07-11 06:51:31	INFO		Imported offer with ID 1196
+2025-07-11 06:51:31	INFO		Imported offer with ID 41368
+2025-07-11 06:51:31	INFO		Imported offer with ID 38983
+2025-07-11 06:51:31	INFO		Imported offer with ID 43997
+2025-07-11 06:51:31	INFO		Imported offer with ID 43828
+2025-07-11 06:51:31	INFO		Imported offer with ID 43827
+2025-07-11 06:51:31	INFO		Imported offer with ID 2259
+2025-07-11 06:51:31	INFO		Imported offer with ID 48224
+2025-07-11 06:51:31	INFO		Imported offer with ID 38646
+2025-07-11 06:51:31	INFO		Imported offer with ID 42206
+2025-07-11 06:51:31	INFO		Imported offer with ID 40331
+2025-07-11 06:51:31	INFO		Imported offer with ID 43071
+2025-07-11 06:51:31	INFO		Imported offer with ID 13963
+2025-07-11 06:51:31	INFO		Imported offer with ID 49090
+2025-07-11 06:51:31	INFO		Imported offer with ID 14532
+2025-07-11 06:51:31	INFO		Imported offer with ID 8748
+2025-07-11 06:51:31	INFO		Imported offer with ID 28111
+2025-07-11 06:51:31	INFO		Imported offer with ID 49092
+2025-07-11 06:51:31	INFO		Imported offer with ID 26082
+2025-07-11 06:51:31	INFO		Imported offer with ID 43202
+2025-07-11 06:51:31	INFO	Successfully imported 416 offers.
+2025-07-11 06:51:31	INFO	Deleting offers which were not updated...
+2025-07-11 06:51:31	INFO		Deleted offer with ID 515
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1230
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1233
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1234
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1235
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1376
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1377
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1381
+2025-07-11 06:51:31	INFO		Deleted offer with ID 1383
+2025-07-11 06:51:31	INFO		Deleted offer with ID 2143
+2025-07-11 06:51:31	INFO		Deleted offer with ID 2144
+2025-07-11 06:51:31	INFO		Deleted offer with ID 4554
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9338
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9342
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9344
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9345
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9346
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9347
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9359
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9361
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9373
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9374
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9375
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9376
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9377
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9378
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9379
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9381
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9382
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9383
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9384
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9385
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9386
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9387
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9388
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9389
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9390
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9391
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9393
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9398
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9399
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9405
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9410
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9416
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9420
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9424
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9425
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9426
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9441
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9453
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9481
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9492
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9499
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9500
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9506
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9513
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9543
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9544
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9545
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9546
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9547
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9549
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9553
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9554
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9560
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9564
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9566
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9584
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9586
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9587
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9588
+2025-07-11 06:51:31	INFO		Deleted offer with ID 9593
+2025-07-11 06:51:31	INFO		Deleted offer with ID 11086
+2025-07-11 06:51:31	INFO		Deleted offer with ID 13926
+2025-07-11 06:51:31	INFO		Deleted offer with ID 20993
+2025-07-11 06:51:31	INFO		Deleted offer with ID 20997
+2025-07-11 06:51:31	INFO		Deleted offer with ID 20998
+2025-07-11 06:51:31	INFO		Deleted offer with ID 21001
+2025-07-11 06:51:31	INFO		Deleted offer with ID 21002
+2025-07-11 06:51:31	INFO		Deleted offer with ID 21007
+2025-07-11 06:51:31	INFO		Deleted offer with ID 21729
+2025-07-11 06:51:31	INFO		Deleted offer with ID 23372
+2025-07-11 06:51:31	INFO		Deleted offer with ID 23373
+2025-07-11 06:51:31	INFO		Deleted offer with ID 23374
+2025-07-11 06:51:31	INFO		Deleted offer with ID 23573
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24501
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24522
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24523
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24524
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24525
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24528
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24553
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24557
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24558
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24559
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24560
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24561
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24563
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24607
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24615
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24617
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24740
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24816
+2025-07-11 06:51:31	INFO		Deleted offer with ID 24824
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25218
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25219
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25220
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25221
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25348
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25349
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25350
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25478
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25479
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25481
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25494
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25503
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25507
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25509
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25510
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25513
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25514
+2025-07-11 06:51:31	INFO		Deleted offer with ID 25833
+2025-07-11 06:51:31	INFO		Deleted offer with ID 26084
+2025-07-11 06:51:31	INFO		Deleted offer with ID 26086
+2025-07-11 06:51:31	INFO		Deleted offer with ID 26087
+2025-07-11 06:51:31	INFO		Deleted offer with ID 26089
+2025-07-11 06:51:31	INFO		Deleted offer with ID 26413
+2025-07-11 06:51:31	INFO		Deleted offer with ID 27012
+2025-07-11 06:51:31	INFO		Deleted offer with ID 27013
+2025-07-11 06:51:31	INFO		Deleted offer with ID 27014
+2025-07-11 06:51:31	INFO		Deleted offer with ID 27015
+2025-07-11 06:51:31	INFO		Deleted offer with ID 27016
+2025-07-11 06:51:31	INFO		Deleted offer with ID 27018
+2025-07-11 06:51:31	INFO		Deleted offer with ID 28105
+2025-07-11 06:51:31	INFO		Deleted offer with ID 28758
+2025-07-11 06:51:31	INFO		Deleted offer with ID 29678
+2025-07-11 06:51:31	INFO		Deleted offer with ID 29682
+2025-07-11 06:51:31	INFO		Deleted offer with ID 29684
+2025-07-11 06:51:31	INFO		Deleted offer with ID 29991
+2025-07-11 06:51:31	INFO		Deleted offer with ID 29993
+2025-07-11 06:51:31	INFO		Deleted offer with ID 29996
+2025-07-11 06:51:31	INFO		Deleted offer with ID 30000
+2025-07-11 06:51:31	INFO		Deleted offer with ID 30002
+2025-07-11 06:51:31	INFO		Deleted offer with ID 30006
+2025-07-11 06:51:31	INFO		Deleted offer with ID 30014
+2025-07-11 06:51:31	INFO		Deleted offer with ID 30015
+2025-07-11 06:51:31	INFO		Deleted offer with ID 33924
+2025-07-11 06:51:31	INFO		Deleted offer with ID 35515
+2025-07-11 06:51:31	INFO		Deleted offer with ID 35961
+2025-07-11 06:51:31	INFO		Deleted offer with ID 36366
+2025-07-11 06:51:31	INFO		Deleted offer with ID 36556
+2025-07-11 06:51:31	INFO		Deleted offer with ID 36684
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37068
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37490
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37512
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37529
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37555
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37731
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37732
+2025-07-11 06:51:31	INFO		Deleted offer with ID 37821
+2025-07-11 06:51:31	INFO		Deleted offer with ID 38303
+2025-07-11 06:51:31	INFO		Deleted offer with ID 38459
+2025-07-11 06:51:31	INFO		Deleted offer with ID 38460
+2025-07-11 06:51:31	INFO		Deleted offer with ID 38461
+2025-07-11 06:51:31	INFO		Deleted offer with ID 38562
+2025-07-11 06:51:31	INFO		Deleted offer with ID 39474
+2025-07-11 06:51:31	INFO		Deleted offer with ID 39548
+2025-07-11 06:51:31	INFO		Deleted offer with ID 39658
+2025-07-11 06:51:31	INFO		Deleted offer with ID 39850
+2025-07-11 06:51:31	INFO		Deleted offer with ID 39991
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40257
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40258
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40592
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40858
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40865
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40871
+2025-07-11 06:51:31	INFO		Deleted offer with ID 40901
+2025-07-11 06:51:31	INFO		Deleted offer with ID 41246
+2025-07-11 06:51:31	INFO		Deleted offer with ID 41436
+2025-07-11 06:51:31	INFO		Deleted offer with ID 41782
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42474
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42475
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42476
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42592
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42737
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42801
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42954
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42955
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42957
+2025-07-11 06:51:31	INFO		Deleted offer with ID 42994
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43108
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43114
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43117
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43118
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43313
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43399
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43443
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43474
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43489
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43523
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43574
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43578
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43625
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43656
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43682
+2025-07-11 06:51:31	INFO		Deleted offer with ID 43820
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44162
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44255
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44258
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44380
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44465
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44589
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44774
+2025-07-11 06:51:31	INFO		Deleted offer with ID 44775
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45027
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45030
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45183
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45184
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45228
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45233
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45362
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45429
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45471
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45472
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45473
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45474
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45475
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45476
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45477
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45478
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45481
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45482
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45483
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45484
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45486
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45487
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45488
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45489
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45490
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45491
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45492
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45493
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45494
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45495
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45496
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45497
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45500
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45502
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45503
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45507
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45508
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45554
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45561
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45562
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45589
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45596
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45597
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45598
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45599
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45637
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45639
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45641
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45654
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45655
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45657
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45661
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45663
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45664
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45665
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45668
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45671
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45673
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45674
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45676
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45677
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45833
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45834
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45843
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45849
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45851
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45854
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45856
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45860
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45896
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45914
+2025-07-11 06:51:31	INFO		Deleted offer with ID 45915
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46094
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46266
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46373
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46416
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46450
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46469
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46657
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46805
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46859
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46884
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46934
+2025-07-11 06:51:31	INFO		Deleted offer with ID 46988
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47115
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47116
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47291
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47900
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47930
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47931
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47938
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47942
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47943
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47944
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47976
+2025-07-11 06:51:31	INFO		Deleted offer with ID 47978
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48005
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48006
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48234
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48253
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48258
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48359
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48455
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48498
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48500
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48579
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48645
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48646
+2025-07-11 06:51:31	INFO		Deleted offer with ID 48801
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49040
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49161
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49162
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49209
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49210
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49234
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49254
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49306
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49312
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49351
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49371
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49373
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49384
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49439
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49453
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49461
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49462
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49532
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49539
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49566
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49567
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49568
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49641
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49697
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49747
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49758
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49785
+2025-07-11 06:51:31	INFO		Deleted offer with ID 49934
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50036
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50280
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50326
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50328
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50330
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50347
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50348
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50374
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50375
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50381
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50384
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50431
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50437
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50454
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50535
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50542
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50582
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50585
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50586
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50609
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50652
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50672
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50721
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50734
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50737
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50739
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50770
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50825
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50844
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50880
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50892
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50910
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50911
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50912
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50938
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50953
+2025-07-11 06:51:31	INFO		Deleted offer with ID 50959
+2025-07-11 06:51:31	INFO	Import finished successfully.
+2025-07-11 06:51:32	INFO	Clean up offers
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 38983
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 39138
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 40429
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 40555
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 40556
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 41419
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 42141
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 42142
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 42143
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 42716
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 43071
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 43115
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 43706
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 43742
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 43846
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 43852
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 45876
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 45878
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 45879
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 49423
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 49940
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50004
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50005
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50006
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50007
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50008
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50009
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50010
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50011
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50012
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50013
+2025-07-11 06:51:32	INFO		Deleted inactive offer with ID 50014
+2025-07-11 06:51:32	INFO	Deleted 32 inactive offer(s).
+2025-07-11 09:09:38	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:10:29	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:10:38	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:11:09	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:11:09	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:11:09	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:12:06	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:12:06	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:12:33	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:12:33	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:14:50	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:14:50	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:14:50	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:17:33	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:17:33	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:17:33	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:18:12	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:18:12	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:18:12	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:28:05	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:28:05	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:28:05	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:35:07	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:35:07	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:35:07	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:42:45	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:42:48	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:42:48	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:42:48	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:43:56	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:43:56	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:43:56	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:44:59	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:44:59	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:44:59	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:47:52	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:47:52	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:47:53	INFO	Migration to version 21.1 successfully finished.
+2025-07-11 09:49:08	INFO	The current API version is out of date. Please update database.
+2025-07-11 09:49:08	INFO	Starting migration from version 21 to version 21.1...
+2025-07-11 09:49:08	INFO	Migration to version 21.1 successfully finished.

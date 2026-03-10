@@ -1,0 +1,12 @@
+2025-07-16 06:27:43	INFO	The current API version is out of date. Please update database.
+2025-07-16 06:27:44	INFO	FORCE mode is enabled
+2025-07-16 06:27:44	INFO	XML is not valid: https://angebote.paerke.ch/export/xml/insert-your-hash-here
+2025-07-16 06:27:44	INFO	XML is not valid: https://angebote.paerke.ch/export/xml/map_layers/insert-your-hash-here
+2025-07-16 06:27:45	INFO	Clean up offers
+2025-07-16 06:27:45	INFO		Deleted inactive offer with ID 49219
+2025-07-16 06:27:45	INFO	Deleted 1 inactive offer(s).
+2025-07-16 06:27:47	INFO	The current API version is out of date. Please update database.
+2025-07-16 06:27:47	INFO	Starting migration from version 20 to version 21...
+2025-07-16 06:27:48	INFO	Migration to version 21 successfully finished.
+2025-07-16 06:27:48	INFO	Starting migration from version 20 to version 21.1...
+2025-07-16 06:27:48	INFO	Migration to version 21.1 successfully finished.

@@ -1,0 +1,1194 @@
+/*
+|---------------------------------------------------------------
+| ANGEBOTE.PAERKE.CH API
+|---------------------------------------------------------------
+*/
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+
+# Export von Tabelle accommodation
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `accommodation`;
+
+CREATE TABLE `accommodation` (
+  `offer_id` bigint(20) DEFAULT NULL,
+  `contact` text,
+  `is_park_partner` tinyint(4) DEFAULT '0',
+  KEY `offer_id_idxfk` (`offer_id`),
+  CONSTRAINT `accommodation_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle activity
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `activity`;
+
+CREATE TABLE `activity` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `start_place_info` text,
+  `start_place_altitude` int(11) DEFAULT NULL,
+  `goal_place_info` text,
+  `goal_place_altitude` int(11) DEFAULT NULL,
+  `route_length` decimal(7,2) DEFAULT NULL,
+  `untarred_route_length` decimal(7,2) DEFAULT NULL,
+  `public_transport_start` varchar(255) DEFAULT NULL,
+  `public_transport_stop` varchar(255) DEFAULT NULL,
+  `altitude_differential` int(11) DEFAULT NULL,
+  `altitude_ascent` int(11) DEFAULT NULL,
+  `altitude_descent` int(11) DEFAULT NULL,
+  `time_required` varchar(255) DEFAULT NULL,
+  `level_technics` tinyint(1) DEFAULT NULL,
+  `level_condition` tinyint(1) DEFAULT NULL,
+  `has_playground` tinyint(1) DEFAULT NULL,
+  `has_picnic_place` tinyint(1) DEFAULT NULL,
+  `has_fireplace` tinyint(1) DEFAULT NULL,
+  `has_washrooms` tinyint(1) DEFAULT NULL,
+  `poi` text,
+  PRIMARY KEY (`offer_id`),
+  CONSTRAINT `activity_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle api
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `api`;
+
+CREATE TABLE `api` (
+  `initialized` tinyint(1) DEFAULT '0',
+  `version` varchar(20) DEFAULT '1.0',
+  `last_import` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `api` WRITE;
+/*!40000 ALTER TABLE `api` DISABLE KEYS */;
+
+INSERT INTO `api` (`initialized`, `version`, `last_import`)
+VALUES
+	(1,'8',NULL);
+
+/*!40000 ALTER TABLE `api` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Export von Tabelle booking
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `booking`;
+
+CREATE TABLE `booking` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `is_park_partner` tinyint(1) DEFAULT NULL,
+  `min_group_subscriber` int(11) DEFAULT NULL,
+  `max_group_subscriber` int(11) DEFAULT NULL,
+  `min_individual_subscriber` int(11) DEFAULT NULL,
+  `max_individual_subscriber` int(11) DEFAULT NULL,
+  `public_transport_stop` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`offer_id`),
+  CONSTRAINT `booking_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle category
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `category`;
+
+CREATE TABLE `category` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `parent_id` int(11) DEFAULT NULL,
+  `stnet_id` char(1) DEFAULT NULL,
+  `alpstein_id` varchar(255) DEFAULT NULL,
+  `contact_visible_for_alpstein` tinyint(4) DEFAULT '1',
+  `marker` varchar(255) DEFAULT NULL,
+  `sort` int(11) NOT NULL,
+  PRIMARY KEY (`category_id`),
+  UNIQUE KEY `category_id` (`category_id`),
+  UNIQUE KEY `sort` (`sort`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `category` WRITE;
+/*!40000 ALTER TABLE `category` DISABLE KEYS */;
+
+INSERT INTO `category` (`category_id`, `parent_id`, `stnet_id`, `alpstein_id`, `contact_visible_for_alpstein`, `marker`, `sort`)
+VALUES
+	(1,0,NULL,NULL,1,'362782',1000),
+	(2,0,NULL,NULL,1,'cccccc',2000),
+	(3,0,NULL,'',1,'FCE237',3000),
+	(4,0,NULL,NULL,1,'cccccc',4000),
+	(5,1,'D',NULL,1,'362782',1010),
+	(6,1,'I',NULL,1,'362782',1020),
+	(7,1,'A',NULL,1,'362782',1030),
+	(8,1,'B',NULL,1,'362782',1040),
+	(9,1,'C',NULL,1,'362782',1050),
+	(10,1,'D',NULL,1,'362782',1060),
+	(11,1,'E',NULL,1,'362782',1070),
+	(12,1,'F',NULL,1,'362782',1080),
+	(13,1,'G',NULL,1,'362782',1090),
+	(14,1,'H',NULL,1,'362782',1100),
+	(15,1,'I',NULL,1,'362782',1110),
+	(16,1,'K',NULL,1,'362782',1120),
+	(17,1,'J',NULL,1,'362782',1130),
+	(18,1,NULL,NULL,1,'362782',1140),
+	(19,2,NULL,'',1,'8CCAAD',2300),
+	(20,200,NULL,NULL,1,'F3975F',2400),
+	(21,200,NULL,NULL,1,'C62945',2500),
+	(22,2,NULL,NULL,1,'00625C',2200),
+	(25,19,NULL,'',0,'8CCAAD',2310),
+	(26,19,NULL,'',0,'8CCAAD',2320),
+	(27,19,NULL,'',0,'8CCAAD',2330),
+	(28,20,NULL,'restaurant',1,'F3975F',2410),
+	(29,20,NULL,'eatables',1,'F3975F',2420),
+	(30,20,NULL,'',0,'F3975F',2430),
+	(31,20,NULL,'barbecueArea',0,'F3975F',2440),
+	(32,20,NULL,NULL,1,'F3975F',2450),
+	(33,21,NULL,'hotel',1,'C62945',2505),
+	(34,21,NULL,'guesthouse',1,'C62945',2510),
+	(35,21,NULL,'privateRoom',1,'C62945',2515),
+	(36,21,NULL,'youthHostel',1,'C62945',2520),
+	(37,21,NULL,'lodge',1,'C62945',2525),
+	(38,21,NULL,'farm',1,'C62945',2530),
+	(39,21,NULL,'holidayFlat',1,'C62945',2535),
+	(40,21,NULL,'camping',1,'C62945',2540),
+	(41,21,NULL,NULL,1,'C62945',2545),
+	(44,3,NULL,'',1,'FCE237',3100),
+	(45,3,NULL,'',1,'FCE237',3200),
+	(46,3,NULL,'',1,'FCE237',3300),
+	(47,3,NULL,'',1,'FCE237',3400),
+	(48,3,NULL,'',1,'FCE237',3500),
+	(49,3,NULL,'',1,'FCE237',3600),
+	(50,4,NULL,NULL,1,'C6C6C6',4100),
+	(51,4,NULL,NULL,1,'C6C6C6',4200),
+	(53,22,NULL,'naturalMonument',0,'00625C',2210),
+	(54,22,NULL,'fauna',0,'00625C',2215),
+	(55,22,NULL,'flora',0,'00625C',2220),
+	(56,22,NULL,'biotope',0,'00625C',2225),
+	(57,22,NULL,'',0,'00625C',2230),
+	(59,22,NULL,'historicCityCenter',0,'00625C',2235),
+	(60,22,NULL,'architecture',0,'00625C',2240),
+	(61,22,NULL,'museum',1,'00625C',2250),
+	(62,22,NULL,NULL,0,'00625C',2255),
+	(63,50,NULL,'themeTrail',1,'92D255',4110),
+	(64,50,NULL,'hikingTourTrail',1,'4BA234',4120),
+	(65,50,NULL,'cycling',1,'449BD5',4130),
+	(66,50,NULL,'mountainbiking',1,'FACA4D',4140),
+	(67,50,NULL,'inlineSkating',1,'C6C6C6',4160),
+	(68,50,NULL,NULL,1,'C6C6C6',4180),
+	(69,51,NULL,'snowshoehiking',1,'BE2F7E',4210),
+	(70,51,NULL,'winterHiking',1,'EC7AAD',4220),
+	(71,79,NULL,'infoCenter',1,'79BCDA',2110),
+	(72,51,NULL,'skitour',1,'C6C6C6',4230),
+	(73,51,NULL,'skitrailCrosscountry',1,'60C1E9',4240),
+	(74,51,NULL,'sledging',1,'9E7967',4250),
+	(75,51,NULL,NULL,1,'C6C6C6',4260),
+	(78,50,NULL,'ebike',1,'2677C0',4150),
+	(79,2,NULL,NULL,1,'79BCDA',2100),
+	(80,22,NULL,'historicPlace',0,'00625C',2245),
+	(81,100,NULL,'playground',0,'D18391',2620),
+	(82,50,NULL,'horsebackRidingTour',1,'C09732',4170),
+	(100,2,NULL,NULL,1,'D18391',2600),
+	(101,79,NULL,'helpDesk',1,'79BCDA',2120),
+	(102,22,NULL,'viewpoint',0,'00625C',2205),
+	(103,100,NULL,'sportsOutfitters',1,'D18391',2610),
+	(104,100,NULL,'',0,'D18391',2630),
+	(105,100,NULL,'',0,'D18391',2640),
+	(106,100,NULL,'skiLift',0,'D18391',2650),
+	(107,3,NULL,'',1,'FCE237',3800),
+	(108,20,NULL,'mountainInn',1,'F3975F',2445),
+	(109,22,NULL,'geotope',0,'00625C',2221),
+	(110,21,NULL,NULL,1,'C62945',2518),
+	(111,3,NULL,NULL,1,'FCE237',3900),
+	(112,3,NULL,NULL,1,'FCE237',3950),
+	(113,22,NULL,NULL,1,'00625C',2253),
+	(114,79,NULL,'organization',1,'79BCDA',2130),
+	(115,22,NULL,'church',1,'00625C',2247),
+	(116,22,NULL,'fortress',1,'00625C',2248),
+	(117,20,NULL,'directMarketed',1,'F3975F',2447),
+	(118,20,NULL,'alpOpened',1,'F3975F',2448),
+	(119,100,NULL,'waterSports',1,'D18391',2633),
+	(120,100,NULL,'horsebackRidingPoi',1,'D18391',2634),
+	(121,100,NULL,NULL,1,'D18391',2636),
+	(122,1,NULL,NULL,1,'362782',1025),
+	(123,19,NULL,NULL,1,'8CCAAD',2312),
+	(124,19,NULL,NULL,1,'8CCAAD',2314),
+	(125,19,NULL,NULL,1,'8CCAAD',2316),
+	(126,20,NULL,NULL,1,'F3975F',2415),
+	(127,100,NULL,NULL,1,'D18391',2631),
+	(128,100,NULL,NULL,1,'D18391',2632),
+	(129,100,NULL,NULL,1,'D18391',2638),
+	(130,100,NULL,NULL,1,'D18391',2643),
+	(131,100,NULL,NULL,1,'D18391',2647),
+	(200,2,NULL,NULL,1,'ff7b21',2380),
+	(1000,0,NULL,NULL,1,'454545',5000),
+	(1001,1000,NULL,NULL,1,'ffcc00',5010),
+	(1002,1000,NULL,NULL,1,'cccccc',5020),
+	(1003,1000,NULL,NULL,1,'0066ff',5030),
+	(1004,1000,NULL,NULL,1,'ff99cc',5040),
+	(1005,1000,NULL,NULL,1,'93dbff',5050),
+	(1006,1000,NULL,NULL,1,'ff7b21',5060),
+	(1007,1000,NULL,NULL,1,'d8d8d8',5070),
+	(1008,1000,NULL,NULL,1,'ffff00',5080),
+	(1009,1000,NULL,NULL,1,'00501f',5090),
+	(1010,1000,NULL,NULL,1,'974807',5100),
+	(1011,1000,NULL,NULL,1,'7dd53b',5110),
+	(1012,1000,NULL,NULL,1,'699fd6',5120),
+	(1013,1000,NULL,NULL,1,'c79602',5130),
+	(1014,1000,NULL,NULL,1,'ff00ff',5140),
+	(1015,1000,NULL,NULL,1,'9b7bb4',5150),
+	(1016,1000,NULL,NULL,1,'376091',5160),
+	(1017,1000,NULL,NULL,1,'7030a0',5170),
+	(5000,0,NULL,NULL,1,'3A5BA6',6000),
+	(5001,5000,NULL,NULL,1,'3A5BA6',6010),
+	(5002,5000,NULL,NULL,1,'3A5BA6',6020);
+
+/*!40000 ALTER TABLE `category` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Export von Tabelle category_i18n
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `category_i18n`;
+
+CREATE TABLE `category_i18n` (
+  `category_id` int(11) NOT NULL DEFAULT '0',
+  `language` char(2) NOT NULL DEFAULT '',
+  `body` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`category_id`,`language`),
+  CONSTRAINT `category_i18n_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `category` (`category_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `category_i18n` WRITE;
+/*!40000 ALTER TABLE `category_i18n` DISABLE KEYS */;
+
+INSERT INTO `category_i18n` (`category_id`, `language`, `body`)
+VALUES
+	(1,'de','Veranstaltung'),
+	(1,'en','Event'),
+	(1,'fr','Ev&eacute;nement'),
+	(1,'it','Evento'),
+	(2,'de','Produkt / Verpflegung / Beherbergung / Sehenswürdigkeit'),
+	(2,'en','Product / Gastronomy / Accomodation / Sight/Place of interest'),
+	(2,'fr','Produit / Restauration / H&eacute;bergement / Curiosit&eacute;'),
+	(2,'it','Prodotto / approvvigionamento / alloggio / punto d\'interesse'),
+	(3,'de','Pauschalangebote'),
+	(3,'en','Bookable offer'),
+	(3,'fr','Offre r&eacute;servable'),
+	(3,'it','Offerta prenotabile'),
+	(4,'de','Aktivitäten (Routen/Wege)'),
+	(4,'en','Activities (Routes/Paths)'),
+	(4,'fr','Activités (Itinéraires/chemins)'),
+	(4,'it','Attività (Itinerari/Percorsi/Sentieri)'),
+	(5,'de','Natur / Landschaft'),
+	(5,'en','Nature / Landscape'),
+	(5,'fr','Nature / paysage'),
+	(5,'it','Natura / paesaggio'),
+	(6,'de','Exkursion / geführte Wanderung'),
+	(6,'en','Excursion / Guided tour'),
+	(6,'fr','Excursion / randonn&eacute;e accompagn&eacute;e'),
+	(6,'it','Escursione / gita guidata'),
+	(7,'de','Konzert / Musical'),
+	(7,'en','Concert / Musical'),
+	(7,'fr','Concert / com&eacute;die musicale'),
+	(7,'it','Concerto / musical'),
+	(8,'de','Theater / Kino'),
+	(8,'en','Theater / Cinema'),
+	(8,'fr','Th&eacute;&acirc;tre / cin&eacute;ma'),
+	(8,'it','Teatro / cinema'),
+	(9,'de','Kunst / Handwerk'),
+	(9,'en','Art / Artisanry'),
+	(9,'fr','Art / artisanat'),
+	(9,'it','Arte / artigianato'),
+	(10,'de','Messe / Ausstellung'),
+	(10,'en','Fair / Exhibition'),
+	(10,'fr','Foire / Manifestation'),
+	(10,'it','Fiera / esposizione'),
+	(11,'de','Brauchtum / Markt'),
+	(11,'en','Custom / Market'),
+	(11,'fr','Coutumes / March&eacute;'),
+	(11,'it','Usanza / mercato'),
+	(12,'de','Festival / Fest'),
+	(12,'en','Festival / Festivity'),
+	(12,'fr','Festival / F&ecirc;te'),
+	(12,'it','Festival / festa'),
+	(13,'de','Kongress / Kurs / Seminar'),
+	(13,'en','Congress / Course / Seminar'),
+	(13,'fr','Congr&egrave;s / cours / s&eacute;minaire'),
+	(13,'it','Congresso / corso / seminario'),
+	(14,'de','Sport'),
+	(14,'en','Sport'),
+	(14,'fr','Sport'),
+	(14,'it','Sport'),
+	(15,'de','Kinderprogramm'),
+	(15,'en','Children\'s programme'),
+	(15,'fr','Programme pour enfants'),
+	(15,'it','Programma per bambini'),
+	(16,'de','Kulinarik'),
+	(16,'en','Gastronomy'),
+	(16,'fr','Gastronomie'),
+	(16,'it','Gastronomia'),
+	(17,'de','Versammlung'),
+	(17,'en','Meeting'),
+	(17,'fr','Assembl&eacute;e'),
+	(17,'it','Collezione'),
+	(18,'de','Weitere'),
+	(18,'en','Further'),
+	(18,'fr','Autre'),
+	(18,'it','Altro'),
+	(19,'de','Regionales Produkt'),
+	(19,'en','Regional product'),
+	(19,'fr','Produit r&eacute;gional'),
+	(19,'it','Prodotto regionale'),
+	(20,'de','Verpflegung'),
+	(20,'en','Gastronomy'),
+	(20,'fr','Restauration'),
+	(20,'it','Approvvigionamento'),
+	(21,'de','Beherbergung'),
+	(21,'en','Accomodation'),
+	(21,'fr','H&eacute;bergement'),
+	(21,'it','Alloggio'),
+	(22,'de','Sehenswürdigkeit'),
+	(22,'en','Sight / Place of interest'),
+	(22,'fr','Curiosit&eacute;'),
+	(22,'it','Punto d\'interesse'),
+	(25,'de','Nahrungsmittel'),
+	(25,'en','Aliment'),
+	(25,'fr','Produits alimentaires'),
+	(25,'it','Alimentari'),
+	(26,'de','Handwerk'),
+	(26,'en','Artisanry'),
+	(26,'fr','Artisanat'),
+	(26,'it','Artigianato'),
+	(27,'de','Weitere Produkte'),
+	(27,'en','Further'),
+	(27,'fr','Autre'),
+	(27,'it','Altro'),
+	(28,'de','Restaurant'),
+	(28,'en','Restaurant'),
+	(28,'fr','Restaurant'),
+	(28,'it','Ristorante'),
+	(29,'de','Laden'),
+	(29,'en','Shop'),
+	(29,'fr','Boutique'),
+	(29,'it','Negozio'),
+	(30,'de','Picknickstelle'),
+	(30,'en','Picnic-place'),
+	(30,'fr','Place de pique-nique'),
+	(30,'it','Spiazzo per picnic'),
+	(31,'de','Feuerstelle'),
+	(31,'en','Fireplace'),
+	(31,'fr','Foyer pour feu'),
+	(31,'it','Spiazzo per accendere fuochi'),
+	(32,'de','Weitere'),
+	(32,'en','Further'),
+	(32,'fr','Autre'),
+	(32,'it','Altro'),
+	(33,'de','Hotel'),
+	(33,'en','Hotel'),
+	(33,'fr','H&ocirc;tel'),
+	(33,'it','Hotel'),
+	(34,'de','Pension'),
+	(34,'en','Guest house'),
+	(34,'fr','Pension'),
+	(34,'it','Pensione'),
+	(35,'de','Bed and Breakfast'),
+	(35,'en','Bed and Breakfast'),
+	(35,'fr','Bed and Breakfast'),
+	(35,'it','Bed and Breakfast'),
+	(36,'de','Jugendherberge / Backpackers'),
+	(36,'en','Youth hostel / Backpackers'),
+	(36,'fr','Auberge de jeunesse / Backpackers'),
+	(36,'it','Albergo della gioventù / Backpackers'),
+	(37,'de','Gruppenunterkunft'),
+	(37,'en','Group accomodation'),
+	(37,'fr','H&eacute;bergement de groupe'),
+	(37,'it','Alloggio per gruppi'),
+	(38,'de','Agrotourismus'),
+	(38,'en','Agrotourism'),
+	(38,'fr','Agrotourisme'),
+	(38,'it','Agriturismo'),
+	(39,'de','Zimmer / Ferienwohnung'),
+	(39,'en','Room / Holiday flat'),
+	(39,'fr','Chambre / appartement de vacances'),
+	(39,'it','Camera / Appartamento di vacanza'),
+	(40,'de','Zeltplatz / Camping'),
+	(40,'en','Camping site / Camping'),
+	(40,'fr','Emplacement pour tente / Camping'),
+	(40,'it','Campeggio'),
+	(41,'de','Weitere'),
+	(41,'en','Further'),
+	(41,'fr','Autre'),
+	(41,'it','Altro'),
+	(44,'de','Naturerlebnis'),
+	(44,'en','Nature experience'),
+	(44,'fr','D&eacute;couverte nature'),
+	(44,'it','Esperienza nella natura'),
+	(45,'de','Kulturerlebnis'),
+	(45,'en','Culture experience'),
+	(45,'fr','D&eacute;couverte culture'),
+	(45,'it','Esperienza culturale'),
+	(46,'de','Kulinarik'),
+	(46,'en','Culinary'),
+	(46,'fr','Activit&eacute; culinaire'),
+	(46,'it','Gastronomia'),
+	(47,'de','Freiwilligeneinsatz'),
+	(47,'en','Volunteering'),
+	(47,'fr','Engagement de b&eacute;n&eacute;voles'),
+	(47,'it','Volontariato'),
+	(48,'de','Sport / Freizeit'),
+	(48,'en','Sport / Free-time'),
+	(48,'fr','Sport / Loisir'),
+	(48,'it','Sport / tempo libero'),
+	(49,'de','Geführte Tour / Exkursion'),
+	(49,'en','Guided tour / Excursion'),
+	(49,'fr','Itin&eacute;raire accompagn&eacute; / Excursion'),
+	(49,'it','Tour organizzato / escursione'),
+	(50,'de','Sommerrouten'),
+	(50,'en','Summer routes'),
+	(50,'fr','Itin&eacute;raires d\'&eacute;t&eacute;'),
+	(50,'it','Itinerari estivi'),
+	(51,'de','Winterrouten'),
+	(51,'en','Winter routes'),
+	(51,'fr','Itin&eacute;raires d\'hiver'),
+	(51,'it','Itinerari invernali'),
+	(53,'de','Naturdenkmal'),
+	(53,'en','Natural monument'),
+	(53,'fr','Curiosit&eacute; naturelle'),
+	(53,'it','Monumento naturale'),
+	(54,'de','Fauna'),
+	(54,'en','Fauna'),
+	(54,'fr','Faune'),
+	(54,'it','Fauna'),
+	(55,'de','Flora'),
+	(55,'en','Flora'),
+	(55,'fr','Flore'),
+	(55,'it','Flora'),
+	(56,'de','Naturlandschaft / Habitat'),
+	(56,'en','Natural landscape / Habitat'),
+	(56,'fr','Paysage naturel / habitat'),
+	(56,'it','Paesaggio naturale / habitat naturale'),
+	(57,'de','Kulturlandschaft'),
+	(57,'en','Cultural landscape'),
+	(57,'fr','Paysage rural'),
+	(57,'it','Paesaggio culturale'),
+	(59,'de','Ortsbild'),
+	(59,'en','Site'),
+	(59,'fr','Site culturel'),
+	(59,'it','Insediamento'),
+	(60,'de','Baudenkmal'),
+	(60,'en','Historical building'),
+	(60,'fr','Construction &agrave; caract&egrave;re historique'),
+	(60,'it','Costruzione storica'),
+	(61,'de','Museum / Ausstellung'),
+	(61,'en','Museum / Exhibition'),
+	(61,'fr','Mus&eacute;e / Exposition'),
+	(61,'it','Museo / Esposizione'),
+	(62,'de','Weitere'),
+	(62,'en','Further'),
+	(62,'fr','Autre'),
+	(62,'it','Altro'),
+	(63,'de','Themenweg'),
+	(63,'en','Theme-Trail'),
+	(63,'fr','Parcours &agrave; th&egrave;me'),
+	(63,'it','Percorso tematico'),
+	(64,'de','Wanderung'),
+	(64,'en','Hikingroute'),
+	(64,'fr','Randonn&eacute;e'),
+	(64,'it','Escursione'),
+	(65,'de','Veloroute'),
+	(65,'en','Cyclingroute'),
+	(65,'fr','Parcours v&eacute;lo'),
+	(65,'it','Percorso ciclabile'),
+	(66,'de','Mountainbiketour'),
+	(66,'en','Mountainbikeroute'),
+	(66,'fr','Parcours VTT'),
+	(66,'it','Percorso per MBT'),
+	(67,'de','Skatingtour'),
+	(67,'en','Skatingroute'),
+	(67,'fr','Parcours pour patins &agrave; roulettes'),
+	(67,'it','Percorso per skating'),
+	(68,'de','Weitere Routen'),
+	(68,'en','Other routes'),
+	(68,'fr','Autres routes'),
+	(68,'it','Altri itinerari'),
+	(69,'de','Schneeschuhtour'),
+	(69,'en','Snow shoe-route'),
+	(69,'fr','Parcours en raquettes'),
+	(69,'it','Sentiero per ciaspole'),
+	(70,'de','Winterwanderung'),
+	(70,'en','Winterhikingroute'),
+	(70,'fr','Randonn&eacute;e hivernale'),
+	(70,'it','Escursione invernale'),
+	(71,'de','Besucherzentrum'),
+	(71,'en','Visitorcenter'),
+	(71,'fr','Centre de visiteurs'),
+	(71,'it','Centro visita'),
+	(72,'de','Tourenskiroute'),
+	(72,'en','Tourenskiroute'),
+	(72,'fr','Parcours de ski de randonn&eacute;e'),
+	(72,'it','Sentiero per pelli di foca'),
+	(73,'de','Langlaufstrecke'),
+	(73,'en','Crosscountryroute'),
+	(73,'fr','Piste de ski de fonds'),
+	(73,'it','Percorso per sci di fondo'),
+	(74,'de','Schlittelweg'),
+	(74,'en','Sledgetrail'),
+	(74,'fr','Piste de luge'),
+	(74,'it','Piste de luge'),
+	(75,'de','Weitere Routen'),
+	(75,'en','Other routes'),
+	(75,'fr','Autres routes'),
+	(75,'it','Altri itinerari'),
+	(78,'de','E-Bike Routen'),
+	(78,'en','E-bike itineraries'),
+	(78,'fr','Itin&eacute;raires E-Bike'),
+	(78,'it','Itinerari per biciclette elettriche'),
+	(79,'de','Information'),
+	(79,'en','Information'),
+	(79,'fr','Information'),
+	(79,'it','Informazione'),
+	(80,'de','Historischer Ort'),
+	(80,'en','Historical place'),
+	(80,'fr','Lieu historique'),
+	(80,'it','Luogo d\'importanza storica'),
+	(81,'de','Spielplatz'),
+	(81,'en','Playground'),
+	(81,'fr','Aire de jeu'),
+	(81,'it','Parco giochi'),
+	(82,'de','Reitroute'),
+	(82,'en','Bridal path'),
+	(82,'fr','Sentier &eacute;questre'),
+	(82,'it','Sentiero equestre'),
+	(100,'de','Infrastruktur'),
+	(100,'en','Infrastructure'),
+	(100,'fr','Infrastructure'),
+	(100,'it','Infrastruttura'),
+	(101,'de','Informationsstelle'),
+	(101,'en','Informationcenter'),
+	(101,'fr','Centre d\'information'),
+	(101,'it','Ufficio informazione'),
+	(102,'de','Aussichtspunkt'),
+	(102,'en','Point of view'),
+	(102,'fr','Point de vue'),
+	(102,'it','Belvedere'),
+	(103,'de','Sportgeräteverleih'),
+	(103,'en','Rental for sports equipment'),
+	(103,'fr','Location de mat&eacute;riel de sport'),
+	(103,'it','Noleggio materiale sportivo'),
+	(104,'de','Sommerinfrastruktur'),
+	(104,'en','Infrastructure Summer'),
+	(104,'fr','Infrastructure d\'&eacute;t&eacute;'),
+	(104,'it','Infrastrutture estive'),
+	(105,'de','Winterinfrastruktur'),
+	(105,'en','Infrastructure Winter'),
+	(105,'fr','Infrastructure d\'hiver'),
+	(105,'it','Infrastrutture invernali'),
+	(106,'de','Skigebiet'),
+	(106,'en','Skiing-region'),
+	(106,'fr','Domaine skiable'),
+	(106,'it','Regione sciistica'),
+	(107,'de','Klassenlager'),
+	(107,'en','School camp'),
+	(107,'fr','Camp pour classes d\'&eacute;cole'),
+	(107,'it','Settimane scolastiche'),
+	(108,'de','Berggasthof'),
+	(108,'en','Farm restaurant'),
+	(108,'fr','M&eacute;tairie / Chalet d\'alpage'),
+	(108,'it','Chalet d\'alpeggio'),
+	(109,'de','Geologie'),
+	(109,'en','Geology'),
+	(109,'fr','G&eacute;ologie'),
+	(109,'it','Geologia'),
+	(110,'de','H&uuml;tte'),
+	(110,'en','Alpine hut and shelter'),
+	(110,'fr','Cabane et refuge'),
+	(110,'it','Capanna e Rifugi'),
+	(111,'de','Schulklassenangebot'),
+	(111,'en','Offer for classes'),
+	(111,'fr','Offres pour les classes d\'&eacute;cole'),
+	(111,'it','Offerta per classi'),
+	(112,'de','Gruppenangebot'),
+	(112,'en','Offer for groups'),
+	(112,'fr','Offres pour les groupes'),
+	(112,'it','Offerta per gruppi'),
+	(113,'de','Gew&auml;sser'),
+	(113,'en','Waters'),
+	(113,'fr','Eaux'),
+	(113,'it','Acque'),
+	(114,'de','Parkverwaltung'),
+	(114,'en','Park administration'),
+	(114,'fr','Administration du parc'),
+	(114,'it','Gestione dei parcheggi'),
+	(115,'de','Kirche'),
+	(115,'en','Church'),
+	(115,'fr','Église'),
+	(115,'it','Chiesa'),
+	(116,'de','Burg'),
+	(116,'en','Castle'),
+	(116,'fr','Château'),
+	(116,'it','Castello'),
+	(117,'de','Direktverkauf'),
+	(117,'en','Direct selling'),
+	(117,'fr','Vente directe '),
+	(117,'it','Vendita diretta'),
+	(118,'de','Bewirtschaftete Alp'),
+	(118,'en','Alpine huts offering regional product'),
+	(118,'fr','Alpage exploité'),
+	(118,'it','Alpeggio'),
+	(119,'de','Wassersport'),
+	(119,'en','Watersports'),
+	(119,'fr','Sports aquatique'),
+	(119,'it','Sport acquatico'),
+	(120,'de','Reiten'),
+	(120,'en','Riding'),
+	(120,'fr','Monter à cheval'),
+	(120,'it','Equitazione'),
+	(121,'de','Trekking'),
+	(121,'en','Trekking'),
+	(121,'fr','Trekking'),
+	(121,'it','Trekking'),
+	(122,'de','Vortrag'),
+	(122,'en','Presentation'),
+	(122,'fr','Présentation'),
+	(122,'it','Presentatzione'),
+	(123,'de','Produzent'),
+	(123,'en','Producer'),
+	(123,'fr','Producteur'),
+	(123,'it','Produttore'),
+	(124,'de','Verkauf Regionalprodukte'),
+	(124,'en','Shop for regional products'),
+	(124,'fr','Vente du produits regionaux'),
+	(124,'it','Vendita di prodotti regionali'),
+	(125,'de','Geschenke'),
+	(125,'en','Gifts'),
+	(125,'fr','Cadeaux'),
+	(125,'it','Regali'),
+	(126,'de','Cafe'),
+	(126,'en','Cafe'),
+	(126,'fr','Café'),
+	(126,'it','Caffè'),
+	(127,'de','Schwimmbad/Badesee'),
+	(127,'en','Swimming pool/Swimming lake'),
+	(127,'fr','Piscine/Lac de baignade'),
+	(127,'it','Piscina/Lago balneabile'),
+	(128,'de','Seilbahn'),
+	(128,'en','Funicular'),
+	(128,'fr','Funiculaire'),
+	(128,'it','Funicolare'),
+	(129,'de','Klettern'),
+	(129,'en','Climbing'),
+	(129,'fr','Escalade'),
+	(129,'it','Arrampicata'),
+	(130,'de','Eisbahn'),
+	(130,'en','Skating rink'),
+	(130,'fr','Patinoire'),
+	(130,'it','Pista di ghiaccio'),
+	(131,'de','Langlauf'),
+	(131,'en','Cross-country skiing'),
+	(131,'fr','Ski de fond'),
+	(131,'it','Sci di fondo'),
+	(200,'de','Verpflegung / Beherbergung'),
+	(200,'en','Gastronomy / Accomodation'),
+	(200,'fr','Restauration / H&eacute;bergement'),
+	(200,'it','Approvvigionamento / Alloggio'),
+	(1000,'de','Projekt'),
+	(1000,'en','Project'),
+	(1000,'fr','Projet'),
+	(1000,'it','Progetto'),
+	(1001,'de','Natur / Landschaft'),
+	(1001,'en','Nature / Landscape'),
+	(1001,'fr','Nature / paysage'),
+	(1001,'it','Natura / Paesaggio'),
+	(1002,'de','Biodiversität'),
+	(1002,'en','Biodiversity'),
+	(1002,'fr','Biodiversité'),
+	(1002,'it','Biodiversità'),
+	(1003,'de','Landwirtschaft'),
+	(1003,'en','Agriculture'),
+	(1003,'fr','Agriculture'),
+	(1003,'it','Agricoltura'),
+	(1004,'de','Forstwirtschaft'),
+	(1004,'en','Forestry'),
+	(1004,'fr','Sylviculture'),
+	(1004,'it','Economia forestale'),
+	(1005,'de','Energie'),
+	(1005,'en','Energy'),
+	(1005,'fr','Énergie'),
+	(1005,'it','Energia'),
+	(1006,'de','Raumplanung'),
+	(1006,'en','Spatial planning'),
+	(1006,'fr','Aménagement du territoire'),
+	(1006,'it','Pianificazione territoriale'),
+	(1007,'de','Tourismus'),
+	(1007,'en','Tourism'),
+	(1007,'fr','Tourisme'),
+	(1007,'it','Turismo'),
+	(1008,'de','Mobilität'),
+	(1008,'en','Mobility'),
+	(1008,'fr','Mobilité'),
+	(1008,'it','Mobilità'),
+	(1009,'de','Besucherlenkung'),
+	(1009,'en','Visitor management'),
+	(1009,'fr','Gestion des visiteurs'),
+	(1009,'it','Visite guidate'),
+	(1010,'de','Zugänglichkeit'),
+	(1010,'en','Accessibility'),
+	(1010,'fr','Accessibilité '),
+	(1010,'it','Accessibilità'),
+	(1011,'de','Bildung'),
+	(1011,'en','Education'),
+	(1011,'fr','Education'),
+	(1011,'it','Formazione'),
+	(1012,'de','Kultur'),
+	(1012,'en','Culture'),
+	(1012,'fr','Culture'),
+	(1012,'it','Cultura'),
+	(1013,'de','Regionale Produkte'),
+	(1013,'en','Regional products'),
+	(1013,'fr','Produits régionaux'),
+	(1013,'it','Prodotti regionali'),
+	(1014,'de','Gesundheit / Wellness'),
+	(1014,'en','Health / wellness'),
+	(1014,'fr','Santé / bien-être'),
+	(1014,'it','Benessere / wellness'),
+	(1015,'de','Nachhaltigkeit'),
+	(1015,'en','Sustainability'),
+	(1015,'fr','Durabilité'),
+	(1015,'it','Sostenibilità'),
+	(1016,'de','Dienstleistungen'),
+	(1016,'en','Services'),
+	(1016,'fr','Services'),
+	(1016,'it','Servizi'),
+	(1017,'de','Transnationale Projekte'),
+	(1017,'en','Transnational projects'),
+	(1017,'fr','Projets transfrontaliers'),
+	(1017,'it','Progetti transnazionali'),
+	(5000,'de','Forschung'),
+	(5000,'en','Research'),
+	(5000,'fr','Recherche'),
+	(5000,'it','Ricerca'),
+	(5001,'de','Forschungsprojekt'),
+	(5001,'en','Research project'),
+	(5001,'fr','Projet de recherche'),
+	(5001,'it','Progetto di ricerca'),
+	(5002,'de','Feldarbeit'),
+	(5002,'en','Fieldwork'),
+	(5002,'fr','Travail de terrain'),
+	(5002,'it','Lavoro sul campo');
+
+/*!40000 ALTER TABLE `category_i18n` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Export von Tabelle category_link
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `category_link`;
+
+CREATE TABLE `category_link` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `category_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`offer_id`,`category_id`),
+  KEY `category_id_idxfk_1` (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle document
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `document`;
+
+CREATE TABLE `document` (
+  `offer_id` bigint(20) DEFAULT NULL,
+  `language` char(2) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  KEY `offer_id_idxfk_4` (`offer_id`),
+  CONSTRAINT `document_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle event
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `event`;
+
+CREATE TABLE `event` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `is_park_event` tinyint(1) DEFAULT NULL,
+  `is_park_partner_event` tinyint(1) DEFAULT NULL,
+  `public_transport_stop` varchar(255) DEFAULT NULL,
+  `kind_of_event` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`offer_id`),
+  CONSTRAINT `event_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle hyperlink
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `hyperlink`;
+
+CREATE TABLE `hyperlink` (
+  `offer_id` bigint(20) DEFAULT NULL,
+  `language` char(2) DEFAULT NULL,
+  `title` varchar(255) DEFAULT NULL,
+  `url` varchar(255) DEFAULT NULL,
+  KEY `offer_id_idxfk_9` (`offer_id`),
+  CONSTRAINT `hyperlink_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle image
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `image`;
+
+CREATE TABLE `image` (
+  `offer_id` bigint(20) DEFAULT NULL,
+  `small` varchar(255) DEFAULT NULL,
+  `medium` varchar(255) DEFAULT NULL,
+  `large` varchar(255) DEFAULT NULL,
+  `original` varchar(255) DEFAULT NULL,
+  `copyright` varchar(255) DEFAULT NULL,
+  KEY `offer_id_idxfk_11` (`offer_id`),
+  CONSTRAINT `image_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle map_layer
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `map_layer`;
+
+CREATE TABLE `map_layer` (
+  `map_layer_id` int(11) NOT NULL AUTO_INCREMENT,
+  `url` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `languages` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `layer_position` tinyint(4) DEFAULT NULL,
+  `visible_by_default` tinyint(4) DEFAULT NULL,
+  `popup_title` varchar(255) DEFAULT NULL,
+  `popup_logo` varchar(255) DEFAULT NULL,
+  `popup_logo_width` int(11) DEFAULT NULL,
+  `popup_logo_height` int(11) DEFAULT NULL,
+  PRIMARY KEY (`map_layer_id`),
+  UNIQUE KEY `map_layer_id` (`map_layer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Export von Tabelle map_layer_i18n
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `map_layer_i18n`;
+
+CREATE TABLE `map_layer_i18n` (
+  `map_layer_id` int(11) NOT NULL DEFAULT '0',
+  `language` char(2) NOT NULL DEFAULT '',
+  `popup_content` text,
+  PRIMARY KEY (`map_layer_id`,`language`),
+  CONSTRAINT `map_layer_i18n_ibfk_1` FOREIGN KEY (`map_layer_id`) REFERENCES `map_layer` (`map_layer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+# Export von Tabelle offer
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `offer`;
+
+CREATE TABLE `offer` (
+  `offer_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `park_id` int(11) NOT NULL,
+  `park` text NOT NULL,
+  `is_hint` tinyint(1) DEFAULT NULL,
+  `institution` text,
+  `institution_is_park_partner` tinyint(1) DEFAULT NULL,
+  `contact` text,
+  `contact_is_park_partner` tinyint(1) DEFAULT NULL,
+  `barrier_free` tinyint(1) DEFAULT NULL,
+  `learning_opportunity` tinyint(1) DEFAULT NULL,
+  `child_friendly` tinyint(1) DEFAULT NULL,
+  `park_day` tinyint(1) DEFAULT NULL,
+  `enjoy_week` tinyint(1) DEFAULT NULL,
+  `latitude` float(10,6) DEFAULT NULL,
+  `longitude` float(10,6) DEFAULT NULL,
+  `keywords` varchar(150) DEFAULT NULL,
+  `modified_at` datetime DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`offer_id`),
+  UNIQUE KEY `offer_id` (`offer_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle offer_date
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `offer_date`;
+
+CREATE TABLE `offer_date` (
+  `offer_date_id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `offer_id` bigint(20) DEFAULT NULL,
+  `date_from` datetime DEFAULT NULL,
+  `date_to` datetime DEFAULT NULL,
+  PRIMARY KEY (`offer_date_id`),
+  KEY `offer_id_idxfk_6` (`offer_id`),
+  CONSTRAINT `offer_date_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle offer_i18n
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `offer_i18n`;
+
+CREATE TABLE `offer_i18n` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `language` char(2) NOT NULL DEFAULT '',
+  `title` varchar(255) DEFAULT NULL,
+  `abstract` varchar(50) DEFAULT NULL,
+  `description_medium` varchar(250) DEFAULT NULL,
+  `description_long` varchar(1000) DEFAULT NULL,
+  `details` text,
+  `price` text,
+  `location_details` varchar(1000) DEFAULT NULL,
+  `opening_hours` text,
+  `benefits` text,
+  `requirements` text,
+  `additional_informations` text,
+  `catering_informations` text,
+  `material_rent` text,
+  `safety_instructions` text,
+  `signalization` text,
+  `other_infrastructure` text,
+  `route_url` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`offer_id`,`language`),
+  CONSTRAINT `offer_i18n_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle offer_route
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `offer_route`;
+
+CREATE TABLE `offer_route` (
+  `offer_id` bigint(20) DEFAULT NULL,
+  `latitude` float(10,6) DEFAULT NULL,
+  `longitude` float(10,6) DEFAULT NULL,
+  `sort` int(11) DEFAULT NULL,
+  KEY `offer_id_idxfk_8` (`offer_id`),
+  CONSTRAINT `offer_route_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle product
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `product`;
+
+CREATE TABLE `product` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `public_transport_stop` varchar(255) DEFAULT NULL,
+  `number_of_rooms` int(11) DEFAULT NULL,
+  `has_conference_room` tinyint(1) DEFAULT NULL,
+  `has_playground` tinyint(1) DEFAULT NULL,
+  `has_picnic_place` tinyint(1) DEFAULT NULL,
+  `has_fireplace` tinyint(1) DEFAULT NULL,
+  `has_washrooms` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`offer_id`),
+  CONSTRAINT `product_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle project
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `project`;
+
+CREATE TABLE `project` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `duration_from` int(11) DEFAULT NULL,
+  `duration_to` int(11) DEFAULT NULL,
+  `status` tinyint(1) DEFAULT NULL,
+  `poi` text,
+  PRIMARY KEY (`offer_id`),
+  CONSTRAINT `project_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle subscription
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `subscription`;
+
+CREATE TABLE `subscription` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `subscription_mandatory` tinyint(1) DEFAULT NULL,
+  `online_subscription_enabled` tinyint(1) DEFAULT NULL,
+  `subscription_contact` varchar(255) DEFAULT NULL,
+  `subscription_link` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`offer_id`),
+  CONSTRAINT `subscription_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle subscription_i18n
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `subscription_i18n`;
+
+CREATE TABLE `subscription_i18n` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `language` char(2) NOT NULL DEFAULT '',
+  `subscription_details` text,
+  PRIMARY KEY (`offer_id`,`language`),
+  CONSTRAINT `subscription_i18n_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle supplier
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `supplier`;
+
+CREATE TABLE `supplier` (
+  `offer_id` bigint(20) DEFAULT NULL,
+  `contact` text,
+  `is_park_partner` tinyint(1) DEFAULT NULL,
+  KEY `offer_id_idxfk_10` (`offer_id`),
+  CONSTRAINT `supplier_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+# Export von Tabelle target_group
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `target_group`;
+
+CREATE TABLE `target_group` (
+  `target_group_id` int(11) NOT NULL DEFAULT '0',
+  `sort` int(11) DEFAULT NULL,
+  PRIMARY KEY (`target_group_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `target_group` WRITE;
+/*!40000 ALTER TABLE `target_group` DISABLE KEYS */;
+
+INSERT INTO `target_group` (`target_group_id`, `sort`)
+VALUES
+	(1,0),
+	(2,35),
+	(3,37),
+	(4,10),
+	(5,20),
+	(6,30),
+	(7,50),
+	(8,60),
+	(9,70),
+	(10,80),
+	(11,38);
+
+/*!40000 ALTER TABLE `target_group` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Export von Tabelle target_group_i18n
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `target_group_i18n`;
+
+CREATE TABLE `target_group_i18n` (
+  `target_group_id` int(11) NOT NULL DEFAULT '0',
+  `language` char(2) NOT NULL DEFAULT '',
+  `body` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`target_group_id`,`language`),
+  CONSTRAINT `target_group_i18n_ibfk_1` FOREIGN KEY (`target_group_id`) REFERENCES `target_group` (`target_group_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOCK TABLES `target_group_i18n` WRITE;
+/*!40000 ALTER TABLE `target_group_i18n` DISABLE KEYS */;
+
+INSERT INTO `target_group_i18n` (`target_group_id`, `language`, `body`)
+VALUES
+	(1,'de','Erwachsene'),
+	(1,'en','Adults'),
+	(1,'fr','Adultes'),
+	(1,'it','Adulti'),
+	(2,'de','50+'),
+	(2,'en','50+'),
+	(2,'fr','50+'),
+	(2,'it','50+'),
+	(3,'de','Familien'),
+	(3,'en','Families'),
+	(3,'fr','Familles'),
+	(3,'it','Famiglie'),
+	(4,'de','Kinder < 6 Jahre'),
+	(4,'en','Children < 6 years'),
+	(4,'fr','Enfants < 6 ans'),
+	(4,'it','Bambini < 6 anni'),
+	(5,'de','Kinder von 7-12 Jahre'),
+	(5,'en','Children from 7-12 years'),
+	(5,'fr','Enfants de 7-12 ans'),
+	(5,'it','Bambini da 7 a 12 anni'),
+	(6,'de','Kinder >12 Jahre'),
+	(6,'en','Children >12 years'),
+	(6,'fr','Enfants >12 ans'),
+	(6,'it','Bambini > 12 anni'),
+	(7,'de','Schulklassen Primarstufe'),
+	(7,'en','Primary School Classes'),
+	(7,'fr','Classes d\'Ècole niveau primaire'),
+	(7,'it','Classi scuole elementari'),
+	(8,'de','Schulklassen Sekundarstufe I'),
+	(8,'en','Lower Secondary School Classes'),
+	(8,'fr','Classes d\'Ècole niveau secondaire I'),
+	(8,'it','Classi scuole medie'),
+	(9,'de','Schulklassen Sekundarstufe II'),
+	(9,'en','Upper Secondary School Classes'),
+	(9,'fr','Classes d\'Ècole niveau secondaire II'),
+	(9,'it','Classi liceali / scuole superiori'),
+	(10,'de','Vereine/Firmen'),
+	(10,'en','Association/Companies'),
+	(10,'fr','Associations/entreprises'),
+	(10,'it','Associazioni/imprese'),
+	(11,'de','Gruppen'),
+	(11,'en','Groups'),
+	(11,'fr','Groupes'),
+	(11,'it','Gruppi');
+
+/*!40000 ALTER TABLE `target_group_i18n` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+# Export von Tabelle target_group_link
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `target_group_link`;
+
+CREATE TABLE `target_group_link` (
+  `offer_id` bigint(20) NOT NULL DEFAULT '0',
+  `target_group_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`offer_id`,`target_group_id`),
+  KEY `target_group_id_idxfk` (`target_group_id`),
+  CONSTRAINT `target_group_link_ibfk_1` FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE,
+  CONSTRAINT `target_group_link_ibfk_2` FOREIGN KEY (`target_group_id`) REFERENCES `target_group` (`target_group_id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
