@@ -1,0 +1,4 @@
+/parks_api/log/*
+/deploy.sh
+.DS_Store
+/zip/*.zip
