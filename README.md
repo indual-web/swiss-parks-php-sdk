@@ -2,6 +2,18 @@
 
 This SDK imports offer data from an XML export into a local MySQL/MariaDB database and renders it as filter, list, map, and detail views. It is designed for server-side PHP integration and can be extended via templates and custom view classes.
 
+## Documentation structure
+
+- This `README.md` is the integration and operations guide (setup, upgrade, runtime behavior).
+- Detailed guides are available in `docs/guides/`:
+  - `docs/guides/new-installation.md`
+  - `docs/guides/upgrading.md`
+- Detailed API reference is available in `docs/api-reference/`:
+  - `docs/api-reference/index.md`
+  - `docs/api-reference/parks-api.md`
+  - `docs/api-reference/filter-options.md`
+  - `docs/api-reference/map-options.md`
+
 ---
 
 ## 1) Requirements
@@ -48,43 +60,32 @@ Note:
 
 ## 4) New Installation
 
-1. Download the latest API version ZIP from `downloads/releases`.
-2. Upload/copy the `parks_api` directory into your project or content management system.
-3. Create a database.
-4. Extract the release package and import `database/database.sql` from that package.
-5. Configure `parks_api/config.php`.
-   - Obtain a valid hash value from `https://angebote.paerke.ch/en/settings`. This hash is used to generate the XML export file that supplies your data.
-6. Run the first import:
-   - CLI: `php parks_api/scripts/cron.php`
-   - Web: `[Your project path]/parks_api/scripts/cron.php`
-7. Verify that the database has been created and that the `offer` table contains data after import.
-8. Configure a regular cronjob (for example every 15 minutes).
+Use the dedicated installation guide:
+
+- `docs/guides/new-installation.md`
+
+Quick summary:
+
+1. Install SDK files and import `database/database.sql`.
+2. Configure `parks_api/config.php` (`api_hash`, DB credentials, `park_id`).
+3. Run first import: `php parks_api/scripts/cron.php`.
+4. Verify data import and set up regular cron execution.
 
 ---
 
 ## 5) Upgrade from an older version (example: v21 to v22)
 
-### Step-by-step upgrade
+Use the dedicated upgrade guide:
 
-1. Download API version `22`.
-2. Create a full backup of your current API files.
-3. Create a full backup of your MySQL database.
-4. In `/{PATH-TO-YOUR-API-FOLDER}/`, replace:
-   - `autoload.php`
-   - `classes/`
-5. Execute the migration script:
-   - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
-6. Execute the cron script and force a full import of all offers:
-   - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/force_update.php`
-7. Validate functionality:
-   - Check filter/list/map/detail pages.
-   - Check browser console for JavaScript errors.
-   - Check API logs and test the complete website.
+- `docs/guides/upgrading.md`
 
-### Notes
+Quick summary:
 
-- Keep your custom files (`custom/`, custom templates, `config.php`) outside replaced core paths.
-- Always run migration before the forced import after a version upgrade.
+1. Backup files and database.
+2. Replace core SDK files (`autoload.php`, `classes/`).
+3. Run migration: `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`.
+4. Run forced import: `php /{PATH-TO-YOUR-API-FOLDER}/scripts/force_update.php`.
+5. Validate filter/list/map/detail, console output, and logs.
 
 ---
 
@@ -199,6 +200,9 @@ Recommended:
 
 Most relevant methods from `ParksAPI`:
 
+Detailed method reference:
+- `docs/api-reference/parks-api.md`
+
 - `show_offers_filter($categories = [], $filter = [], $park_id = null)`
   - Renders the interactive filter UI for the current context.
 - `show_offers_list($categories = [], $filter = [], $park_id = null)`
@@ -245,6 +249,9 @@ Import and maintenance:
 ## 10) Filter options and capabilities
 
 You can pass these keys in `$filter` (among others):
+
+Detailed filter reference:
+- `docs/api-reference/filter-options.md`
 
 - `keywords`
   - Filters by keyword IDs/values depending on integration setup.
@@ -294,6 +301,9 @@ Note:
 ## 11) Map options (`$api->map_options`)
 
 Typical options:
+
+Detailed map reference:
+- `docs/api-reference/map-options.md`
 
 - `map_initialize_on_load`
   - Initializes the map immediately on page load.
