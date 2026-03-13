@@ -62,7 +62,7 @@ Note:
 
 ---
 
-## 5) Upgrade from an older Version (example: v21 to v22)
+## 5) Upgrade from an older version (example: v21 to v22)
 
 ### Step-by-step upgrade
 
@@ -108,11 +108,17 @@ Note:
 ### Common display/runtime options
 
 - `class_view` (for example `MyView`)
+  - Defines which view class renders output. Use a custom class to override default rendering methods.
 - `template_folder` (for example `standard`)
+  - Selects the template set inside `parks_api/template/`.
 - `prevent_css_js_include`
+  - Prevents automatic inclusion of SDK CSS/JS assets. Enable only if your project includes required assets manually.
 - `return_output`
+  - Controls output mode: return generated HTML as string (`true`) or print directly (`false`).
 - `use_sessions`, `session_name`
+  - Enables SDK session-based state and defines the namespace/cookie prefix used for filter and favorites state.
 - `language_independence`, `language_priority`
+  - Controls multilingual fallback behavior, including whether related-language content can be shown and which language is preferred first.
 
 ### Practical starter configuration
 
