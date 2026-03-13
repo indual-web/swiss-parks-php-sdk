@@ -14,7 +14,8 @@ This section contains setup, runtime, and operations guides for the Swiss Parks 
 - [Quick start integration](./quick-start-integration.md)
 - [Templating and custom view](./templating-and-custom-view.md)
 - [Output mode and multilingual support](./output-and-language.md)
-- [SEO URLs and favorites](./seo-and-favorites.md)
+- [SEO URLs](./seo-urls.md)
+- [Favorites](./favorites.md)
 
 ## Operations
 

@@ -1,4 +1,4 @@
-# Upgrade Guide
+# Upgrade guide
 
 This guide describes a safe upgrade workflow from an older SDK/API version to a newer release.
 
@@ -50,5 +50,6 @@ If issues appear after upgrade:
 
 ## Related docs
 
+- [Guide index](./index.md)
 - [README](../../README.md) (operations overview)
 - [API reference index](../api-reference/index.md)

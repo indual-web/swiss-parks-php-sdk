@@ -1,4 +1,4 @@
-# Templating and Custom View
+# Templating and custom view
 
 ## Templating
 
@@ -52,3 +52,8 @@ Best practices:
 Additional example:
 
 - `parks_api/custom/ParksSwissView.php`
+
+## Related docs
+
+- [Guide index](./index.md)
+- [Core configuration](./configuration.md)

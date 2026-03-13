@@ -1,4 +1,4 @@
-# Import and Update Lifecycle
+# Import and update lifecycle
 
 This guide documents the regular update flow, forced updates, and migration command.
 
@@ -28,5 +28,6 @@ This guide documents the regular update flow, forced updates, and migration comm
 
 ## Related docs
 
+- [Guide index](./index.md)
 - [New installation](./new-installation.md)
 - [Upgrade guide](./upgrading.md)

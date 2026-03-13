@@ -1,4 +1,4 @@
-# Performance and Upgrade Strategy
+# Performance and upgrade strategy
 
 ## Performance recommendations
 
@@ -43,5 +43,6 @@ This keeps upgrades safe and reduces merge risk.
 
 ## Related docs
 
+- [Guide index](./index.md)
 - [Upgrade guide](./upgrading.md)
 - [Import and update lifecycle](./import-update-lifecycle.md)

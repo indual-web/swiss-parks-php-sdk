@@ -1,4 +1,4 @@
-# Output Mode and Multilingual Support
+# Output mode and multilingual support
 
 ## Output mode
 
@@ -31,4 +31,5 @@ Runtime behavior:
 
 ## Related docs
 
+- [Guide index](./index.md)
 - [Core configuration](./configuration.md)

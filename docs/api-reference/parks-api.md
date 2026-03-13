@@ -1,4 +1,4 @@
-# ParksAPI Methods
+# ParksAPI methods
 
 Integrator-facing methods from `ParksAPI`, grouped by purpose.
 
@@ -172,4 +172,10 @@ if ($api->is_offer_detail()) {
     echo $api->show_offers_pagination();
 }
 ```
+
+## Related docs
+
+- [API reference index](./index.md)
+- [Filter options](./filter-options.md)
+- [Map options](./map-options.md)
 

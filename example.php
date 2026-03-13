@@ -39,10 +39,7 @@ $api = new ParksAPI($language);
 		<?php
 
 		// Map options
-		$api->map_options = array(
-			'map_initialize_on_load' => false, 				// Load map on page load
-			'full_height' => true,
-
+		$api->map_options = [
 			/*
 			'map_initialize_on_load' => false, 				// Load map on page load
 			'show_layers_at_start' => false, 				// Show/hide layers at start after loading
@@ -59,10 +56,10 @@ $api = new ParksAPI($language);
 			),
 			'do_not_group_categories_in_legend' => true,	// Do not group offer categories in legend
 			*/
-		);
+		];
 
 		// Filter settings
-		$filter = array(
+		$filter = [
 			/*
 			'keywords' => '', 							// Filter by keywords
 			'contact_is_park_partner' => 0, 			// 1 == show only offers from park partners
@@ -85,7 +82,7 @@ $api = new ParksAPI($language);
 				'fields_of_activity' => array()				// Show only offers in this fields of activity
 			)
 			*/
-		);
+		];
 
 		// Filter categories
 		$categories = [];

@@ -1,4 +1,4 @@
-# Quick Start Integration
+# Quick start integration
 
 Minimal page integration:
 
@@ -24,5 +24,6 @@ A complete example including tabs and map is available in `example.php`.
 
 ## Related docs
 
+- [Guide index](./index.md)
 - [Core configuration](./configuration.md)
 - [ParksAPI methods](../api-reference/parks-api.md)

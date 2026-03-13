@@ -145,19 +145,25 @@ Commands for `cron.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 14) SEO URLs and Favorites
+## 14) SEO URLs
 
-- [`docs/guides/seo-and-favorites.md`](docs/guides/seo-and-favorites.md)
+- [`docs/guides/seo-urls.md`](docs/guides/seo-urls.md)
 
 ---
 
-## 15) Performance and Upgrade Strategy
+## 15) Favorites
+
+- [`docs/guides/favorites.md`](docs/guides/favorites.md)
+
+---
+
+## 16) Performance and Upgrade Strategy
 
 - [`docs/guides/performance-and-upgrade-strategy.md`](docs/guides/performance-and-upgrade-strategy.md)
 
 ---
 
-## 16) Contact
+## 17) Contact
 
 More information:
 

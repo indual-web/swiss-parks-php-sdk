@@ -1,4 +1,4 @@
-# New Installation Guide
+# New installation guide
 
 This guide describes the first-time setup of the SDK in a new environment.
 
@@ -25,7 +25,10 @@ This guide describes the first-time setup of the SDK in a new environment.
 7. Verify import success:
    - Database/tables exist.
    - `offer` table contains entries.
-8. Configure a recurring cronjob (for example every 15 minutes).
+8. Integrate SDK rendering into your project pages based on `example.php`.
+   - Add the API bootstrap and rendering calls (`show_offers_filter`, `show_offers_list`, `show_offers_map`, `show_offer_detail`) in your own template/page code.
+   - Include the required frontend assets in your template (`<link ...parks.min.css>` and `<script ...parks.min.js>`), as shown in `example.php`.
+9. Configure a recurring cronjob (for example every 4 hours).
 
 ## Verification checklist
 
@@ -36,5 +39,6 @@ This guide describes the first-time setup of the SDK in a new environment.
 
 ## Related docs
 
+- [Guide index](./index.md)
 - [README](../../README.md) (integration overview)
 - [API reference index](../api-reference/index.md)

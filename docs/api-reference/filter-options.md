@@ -1,4 +1,4 @@
-# Filter Options
+# Filter options
 
 Reference for keys that can be passed in `$filter`.
 
@@ -92,4 +92,9 @@ Additional structured filters supported by the model/query layer:
 - Filter values can be sourced from POST, allowed GET params, and session state.
 - Allowed GET params in runtime initialization are: `categories`, `target_groups`, `fields_of_activity`, `accessibilities`.
 - If `use_sessions` is enabled, active filter state is persisted in session.
+
+## Related docs
+
+- [API reference index](./index.md)
+- [ParksAPI methods](./parks-api.md)
 
