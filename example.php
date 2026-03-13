@@ -62,16 +62,16 @@ $api = new ParksAPI($language);
 		$filter = [
 			/*
 			'keywords' => '', 							// Filter by keywords
-			'contact_is_park_partner' => 0, 			// 1 == show only offers from park partners
+			'contact_is_park_partner' => false, 		// true = show only offers from park partners
 			'target_groups' => array(), 				// Filter by target groups
 			'fields_of_activity' => array(), 			// Filter by fields of activity
 			'search' => '', 							// Filter by an explicit word
-			'online_shop_enabled' => 0, 				// 1 = show online shop products only
-			'barrier_free' => 0, 						// 1 = barrier free offers
-			'learning_opportunity' => 0, 				// 1 = learning opportunity offers
-			'child_friendly' => 0, 						// 1 = child friendly offers
-			'is_hint' => 0, 							// 1 = show only hints (Tipps)
-			'offers_is_park_event' => 1,				// 1 = show only park events	
+			'online_shop_enabled' => false, 			// true = show online shop products only
+			'barrier_free' => false, 					// true = barrier free offers
+			'learning_opportunity' => false, 			// true = learning opportunity offers
+			'child_friendly' => false, 					// true = child friendly offers
+			'is_hint' => false, 						// true = show only hints (Tipps)
+			'offers_is_park_event' => true,				// true = show only park events
 			'has_accessibility_informations' => true,	// true = Filter offers with accessibility informations
 			'offers' => array(),						// Filter by offer ids
 			'show_keywords_filter' => true,				// Show keywords filter

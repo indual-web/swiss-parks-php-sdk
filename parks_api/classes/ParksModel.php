@@ -381,7 +381,7 @@ class ParksModel
 
 		// Filter: is hint
 		if (isset($filter['is_hint'])) {
-			if ($filter['is_hint'] == 1) {
+			if ($filter['is_hint'] == true) {
 				$where[] = "main_offer.is_hint = 1";
 			} else {
 				$where[] = "
@@ -395,7 +395,7 @@ class ParksModel
 
 		// Filter: contact_is_park_partner
 		if (isset($filter['contact_is_park_partner'])) {
-			if ($filter['contact_is_park_partner'] == 1) {
+			if ($filter['contact_is_park_partner'] == true) {
 				$where[] = "main_offer.contact_is_park_partner = 1";
 			} else {
 				$where[] = "
@@ -422,7 +422,7 @@ class ParksModel
 		}
 
 		// Filter: has accessibility informations
-		if (! empty($filter['has_accessibility_informations'])) {
+		if (isset($filter['has_accessibility_informations']) && ($filter['has_accessibility_informations'] == true)) {
 			$where[] = "accessibility.accessibility_id IS NOT NULL";
 		}
 
@@ -773,16 +773,16 @@ class ParksModel
 
 		// Filter: additional infos
 		$where_additional = [];
-		if (isset($filter['online_shop_enabled']) && $filter['online_shop_enabled'] == 1) {
+		if (isset($filter['online_shop_enabled']) && ($filter['online_shop_enabled'] == true)) {
 			$where_additional[] = "product.online_shop_enabled = 1";
 		}
-		if (isset($filter['barrier_free']) && $filter['barrier_free'] == 1) {
+		if (isset($filter['barrier_free']) && ($filter['barrier_free'] == true)) {
 			$where_additional[] = "main_offer.barrier_free = 1";
 		}
-		if (isset($filter['learning_opportunity']) && $filter['learning_opportunity'] == 1) {
+		if (isset($filter['learning_opportunity']) && ($filter['learning_opportunity'] == true)) {
 			$where_additional[] = "main_offer.learning_opportunity = 1";
 		}
-		if (isset($filter['child_friendly']) && $filter['child_friendly'] == 1) {
+		if (isset($filter['child_friendly']) && ($filter['child_friendly'] == true)) {
 			$where_additional[] = "main_offer.child_friendly = 1";
 		}
 		if (! empty($where_additional)) {
@@ -1705,7 +1705,6 @@ class ParksModel
 		$datetime = new DateTime($value);
 		return $datetime->format($format);
 	}
-
 
 
 	/**

@@ -27,24 +27,24 @@ Reference for keys that can be passed in `$filter`.
 
 ## Boolean feature filters
 
-- `contact_is_park_partner` (`0|1`)
-  - Show only offers from park partners.
-- `offers_is_park_event` (`0|1`)
-  - Show only event offers.
-- `online_shop_enabled` (`0|1`)
-  - Show only offers with online shop enabled.
-- `barrier_free` (`0|1`)
-  - Show only barrier-free offers.
-- `learning_opportunity` (`0|1`)
-  - Show only learning opportunity offers.
-- `child_friendly` (`0|1`)
-  - Show only child-friendly offers.
+- `contact_is_park_partner` (`bool`)
+  - `true`: show only offers from park partners.
+- `offers_is_park_event` (`bool`)
+  - `true`: show only event offers.
+- `online_shop_enabled` (`bool`)
+  - `true`: show only offers with online shop enabled.
+- `barrier_free` (`bool`)
+  - `true`: show only barrier-free offers.
+- `learning_opportunity` (`bool`)
+  - `true`: show only learning opportunity offers.
+- `child_friendly` (`bool`)
+  - `true`: show only child-friendly offers.
 - `has_accessibility_informations` (`bool`)
-  - Require offers with accessibility details.
-- `is_hint` (`0|1`)
-  - Limit to hint/tip entries.
+  - `true`: require offers with accessibility details.
+- `is_hint` (`bool`)
+  - `true`: limit to hint/tip entries.
 - `offers_of_today` (`bool`)
-  - Shortcut to force date filter to current day.
+  - `true`: shortcut to force date filter to current day.
 
 ## System filters
 

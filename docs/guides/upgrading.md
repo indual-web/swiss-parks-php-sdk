@@ -11,6 +11,8 @@ This guide describes a safe upgrade workflow from an older SDK/API version to a 
 3. Replace SDK core files in your API folder:
    - `autoload.php`
    - `classes/`
+   - `helpers/`
+   - `language/`
 4. Run migration:
    - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
 5. Run forced import:
