@@ -195,79 +195,124 @@ Recommended:
 
 ---
 
-## 9) Public API Methods for Integrators
+## 9) Public API methods for integrators
 
 Most relevant methods from `ParksAPI`:
 
 - `show_offers_filter($categories = [], $filter = [], $park_id = null)`
+  - Renders the interactive filter UI for the current context.
 - `show_offers_list($categories = [], $filter = [], $park_id = null)`
+  - Renders the offer overview list based on active category/filter constraints.
 - `show_offers_map($categories = [], $filter = [], $park_id = null)`
+  - Renders the map including matching offer markers and map controls.
 - `show_offers_pagination()`
+  - Renders pagination for the current list result.
 - `show_offer_detail($single_offer_id = null)`
+  - Renders the detail page for one offer (by routed or explicit offer ID).
 - `show_favorites()`
+  - Renders the favorites list for the current visitor.
 - `toggle_favorite($offer_id)`
+  - Adds/removes one offer from the visitor favorites store.
 - `clean_favorites()`
+  - Clears all stored favorites for the current visitor.
 - `is_offer_detail()`
+  - Returns whether the current request targets a detail view.
 - `is_filter_activated()`
+  - Returns whether any relevant user/system filter is currently active.
 - `get_filter_data()`
+  - Returns normalized filter state currently used by the SDK.
 
 Data access (instead of direct rendering):
 
 - `get_offers_list(...)`
+  - Returns offers as data array instead of rendering HTML.
 - `get_offer_detail($offer_id)`
+  - Returns the normalized detail data for one offer ID.
 - `get_categories_list()`
+  - Returns categories as list data for custom integrations.
 - `get_categories_list_for_select()`
+  - Returns categories preformatted for select/dropdown controls.
 
 Import and maintenance:
 
 - `update($force = false)`
+  - Runs the import/update process (`$force = true` triggers a full refresh path).
 - `migrate()`
+  - Executes schema/data migrations for the current SDK version.
 
 ---
 
-## 10) Filter Options and Capabilities
+## 10) Filter options and capabilities
 
 You can pass these keys in `$filter` (among others):
 
 - `keywords`
+  - Filters by keyword IDs/values depending on integration setup.
 - `search`
+  - Full-text search term for offer title/description fields.
 - `target_groups` (array)
+  - Limits results to selected target groups.
 - `fields_of_activity` (array)
+  - Limits results to selected fields of activity.
 - `offers` (array of offer IDs)
+  - Whitelists results to explicit offer IDs.
 - `contact_is_park_partner`
+  - Filters to offers from park partners.
 - `offers_is_park_event`
+  - Filters to event-type offers.
 - `online_shop_enabled`
+  - Filters to offers with online booking/shop availability.
 - `barrier_free`
+  - Filters to offers marked as barrier-free.
 - `learning_opportunity`
+  - Filters to offers flagged as learning opportunity.
 - `child_friendly`
+  - Filters to child/family friendly offers.
 - `has_accessibility_informations`
+  - Filters to offers with accessibility information available.
 - `is_hint`
+  - Filters to hint/info entries (where supported by dataset).
 - `system_filter` (hard filter constraints from your system)
+  - Applies non-user-overridable constraints from your integration.
   - `target_groups` (array)
+    - Hard-limits allowed target groups.
   - `fields_of_activity` (array)
+    - Hard-limits allowed fields of activity.
 - UI-related toggles:
   - `show_keywords_filter`
+    - Shows/hides the keywords filter control in the UI.
   - `hide_user_filter`
+    - Hides the free-text search/user filter control.
   - `hide_accessibility_filter`
+    - Hides the accessibility filter controls in the UI.
 
 Note:
 - Visitor-selected filter values (for example form POST values) are managed internally by the SDK via session/filter state.
 
 ---
 
-## 11) Map Options (`$api->map_options`)
+## 11) Map options (`$api->map_options`)
 
 Typical options:
 
 - `map_initialize_on_load`
+  - Initializes the map immediately on page load.
 - `show_layers_at_start`
+  - Enables configured map layers by default on first render.
 - `parkperimeter_visibility`
+  - Shows/hides the park perimeter layer.
 - `associated_members_visibility`
+  - Shows/hides associated members layer (if data is available).
 - `link_target`
+  - Defines target attribute for map popup/detail links (for example `_self`, `_blank`).
 - `full_height`
+  - Expands map container to full available height layout.
 - `disable_auto_load_oev`
+  - Disables automatic loading of public transport overlays/data.
 - `map_extent` (`xmin`, `ymin`, `xmax`, `ymax`)
+  - Sets initial map bounding box in projected map coordinates.
 - `do_not_group_categories_in_legend`
+  - Keeps legend entries ungrouped by category.
 
 See `example.php` for a practical setup.
 
