@@ -6,48 +6,97 @@ This SDK imports offer data from an XML export into a local MySQL/MariaDB databa
 
 ## 1) Requirements
 
-- PHP `>= 7.4` and `<= 8.4`
+- PHP `>= 8.2` and `<= 8.4`
 - MySQL or MariaDB
 - Write permissions for the log directory (`parks_api/log/` or your configured path)
-- Access to frontend assets (if not auto-included):
-  - `parks.min.css`
-  - `parks.min.js`
+- PHP cURL extension enabled (required for external data fetches)
+- Outbound HTTPS access to `angebote.paerke.ch` and related API endpoints
+- URL file access via PHP stream wrappers (for `file_get_contents()` based sync calls)
 
 ---
 
 ## 2) Architecture Overview
 
+- **Orchestration**
+  - `ParksAPI` is the main integration entry point.
 - **Import layer**
-  - `ParksImport` fetches XML data and stores it in the local database.
+  - `ParksImport` imports offers and synchronizes additional API data sources into the local database.
 - **Data/filter layer**
   - `ParksModel` handles SQL filtering, aggregation, and query logic.
 - **Rendering layer**
   - `ParksView` renders filter, list, map, pagination, and detail output.
   - `custom/MyView.php` can override methods from `ParksView`.
-- **Orchestration**
-  - `ParksAPI` is the main integration entry point.
+- **Language layer**
+  - `ParksLanguage` loads translation labels and runtime language context.
 
 ---
 
-## 3) Installation
+## 3) Version Workflow
 
-1. Download the SDK from `https://angebote.paerke.ch/en/settings`.
-2. Upload/copy the project to your web server.
+1. **Install**
+   - Place the required API release ZIP in `downloads/` (local workspace).
+   - Extract the release ZIP and import the base schema from `database/database.sql` (inside the package).
+2. **Upgrade**
+   - Update SDK/API files to the target release.
+3. **Migrate**
+   - Run `php parks_api/scripts/migrate.php` to apply schema/data migrations defined in `parks_api/classes/ParksMigration.php`.
+
+Note:
+- Keep `downloads/` as local release workspace (ZIPs, dumps).
+- The base schema `database/database.sql` is part of each downloaded release package.
+
+---
+
+## 4) New Installation
+
+1. Download the latest API version ZIP from `downloads/releases`.
+2. Upload/copy the `parks_api` directory into your project or content management system.
 3. Create a database.
-4. Import `database/database.sql`.
+4. Extract the release package and import `database/database.sql` from that package.
 5. Configure `parks_api/config.php`.
+   - Obtain a valid hash value from `https://angebote.paerke.ch/en/settings`. This hash is used to generate the XML export file that supplies your data.
 6. Run the first import:
    - CLI: `php parks_api/scripts/cron.php`
-7. Configure a regular cronjob (for example every 15 minutes).
+   - Web: `[Your project path]/parks_api/scripts/cron.php`
+7. Verify that the database has been created and that the `offer` table contains data after import.
+8. Configure a regular cronjob (for example every 15 minutes).
 
 ---
 
-## 4) Core Configuration (`parks_api/config.php`)
+## 5) Upgrade from an Older Version (Example: v20 to v21.1)
+
+### Step-by-step upgrade
+
+1. Download API version `21.1`.
+2. Create a full backup of your current API files.
+3. Create a full backup of your MySQL database.
+4. In `/{PATH-TO-YOUR-API-FOLDER}/`, replace:
+   - `autoload.php`
+   - `classes/`
+5. Execute the migration script:
+   - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
+6. Execute the cron script and force a full import of all offers:
+   - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/force_update.php`
+7. Validate functionality:
+   - Check filter/list/map/detail pages.
+   - Check browser console for JavaScript errors.
+   - Check API logs and test the complete website.
+
+### Notes
+
+- Keep your custom files (`custom/`, custom templates, `config.php`) outside replaced core paths.
+- Always run migration before the forced import after a version upgrade.
+
+---
+
+## 6) Core Configuration (`parks_api/config.php`)
 
 ### Required settings
 
 - `api_hash`
   - Hash from your export configuration on `angebote.paerke.ch`.
+- `park_id`
+  - Enter the park ID; you can obtain it by contacting the respective park.
 - `db_hostname`, `db_username`, `db_password`, `db_database`
   - Database connection credentials.
 
@@ -61,19 +110,35 @@ This SDK imports offer data from an XML export into a local MySQL/MariaDB databa
 
 - `class_view` (for example `MyView`)
 - `template_folder` (for example `standard`)
-- `offers_per_page`
-- `show_route_filter`
-- `show_target_group_filter`
-- `show_accessibility_filter`
-- `show_municipality_filter`
 - `prevent_css_js_include`
 - `return_output`
 - `use_sessions`, `session_name`
 - `language_independence`, `language_priority`
 
+### Practical starter configuration
+
+Frequently tuned options in `parks_api/config.php`:
+
+- `return_output` - Important for CMS integrations: set explicitly whether API methods should return HTML strings (`true`) or print directly (`false`).
+- `prevent_css_js_include` - Use this only if you include the map scripts manually in your project; in standard integrations this should usually stay unchanged.
+- `use_sessions` - Controls SDK session-based state (filters, favorites behavior), not global PHP session bootstrap.
+- `session_name` - Prefix for SDK session namespace and favorites cookie naming.
+- `offers_per_page` - Number of offers displayed per overview page.
+- `show_route_filter` - Enables the route filter in the filter UI.
+- `show_target_group_filter` - Enables the target group filter.
+- `show_accessibility_filter` - Enables the accessibility filter.
+- `show_municipality_filter` - Enables the municipality filter.
+- `show_event_location_in_overview` - Shows event location in overview cards.
+- `show_short_description_in_overview` - Shows short offer descriptions in overview cards.
+- `show_keywords_in_overview` - Shows offer keywords in overview cards.
+- `show_button_in_overview` - Shows the detail/action button in overview cards.
+- `overview_thumbnail_size`, `detail_thumbnail_size` - Controls image size in overview/detail templates.
+- `heading_offer_title_in_overview` - Defines the HTML heading tag for offer titles in overviews.
+- `image_enlargement` - Enables enlarged image links (for lightbox/fancybox integrations).
+
 ---
 
-## 5) Quick Start Integration
+## 7) Quick Start Integration
 
 Minimal page integration:
 
@@ -99,7 +164,7 @@ A complete example including tabs and map is available in `example.php`.
 
 ---
 
-## 6) Import and Update Lifecycle
+## 8) Import and Update Lifecycle
 
 ### Standard update
 
@@ -125,7 +190,7 @@ Recommended:
 
 ---
 
-## 7) Public API Methods for Integrators
+## 9) Public API Methods for Integrators
 
 Most relevant methods from `ParksAPI`:
 
@@ -155,7 +220,7 @@ Import and maintenance:
 
 ---
 
-## 8) Filter Options and Capabilities
+## 10) Filter Options and Capabilities
 
 You can pass these keys in `$filter` (among others):
 
@@ -185,7 +250,7 @@ Note:
 
 ---
 
-## 9) Map Options (`$api->map_options`)
+## 11) Map Options (`$api->map_options`)
 
 Typical options:
 
@@ -203,7 +268,7 @@ See `example.php` for a practical setup.
 
 ---
 
-## 10) Templating
+## 12) Templating
 
 Templates are located in:
 
@@ -220,7 +285,7 @@ Important:
 
 ---
 
-## 11) Overriding Methods (Custom View)
+## 13) Overriding Methods (Custom View)
 
 ### Step 1: Activate a custom view class
 
@@ -257,7 +322,7 @@ Additional example:
 
 ---
 
-## 12) Output Mode
+## 14) Output Mode
 
 - `return_output = false` (default)
   - Methods print output directly (`echo`).
@@ -270,7 +335,7 @@ Useful for:
 
 ---
 
-## 13) Multilingual Support
+## 15) Multilingual Support
 
 Language files:
 
@@ -279,18 +344,17 @@ Language files:
 - `parks_api/language/it.php`
 - `parks_api/language/en.php`
 
-Controlled by:
+Runtime behavior:
 
-- `default_language`
-- `available_languages`
-- `language_independence`
-- `language_priority`
-
-The SDK can fall back to alternative languages depending on your configuration.
+- The active SDK language is passed via `new ParksAPI('<lang>')` (for example `de`, `fr`, `it`, `en`).
+- If the language is missing/invalid, the SDK falls back to `de`.
+- `available_languages` defines which language files can be loaded.
+- `language_independence` and `language_priority` control data fallback behavior across languages.
+- `default_language` in `config.php` can be used as a project convention, but runtime selection is constructor-driven.
 
 ---
 
-## 14) SEO URLs
+## 16) SEO URLs
 
 If your environment uses SEO routing:
 
@@ -301,30 +365,58 @@ If your environment uses SEO routing:
   - `seo_url_page_slug`
   - `seo_url_reset_slug`
 
-The SDK handles detail/pagination/reset URL parsing accordingly.
+Routing notes:
+
+- Detail links are parsed via the configured detail slug and offer IDs in the URL path.
+- Pagination/reset handling depends on the configured page/reset slugs.
+- Ensure your CMS/router forwards these slug paths to the SDK integration endpoint.
 
 ---
 
-## 15) Favorites Module
+## 17) Favorites Module
 
-Configuration:
+This module is optional. If enabled, each offer can show an "add/remove favorite" link for visitors.
 
-- `favorites_extension_available`
-- `favorites_script_path`
+### What it does
 
-Script endpoint:
+- Adds a favorite toggle link in offer listings.
+- Stores selected favorites client-side in a cookie.
+- Allows rendering a favorites overview page for the current visitor.
 
-- `parks_api/scripts/favorite.php`
+### Enable/disable behavior
 
-API methods:
+- `favorites_extension_available = true` enables the feature.
+- `favorites_script_path` must point to your API script folder.
+- `use_sessions = true` must be enabled for persistent favorites behavior.
+- `session_name` defines the cookie/session prefix used by the favorites module.
+- The favorite link is rendered when `favorites_extension_available` and `favorites_script_path` are set.
+- Full favorite toggle/persistence behavior requires `use_sessions = true`.
+- If disabled, no favorite link is shown in offer listings.
 
-- `toggle_favorite($offer_id)`
-- `show_favorites()`
-- `clean_favorites()`
+### Storage and lifecycle
+
+- Favorites are stored in a cookie named `<session_name>_favorites`.
+- The cookie stores offer IDs and is updated when visitors add/remove favorites.
+- A clean action is available to clear all favorites.
+
+### Endpoints and methods
+
+- Script endpoint: `parks_api/scripts/favorite.php`
+  - Toggle favorite: `favorite.php?offer_id=<id>`
+  - Clear all: `favorite.php?action=clean`
+- API methods:
+  - `toggle_favorite($offer_id)`
+  - `show_favorites()`
+  - `clean_favorites()`
+
+### Integration note
+
+- Not every park needs favorites. Keep the feature disabled if you do not need visitor bookmark lists.
+- `parks.swiss` uses this pattern as a reference implementation for visitor favorites.
 
 ---
 
-## 16) Performance Recommendations
+## 18) Performance Recommendations
 
 ### PHP/server
 
@@ -343,7 +435,7 @@ API methods:
 
 ---
 
-## 17) Upgrade Strategy
+## 19) Upgrade Strategy
 
 1. Download the new SDK version.
 2. Update core files.
@@ -358,7 +450,7 @@ API methods:
 
 ---
 
-## 18) Project Rule for Maintainability
+## 20) Project Rule for Maintainability
 
 Avoid changing core files whenever possible.  
 Use these extension points instead:
@@ -371,7 +463,7 @@ This keeps upgrades safe and reduces merge risk.
 
 ---
 
-## 19) Contact
+## 21) Contact
 
 More information:
 
