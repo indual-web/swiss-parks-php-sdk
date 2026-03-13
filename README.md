@@ -1,7 +1,6 @@
 # PHP SDK Documentation - Swiss Parks Network
 
-This SDK imports offer data from an XML export into a local MySQL/MariaDB database and renders it as filter, list, map, and detail views.  
-It is designed for server-side PHP integration and can be extended via templates and custom view classes.
+This SDK imports offer data from an XML export into a local MySQL/MariaDB database and renders it as filter, list, map, and detail views. It is designed for server-side PHP integration and can be extended via templates and custom view classes.
 
 ---
 
