@@ -50,5 +50,5 @@ If issues appear after upgrade:
 
 ## Related docs
 
-- `README.md` (operations overview)
-- `docs/api-reference/index.md`
+- [README](../../README.md) (operations overview)
+- [API reference index](../api-reference/index.md)

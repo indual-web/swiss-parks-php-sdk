@@ -36,5 +36,5 @@ This guide describes the first-time setup of the SDK in a new environment.
 
 ## Related docs
 
-- `README.md` (integration overview)
-- `docs/api-reference/index.md`
+- [README](../../README.md) (integration overview)
+- [API reference index](../api-reference/index.md)
