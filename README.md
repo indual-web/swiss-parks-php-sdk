@@ -42,7 +42,6 @@ This SDK imports offer data from an XML export into a local MySQL/MariaDB databa
    - Run `php parks_api/scripts/migrate.php` to apply schema/data migrations defined in `parks_api/classes/ParksMigration.php`.
 
 Note:
-- Keep `downloads/` as local release workspace (ZIPs, dumps).
 - The base schema `database/database.sql` is part of each downloaded release package.
 
 ---
@@ -63,11 +62,11 @@ Note:
 
 ---
 
-## 5) Upgrade from an Older Version (Example: v20 to v21.1)
+## 5) Upgrade from an older Version (example: v21 to v22)
 
 ### Step-by-step upgrade
 
-1. Download API version `21.1`.
+1. Download API version `22`.
 2. Create a full backup of your current API files.
 3. Create a full backup of your MySQL database.
 4. In `/{PATH-TO-YOUR-API-FOLDER}/`, replace:

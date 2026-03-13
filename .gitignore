@@ -1,3 +1,4 @@
 /parks_api/log/*
 /deploy.sh
 .DS_Store
+.cursor
