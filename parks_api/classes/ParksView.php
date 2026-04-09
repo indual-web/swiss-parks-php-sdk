@@ -148,6 +148,7 @@ class ParksView
 
 			// Set ending slash
 			$action = rtrim($action, '/') . '/';
+			
 		} else {
 
 			// Set action for default urls

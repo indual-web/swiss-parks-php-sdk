@@ -1,0 +1,24 @@
+---
+description: Versionierte SQL-Dumps als Basis der Datenstruktur behandeln
+globs: downloads/dumps/database-*.sql
+alwaysApply: false
+---
+
+# Datenstruktur-Basis pro Version
+
+- Behandle `downloads/dumps/database-*.sql` als versionsspezifische SQL-Snapshots.
+- Jede Datei `database-[Version].sql` repraesentiert die Datenstruktur fuer genau diese Version.
+
+# Working Rules
+
+- Keine Vermischung mit Laufzeitdaten oder ad-hoc Backups.
+- Dateinamen-Pattern beibehalten: `database-[Version].sql` (z. B. `database-21.1.sql`).
+- Wenn neue Versionen hinzukommen, entsprechend neue Datei im selben Pfad ergaenzen.
+
+# Beispiel
+
+```text
+downloads/dumps/database-14.sql
+downloads/dumps/database-21.1.sql
+downloads/dumps/database-22.sql
+```

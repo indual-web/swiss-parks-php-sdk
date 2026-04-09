@@ -1,0 +1,29 @@
+---
+description: Bei Code-Aenderungen Doku in docs pruefen und aktualisieren
+alwaysApply: true
+---
+
+# Doku-Sync bei Code-Aenderungen
+
+- Bei jeder Programmier-Aenderung immer pruefen, ob Inhalte in `docs/` betroffen sind.
+- Wenn Verhalten, API, Konfiguration, Parameter oder Setup geaendert wurden, Doku im selben Arbeitsgang aktualisieren.
+- Keine Code-Aenderung als "fertig" betrachten, bevor der Doku-Check erfolgt ist.
+
+## Was zu pruefen ist
+
+- Neue oder geaenderte Parameter, Defaults, Rueckgabewerte, Fehlerfaelle.
+- Geaenderte Ablaufe, Voraussetzungen, Installations- oder Upgrade-Schritte.
+- Beispiele, die durch die Aenderung veraltet sein koennen.
+
+## Erwartetes Vorgehen
+
+1. Betroffene Dateien unter `docs/` identifizieren.
+2. Doku ergaenzen oder korrigieren.
+3. Sicherstellen, dass Beispiele und Begriffe konsistent mit dem Code sind.
+
+## Beispiel
+
+```text
+Code: Neue Option `timeout_ms` in SDK-Methode eingefuehrt
+=> Doku in docs/... um Option, Default und Beispielnutzung erweitern.
+```

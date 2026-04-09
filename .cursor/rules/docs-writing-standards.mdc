@@ -1,0 +1,33 @@
+---
+description: Doku-Standards fuer Optionen und Ueberschriften
+globs: "{README.md,docs/**/*.md}"
+alwaysApply: false
+---
+
+# Dokumentations-Standards
+
+## Optionen immer beschreiben
+
+- Wenn in Doku eine Option/ein Key aufgefuehrt wird, muss direkt eine kurze Beschreibung folgen.
+- Keine reinen "Namenlisten" von Optionen ohne Erklaerung.
+- Form:
+  - `option_name`
+    - Kurze, konkrete Bedeutung/Wirkung der Option.
+
+## Ueberschriften in sentence case
+
+- Englische Ueberschriften in sentence case schreiben (nicht Title Case).
+- Nur Eigennamen und Akronyme bleiben gross (z. B. `API`, `SEO`, `ParksAPI`, `PHP`).
+
+## Beispiele
+
+```markdown
+## Practical starter configuration
+
+- `return_output`
+  - Returns HTML (`true`) or prints directly (`false`).
+```
+
+```markdown
+# Output mode and multilingual support
+```
