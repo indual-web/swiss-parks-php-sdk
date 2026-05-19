@@ -178,6 +178,7 @@ class ParksModel
 	 * @param bool $return_only_categories
 	 * @param bool $ignore_hint_order
 	 * @param bool $order_by_rand
+	 * @param bool $return_only_parks
 	 * @return mixed
 	 */
 	public function filter_offers($filter, $limit = NULL, $offset = NULL, $return_minimal = false, $only_count_categories = false, $map_mode = false, $return_only_categories = false, $ignore_hint_order = false, $order_by_rand = false, $return_only_parks = false)
