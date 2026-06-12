@@ -182,7 +182,6 @@ class ParksSQLite
 	 */
 	public function get_last_error(): string
 	{
-
 		$error = $this->connection->errorInfo();
 
 		return $error[2] ?? '';
@@ -195,7 +194,6 @@ class ParksSQLite
 	 */
 	public function escape(mixed $value): string
 	{
-
 		return str_replace("'", "''", (string) $value);
 	}
 
@@ -399,16 +397,25 @@ class ParksSQLite
 
 	/**
 	 * Register a custom SQL function
-	 * (PDO::sqliteCreateFunction is deprecated since PHP 8.5)
 	 */
 	private function _create_function(string $name, callable $callback, int $num_args): void
 	{
 
-		if ($this->connection instanceof \Pdo\Sqlite) {
+		if (method_exists($this->connection, 'createFunction')) {
 			$this->connection->createFunction($name, $callback, $num_args);
-		} else {
-			$this->connection->sqliteCreateFunction($name, $callback, $num_args);
+			return;
 		}
+
+		if (PHP_VERSION_ID >= 80500) {
+			throw new RuntimeException('SQLite user-defined functions require PDO::connect() on PHP 8.5+.');
+		}
+
+		if (! method_exists($this->connection, 'sqliteCreateFunction')) {
+			throw new RuntimeException('SQLite user-defined functions are not supported by this PDO driver.');
+		}
+
+		$legacy_register = 'sqliteCreateFunction';
+		$this->connection->{$legacy_register}($name, $callback, $num_args);
 
 	}
 

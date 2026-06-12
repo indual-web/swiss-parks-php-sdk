@@ -415,7 +415,7 @@ class ParksImport
 										'date_to' => empty($date_to) ? null : $this->_datetime($date_to),
 									];
 
-									$this->_insert_or_update('offer_date', $fields, ['offer_id' => $offer_id]);
+									$this->api->db->insert('offer_date', $fields);
 								}
 							}
 
