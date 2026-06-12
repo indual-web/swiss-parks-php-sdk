@@ -5,23 +5,8 @@
 | Netzwerk Schweizer Pärke
 |---------------------------------------------------------------
 |
-| Update offer data (via cronjob)
+| Legacy entry point for scheduled sync (forwards to sync.php)
 |
 */
 
-
-// Include API
-require("../autoload.php");
-
-try {
-
-	// Initialize API and update local database from XML export
-	$api = ParksAPI::forScript();
-	exit($api->update() ? 0 : 1);
-
-} catch (Throwable $e) {
-
-	fwrite(STDERR, $e->getMessage() . PHP_EOL);
-	exit(1);
-
-}
+require __DIR__ . '/sync.php';

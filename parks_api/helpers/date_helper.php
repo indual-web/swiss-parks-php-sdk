@@ -12,12 +12,9 @@
 
 /**
  * Show date
- *
- * @param array $date
- * @param object $lang
- * @return string
  */
-function parks_show_date($date, $lang) {
+function parks_show_date(array $date, ParksLanguage $lang): string {
+
 	$return = '';
 
 	// Init date
@@ -82,11 +79,9 @@ function parks_show_date($date, $lang) {
 
 /**
  * Convert MySQL to a form format
- *
- * @param string $mysql_date
- * @return array
  */
-function parks_mysql2form($mysql_date) {
+function parks_mysql2form(string $mysql_date): array {
+
 	$return = [];
 
 	if (! empty($mysql_date)) {
@@ -102,13 +97,9 @@ function parks_mysql2form($mysql_date) {
 
 /**
  * Convert MySQL to a date format
- *
- * @param mixed $mysql_date
- * @param bool $time (default: false)
- * @param bool $ts (default: false)
- * @return string
  */
-function parks_mysql2date($mysql_date, $time = false, $ts = false) {
+function parks_mysql2date(mixed $mysql_date, bool $time = false, bool $ts = false): string|int {
+
 	if (! empty($mysql_date)) {
 		$date = substr($mysql_date, 0, 10);
 		$date_time = '';
@@ -137,11 +128,8 @@ function parks_mysql2date($mysql_date, $time = false, $ts = false) {
 
 /**
  * Show multiple time data
- *
- * @param string $data
- * @return string
  */
-function parks_show_times($data) {
+function parks_show_times(string $data): string {
 
 	// Init
 	$times = [];
@@ -178,11 +166,9 @@ function parks_show_times($data) {
 
 /**
  * Split hours and minutes by minutes
- *
- * @param int $total_minutes
- * @return array
  */
-function parks_split_hours_and_minutes($total_minutes) {
+function parks_split_hours_and_minutes(int $total_minutes): array {
+
     if ($total_minutes >= 1) {
 
 		// Split total minutes into hours and minutes
@@ -207,13 +193,9 @@ function parks_split_hours_and_minutes($total_minutes) {
  * - If it has already started: Sets it to the current date
  * - If a filter was set: Sets it to the filter date
  * - If the event is in the future: No changes
- *
- * @param string $date_from
- * @param string $date_to
- * @param string $filter_from
- * @return string
  */
-function parks_adjust_date_from($date_from = '', $date_to = '', $filter_from = '') {
+function parks_adjust_date_from(string $date_from = '', string $date_to = '', string $filter_from = ''): string {
+
 	if (! empty($date_from) && ! empty($date_to)) {
 
 		// Init dates
@@ -247,13 +229,8 @@ function parks_adjust_date_from($date_from = '', $date_to = '', $filter_from = '
 
 /**
  * Activities: Get time required info and return formatted value
- *
- * @param object $offer
- * @param object $lang
- * @param bool $short_labels (default: false)
- * @return string $return
  */
-function activity_get_time_required($offer, $lang, $short_labels = false) {
+function activity_get_time_required(object $offer, ParksLanguage $lang, bool $short_labels = false): string {
 
 	// Init
 	$return = '';

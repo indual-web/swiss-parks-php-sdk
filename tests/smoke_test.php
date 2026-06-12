@@ -196,6 +196,29 @@ $api->db->recreate();
 check('recreate empties db', $api->db->get('offer')->num_rows === 0);
 check('recreate keeps schema', $api->db->query("SELECT * FROM api") !== false);
 
+// Output mode: echo must return null, buffer mode must return string
+$view = (new ReflectionClass('ParksView'))->newInstanceWithoutConstructor();
+$view->api = $api;
+$view->return_output = false;
+$view_output = new ReflectionMethod('ParksView', '_output');
+ob_start();
+$view_echo_result = $view_output->invoke($view, 'html');
+$view_echo_buffer = ob_get_clean();
+check('view echo returns null', $view_echo_result === null);
+check('view echo prints content', $view_echo_buffer === 'html');
+$view->return_output = true;
+check('view buffer returns content', $view_output->invoke($view, 'html') === 'html');
+
+$api->return_output = false;
+$api_output = new ReflectionMethod('ParksAPI', '_output');
+ob_start();
+$api_echo_result = $api_output->invoke($api, 'total');
+$api_echo_buffer = ob_get_clean();
+check('api echo returns null', $api_echo_result === null);
+check('api echo prints content', $api_echo_buffer === 'total');
+$api->return_output = true;
+check('api buffer returns content', $api_output->invoke($api, 'total') === 'total');
+
 // Cleanup
 foreach (['', '-wal', '-shm'] as $suffix) {
 	@unlink(__DIR__ . '/../parks_api/' . $test_db . $suffix);

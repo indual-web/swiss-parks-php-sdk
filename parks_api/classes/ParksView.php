@@ -106,12 +106,26 @@ class ParksView
 
 
 	/**
-	 * Show offer filter
-	 *
-	 * @param array $params (default: array())
-	 * @return void
+	 * Echo or return HTML depending on output mode
 	 */
-	public function filter($params = [])
+	private function _output(string $output): ?string
+	{
+
+		if ($this->return_output === true) {
+			return $output;
+		}
+
+		echo $output;
+
+		return null;
+	}
+
+
+
+	/**
+	 * Show offer filter
+	 */
+	public function filter(array $params = []): ?string
 	{
 
 		// Init template data
@@ -713,26 +727,17 @@ class ParksView
 		$output = $this->api->compile_template('filter', $template_data);
 
 		// Show output
-		if ($this->return_output === true) {
-			return $output;
-		} else {
-			echo $output;
-		}
+		return $this->_output($output);
 	}
 
 
 
 	/**
 	 * Show offer list
-	 *
-	 * @param array $offers
-	 * @param bool $in_tab (default: false)
-	 * @param int $poi (default: 0)
-	 * @param int $original_category (default: null)
-	 * @return mixed
 	 */
-	public function list_offers($offers, $in_tab = false, $poi = 0, $original_category = null)
+	public function list_offers(array $offers, bool $in_tab = false, int $poi = 0, ?int $original_category = null): ?string
 	{
+
 		$output = "";
 		if (isset($offers['total']) && ($offers['total'] > 0) && isset($offers['data']) && ! empty($offers['data'])) {
 
@@ -1066,23 +1071,19 @@ class ParksView
 			$output .= '<p class="no_results">' . $this->api->lang->get('offer_not_found') . '</p>';
 		}
 
-		if (($in_tab == true) || ($this->return_output == true)) {
+		if ($in_tab === true) {
 			return $output;
-		} else {
-			echo $output;
 		}
+
+		return $this->_output($output);
 	}
 
 
 
 	/**
 	 * Show pagination
-	 *
-	 * @param int $page
-	 * @param int $total
-	 * @return mixed
 	 */
-	public function pagination($page = 1, $total = 1)
+	public function pagination(int $page = 1, int $total = 1): ?string
 	{
 
 		// Init page
@@ -1252,25 +1253,18 @@ class ParksView
 		$output .= '</div>';
 
 		if ($total > 1) {
-			// Show output
-			if ($this->return_output === true) {
-				return $output;
-			} else {
-				echo $output;
-			}
+			return $this->_output($output);
 		}
+
+		return null;
 	}
 
 
 
 	/**
 	 * Show offer detail page
-	 *
-	 * @param object $offer
-	 * @param int $original_offer_id (default: 0)
-	 * @return void
 	 */
-	public function detail($offer, $original_offer_id = 0)
+	public function detail(object $offer, int $original_offer_id = 0): ?string
 	{
 
 		// Init
@@ -2086,22 +2080,18 @@ class ParksView
 		|
 		*/
 		$output = $this->api->compile_template('detail', $template_data, $template_conditions);
-		if ($this->return_output === true) {
-			return $output;
-		} else {
-			echo $output;
-		}
+
+		return $this->_output($output);
 	}
 
 
 
 	/**
 	 * Get «Add to favorites» link
-	 * 
-	 * @param int $offer_id
-	 * @return string
 	 */
-	public function get_favorites_link($offer_id) {
+	public function get_favorites_link(int $offer_id): string
+	{
+
 		$output = '';
 
 		// Check if favorites are enabled
@@ -2131,11 +2121,8 @@ class ParksView
 
 	/**
 	 * Get detail description
-	 *
-	 * @param object $offer
-	 * @return mixed
 	 */
-	protected function _get_offer_dates($offer)
+	protected function _get_offer_dates(object $offer): string
 	{
 
 		$dates = '';
@@ -2254,12 +2241,10 @@ class ParksView
 
 	/**
 	 * Overwrite template data before they are loaded
-	 *
-	 * @param mixed $template_data
-	 * @return string
 	 */
-	public function overwrite_template_data($template_data, $offer)
+	public function overwrite_template_data(array $template_data, object $offer): array
 	{
+
 		return $template_data;
 	}
 
@@ -2267,14 +2252,10 @@ class ParksView
 
 	/**
 	 * Get POI content
-	 *
-	 * @param array $pois
-	 * @param int $offer_id
-	 * @param string $original_category
-	 * @return string
 	 */
-	protected function _get_poi_content($pois, $offer_id, $original_category)
+	protected function _get_poi_content(array $pois, int $offer_id, ?int $original_category): ?string
 	{
+
 		$offers = $this->api->show_offer_poi_list($pois);
 		$offers = array('data' => $offers, 'total' => count($offers));
 		$output = $this->list_offers($offers, true, $offer_id, $original_category);
@@ -2285,11 +2266,8 @@ class ParksView
 
 	/**
 	 * Get event detail
-	 *
-	 * @param object $offer
-	 * @return string
 	 */
-	protected function _get_detail_event($offer)
+	protected function _get_detail_event(object $offer): string
 	{
 
 		// Load template data		
@@ -2313,12 +2291,10 @@ class ParksView
 
 	/**
 	 * Get product detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_product($offer)
+	protected function _get_detail_product(object $offer): string
 	{
+
 		$template_data['OFFER_ADDITIONAL_INFO'] = $this->_prepare_additional_infos($offer);
 		if (empty($offer->online_shop_enabled)) {
 			$template_data['OFFER_DATES'] = $this->_get_offer_dates($offer);
@@ -2366,11 +2342,8 @@ class ParksView
 
 	/**
 	 * Get booking detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_booking($offer)
+	protected function _get_detail_booking(object $offer): string
 	{
 
 		// Load template data
@@ -2393,11 +2366,8 @@ class ParksView
 
 	/**
 	 * Get activity detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_activity($offer)
+	protected function _get_detail_activity(object $offer): string
 	{
 
 		// Load template data
@@ -2420,11 +2390,8 @@ class ParksView
 
 	/**
 	 * Get project detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_project($offer)
+	protected function _get_detail_project(object $offer): string
 	{
 
 		// Load template data
@@ -2440,13 +2407,8 @@ class ParksView
 
 	/**
 	 * Get overview map
-	 *
-	 * @param array $offers
-	 * @param boolean $poi_detail
-	 * @param boolean $offer_id
-	 * @return string
 	 */
-	public function _get_overview_map($offers, $poi_detail = false, $offer_id = 0)
+	public function _get_overview_map(array $offers, bool $poi_detail = false, int $offer_id = 0): ?string
 	{
 
 		if (empty($offers)) {
@@ -2489,24 +2451,15 @@ class ParksView
 			</script>
 		';
 
-		if ($this->return_output == true) {
-			return $map_view;
-		} else {
-			echo $map_view;
-			return '';
-		}
-
+		return $this->_output($map_view);
 	}
 
 
 
 	/**
 	 * Get detail map
-	 *
-	 * @param object $offer
-	 * @return string
 	 */
-	protected function _get_detail_map($offer)
+	protected function _get_detail_map(object $offer): string
 	{
 
 		if (empty($offer) || empty($offer->offer_id)) {
@@ -2561,11 +2514,10 @@ class ParksView
 
 	/**
 	 * Get map layers
-	 * 
-	 * @return string
 	 */
-	protected function _get_map_layers()
+	protected function _get_map_layers(): string
 	{
+
 		$map_layers = $this->api->model->get_custom_layers();
 
 		if (empty($map_layers)) {
@@ -2612,11 +2564,8 @@ class ParksView
 
 	/**
 	 * Get subscription detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_subscription($offer)
+	protected function _get_detail_subscription(object $offer): string
 	{
 
 		$return = '
@@ -2669,11 +2618,8 @@ class ParksView
 
 	/**
 	 * Get infrastructure details
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_infrastructure($offer)
+	protected function _get_detail_infrastructure(object $offer): string
 	{
 
 		// Other infrastructure
@@ -2712,12 +2658,10 @@ class ParksView
 
 	/**
 	 * Get accommodations
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_accommodations($offer)
+	protected function _get_accommodations(object $offer): string
 	{
+
 		$accommodations = '';
 
 		if (isset($offer->accommodations) && ! empty($offer->accommodations)) {
@@ -2736,12 +2680,10 @@ class ParksView
 
 	/**
 	 * Get route details
-	 *
-	 * @param object $offer
-	 * @return string
 	 */
-	protected function _get_route_details($offer)
+	protected function _get_route_details(object $offer): string
 	{
+
 		$route_details = '';
 
 		if (! empty($offer)) {
@@ -2781,12 +2723,10 @@ class ParksView
 
 	/**
 	 * Show offer start and stop place
-	 *
-	 * @param object $offer
-	 * @return string
 	 */
-	protected function _get_route_start_stop($offer)
+	protected function _get_route_start_stop(object $offer): string
 	{
+
 		$start_stop_place = '';
 
 		if (! empty($offer)) {
@@ -2831,11 +2771,8 @@ class ParksView
 
 	/**
 	 * Get group details
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_groups($offer)
+	protected function _get_detail_groups(object $offer): string
 	{
 
 		// Group subscriber
@@ -2877,12 +2814,10 @@ class ParksView
 
 	/**
 	 * Prepare additional informations
-	 *
-	 * @param object $offer
-	 * @return string
 	 */
-	protected function _prepare_additional_infos($offer)
+	protected function _prepare_additional_infos(object $offer): string
 	{
+
 		$additional_info = [];
 
 		// Prepare options
@@ -2915,16 +2850,15 @@ class ParksView
 
 	/**
 	 * Show project duration ({M} {Y} - {M} {Y})
-	 *
-	 * @param int $from_year
-	 * @param int $to_year
-	 * @param int $from_month
-	 * @param int $to_month
-	 * @param bool $is_overview
-	 * @return string
 	 */
-	protected function _prepare_project_duration($from_year, $to_year, $from_month = null, $to_month = null, $is_overview = false)
-	{
+	protected function _prepare_project_duration(
+		int $from_year,
+		int $to_year,
+		?int $from_month = null,
+		?int $to_month = null,
+		bool $is_overview = false
+	): string {
+
 		$output = '';
 
 		if (! empty($from_year)) {
@@ -2991,14 +2925,10 @@ class ParksView
 
 	/**
 	 * Get string
-	 *
-	 * @param mixed $string
-	 * @param string $suffix (default: "")
-	 * @param string $prefix (default: "")
-	 * @return string
 	 */
-	protected function _get_string($string, $suffix = "", $prefix = "")
+	protected function _get_string(?string $string, string $suffix = "", string $prefix = ""): string
 	{
+
 		if (! empty($string)) {
 			return $prefix . $string . $suffix;
 		}
@@ -3010,13 +2940,8 @@ class ParksView
 
 	/**
 	 * Prepare detail block
-	 *
-	 * @param mixed $title
-	 * @param mixed $content
-	 * @param string $class (default: "")
-	 * @return string
 	 */
-	protected function _show_text($title, $content, $class = "")
+	protected function _show_text(?string $title, ?string $content, string $class = ""): string
 	{
 
 		$return = "";
@@ -3046,12 +2971,10 @@ class ParksView
 
 	/**
 	 * Compile template output
-	 *
-	 * @param array $template_data
-	 * @return string
 	 */
-	protected function _compile_output($template_data)
+	protected function _compile_output(array $template_data): string
 	{
+
 		$output = '';
 
 		if (! empty($template_data)) {
@@ -3079,14 +3002,8 @@ class ParksView
 
 	/**
 	 * Get seo detail url by offer id and title
-	 *
-	 * @param int $offer_id
-	 * @param string $title
-	 * @param int $poi
-	 * @param bool $include_script_url
-	 * @return string
 	 */
-	public function get_seo_detail_url($offer_id = 0, $title = '', $poi = null, $include_script_url = true)
+	public function get_seo_detail_url(int $offer_id = 0, string $title = '', ?int $poi = null, bool $include_script_url = true): string
 	{
 
 		// Get detail slugs

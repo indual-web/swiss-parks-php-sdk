@@ -6,6 +6,30 @@ For breaking changes between specific versions, use a [version-specific migratio
 
 ## Recommended upgrade flow
 
+### Option A: CLI upgrade script (preferred)
+
+From the `parks_api/` directory on the server (SSH):
+
+```bash
+bash bin/upgrade-sdk.sh latest
+# or a specific version:
+bash bin/upgrade-sdk.sh 22
+```
+
+The script:
+
+1. Downloads the release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
+2. Creates a backup next to `parks_api/` (`parks_api-backup-<timestamp>/`)
+3. Replaces SDK core files (`autoload.php`, `classes/`, `database/`, `helpers/`, `language/`, `bin/`, `scripts/`, default templates)
+4. Preserves `config.php`, `custom/`, `data/`, `log/`, and custom templates
+5. Runs `php scripts/migrate.php` (rebuilds SQLite DB + full import)
+
+Exit code: `0` on success, `1` on failure. Set `PARKS_API_SKIP_MIGRATE=1` to update files only.
+
+Apply version-specific config steps from a [migration guide](./migrations/README.md) **before** running the script when a guide requires manual `config.php` changes.
+
+### Option B: Manual ZIP upgrade
+
 1. Download the target API/SDK release.
 2. Create a full backup of your current API files.
 3. Replace SDK core files in your API folder:
@@ -14,10 +38,14 @@ For breaking changes between specific versions, use a [version-specific migratio
    - `database/`
    - `helpers/`
    - `language/`
+   - `bin/`
 4. Apply version-specific steps from a [migration guide](./migrations/README.md) if one exists for your upgrade path.
 5. Run migration:
    - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
    - Deletes the SQLite database file, recreates it with the current schema, and runs a full import.
+
+### Validation (both options)
+
 6. Validate functionality end-to-end:
    - filter
    - list

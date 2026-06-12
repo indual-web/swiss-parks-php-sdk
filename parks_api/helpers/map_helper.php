@@ -13,12 +13,8 @@
 
 /**
  * Collect all offers by categories
- *
- * @param array $offers
- * @param bool $ignore_categories_with_subcategories
- * @return string
  */
-function collect_categories_by_offers($offers, $ignore_categories_with_subcategories = false) {
+function collect_categories_by_offers(array $offers, bool $ignore_categories_with_subcategories = false): string {
 
 	if (empty($offers)) {
 		return '';
@@ -80,12 +76,9 @@ function collect_categories_by_offers($offers, $ignore_categories_with_subcatego
 
 /**
  * Convert latitude and longitued values to CH1903 format
- *
- * @param string $latitude
- * @param string $longitude
- * @return array
  */
-function convertLatLonToCH1903($latitude, $longitude) {
+function convertLatLonToCH1903(string $latitude, string $longitude): array {
+
 	$return = [];
 
 	$return['x'] = intval(WGStoCHx($latitude, $longitude) + 1000000);
@@ -97,12 +90,8 @@ function convertLatLonToCH1903($latitude, $longitude) {
 
 /**
  * Convert WGS lat/long (° dec) to CH y
- *
- * @param float $lat
- * @param float $long
- * @return float
  */
-function WGStoCHy($lat, $long) {
+function WGStoCHy(float $lat, float $long): float {
 
 	// Converts degrees dec to sex
 	$lat = DECtoSEX($lat);
@@ -129,12 +118,8 @@ function WGStoCHy($lat, $long) {
 
 /**
  * Convert WGS lat/long (° dec) to CH x
- *
- * @param float $lat
- * @param float $long
- * @return float
  */
-function WGStoCHx($lat, $long) {
+function WGStoCHx(float $lat, float $long): float {
 
 	// Converts degrees dec to sex
 	$lat = DECtoSEX($lat);
@@ -164,12 +149,8 @@ function WGStoCHx($lat, $long) {
 
 /**
  * Convert CH y/x to WGS lat
- *
- * @param mixed $y
- * @param mixed $x
- * @return string
  */
-function CHtoWGSlat($y, $x) {
+function CHtoWGSlat(mixed $y, mixed $x): float {
 
 	// Converts militar to civil and	to unit = 1000km
 	// Axiliary values (% Bern)
@@ -194,12 +175,8 @@ function CHtoWGSlat($y, $x) {
 
 /**
  * Convert CH y/x to WGS long
- *
- * @param mixed $y
- * @param mixed $x
- * @return string
  */
-function CHtoWGSlong($y, $x) {
+function CHtoWGSlong(mixed $y, mixed $x): float {
 
 	// Converts militar to civil and	to unit = 1000km
 	// Axiliary values (% Bern)
@@ -223,11 +200,8 @@ function CHtoWGSlong($y, $x) {
 
 /**
  * Convert SEX DMS angle to DEC
- *
- * @param mixed $angle
- * @return float
  */
-function SEXtoDEC($angle) {
+function SEXtoDEC(mixed $angle): float {
 
 	// Extract DMS
 	$deg = intval( $angle );
@@ -242,11 +216,8 @@ function SEXtoDEC($angle) {
 
 /**
  * Convert DEC angle to SEX DMS
- *
- * @param float $angle
- * @return float
  */
-function DECtoSEX($angle) {
+function DECtoSEX(float $angle): float {
 
 	// Extract DMS
 	$deg = intval( $angle );
@@ -261,11 +232,8 @@ function DECtoSEX($angle) {
 
 /**
  * Convert Degrees angle to seconds
- *
- * @param float $angle
- * @return float
  */
-function DEGtoSEC($angle) {
+function DEGtoSEC(float $angle): float {
 
 	// Extract DMS
 	$deg = intval( $angle );

@@ -152,7 +152,7 @@ Parameters:
 
 Static factories for CLI scripts (no page rendering bootstrap):
 
-- `ParksAPI::forScript()` — used by `cron.php` and `force_update.php`
+- `ParksAPI::forScript()` — used by `sync.php` (and legacy `cron.php`) and `force_update.php`
 - `ParksAPI::forMigration()` — used by `migrate.php` (also skips `_setup()`)
 
 ### `migrate()`

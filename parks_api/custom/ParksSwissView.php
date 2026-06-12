@@ -26,11 +26,8 @@ class ParksSwissView extends ParksView {
 	/**
 	 * Overwrite template data
 	 * Overwrite template data before they are loaded
-	 *
-	 * @param mixed $template_data
-	 * @return void
 	 */
-	public function overwrite_template_data($template_data, $offer) {
+	public function overwrite_template_data(array $template_data, object $offer): array {
 
 		// Get offer dates
 		$template_data['OFFER_DATES'] = $this->_get_offer_dates($offer);
@@ -57,11 +54,8 @@ class ParksSwissView extends ParksView {
 
 	/**
 	 * Get event detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_event($offer) {
+	protected function _get_detail_event(object $offer): string {
 
 		// Load template data
 		$template_data['OFFER_ADDITIONAL_INFO'] = parent:: _prepare_additional_infos($offer);
@@ -80,11 +74,8 @@ class ParksSwissView extends ParksView {
 
 	/**
 	 * Get product detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_product($offer) {
+	protected function _get_detail_product(object $offer): string {
 
 		// Load template data
 		if (! empty($offer->online_shop_enabled)) {
@@ -143,11 +134,8 @@ class ParksSwissView extends ParksView {
 
 	/**
 	 * Get booking detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_booking($offer) {
+	protected function _get_detail_booking(object $offer): string {
 
 		// Load template data
 		$template_data['OFFER_ADDITIONAL_INFO'] = parent:: _prepare_additional_infos($offer);
@@ -168,11 +156,8 @@ class ParksSwissView extends ParksView {
 
 	/**
 	 * Get activity detail
-	 *
-	 * @param mixed $offer
-	 * @return string
 	 */
-	protected function _get_detail_activity($offer) {
+	protected function _get_detail_activity(object $offer): string {
 
 		// Load template data
 		$template_data['OFFER_ADDITIONAL_INFO'] = parent:: _prepare_additional_infos($offer);

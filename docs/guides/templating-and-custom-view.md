@@ -35,7 +35,7 @@ This class extends `ParksView`.
 
 Common extension points:
 
-- `overwrite_template_data($template_data, $offer)`
+- `overwrite_template_data(array $template_data, object $offer): array`
   - Fine-grained template data changes before rendering.
 - Full rendering methods from `ParksView`, for example:
   - `filter(...)`

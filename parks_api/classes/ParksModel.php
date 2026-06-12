@@ -77,12 +77,10 @@ class ParksModel
 
 	/**
 	 * Checks if an offer with the given id exists
-	 *
-	 * @param int $offer_id
-	 * @return bool
 	 */
-	public function offer_exists($offer_id)
+	public function offer_exists(int $offer_id): bool
 	{
+
 		$q_offer = $this->api->db->query("SELECT offer_id FROM offer WHERE offer_id = " . $offer_id);
 		if ($q_offer->num_rows > 0) {
 			return true;
@@ -96,10 +94,8 @@ class ParksModel
 	/**
 	 * Get Custom Layers
 	 * [Deprecated with new map]
-	 * 
-	 * @return mixed
 	 */
-	public function get_custom_layers()
+	public function get_custom_layers(): array|false
 	{
 
 		$q_layers = $this->api->db->query("
@@ -162,21 +158,19 @@ class ParksModel
 
 	/**
 	 * Get offers
-	 *
-	 * @param array $filter
-	 * @param int|null $limit
-	 * @param int|null $offset
-	 * @param bool $return_minimal
-	 * @param bool $only_count_categories
-	 * @param bool $map_mode
-	 * @param bool $return_only_categories
-	 * @param bool $ignore_hint_order
-	 * @param bool $order_by_rand
-	 * @param bool $return_only_parks
-	 * @return mixed
 	 */
-	public function filter_offers($filter, $limit = null, $offset = null, $return_minimal = false, $only_count_categories = false, $map_mode = false, $return_only_categories = false, $ignore_hint_order = false, $order_by_rand = false, $return_only_parks = false)
-	{
+	public function filter_offers(
+		array $filter,
+		?int $limit = null,
+		?int $offset = null,
+		bool $return_minimal = false,
+		bool $only_count_categories = false,
+		bool $map_mode = false,
+		bool $return_only_categories = false,
+		bool $ignore_hint_order = false,
+		bool $order_by_rand = false,
+		bool $return_only_parks = false
+	): ParksSQLiteResult|stdClass|array|false {
 
 		// Populate date filter
 		$filter_date_from = ! empty($filter['date_from']) ? $this->_get_datetime($filter['date_from']) : '';
@@ -942,13 +936,8 @@ class ParksModel
 
 	/**
 	 * Get offer with additional infos
-	 *
-	 * @param mixed $offer
-	 * @param boolean $return_minimal
-	 * @param boolean $map_mode
-	 * @return mixed
 	 */
-	public function get_offer($offer, $return_minimal = false, $map_mode = false)
+	public function get_offer(int|object $offer, bool $return_minimal = false, bool $map_mode = false): object|false
 	{
 
 		// Get offer if needed
@@ -1269,12 +1258,10 @@ class ParksModel
 
 	/**
 	 * Get category by ID
-	 *
-	 * @param int $category_id
-	 * @return mixed
 	 */
-	public function get_category($category_id)
+	public function get_category(int $category_id): object|false
 	{
+
 		if (array_key_exists($category_id, $this->categories)) {
 			return $this->categories[$category_id];
 		}
@@ -1286,12 +1273,10 @@ class ParksModel
 
 	/**
 	 * Get path for a category
-	 *
-	 * @param int $category_id
-	 * @return array
 	 */
-	public function get_category_path($category_id)
+	public function get_category_path(int $category_id): array
 	{
+
 		if (! empty($category_id)) {
 			$path = [];
 
@@ -1311,11 +1296,10 @@ class ParksModel
 
 	/**
 	 * Get all categories
-	 *
-	 * @return array
 	 */
-	public function get_all_categories($filter = [])
+	public function get_all_categories(array $filter = []): array
 	{
+
 		$q_categories_string = "
 			SELECT
 				c1.category_id as category_id,
@@ -1377,11 +1361,10 @@ class ParksModel
 
 	/**
 	 * Get all category links
-	 *
-	 * @return mixed
 	 */
-	public function get_all_category_links()
+	public function get_all_category_links(): array|false
 	{
+
 		$q_category_links = $this->api->db->query("SELECT category_id FROM category_link GROUP BY category_link.category_id");
 
 		if ($q_category_links->num_rows > 0) {
@@ -1410,13 +1393,10 @@ class ParksModel
 
 	/**
 	 * Get all users/parks
-	 *
-	 * @param array $categories
-	 * @param array $filter
-	 * @return mixed
 	 */
-	public function get_all_users($categories = [], $filter = [])
+	public function get_all_users(array $categories = [], array $filter = []): array|false
 	{
+
 		if (empty($categories)) {
 			$categories = $this->get_all_category_links();
 		}
@@ -1444,11 +1424,10 @@ class ParksModel
 
 	/**
 	 * Get full category tree
-	 *
-	 * @return array
 	 */
-	public function get_category_tree()
+	public function get_category_tree(): array
 	{
+
 		$categories = [];
 		$q_categories = $this->api->db->query("
 
@@ -1486,12 +1465,10 @@ class ParksModel
 
 	/**
 	 * Sync target groups
-	 *
-	 * @param array $target_groups
-	 * @return bool
 	 */
-	public function sync_target_groups($target_groups)
+	public function sync_target_groups(array $target_groups): bool
 	{
+
 		if (! empty($target_groups) && is_array($target_groups)) {
 
 			// Delete existing target groups
@@ -1531,12 +1508,10 @@ class ParksModel
 
 	/**
 	 * Sync categories
-	 *
-	 * @param array $categories
-	 * @return bool
 	 */
-	public function sync_categories($categories)
+	public function sync_categories(array $categories): bool
 	{
+
 		if (! empty($categories) && is_array($categories)) {
 
 			// Delete existing categories
@@ -1579,12 +1554,10 @@ class ParksModel
 
 	/**
 	 * Sync fields of activity
-	 *
-	 * @param array $fields_of_activity
-	 * @return bool
 	 */
-	public function sync_fields_of_activity($fields_of_activity)
+	public function sync_fields_of_activity(array $fields_of_activity): bool
 	{
+
 		if (! empty($fields_of_activity) && is_array($fields_of_activity)) {
 
 			// Delete existing fields of activity
@@ -1624,11 +1597,8 @@ class ParksModel
 
 	/**
 	 * Get municipalities
-	 * 
-	 * @param array $filter
-	 * @return array
 	 */
-	public function get_municipalities($filter = [])
+	public function get_municipalities(array $filter = []): array
 	{
 
 		// Get the municipalities
@@ -1656,12 +1626,10 @@ class ParksModel
 
 	/**
 	 * Private method for retrieving the root category
-	 *
-	 * @param int $category_id
-	 * @return integer|bool
 	 */
-	private function _get_root_category($category_id)
+	private function _get_root_category(int $category_id): int|false
 	{
+
 		if (! empty($category_id)) {
 
 			while ($category_id > 0) {
@@ -1680,13 +1648,10 @@ class ParksModel
 
 	/**
 	 * Get date time
-	 *
-	 * @param mixed $value
-	 * @param string $format (default: 'Y-m-d H:i:s')
-	 * @return string
 	 */
-	private function _get_datetime($value, $format = 'Y-m-d H:i:s')
+	private function _get_datetime(mixed $value, string $format = 'Y-m-d H:i:s'): string
 	{
+
 		$datetime = new DateTime($value);
 		return $datetime->format($format);
 	}
@@ -1694,12 +1659,10 @@ class ParksModel
 
 	/**
 	 * Prepare additional infos for sql query
-	 *
-	 * @param array $filter
-	 * @return string
 	 */
-	private function _prepare_additional_infos($filter)
+	private function _prepare_additional_infos(array $filter): string
 	{
+
 		$additional_query = '';
 		if (! empty($filter) && is_array($filter)) {
 			foreach ($filter as $key => $value) {
@@ -1750,7 +1713,6 @@ class ParksModel
 
 	/**
 	 * Get dropdown list with all accessiblity options
-	 *
 	 */
 	public function get_accessibility_list(): array
 	{
@@ -1798,12 +1760,10 @@ class ParksModel
 
 	/**
 	 * Sync accessibility dropdown list
-	 *
-	 * @param array $options
-	 * @return bool
 	 */
-	public function sync_accessibilities($options)
+	public function sync_accessibilities(array $options): bool
 	{
+
 		if (! empty($options) && is_array($options)) {
 
 			// Delete existing list

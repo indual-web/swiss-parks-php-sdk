@@ -28,11 +28,8 @@ class MyView extends ParksView {
 	/**
 	 * Overwrite template data
 	 * Overwrite template data before they are loaded
-	 *
-	 * @param mixed $template_data
-	 * @return void
 	 */
-	public function overwrite_template_data($template_data, $offer) {
+	public function overwrite_template_data(array $template_data, object $offer): array {
 
 		// Overwrite template data
 		// Example:

@@ -21,8 +21,8 @@ No database server is required: the SDK stores all data in a local SQLite file t
    - Optionally adjust `db_path` (default: `data/park-offers.sqlite`).
    - See `config.example.php` for optional keys such as `curl_verify_ssl`.
 4. Run the first import:
-   - CLI: `php parks_api/scripts/cron.php`
-   - Web: `[Your project path]/parks_api/scripts/cron.php`
+   - CLI: `bash parks_api/bin/sync.sh`
+   - Web: `[Your project path]/parks_api/scripts/cron.php` (legacy alias for `sync.php`)
    - The SQLite database file and schema are created automatically.
 5. Verify import success:
    - The SQLite file exists at the configured `db_path`.

@@ -53,8 +53,9 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
    - Download the required API release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
    - Extract the release ZIP and copy the `parks_api` directory into your project.
 2. **Upgrade**
-   - Update SDK/API files to the target release.
-3. **Migrate**
+   - CLI: `bash parks_api/bin/upgrade-sdk.sh latest` (downloads release, updates core files, runs migration)
+   - Or update SDK/API files manually from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
+3. **Migrate** (if not using `upgrade-sdk.sh`)
    - Run `php parks_api/scripts/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
 
 The SQLite database file is created automatically on first run from `parks_api/database/schema.sql`; no manual schema import is needed.
@@ -71,8 +72,8 @@ Quick summary:
 
 1. Install SDK files from the release ZIP (`parks_api/` + `example.php`).
 2. Configure `parks_api/config.php` (`api_hash`, `park_id`).
-3. Run first import: `php parks_api/scripts/cron.php` or via browser (creates the SQLite database automatically).
-4. Verify data import and configure regular cron execution.
+3. Run first import: `bash parks_api/bin/sync.sh` or via browser at `scripts/cron.php` (creates the SQLite database automatically).
+4. Verify data import and configure regular cron execution (`bin/sync.sh`).
 
 ---
 
@@ -102,7 +103,7 @@ Integration example and implementation basics:
 
 ## 8) Import and Update Lifecycle
 
-Commands for `cron.php`, `force_update.php`, and migration are documented in:
+Commands for `sync.php`, `force_update.php`, and migration are documented in:
 
 - [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
 

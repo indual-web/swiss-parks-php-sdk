@@ -17,7 +17,7 @@ Use this checklist before publishing a new Parks-API release ZIP.
 ## 3. Manual validation
 
 - [ ] `php parks_api/scripts/migrate.php` (exit code `0`)
-- [ ] `php parks_api/scripts/cron.php` (exit code `0`)
+- [ ] `bash parks_api/bin/sync.sh` (exit code `0`)
 - [ ] Validate on a test page:
   - filter
   - list

@@ -12,11 +12,9 @@
 
 /**
  * Auto text format
- *
- * @param string $string
- * @return string
  */
-function auto_text_format($string, $first_line_strong = false) {
+function auto_text_format(string $string, bool $first_line_strong = false): string {
+
 	$return = '';
 	if ($string != '') {
 
@@ -82,13 +80,8 @@ function auto_text_format($string, $first_line_strong = false) {
  * Note: There's a bit of extra code here to deal with
  * URLs or emails that end in a period. We'll strip these
  * Off and add them after the link.
- *
- * @param	string	the string
- * @param	string	the type: email, url, or both
- * @param	bool	whether to create pop-up links
- * @return	string
  */
-function auto_link($str, $type = 'both', $popup = FALSE) {
+function auto_link(string $str, string $type = 'both', bool $popup = FALSE): string {
 
 	// Find and replace any URLs.
 	if ($type !== 'email' && preg_match_all('#(\w*://|www\.)[a-z0-9äöü]+(-+[a-z0-9äöü]+)*(\.[a-z0-9äöü]+(-+[a-z0-9äöü]+)*)+(/([^\s()<>;]+\w)?/?)?#i', $str, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER))
@@ -130,11 +123,9 @@ function auto_link($str, $type = 'both', $popup = FALSE) {
 
 /**
  * Transform newlines to paragraphs
- *
- * @param mixed $text
- * @return string
  */
-function nl2p($text) {
+function nl2p(mixed $text): string {
+
 	return '<p>'.str_replace(array("\r\n", "\r", "\n"), '</p><p>', $text).'</p>';
 }
 
@@ -144,13 +135,9 @@ function nl2p($text) {
  * Encoded Mailto Link
  *
  * Create a spam-protected mailto link written in Javascript
- *
- * @param	string	the email address
- * @param	string	the link title
- * @param	mixed	any attributes
- * @return	string
  */
- function safe_mailto($email, $title = '', $attributes = '') {
+function safe_mailto(string $email, string $title = '', array|string $attributes = ''): string {
+
 	$title = (string) $title;
 	if ($title == "") {
 		$title = $email;
@@ -239,15 +226,12 @@ else document.write(unescape(l[i]));}
  *     1) most web browsers support UTF-8 characters in URLs
  *     2) transliteration causes a loss of information
  *
- * @author Sean Murphy <sean@iamseanmurphy.com>
- * @copyright Copyright 2012 Sean Murphy. All rights reserved.
- * @license http://creativecommons.org/publicdomain/zero/1.0/
- *
- * @param string $str
- * @param array $options
- * @return string
+ * Author: Sean Murphy <sean@iamseanmurphy.com>
+ * Copyright 2012 Sean Murphy. All rights reserved.
+ * License: http://creativecommons.org/publicdomain/zero/1.0/
  */
-function url_slug($str, $options = []) {
+function url_slug(string $str, array $options = []): string {
+
 	// Make sure string is in UTF-8 and strip invalid UTF-8 characters
 	$str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
 
@@ -348,11 +332,9 @@ function url_slug($str, $options = []) {
 
 /**
  * Set the first char of a string to uppercase, even if its a multibyte char
- *
- * @param string $str
- * @return string
  */
-function ucfirst_utf8($str) {
+function ucfirst_utf8(string $str): string {
+
   $a = mb_strtoupper(mb_substr($str, 0, 1, 'UTF-8'), 'UTF-8');
   return $a . mb_substr($str, 1, null, 'UTF-8');
 }
@@ -361,11 +343,9 @@ function ucfirst_utf8($str) {
 
 /**
  * Check if string contains html tags
- * 
- * @param string $string
- * @return bool
  */
-function contains_html_tags($string) {
+function contains_html_tags(string $string): bool {
+
     return strlen($string) != strlen(strip_tags($string));
 }
 
@@ -373,11 +353,8 @@ function contains_html_tags($string) {
 
 /**
  * Output text with or without html tags
- * 
- * @param string $text
- * @return string
  */
-function output_text($text) {
+function output_text(string $text): string {
 
 	// Text with html tags
     if (contains_html_tags($text)) {
