@@ -2,6 +2,7 @@
 /parks_api/data/*
 /parks_api/config.local.php
 /releases/*.zip
+/zip/
 .DS_Store
 __pycache__/
 *.pyc
