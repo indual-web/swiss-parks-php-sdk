@@ -35,8 +35,6 @@ class ParksSQLiteResult implements IteratorAggregate
 
 	/**
 	 * Constructor
-	 *
-	 * @param array $rows
 	 */
 	public function __construct(array $rows)
 	{

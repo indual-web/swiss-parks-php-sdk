@@ -4,12 +4,22 @@ This guide documents the most important runtime settings in `parks_api/config.ph
 
 ## Required settings
 
+Set these in `parks_api/config.php` on your server (keep this file across SDK updates):
+
 - `api_hash`
   - Hash from your export configuration on `angebote.paerke.ch`.
 - `park_id`
   - Enter the park ID; you can obtain it by contacting the respective park.
 - `db_path`
   - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `parks_api/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
+
+Optional for SDK development in git: copy `config.example.php` to `config.local.php` to override `api_hash` and `park_id` locally without committing secrets.
+
+## Network settings
+
+- `curl_verify_ssl` (default: `true`)
+  - Verifies SSL certificates for export requests to `angebote.paerke.ch`.
+  - If import/update fails with SSL or cURL HTTPS errors on shared hosting, set to `false` in `config.php` as a fallback.
 
 ## Runtime mode: single park vs network-wide
 

@@ -1,6 +1,8 @@
 # Upgrade guide
 
-This guide describes a safe upgrade workflow from an older SDK/API version to a newer release.
+This guide describes the **generic** upgrade workflow for any Parks-API release.
+
+For breaking changes between specific versions, use a [version-specific migration guide](./migrations/README.md).
 
 ## Recommended upgrade flow
 
@@ -12,10 +14,11 @@ This guide describes a safe upgrade workflow from an older SDK/API version to a 
    - `database/`
    - `helpers/`
    - `language/`
-4. Run migration:
+4. Apply version-specific steps from a [migration guide](./migrations/README.md) if one exists for your upgrade path.
+5. Run migration:
    - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
-   - This deletes the SQLite database file, recreates it with the current schema, and runs a full import.
-5. Validate functionality end-to-end:
+   - Deletes the SQLite database file, recreates it with the current schema, and runs a full import.
+6. Validate functionality end-to-end:
    - filter
    - list
    - map
@@ -23,14 +26,13 @@ This guide describes a safe upgrade workflow from an older SDK/API version to a 
    - browser console
    - logs
 
-## Breaking change: MySQL replaced by SQLite
+## Version-specific migrations
 
-Since the switch to SQLite, no database server is used anymore. When upgrading from a MySQL-based version:
+| From | To | Guide |
+| --- | --- | --- |
+| v21 (MySQL) | v22 (SQLite) | [21 to 22](./migrations/21-to-22.md) |
 
-1. Update `config.php`: remove `db_hostname`, `db_port`, `db_username`, `db_password`, `db_database` and add `db_path` (default: `data/park-offers.sqlite`).
-2. Ensure the web server has write permissions on the `db_path` directory (`parks_api/data/` by default).
-3. Run `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php` — all data is re-imported automatically from the XML export.
-4. The old MySQL database is no longer used and can be removed after validation.
+New guides are added to [migrations/README.md](./migrations/README.md) when a release needs steps beyond the generic flow above.
 
 ## Upgrade notes
 
@@ -38,7 +40,7 @@ Since the switch to SQLite, no database server is used anymore. When upgrading f
   - `custom/`
   - custom templates
   - `config.php`
-- Since the database is only a mirror of the XML export, no data backup is needed; `migrate.php` rebuilds it completely.
+- Since the database is only a mirror of the XML export, no data backup is needed for SQLite upgrades; `migrate.php` rebuilds it completely.
 - Re-test multilingual behavior and SEO routes when enabled.
 
 ## Rollback strategy
@@ -46,10 +48,13 @@ Since the switch to SQLite, no database server is used anymore. When upgrading f
 If issues appear after upgrade:
 
 1. Restore file backup.
-2. Re-run old version cron/import (the SQLite database is rebuilt automatically).
+2. Re-run the previous version's cron/import workflow.
+
+For v21 rollback after a failed v22 attempt, see [21 to 22 — Rollback](./migrations/21-to-22.md#7-rollback).
 
 ## Related docs
 
+- [Migrations index](./migrations/README.md)
 - [Guide index](./index.md)
 - [README](../../README.md) (operations overview)
 - [API reference index](../api-reference/index.md)

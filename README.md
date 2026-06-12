@@ -21,7 +21,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 
 ## 1) Requirements
 
-- PHP `>= 8.2` and `<= 8.4`
+- PHP `>= 8.2` and `<= 8.5`
 - PHP `pdo_sqlite` extension (bundled with PHP by default), SQLite `>= 3.25`
 - Write permissions for the data directory (`parks_api/data/` or your configured `db_path`)
 - Write permissions for the log directory (`parks_api/log/` or your configured path)
@@ -69,27 +69,18 @@ Use the dedicated guide:
 
 Quick summary:
 
-1. Install SDK files.
+1. Install SDK files from the release ZIP (`parks_api/` + `example.php`).
 2. Configure `parks_api/config.php` (`api_hash`, `park_id`).
-3. Run first import: `php parks_api/scripts/cron.php` (creates the SQLite database automatically).
+3. Run first import: `php parks_api/scripts/cron.php` or via browser (creates the SQLite database automatically).
 4. Verify data import and configure regular cron execution.
 
 ---
 
-## 5) Upgrade from an older version (example: v21 to v22)
+## 5) Upgrade from an older version
 
-Use the dedicated guide:
-
-- [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
-
-Quick summary:
-
-1. Backup files.
-2. Replace core SDK files (`autoload.php`, `classes/`, `database/`).
-3. Run migration: `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php` (rebuilds the SQLite database and runs a full import).
-4. Validate filter/list/map/detail, console output, and logs.
-
-**Breaking change since the SQLite switch:** MySQL/MariaDB is no longer used. Existing installations must remove the old DB credentials from `config.php` (replaced by `db_path`); all data is re-imported automatically from the XML export.
+- Generic workflow: [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
+- Version-specific migrations: [`docs/guides/migrations/README.md`](docs/guides/migrations/README.md)
+- **v21 → v22 (MySQL to SQLite):** [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
 ---
 
@@ -165,7 +156,17 @@ Commands for `cron.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 17) Contact
+## 17) Smoke tests (SDK maintainers only)
+
+The offline SQLite/query smoke test lives in `tests/smoke_test.php` and is **not** included in release ZIPs built via `deploy.sh`. SDK maintainers can run it after core changes:
+
+```bash
+php tests/smoke_test.php
+```
+
+---
+
+## 18) Contact
 
 More information:
 

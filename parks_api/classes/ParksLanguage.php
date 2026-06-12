@@ -41,9 +41,6 @@ class ParksLanguage
 
 	/**
 	 * Constructor
-	 *
-	 * @param string $lang_id
-	 * @param ParksAPI $api
 	 */
 	public function __construct(string $lang_id, ParksAPI $api)
 	{
@@ -87,8 +84,6 @@ class ParksLanguage
 
 	/**
 	 * Get language string
-	 *
-	 * @param string $key
 	 */
 	public function get(string $key): string
 	{

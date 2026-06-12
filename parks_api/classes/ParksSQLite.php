@@ -41,8 +41,6 @@ class ParksSQLite
 
 	/**
 	 * Constructor
-	 *
-	 * @param ParksAPI $api
 	 */
 	public function __construct(ParksAPI $api)
 	{
@@ -83,7 +81,7 @@ class ParksSQLite
 			$dsn = 'sqlite:' . $this->path;
 			$this->connection = method_exists(PDO::class, 'connect') ? PDO::connect($dsn) : new PDO($dsn);
 		} catch (PDOException $e) {
-			die('Connect Error: ' . $e->getMessage());
+			throw new RuntimeException('Connect Error: ' . $e->getMessage(), 0, $e);
 		}
 
 		// Return false instead of throwing exceptions (like mysqli did)
@@ -117,11 +115,11 @@ class ParksSQLite
 
 		$schema = file_get_contents(__DIR__ . '/../database/schema.sql');
 		if (empty($schema)) {
-			die('The database schema file does not exist.');
+			throw new RuntimeException('The database schema file does not exist.');
 		}
 
 		if ($this->connection->exec($schema) === false) {
-			die('The database schema could not be created: ' . $this->get_last_error());
+			throw new RuntimeException('The database schema could not be created: ' . $this->get_last_error());
 		}
 
 	}
@@ -194,8 +192,6 @@ class ParksSQLite
 
 	/**
 	 * Escape string value for SQL
-	 *
-	 * @param mixed $value
 	 */
 	public function escape(mixed $value): string
 	{
@@ -207,8 +203,6 @@ class ParksSQLite
 
 	/**
 	 * Query database
-	 *
-	 * @param string $sql
 	 */
 	public function query(string $sql): ParksSQLiteResult|bool
 	{
@@ -232,15 +226,6 @@ class ParksSQLite
 
 	/**
 	 * Get rows from table
-	 *
-	 * @param string $table
-	 * @param ?array $where
-	 * @param ?array $joins
-	 * @param ?array $select
-	 * @param ?string $limit
-	 * @param ?string $offset
-	 * @param ?array $left_outer_joins
-	 * @param ?string $order_by
 	 */
 	public function get(
 		string $table,
@@ -309,9 +294,6 @@ class ParksSQLite
 
 	/**
 	 * Insert new row into database table
-	 *
-	 * @param string $table
-	 * @param array $fields
 	 */
 	public function insert(string $table, array $fields): bool
 	{
@@ -349,10 +331,6 @@ class ParksSQLite
 
 	/**
 	 * Update existing rows in database table
-	 *
-	 * @param string $table
-	 * @param array $fields
-	 * @param ?array $where
 	 */
 	public function update(string $table, array $fields, ?array $where = null): bool
 	{
@@ -395,9 +373,6 @@ class ParksSQLite
 
 	/**
 	 * Delete rows from database table
-	 *
-	 * @param string $table
-	 * @param array $where
 	 */
 	public function delete(string $table, array $where = []): bool
 	{
@@ -425,10 +400,6 @@ class ParksSQLite
 	/**
 	 * Register a custom SQL function
 	 * (PDO::sqliteCreateFunction is deprecated since PHP 8.5)
-	 *
-	 * @param string $name
-	 * @param callable $callback
-	 * @param int $num_args
 	 */
 	private function _create_function(string $name, callable $callback, int $num_args): void
 	{

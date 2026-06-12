@@ -22,7 +22,7 @@ $config = [];
 | put your Hashkey in here.
 |
 */
-$config['api_hash'] = "b5f8cc3daccc5bec1e8ce711f76fb6eef351590a";
+$config['api_hash'] = "insert-your-hash-here";
 
 
 /*
@@ -33,7 +33,7 @@ $config['api_hash'] = "b5f8cc3daccc5bec1e8ce711f76fb6eef351590a";
 | Set your park ID here.
 |
 */
-$config['park_id'] = 2;
+$config['park_id'] = 0;
 
 
 /*
@@ -63,6 +63,18 @@ $config['seo_url_reset_slug'] = 'reset';
 |
 */
 $config['db_path'] = "data/park-offers.sqlite";
+
+
+/*
+|--------------------------------------------------------------------------
+| cURL SSL verification
+|--------------------------------------------------------------------------
+|
+| Verify SSL certificates for export requests to angebote.paerke.ch.
+| Set to false only when your environment cannot validate HTTPS.
+|
+*/
+$config['curl_verify_ssl'] = true;
 
 
 /*

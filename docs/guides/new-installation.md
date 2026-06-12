@@ -4,7 +4,7 @@ This guide describes the first-time setup of the SDK in a new environment.
 
 ## Prerequisites
 
-- PHP `>= 8.2` and `<= 8.4`
+- PHP `>= 8.2` and `<= 8.5`
 - PHP `pdo_sqlite` extension (bundled with PHP by default), SQLite `>= 3.25`
 - cURL extension enabled
 - Write permissions for `parks_api/data/` (or your configured `db_path` directory)
@@ -17,9 +17,9 @@ No database server is required: the SDK stores all data in a local SQLite file t
 1. Download the latest API release ZIP into your local `downloads/releases` workflow.
 2. Upload/copy the `parks_api` directory into your project.
 3. Configure `parks_api/config.php`.
-   - Set `park_id`.
-   - Set `api_hash` from `https://angebote.paerke.ch/en/settings`.
+   - Set `park_id` and `api_hash` from `https://angebote.paerke.ch/en/settings`.
    - Optionally adjust `db_path` (default: `data/park-offers.sqlite`).
+   - See `config.example.php` for optional keys such as `curl_verify_ssl`.
 4. Run the first import:
    - CLI: `php parks_api/scripts/cron.php`
    - Web: `[Your project path]/parks_api/scripts/cron.php`

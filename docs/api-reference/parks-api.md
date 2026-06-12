@@ -140,11 +140,19 @@ Parameters:
 ### `update($force = false)`
 
 - Runs synchronization from XML export endpoints.
-- Outputs JSON status to the response (`status`, `messsage`).
+- Outputs JSON status to the response (`status`, `message`). The legacy key `messsage` is still included for backward compatibility.
+- Returns `status: false` when the offer import fails (for example invalid `api_hash` or unreachable XML export).
 
 Parameters:
 
 - `$force` (`bool`): force full update path in import process.
+
+### `forScript()` / `forMigration()`
+
+Static factories for CLI scripts (no page rendering bootstrap):
+
+- `ParksAPI::forScript()` — used by `cron.php` and `force_update.php`
+- `ParksAPI::forMigration()` — used by `migrate.php` (also skips `_setup()`)
 
 ### `migrate()`
 

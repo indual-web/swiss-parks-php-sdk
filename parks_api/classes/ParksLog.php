@@ -29,8 +29,6 @@ class ParksLog
 
 	/**
 	 * Constructor
-	 *
-	 * @param ParksAPI $api
 	 */
 	public function __construct(ParksAPI $api)
 	{
@@ -47,8 +45,6 @@ class ParksLog
 
 	/**
 	 * Log error message
-	 *
-	 * @param string $message
 	 */
 	public function error(string $message): void
 	{
@@ -59,8 +55,6 @@ class ParksLog
 
 	/**
 	 * Log info message
-	 *
-	 * @param string $message
 	 */
 	public function info(string $message): void
 	{
@@ -71,9 +65,6 @@ class ParksLog
 
 	/**
 	 * Log message
-	 *
-	 * @param string $level
-	 * @param string $message
 	 */
 	private function _log(string $level, string $message): void
 	{

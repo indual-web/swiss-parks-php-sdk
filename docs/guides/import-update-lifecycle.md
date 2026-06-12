@@ -32,3 +32,4 @@ This guide documents the regular update flow, forced updates, and migration comm
 - [Guide index](./index.md)
 - [New installation](./new-installation.md)
 - [Upgrade guide](./upgrading.md)
+- [Version migrations](./migrations/README.md)

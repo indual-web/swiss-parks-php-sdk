@@ -62,11 +62,8 @@ class ParksImport
 
 	/**
 	 * Method for importing xml map layers into database
-	 *
-	 * @param string $url
-	 * @return void
 	 */
-	public function import_map_layers(string $url): void
+	public function import_map_layers(string $url): bool
 	{
 
 		// Load xml
@@ -156,29 +153,29 @@ class ParksImport
 			}
 
 			$this->api->db->commit();
+
+			return true;
 		}
 
-		// Log error
 		else {
 			$this->api->logger->info("XML is not valid: " . $url);
 		}
+
+		return false;
 	}
 
 
 
 	/**
 	 * Method for importing xml offers into database
-	 *
-	 * @param string $url
-	 * @param bool $force
-	 * @return void
 	 */
-	public function import(string $url, bool $force = false): void
+	public function import(string $url, bool $force = false): bool
 	{
 
 		if (empty($url)) {
 			$this->api->logger->error("No URL for XML file specified");
-			die("No URL for XML file specified");
+
+			return false;
 		}
 
 		// Speed up bulk writes with a single transaction
@@ -959,28 +956,27 @@ class ParksImport
 
 			// Log message
 			$this->api->logger->info($message);
+
+			$this->api->db->commit();
+
+			return true;
 		}
 
-		// XML error
 		else {
-
-			// Log error
 			$this->api->logger->info("XML is not valid: " . $url);
-
 		}
 
 		$this->api->db->commit();
+
+		return false;
 	}
 
 
 
 	/**
 	 * Clean up offers (remove inactive offers with active id)
-	 *
-	 * @param mixed $url
-	 * @return void
 	 */
-	public function clean_up_offers(string $url): void
+	public function clean_up_offers(string $url): bool
 	{
 
 		// Load xml
@@ -1024,20 +1020,21 @@ class ParksImport
 			} else {
 				$this->api->logger->info("Deleted " . $ctr_deleted . " inactive offer(s).");
 			}
+
+			return true;
 		}
 
-		// Log error and exit
 		else {
 			$this->api->logger->info("XML is not valid: " . $url);
 		}
+
+		return false;
 	}
 
 
 
 	/**
 	 * Synchronise target groups
-	 *
-	 * @return void
 	 */
 	public function sync_target_groups(): void
 	{
@@ -1056,8 +1053,6 @@ class ParksImport
 	
 	/**
 	 * Synchronise fields of activity
-	 *
-	 * @return void
 	 */
 	public function sync_fields_of_activity(): void
 	{
@@ -1077,8 +1072,6 @@ class ParksImport
 	
 	/**
 	 * Synchronise categories
-	 *
-	 * @return void
 	 */
 	public function sync_categories(): void
 	{
@@ -1098,8 +1091,6 @@ class ParksImport
 
 	/**
 	 * Synchronise accessibility dropdown list
-	 *
-	 * @return void
 	 */
 	public function sync_accessibilities(): void
 	{
@@ -1118,9 +1109,6 @@ class ParksImport
 
 	/**
 	 * Private method for retrieving the root category
-	 *
-	 * @param int $category_id
-	 * @return integer|bool
 	 */
 	private function _get_root_category(int $category_id): int|false
 	{
@@ -1145,11 +1133,6 @@ class ParksImport
 
 	/**
 	 * Private method for inserting or updating db record
-	 *
-	 * @param string $stable
-	 * @param array $fields
-	 * @param array $where
-	 * @return mixed
 	 */
 	private function _insert_or_update(string $table, array $fields, array $where): bool
 	{
@@ -1178,10 +1161,6 @@ class ParksImport
 
 	/**
 	 * Private method for parsing Date/Time
-	 *
-	 * @param string $value
-	 * @param string $format
-	 * @return string
 	 */
 	private function _datetime(string $value, string $format = "Y-m-d H:i:s"): string
 	{
@@ -1193,9 +1172,6 @@ class ParksImport
 
 	/**
 	 * Private method for parsing Address from XML
-	 *
-	 * @param object $contact
-	 * @return string
 	 */
 	private function _address(object $contact): string
 	{
@@ -1254,9 +1230,6 @@ class ParksImport
 
 	/**
 	 * Get last ID
-	 *
-	 * @param mixed $table
-	 * @return mixed
 	 */
 	private function _get_last_id(string $name_id, string $table): int
 	{

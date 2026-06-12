@@ -134,12 +134,14 @@ class ParksAPI
 
 	/**
 	 * Constructor
-	 *
-	 * @param string $language
-	 * @param string $hash
-	 * @param string $page_url
 	 */
-	public function __construct(string $language = '', string $hash = '', string $page_url = '')
+	public function __construct(
+		string $language = '',
+		string $hash = '',
+		string $page_url = '',
+		bool $bootstrap_rendering = true,
+		bool $bootstrap_setup = true
+	)
 	{
 
 		// Get config
@@ -178,84 +180,110 @@ class ParksAPI
 			// Load system config
 			$this->_load_system_config();
 
-			// Instance of ParksView
-			if (class_exists($this->config['class_view'])) {
-				$this->view = new $this->config['class_view']($this);
-			} else {
-				echo 'The custom view file does not exist.';
-				exit();
+			if ($bootstrap_setup) {
+				$this->_setup();
 			}
 
-			// Init setup
-			$this->_setup();
+			if ($bootstrap_rendering) {
 
-			// Init seo urls
-			$page_slug = ! empty($this->config['seo_url_page_slug']) ? $this->config['seo_url_page_slug'] : '';
-			$reset_slug = ! empty($this->config['seo_url_reset_slug']) ? $this->config['seo_url_reset_slug'] : '';
+				// Instance of ParksView
+				if (class_exists($this->config['class_view'])) {
+					$this->view = new $this->config['class_view']($this);
+				} else {
+					echo 'The custom view file does not exist.';
+					exit();
+				}
 
-			// Init session
-			if (! empty($this->config['use_sessions'])) {
+				// Init seo urls
+				$page_slug = ! empty($this->config['seo_url_page_slug']) ? $this->config['seo_url_page_slug'] : '';
+				$reset_slug = ! empty($this->config['seo_url_reset_slug']) ? $this->config['seo_url_reset_slug'] : '';
 
-				$session_url = $page_url;
+				// Init session
+				if (! empty($this->config['use_sessions'])) {
 
-				if ($session_url == '') {
+					$session_url = $page_url;
 
-					// Set session name for seo urls
-					$session_url = $this->view->script_url;
-					if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && ! empty($session_url)) {
+					if ($session_url == '') {
 
-						// Clean url from double slashes
-						$session_url = str_replace('//', '/', $session_url);
+						// Set session name for seo urls
+						$session_url = $this->view->script_url;
+						if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && ! empty($session_url)) {
 
-						// Clean url from page param
-						$session_url = preg_replace('/\/' . $page_slug . '\/(\d*)/m', '', $session_url);
+							// Clean url from double slashes
+							$session_url = str_replace('//', '/', $session_url);
 
-						// Clean url from reset param
-						$session_url = str_replace('/' . $reset_slug, '', $session_url);
+							// Clean url from page param
+							$session_url = preg_replace('/\/' . $page_slug . '\/(\d*)/m', '', $session_url);
 
-						// Remove last slash
-						$session_url = rtrim($session_url, '/');
+							// Clean url from reset param
+							$session_url = str_replace('/' . $reset_slug, '', $session_url);
 
+							// Remove last slash
+							$session_url = rtrim($session_url, '/');
+
+						}
+						
 					}
-					
+
+					// Set session
+					$this->session_name = $this->config['session_name'] . '_' . md5($session_url ?? 'default');
+
+					// Get favorites
+					$this->favorites_cookie_name = $this->config['session_name'] . '_favorites';
+					if (! empty($_COOKIE[$this->favorites_cookie_name])) {
+						$this->favorites = unserialize($_COOKIE[$this->favorites_cookie_name], ['allowed_classes' => false]) ?: [];
+					}
+
 				}
 
-				// Set session
-				$this->session_name = $this->config['session_name'] . '_' . md5($session_url ?? 'default');
+				// Init reset filter
+				$reset_filter = false;
 
-				// Get favorites
-				$this->favorites_cookie_name = $this->config['session_name'] . '_favorites';
-				if (! empty($_COOKIE[$this->favorites_cookie_name])) {
-					$this->favorites = unserialize($_COOKIE[$this->favorites_cookie_name], ['allowed_classes' => false]) ?: [];
+				// Reset filter with seo urls
+				if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
+					if (! empty($this->view->script_url) && strstr($this->view->script_url, '/' . $reset_slug)) {
+						$reset_filter = true;
+					}
 				}
 
-			}
-
-			// Init reset filter
-			$reset_filter = false;
-
-			// Reset filter with seo urls
-			if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
-				if (! empty($this->view->script_url) && strstr($this->view->script_url, '/' . $reset_slug)) {
+				// Reset filter with default urls
+				elseif (isset($_GET[$this->config['url_param_prefix'] . 'reset'])) {
 					$reset_filter = true;
 				}
-			}
 
-			// Reset filter with default urls
-			elseif (isset($_GET[$this->config['url_param_prefix'] . 'reset'])) {
-				$reset_filter = true;
-			}
+				// Reset or init filter
+				if ($reset_filter === true) {
+					$this->_reset_filter();
+				} else {
+					$this->_init_filter();
+				}
 
-			// Reset or init filter
-			if ($reset_filter === true) {
-				$this->_reset_filter();
-			} else {
-				$this->_init_filter();
+				// Load template
+				$this->load_template();
 			}
-
-			// Load template
-			$this->load_template();
 		}
+	}
+
+
+
+	/**
+	 * CLI bootstrap without page rendering (cron, force_update)
+	 */
+	public static function forScript(): self
+	{
+
+		return new self('', '', '', false);
+	}
+
+
+
+	/**
+	 * CLI bootstrap for migrate.php (no rendering, no _setup)
+	 */
+	public static function forMigration(): self
+	{
+
+		return new self('', '', '', false, false);
 	}
 
 
@@ -278,26 +306,32 @@ class ParksAPI
 			$xml = $this->config['xml_export_offer_url'] . $this->hash;
 			$xml_map_layer = $this->config['xml_export_map_layer_url'] . $this->hash;
 			$xml_active_offers = $this->config['xml_export_active_offers'] . $this->hash;
-	
-			// Import data from XML into database
-			$this->import->import($xml, $force);
-			$this->import->import_map_layers($xml_map_layer);
-			$this->import->clean_up_offers($xml_active_offers);
 
-			// Return status as json
-			echo json_encode([
-				'status' => true,
-				'messsage' => 'The offers were successfully synchronised.',
-			]);
+			// Import data from XML into database
+			$import_ok = $this->import->import($xml, $force);
+			$map_layers_ok = $this->import->import_map_layers($xml_map_layer);
+			$cleanup_ok = $this->import->clean_up_offers($xml_active_offers);
+
+			if ($import_ok) {
+				$this->_update_api_version();
+
+				$message = 'The offers were successfully synchronised.';
+				if (! $map_layers_ok) {
+					$message .= ' Map layer import failed.';
+				}
+				if (! $cleanup_ok) {
+					$message .= ' Inactive offer cleanup failed.';
+				}
+
+				$this->_output_update_json(true, $message);
+			} else {
+				$this->_output_update_json(false, 'Offer import failed. Check logs and api_hash configuration.');
+			}
 
 
 		} catch (Exception $e) {
 
-			// Return error as json
-			echo json_encode([
-				'status' => false,
-				'messsage' => 'ADB sync exception: ' . $e->getMessage(),
-			]);
+			$this->_output_update_json(false, 'ADB sync exception: ' . $e->getMessage());
 
 		}
 
@@ -1109,9 +1143,8 @@ class ParksAPI
 				$this->db->insert('api', (array)$this->api);
 			}
 
-			if (version_compare(API_VERSION, $this->api->version)) {
-				$logger = new ParksLog($this);
-				$logger->info('The current API version is out of date. Please update database.');
+			if (version_compare((string) API_VERSION, (string) $this->api->version, '>')) {
+				$this->logger->info('The current API version is out of date. Please run scripts/migrate.php.');
 			}
 
 			if (! $this->api->initialized) {
@@ -1121,14 +1154,22 @@ class ParksAPI
 				$xml_map_layer =  $this->config['xml_export_map_layer_url'] . $this->hash;
 
 				// Import data from XML into database
-				$this->import->import($xml);
+				$import_ok = $this->import->import($xml);
 				$this->import->import_map_layers($xml_map_layer);
 
-				$this->api->initialized = true;
-				$this->db->update('api', array('initialized' => 1));
+				if ($import_ok) {
+					$this->api->initialized = 1;
+					$this->db->update('api', array(
+						'initialized' => 1,
+						'version' => API_VERSION,
+					));
+					$this->api->version = API_VERSION;
+				} else {
+					$this->logger->error('Initial import failed. API is not initialized. Check api_hash and run scripts/force_update.php.');
+				}
 			}
 		} else {
-			die("API could not be initialized.");
+			throw new RuntimeException('API could not be initialized.');
 		}
 	}
 
@@ -1669,8 +1710,12 @@ class ParksAPI
 	{
 
 		// Load config file
-		if (file_exists($config_path = realpath(dirname(__FILE__)) . '/../config.php')) {
+		$config_dir = realpath(dirname(__FILE__)) . '/..';
+		if (file_exists($config_path = $config_dir . '/config.php')) {
 			require($config_path);
+			if (file_exists($config_dir . '/config.local.php')) {
+				require($config_dir . '/config.local.php');
+			}
 		} else {
 			echo 'The configuration file does not exist.';
 			exit();
@@ -1886,8 +1931,6 @@ class ParksAPI
 
 	/**
 	 * Load external xml source
-	 *
-	 * @param string $url
 	 * @return mixed
 	 */
 	public function load_external_xml(string $url): SimpleXMLElement|false
@@ -1902,9 +1945,10 @@ class ParksAPI
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
-			// No SSL verification
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			// SSL verification (disable via config only when required)
+			$verify_ssl = $this->config['curl_verify_ssl'] ?? true;
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl ? 2 : 0);
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
 
 			// Get external data
 			$external_data = curl_exec($ch);
@@ -1924,42 +1968,34 @@ class ParksAPI
 
 
 	/**
-	 * Log migration
-	 * 
-	 * @param int $version_to
-	 * @return bool
+	 * Update stored API version after a successful import or migration
 	 */
-	public function log_migration($version_to) 
+	private function _update_api_version(): void
 	{
 
-		// Populate payload
-		$payload = array(
-			'api_version' => ($version_to > 0 ? $version_to : API_VERSION),
-			'php_version' => phpversion(),
-			'url' => (! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['REQUEST_URI'])) ? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] : 'CLI',
-			'hash' => $this->config['api_hash'] ?? '',
-			'park_id' => $this->config['park_id'] ?? '',
-			'file_path' => __FILE__,
-			'ip' => $_SERVER['REMOTE_ADDR'] ?? ''
-		);
+		$this->db->update('api', array('version' => API_VERSION));
 
-		// Send payload to log server
-		$ch = curl_init();
-		curl_setopt($ch, CURLOPT_URL, 'https://angebote.paerke.ch/migrate/log_api_migration');
-		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-		curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_REFERER'] ?? '');
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_exec($ch);
-		curl_close($ch);
-
-		return true;
+		if (! empty($this->api)) {
+			$this->api->version = API_VERSION;
+		}
 
 	}
 
 
-	
+
+	/**
+	 * Output JSON status for update scripts
+	 */
+	private function _output_update_json(bool $status, string $message): void
+	{
+
+		echo json_encode([
+			'status' => $status,
+			'message' => $message,
+			'messsage' => $message,
+		]);
+
+	}
+
+
 }

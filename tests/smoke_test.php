@@ -1,12 +1,14 @@
 <?php
-// Temporary smoke test for the SQLite migration (deleted after the run)
+// Smoke test for SQLite-backed queries (no network access required)
 
 error_reporting(E_ALL);
 ini_set('display_errors', '1');
 
-require __DIR__ . '/parks_api/autoload.php';
+require __DIR__ . '/../parks_api/autoload.php';
 
 $failures = 0;
+$test_db = 'data/test_park-offers.sqlite';
+
 function check(string $name, bool $condition): void
 {
 
@@ -22,8 +24,8 @@ function check(string $name, bool $condition): void
 // Build API instance without running the constructor (no network access)
 $api = (new ReflectionClass('ParksAPI'))->newInstanceWithoutConstructor();
 $api->config = [
-	'absolute_path' => realpath(__DIR__ . '/parks_api'),
-	'db_path' => 'data/test_parks.sqlite',
+	'absolute_path' => realpath(__DIR__ . '/../parks_api'),
+	'db_path' => $test_db,
 	'log_directory' => 'log/',
 	'available_languages' => ['de', 'fr', 'it', 'en'],
 	'language_independence' => true,
@@ -38,7 +40,9 @@ $api->config = [
 ];
 
 // Remove leftovers from previous runs
-@unlink(__DIR__ . '/parks_api/data/test_parks.sqlite');
+foreach (['', '-wal', '-shm'] as $suffix) {
+	@unlink(__DIR__ . '/../parks_api/' . $test_db . $suffix);
+}
 
 $api->lang = new ParksLanguage('de', $api);
 $api->lang_id = 'de';
@@ -193,7 +197,9 @@ check('recreate empties db', $api->db->get('offer')->num_rows === 0);
 check('recreate keeps schema', $api->db->query("SELECT * FROM api") !== false);
 
 // Cleanup
-@unlink(__DIR__ . '/parks_api/data/test_parks.sqlite');
+foreach (['', '-wal', '-shm'] as $suffix) {
+	@unlink(__DIR__ . '/../parks_api/' . $test_db . $suffix);
+}
 
 echo $failures === 0 ? "\nALL TESTS PASSED\n" : "\n" . $failures . " TESTS FAILED\n";
 exit($failures === 0 ? 0 : 1);

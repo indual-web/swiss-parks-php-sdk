@@ -1,4 +1,7 @@
 /parks_api/log/*
 /parks_api/data/*
+/parks_api/config.local.php
 /deploy.sh
 .DS_Store
+__pycache__/
+*.pyc

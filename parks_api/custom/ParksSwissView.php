@@ -16,9 +16,6 @@ class ParksSwissView extends ParksView {
 
 	/**
 	 * Constructor
-	 *
-	 * @param ParksAPI $api
-	 * @return void
 	 */
 	public function __construct(ParksAPI $api) {
 		parent::__construct($api);

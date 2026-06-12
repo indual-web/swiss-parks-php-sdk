@@ -10,6 +10,6 @@
 // Include API
 require("../autoload.php");
 
-// Update offer data
-$api = new ParksAPI();
+// Rebuild database and run full import (no page rendering bootstrap)
+$api = ParksAPI::forMigration();
 $api->migrate();

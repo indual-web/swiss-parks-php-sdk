@@ -1,24 +1,23 @@
 ---
-description: Versionierte SQL-Dumps als Basis der Datenstruktur behandeln
-globs: downloads/dumps/database-*.sql
+description: Versioniertes SQLite-Schema als Basis der Datenstruktur behandeln
+globs: parks_api/database/schema.sql
 alwaysApply: false
 ---
 
 # Datenstruktur-Basis pro Version
 
-- Behandle `downloads/dumps/database-*.sql` als versionsspezifische SQL-Snapshots.
-- Jede Datei `database-[Version].sql` repraesentiert die Datenstruktur fuer genau diese Version.
+- Behandle `parks_api/database/schema.sql` als Schema-Quelle fuer die aktuelle API-Version (`API_VERSION` in `autoload.php`).
+- Das Schema wird beim ersten Start und bei `scripts/migrate.php` automatisch eingespielt.
 
 # Working Rules
 
-- Keine Vermischung mit Laufzeitdaten oder ad-hoc Backups.
-- Dateinamen-Pattern beibehalten: `database-[Version].sql` (z. B. `database-21.1.sql`).
-- Wenn neue Versionen hinzukommen, entsprechend neue Datei im selben Pfad ergaenzen.
+- Schema-Aenderungen immer in `parks_api/database/schema.sql` vornehmen.
+- Schema-Basis ist `schema.sql`, nicht mehr MySQL-Dumps.
+- Nach Schema-Aenderungen: `php tests/smoke_test.php` und `php parks_api/scripts/migrate.php` pruefen.
 
 # Beispiel
 
 ```text
-downloads/dumps/database-14.sql
-downloads/dumps/database-21.1.sql
-downloads/dumps/database-22.sql
+parks_api/database/schema.sql
+parks_api/autoload.php  -> define('API_VERSION', 22);
 ```

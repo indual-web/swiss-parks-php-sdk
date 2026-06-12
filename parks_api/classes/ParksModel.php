@@ -41,8 +41,6 @@ class ParksModel
 
 	/**
 	 * Constructor
-	 *
-	 * @param ParksAPI $api
 	 */
 	public function __construct(ParksAPI $api)
 	{
