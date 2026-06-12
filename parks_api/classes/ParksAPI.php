@@ -60,7 +60,7 @@ class ParksAPI
 	/**
 	 * Database object
 	 */
-	public ?ParksMySQL $db = null;
+	public ?ParksSQLite $db = null;
 
 
 	/**
@@ -166,8 +166,8 @@ class ParksAPI
 			// Instance of ParksLog
 			$this->logger = new ParksLog($this);
 
-			// Instance of ParksMySQL
-			$this->db = new ParksMySQL($this);
+			// Instance of ParksSQLite
+			$this->db = new ParksSQLite($this);
 
 			// Instance of ParksModel
 			$this->model = new ParksModel($this);
@@ -307,15 +307,19 @@ class ParksAPI
 
 	/**
 	 * Migrate database updates
+	 * Rebuilds the database from scratch and runs a full import
 	 *
 	 * @return void
 	 */
 	public function migrate()
 	{
 
-		// Migrate database to newer versions
-		$migration = new ParksMigration($this);
-		$migration->start();
+		// Drop and recreate database file with current schema
+		$this->db->recreate();
+
+		// Re-run setup (triggers a full import)
+		$this->api = null;
+		$this->_setup();
 
 	}
 
@@ -501,7 +505,7 @@ class ParksAPI
 
 			// Get all categories where at least one offer exists
 			$offer_categories = $this->_get_offers($park_id, $categories, null, NULL, $filter, true, true, false, false, true);
-			if (mysqli_num_rows($offer_categories) > 0) {
+			if ($offer_categories->num_rows > 0) {
 				$categories = [];
 				foreach ($offer_categories as $offer_category) {
 					foreach ($offer_category as $single_category) {
@@ -1094,11 +1098,13 @@ class ParksAPI
 		$q_api = $this->db->get('api');
 
 		if ($q_api) {
-			if (mysqli_num_rows($q_api) > 0) {
-				$this->api = mysqli_fetch_object($q_api);
+			if ($q_api->num_rows > 0) {
+				$this->api = $q_api->fetch_object();
 			} else {
-				$this->api->initialized = false;
-				$this->api->version = API_VERSION;
+				$this->api = (object) array(
+					'initialized' => 0,
+					'version' => API_VERSION,
+				);
 
 				$this->db->insert('api', (array)$this->api);
 			}
@@ -1902,9 +1908,6 @@ class ParksAPI
 
 			// Get external data
 			$external_data = curl_exec($ch);
-
-			// Close CURL
-			curl_close($ch);
 
 			// Error: No data found
 			if (empty($external_data)) {

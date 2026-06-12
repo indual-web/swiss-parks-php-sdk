@@ -9,8 +9,10 @@
 
 ### Database
 
-- Ensure proper indexes on common join/filter fields (for example `offer_id`, `park_id`, language/link table columns).
-- Use `EXPLAIN` for slow queries and optimize indexes based on real workloads.
+- The SDK uses a local SQLite file (WAL mode), so reads during a running import are non-blocking.
+- The shipped schema (`parks_api/database/schema.sql`) already contains indexes on common join/filter fields (for example `offer_id`, `park_id`, language/link table columns).
+- Use `EXPLAIN QUERY PLAN` for slow queries and optimize indexes based on real workloads.
+- Place the `db_path` directory on fast local storage (avoid network filesystems for SQLite files).
 
 ### Operations
 
@@ -22,7 +24,7 @@
 1. Download the new SDK version.
 2. Update core files.
 3. Re-apply/compare only your custom layers (`custom/`, custom templates, `config.php`).
-4. Run migration if required.
+4. Run `scripts/migrate.php` (rebuilds the SQLite database and runs a full import).
 5. Validate:
    - filter
    - list

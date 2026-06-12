@@ -75,6 +75,9 @@ class ParksImport
 		// Check XML
 		if ($this->xml !== false) {
 
+			// Speed up bulk writes with a single transaction
+			$this->api->db->begin();
+
 			// Remove all layers
 			$this->api->db->delete('map_layer');
 
@@ -101,7 +104,7 @@ class ParksImport
 
 					// Insert map layer
 					if (! $this->api->db->insert('map_layer', $map_layer)) {
-						$this->api->logger->error("MySQL Error: " . $this->api->db->get_last_error());
+						$this->api->logger->error("Database error: " . $this->api->db->get_last_error());
 						continue;
 					}
 					else {
@@ -138,7 +141,7 @@ class ParksImport
 							if (! empty($map_i18n_fields)) {
 								foreach ($map_i18n_fields as $i18n) {
 									if (! $this->api->db->insert('map_layer_i18n', $i18n)) {
-										$this->api->logger->error("MySQL Error: " . $this->api->db->get_last_error());
+										$this->api->logger->error("Database error: " . $this->api->db->get_last_error());
 										continue;
 									}
 								}
@@ -151,6 +154,8 @@ class ParksImport
 				// Log
 				$this->api->logger->info("Map layer import finished successfully.");
 			}
+
+			$this->api->db->commit();
 		}
 
 		// Log error
@@ -176,6 +181,9 @@ class ParksImport
 			die("No URL for XML file specified");
 		}
 
+		// Speed up bulk writes with a single transaction
+		$this->api->db->begin();
+
 		// Sync target groups
 		$this->sync_target_groups();
 
@@ -190,7 +198,7 @@ class ParksImport
 
 		// Add param to url with last import timestamp
 		if ($force !== true) {
-			$api_info = mysqli_fetch_assoc($this->api->db->get('api'));
+			$api_info = $this->api->db->get('api')->fetch_assoc();
 			$last_import = $api_info['last_import'];
 			if (! empty($last_import)) {
 				$url .= '?since=' . $last_import;
@@ -274,7 +282,7 @@ class ParksImport
 
 							// Error handling
 							if (! $this->_insert_or_update('offer', $fields, array('offer_id' => $offer_id))) {
-								$this->api->logger->error("MySQL Error (offer id " . $offer_id . "): " . $this->api->db->get_last_error());
+								$this->api->logger->error("Database error (offer id " . $offer_id . "): " . $this->api->db->get_last_error());
 								continue;
 							}
 
@@ -571,7 +579,7 @@ class ParksImport
 							}
 
 							// Get root category id
-							$root_category_id = $this->_get_root_category($offer->Categories->Category[0]->attributes()->identifier);
+							$root_category_id = $this->_get_root_category(intval($offer->Categories->Category[0]->attributes()->identifier));
 
 							// Subscription
 							if (($root_category_id == CATEGORY_EVENT) || ($root_category_id == CATEGORY_BOOKING)) {
@@ -929,7 +937,7 @@ class ParksImport
 
 				// Iterate all existing offers
 				$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
-				while ($offer = mysqli_fetch_assoc($all_offers)) {
+				while ($offer = $all_offers->fetch_assoc()) {
 					if (! in_array($offer['offer_id'], $offers_checklist)) {
 						$this->api->db->delete('offer', array('offer_id' => $offer['offer_id']));
 						$this->api->logger->info("\tDeleted offer with ID " . $offer['offer_id']);
@@ -960,6 +968,8 @@ class ParksImport
 			$this->api->logger->info("XML is not valid: " . $url);
 
 		}
+
+		$this->api->db->commit();
 	}
 
 
@@ -992,10 +1002,11 @@ class ParksImport
 
 			// Remove inactive offers
 			$this->api->logger->info("Clean up offers");
+			$this->api->db->begin();
 			$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
 
 			// Iterate all existing offers
-			while ($offer = mysqli_fetch_assoc($all_offers)) {
+			while ($offer = $all_offers->fetch_assoc()) {
 
 				// Delete inactive offer
 				if (! in_array($offer['offer_id'], $active_offers)) {
@@ -1004,6 +1015,8 @@ class ParksImport
 					$ctr_deleted++;
 				}
 			}
+
+			$this->api->db->commit();
 
 			// Log result
 			if ($ctr_deleted == 0) {
@@ -1115,8 +1128,8 @@ class ParksImport
 
 			while ($category_id > 0) {
 				$q_category = $this->api->db->get('category', array('category_id' => $category_id));
-				if (mysqli_num_rows($q_category) > 0) {
-					$category = mysqli_fetch_object($q_category);
+				if ($q_category->num_rows > 0) {
+					$category = $q_category->fetch_object();
 					$category_id = $category->parent_id;
 					$last_category_id = $category->category_id;
 				}
@@ -1138,7 +1151,7 @@ class ParksImport
 	 * @param array $where
 	 * @return mixed
 	 */
-	private function _insert_or_update(string $table, array $fields, array $where): mysqli_result|bool
+	private function _insert_or_update(string $table, array $fields, array $where): bool
 	{
 		if (! empty($table) && ! empty($fields) && ! empty($where)) {
 
@@ -1146,7 +1159,7 @@ class ParksImport
 			$exists = $this->api->db->get($table, $where);
 
 			// Update db record
-			if (mysqli_num_rows($exists) > 0) {
+			if ($exists->num_rows > 0) {
 				return $this->api->db->update($table, $fields, $where);
 			}
 
@@ -1248,7 +1261,7 @@ class ParksImport
 	private function _get_last_id(string $name_id, string $table): int
 	{
 		$query =  $this->api->db->query('SELECT MAX(' . $name_id . ') as id FROM ' . $table);
-		$result = mysqli_fetch_object($query);
+		$result = $query->fetch_object();
 
 		return $result->id;
 	}

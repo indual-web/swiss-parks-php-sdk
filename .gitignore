@@ -1,3 +1,4 @@
 /parks_api/log/*
+/parks_api/data/*
 /deploy.sh
 .DS_Store

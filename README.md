@@ -1,6 +1,6 @@
 # PHP SDK Documentation - Swiss Parks Network
 
-This PHP SDK imports offer data from an XML export into a local MySQL/MariaDB database and renders filter, list, map, and detail views for server-side PHP integrations.
+This PHP SDK imports offer data from an XML export into a local SQLite database file (created automatically, no database server required) and renders filter, list, map, and detail views for server-side PHP integrations.
 
 ## Documentation structure
 
@@ -22,7 +22,8 @@ This PHP SDK imports offer data from an XML export into a local MySQL/MariaDB da
 ## 1) Requirements
 
 - PHP `>= 8.2` and `<= 8.4`
-- MySQL or MariaDB
+- PHP `pdo_sqlite` extension (bundled with PHP by default), SQLite `>= 3.25`
+- Write permissions for the data directory (`parks_api/data/` or your configured `db_path`)
 - Write permissions for the log directory (`parks_api/log/` or your configured path)
 - PHP cURL extension enabled
 - Outbound HTTPS access to `angebote.paerke.ch` and related API endpoints
@@ -50,13 +51,13 @@ This PHP SDK imports offer data from an XML export into a local MySQL/MariaDB da
 
 1. **Install**
    - Place the required API release ZIP in `downloads/`.
-   - Extract the release ZIP and import the base schema from `database/database.sql`.
+   - Extract the release ZIP and copy the `parks_api` directory into your project.
 2. **Upgrade**
    - Update SDK/API files to the target release.
 3. **Migrate**
-   - Run `php parks_api/scripts/migrate.php` to apply schema/data migrations.
+   - Run `php parks_api/scripts/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
 
-The base schema `database/database.sql` is part of each downloaded release package.
+The SQLite database file is created automatically on first run from `parks_api/database/schema.sql`; no manual schema import is needed.
 
 ---
 
@@ -68,9 +69,9 @@ Use the dedicated guide:
 
 Quick summary:
 
-1. Install SDK files and import `database/database.sql`.
-2. Configure `parks_api/config.php` (`api_hash`, DB credentials, `park_id`).
-3. Run first import: `php parks_api/scripts/cron.php`.
+1. Install SDK files.
+2. Configure `parks_api/config.php` (`api_hash`, `park_id`).
+3. Run first import: `php parks_api/scripts/cron.php` (creates the SQLite database automatically).
 4. Verify data import and configure regular cron execution.
 
 ---
@@ -83,11 +84,12 @@ Use the dedicated guide:
 
 Quick summary:
 
-1. Backup files and database.
-2. Replace core SDK files (`autoload.php`, `classes/`).
-3. Run migration: `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`.
-4. Run forced import: `php /{PATH-TO-YOUR-API-FOLDER}/scripts/force_update.php`.
-5. Validate filter/list/map/detail, console output, and logs.
+1. Backup files.
+2. Replace core SDK files (`autoload.php`, `classes/`, `database/`).
+3. Run migration: `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php` (rebuilds the SQLite database and runs a full import).
+4. Validate filter/list/map/detail, console output, and logs.
+
+**Breaking change since the SQLite switch:** MySQL/MariaDB is no longer used. Existing installations must remove the old DB credentials from `config.php` (replaced by `db_path`); all data is re-imported automatically from the XML export.
 
 ---
 

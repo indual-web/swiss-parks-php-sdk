@@ -8,8 +8,8 @@ This guide documents the most important runtime settings in `parks_api/config.ph
   - Hash from your export configuration on `angebote.paerke.ch`.
 - `park_id`
   - Enter the park ID; you can obtain it by contacting the respective park.
-- `db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`
-  - Database connection credentials. `db_port` defaults to `3306` if omitted.
+- `db_path`
+  - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `parks_api/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
 
 ## Runtime mode: single park vs network-wide
 

@@ -22,7 +22,7 @@ $config = [];
 | put your Hashkey in here.
 |
 */
-$config['api_hash'] = "insert-your-hash-here";
+$config['api_hash'] = "b5f8cc3daccc5bec1e8ce711f76fb6eef351590a";
 
 
 /*
@@ -33,7 +33,7 @@ $config['api_hash'] = "insert-your-hash-here";
 | Set your park ID here.
 |
 */
-$config['park_id'] = 0;
+$config['park_id'] = 2;
 
 
 /*
@@ -53,18 +53,16 @@ $config['seo_url_reset_slug'] = 'reset';
 
 /*
 |--------------------------------------------------------------------------
-| MySQL Database
+| SQLite Database
 |--------------------------------------------------------------------------
 |
-| A MySQL Database is required to use the API.
-| Imported offers will be stored there for better performance.
+| Imported offers are stored in a local SQLite database file for better
+| performance. The file is created automatically on first run.
+| Relative paths are resolved relative to the parks_api/ folder.
+| Make sure this directory is writeable by the web server.
 |
 */
-$config['db_hostname'] = "db";
-$config['db_username'] = "db";
-$config['db_password'] = "db";
-$config['db_database'] = "db";
-$config['db_port'] = 3306;
+$config['db_path'] = "data/park-offers.sqlite";
 
 
 /*
@@ -266,8 +264,8 @@ $config['log_directory'] = "log/";
 | Formats
 |--------------------------------------------------------------------------
 |
-| Specify date format for PHP & MySQL
+| Specify date format for PHP & database queries
 |
 */
-$config['mysql_date_format'] = "%d.%m.%Y %H:%i";
+$config['db_date_format'] = "%d.%m.%Y %H:%i";
 $config['php_date_format'] = "d.m.Y H:i";

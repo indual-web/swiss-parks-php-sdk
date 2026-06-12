@@ -148,7 +148,7 @@ Parameters:
 
 ### `migrate()`
 
-- Runs database migration steps for the current SDK version.
+- Rebuilds the SQLite database: deletes the database file, recreates it with the current schema, and runs a full import.
 
 ## Output behavior note
 
