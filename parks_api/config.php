@@ -60,10 +60,10 @@ $config['seo_url_reset_slug'] = 'reset';
 | Imported offers will be stored there for better performance.
 |
 */
-$config['db_hostname'] = "localhost";
-$config['db_username'] = "root";
-$config['db_password'] = "root";
-$config['db_database'] = "parks_api";
+$config['db_hostname'] = "db";
+$config['db_username'] = "db";
+$config['db_password'] = "db";
+$config['db_database'] = "db";
 
 
 /*

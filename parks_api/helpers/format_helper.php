@@ -131,7 +131,6 @@ function auto_link($str, $type = 'both', $popup = FALSE) {
 /**
  * Transform newlines to paragraphs
  *
- * @access public
  * @param mixed $text
  * @return string
  */
@@ -146,7 +145,6 @@ function nl2p($text) {
  *
  * Create a spam-protected mailto link written in Javascript
  *
- * @access	public
  * @param	string	the email address
  * @param	string	the link title
  * @param	mixed	any attributes

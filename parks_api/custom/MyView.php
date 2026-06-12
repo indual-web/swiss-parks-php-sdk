@@ -16,11 +16,10 @@ class MyView extends ParksView {
 	/**
 	 * Constructor
 	 *
-	 * @access public
-	 * @param  array $api
+	 * @param ParksAPI $api
 	 * @return void
 	 */
-	function __construct($api) {
+	public function __construct(ParksAPI $api) {
 		parent::__construct($api);
 
 		// Overwrite attributes here, like script_url, script_url_with_params ...
@@ -33,7 +32,6 @@ class MyView extends ParksView {
 	 * Overwrite template data
 	 * Overwrite template data before they are loaded
 	 *
-	 * @access public
 	 * @param mixed $template_data
 	 * @return void
 	 */

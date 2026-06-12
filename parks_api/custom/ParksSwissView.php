@@ -17,11 +17,10 @@ class ParksSwissView extends ParksView {
 	/**
 	 * Constructor
 	 *
-	 * @access public
-	 * @param  array $api
+	 * @param ParksAPI $api
 	 * @return void
 	 */
-	function __construct($api) {
+	public function __construct(ParksAPI $api) {
 		parent::__construct($api);
 	}
 
@@ -31,7 +30,6 @@ class ParksSwissView extends ParksView {
 	 * Overwrite template data
 	 * Overwrite template data before they are loaded
 	 *
-	 * @access public
 	 * @param mixed $template_data
 	 * @return void
 	 */
@@ -63,7 +61,6 @@ class ParksSwissView extends ParksView {
 	/**
 	 * Get event detail
 	 *
-	 * @access protected
 	 * @param mixed $offer
 	 * @return string
 	 */
@@ -87,7 +84,6 @@ class ParksSwissView extends ParksView {
 	/**
 	 * Get product detail
 	 *
-	 * @access protected
 	 * @param mixed $offer
 	 * @return string
 	 */
@@ -151,7 +147,6 @@ class ParksSwissView extends ParksView {
 	/**
 	 * Get booking detail
 	 *
-	 * @access protected
 	 * @param mixed $offer
 	 * @return string
 	 */
@@ -177,7 +172,6 @@ class ParksSwissView extends ParksView {
 	/**
 	 * Get activity detail
 	 *
-	 * @access protected
 	 * @param mixed $offer
 	 * @return string
 	 */

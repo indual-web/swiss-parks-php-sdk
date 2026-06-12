@@ -17,51 +17,49 @@ class ParksModel
 	/**
 	 * API
 	 */
-	public $api;
+	public ParksAPI $api;
 
 
 	/**
 	 * Offer levels for difficulty
 	 */
-	public $levels;
+	public array $levels;
 
 
 	/**
 	 * Target groups
 	 */
-	public $target_groups = [];
+	public array $target_groups = [];
 
 
 	/**
 	 * All categories
 	 */
-	public $categories = [];
+	public array $categories = [];
 
 
 
 	/**
 	 * Constructor
 	 *
-	 * @access public
-	 * @param object $api
-	 * @return void
+	 * @param ParksAPI $api
 	 */
-	function __construct($api)
+	public function __construct(ParksAPI $api)
 	{
 
 		// Api instance
 		$this->api = $api;
 
 		// Set levels
-		$this->levels = array(
+		$this->levels = [
 			0 => '',
 			1 => $this->api->lang->get('offer_easy'),
 			2 => $this->api->lang->get('offer_average'),
-			3 => $this->api->lang->get('offer_difficult')
-		);
+			3 => $this->api->lang->get('offer_difficult'),
+		];
 
 		// Set target groups
-		$q_target_group = $this->api->db->get('target_group', array('language' => $this->api->lang->lang_id), array('target_group_i18n' => 'target_group.target_group_id = target_group_i18n.target_group_id'), NULL, NULL, NULL, NULL, 'target_group.sort');
+		$q_target_group = $this->api->db->get('target_group', ['language' => $this->api->lang->lang_id], ['target_group_i18n' => 'target_group.target_group_id = target_group_i18n.target_group_id'], null, null, null, null, 'target_group.sort');
 		if (mysqli_num_rows($q_target_group) > 0) {
 			while ($row = mysqli_fetch_object($q_target_group)) {
 				$this->target_groups[$row->target_group_id] = $row->body;
@@ -69,7 +67,7 @@ class ParksModel
 		}
 
 		// Set categories
-		$q_category = $this->api->db->get('category', array('language' => $this->api->lang->lang_id), array('category_i18n' => 'category.category_id = category_i18n.category_id'));
+		$q_category = $this->api->db->get('category', ['language' => $this->api->lang->lang_id], ['category_i18n' => 'category.category_id = category_i18n.category_id']);
 		if (mysqli_num_rows($q_category) > 0) {
 			while ($row = mysqli_fetch_object($q_category)) {
 				$this->categories[$row->category_id] = $row;
@@ -82,7 +80,6 @@ class ParksModel
 	/**
 	 * Checks if an offer with the given id exists
 	 *
-	 * @access public
 	 * @param int $offer_id
 	 * @return bool
 	 */
@@ -102,7 +99,6 @@ class ParksModel
 	 * Get Custom Layers
 	 * [Deprecated with new map]
 	 * 
-	 * @access public
 	 * @return mixed
 	 */
 	public function get_custom_layers()
@@ -181,7 +177,7 @@ class ParksModel
 	 * @param bool $return_only_parks
 	 * @return mixed
 	 */
-	public function filter_offers($filter, $limit = NULL, $offset = NULL, $return_minimal = false, $only_count_categories = false, $map_mode = false, $return_only_categories = false, $ignore_hint_order = false, $order_by_rand = false, $return_only_parks = false)
+	public function filter_offers($filter, $limit = null, $offset = null, $return_minimal = false, $only_count_categories = false, $map_mode = false, $return_only_categories = false, $ignore_hint_order = false, $order_by_rand = false, $return_only_parks = false)
 	{
 
 		// Populate date filter
@@ -1277,7 +1273,6 @@ class ParksModel
 	/**
 	 * Get category by ID
 	 *
-	 * @access public
 	 * @param int $category_id
 	 * @return mixed
 	 */
@@ -1295,7 +1290,6 @@ class ParksModel
 	/**
 	 * Get path for a category
 	 *
-	 * @access public
 	 * @param int $category_id
 	 * @return array
 	 */
@@ -1321,7 +1315,6 @@ class ParksModel
 	/**
 	 * Get all categories
 	 *
-	 * @access public
 	 * @return array
 	 */
 	public function get_all_categories($filter = [])
@@ -1388,7 +1381,6 @@ class ParksModel
 	/**
 	 * Get all category links
 	 *
-	 * @access public
 	 * @return mixed
 	 */
 	public function get_all_category_links()
@@ -1436,7 +1428,7 @@ class ParksModel
 			$filter['categories'] = $categories;
 		}
 
-		$q_users = $this->filter_offers($filter, NULL, NULL, true, false, false, false, true, false, true);
+		$q_users = $this->filter_offers($filter, null, NULL, true, false, false, false, true, false, true);
 
 		if ($q_users && (mysqli_num_rows($q_users) > 0)) {
 			$users = [];
@@ -1456,7 +1448,6 @@ class ParksModel
 	/**
 	 * Get full category tree
 	 *
-	 * @access public
 	 * @return array
 	 */
 	public function get_category_tree()
@@ -1499,7 +1490,6 @@ class ParksModel
 	/**
 	 * Sync target groups
 	 *
-	 * @access public
 	 * @param array $target_groups
 	 * @return bool
 	 */
@@ -1545,7 +1535,6 @@ class ParksModel
 	/**
 	 * Sync categories
 	 *
-	 * @access public
 	 * @param array $categories
 	 * @return bool
 	 */
@@ -1594,7 +1583,6 @@ class ParksModel
 	/**
 	 * Sync fields of activity
 	 *
-	 * @access public
 	 * @param array $fields_of_activity
 	 * @return bool
 	 */
@@ -1696,7 +1684,6 @@ class ParksModel
 	/**
 	 * Get date time
 	 *
-	 * @access private
 	 * @param mixed $value
 	 * @param string $format (default: 'Y-m-d H:i:s')
 	 * @return string
@@ -1711,7 +1698,6 @@ class ParksModel
 	/**
 	 * Prepare additional infos for sql query
 	 *
-	 * @access private
 	 * @param array $filter
 	 * @return string
 	 */
@@ -1768,9 +1754,8 @@ class ParksModel
 	/**
 	 * Get dropdown list with all accessiblity options
 	 *
-	 * @return array
 	 */
-	function get_accessibility_list()
+	public function get_accessibility_list(): array
 	{
 
 		// Init
@@ -1817,7 +1802,6 @@ class ParksModel
 	/**
 	 * Sync accessibility dropdown list
 	 *
-	 * @access public
 	 * @param array $options
 	 * @return bool
 	 */

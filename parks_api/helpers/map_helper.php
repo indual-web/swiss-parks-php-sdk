@@ -81,7 +81,6 @@ function collect_categories_by_offers($offers, $ignore_categories_with_subcatego
 /**
  * Convert latitude and longitued values to CH1903 format
  *
- * @access public
  * @param string $latitude
  * @param string $longitude
  * @return array
@@ -99,7 +98,6 @@ function convertLatLonToCH1903($latitude, $longitude) {
 /**
  * Convert WGS lat/long (° dec) to CH y
  *
- * @access public
  * @param float $lat
  * @param float $long
  * @return float
@@ -132,7 +130,6 @@ function WGStoCHy($lat, $long) {
 /**
  * Convert WGS lat/long (° dec) to CH x
  *
- * @access public
  * @param float $lat
  * @param float $long
  * @return float
@@ -168,7 +165,6 @@ function WGStoCHx($lat, $long) {
 /**
  * Convert CH y/x to WGS lat
  *
- * @access public
  * @param mixed $y
  * @param mixed $x
  * @return string
@@ -199,7 +195,6 @@ function CHtoWGSlat($y, $x) {
 /**
  * Convert CH y/x to WGS long
  *
- * @access public
  * @param mixed $y
  * @param mixed $x
  * @return string
@@ -229,7 +224,6 @@ function CHtoWGSlong($y, $x) {
 /**
  * Convert SEX DMS angle to DEC
  *
- * @access public
  * @param mixed $angle
  * @return float
  */
@@ -249,7 +243,6 @@ function SEXtoDEC($angle) {
 /**
  * Convert DEC angle to SEX DMS
  *
- * @access public
  * @param float $angle
  * @return float
  */
@@ -269,7 +262,6 @@ function DECtoSEX($angle) {
 /**
  * Convert Degrees angle to seconds
  *
- * @access public
  * @param float $angle
  * @return float
  */

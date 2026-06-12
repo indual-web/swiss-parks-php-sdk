@@ -17,37 +17,35 @@ class ParksLanguage
 	/**
 	 * API
 	 */
-	public $api;
+	public ParksAPI $api;
 
 
 	/**
 	 * labels for current language
 	 */
-	private $labels = [];
+	private array $labels = [];
 
 
 	/**
 	 * language id
 	 */
-	public $lang_id;
+	public string $lang_id;
 
 
 	/**
 	 * Lower case language id
 	 */
-	public $lang;
+	public string $lang;
 
 
 
 	/**
 	 * Constructor
 	 *
-	 * @access public
 	 * @param string $lang_id
-	 * @param object $api
-	 * @return void
+	 * @param ParksAPI $api
 	 */
-	function __construct($lang_id, $api)
+	public function __construct(string $lang_id, ParksAPI $api)
 	{
 
 		// Api instance
@@ -55,13 +53,12 @@ class ParksLanguage
 
 		// Load language file
 		if (! empty($lang_id) && in_array($lang_id, $this->api->config['available_languages']) && file_exists($this->api->config['absolute_path'] . '/language/' . strtolower($lang_id) . '.php')) {
-			require($this->api->config['absolute_path'] . '/language/' . strtolower($lang_id) . '.php');
-			$this->lang = strtolower($lang_id);
+			$labels = require($this->api->config['absolute_path'] . '/language/' . strtolower($lang_id) . '.php');
 		}
 
 		// Load default language file
 		elseif (file_exists($this->api->config['absolute_path'] . '/language/de.php')) {
-			require($this->api->config['absolute_path'] . '/language/de.php');
+			$labels = require($this->api->config['absolute_path'] . '/language/de.php');
 			$lang_id = 'de';
 		}
 
@@ -72,16 +69,17 @@ class ParksLanguage
 		}
 
 		// Check language labels
-		if (! isset($lang) || ! is_array($lang)) {
+		if (! is_array($labels)) {
 			echo 'Your language file does not appear to be formatted correctly.';
 			exit();
 		}
 
 		// Set labels
-		$this->labels = $lang;
+		$this->labels = $labels;
 
 		// Set language id
 		$this->lang_id = $lang_id;
+		$this->lang = strtolower($lang_id);
 
 	}
 
@@ -90,11 +88,9 @@ class ParksLanguage
 	/**
 	 * Get language string
 	 *
-	 * @access public
 	 * @param string $key
-	 * @return string
 	 */
-	public function get($key)
+	public function get(string $key): string
 	{
 		if (isset($this->labels[$key])) {
 			return $this->labels[$key];

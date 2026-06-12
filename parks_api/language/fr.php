@@ -385,3 +385,5 @@ $lang['offer_partner'] = "Partenaire";
 $lang['offer_remarks'] = "Remarques";
 $lang['offer_internal_hyperlinks'] = "Liens internes";
 $lang['offer_internal_documents'] = "Documents internes";
+
+return $lang;

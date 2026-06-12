@@ -17,58 +17,56 @@ class ParksMySQL
 	/**
 	 * API
 	 */
-	public $api;
+	public ParksAPI $api;
 
 
 	/**
 	 * MySQL connection
 	 */
-	private $connection;
+	private mysqli $connection;
 
 
 	/**
 	 * MySQL Host
 	 */
-	protected $hostname;
+	protected string $hostname;
 
 
 	/**
 	 * MySQL Username
 	 */
-	protected $username;
+	protected string $username;
 
 
 	/**
 	 * MySQL Password
 	 */
-	protected $password;
+	protected string $password;
 
 
 	/**
 	 * MySQL Database
 	 */
-	protected $database;
+	protected string $database;
 
 
 	/**
 	 * Last error message
 	 */
-	protected $last_error;
+	protected string $last_error = '';
 
 
 
 	/**
 	 * Constructor
 	 *
-	 * @access public
-	 * @param object $api
-	 * @return void
+	 * @param ParksAPI $api
 	 */
-	function __construct($api)
+	public function __construct(ParksAPI $api)
 	{
 
 		// Api instance
-		$this->api = (object)$api;
+		$this->api = $api;
 
 		// DB connection
 		$this->hostname = $api->config['db_hostname'];
@@ -85,11 +83,8 @@ class ParksMySQL
 
 	/**
 	 * Connect to database
-	 *
-	 * @access private
-	 * @return bool
 	 */
-	private function connect()
+	private function connect(): bool
 	{
 		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
 
@@ -104,11 +99,8 @@ class ParksMySQL
 
 	/**
 	 * Get last mysql error
-	 *
-	 * @access public
-	 * @return string
 	 */
-	public function get_last_error()
+	public function get_last_error(): string
 	{
 		return mysqli_error($this->connection);
 	}
@@ -118,11 +110,9 @@ class ParksMySQL
 	/**
 	 * Query database
 	 *
-	 * @access public
 	 * @param string $sql
-	 * @return mixed
 	 */
-	public function query($sql)
+	public function query(string $sql): mysqli_result|bool
 	{
 		$result = $this->connection->query($sql);
 
@@ -140,17 +130,24 @@ class ParksMySQL
 	 * Get rows from table
 	 *
 	 * @param string $table
-	 * @param array $where
-	 * @param array $joins
-	 * @param array $select
-	 * @param string $limit
-	 * @param string $offset
-	 * @param array $left_outer_joins
-	 * @param string $order_by
-	 * @return mixed
+	 * @param ?array $where
+	 * @param ?array $joins
+	 * @param ?array $select
+	 * @param ?string $limit
+	 * @param ?string $offset
+	 * @param ?array $left_outer_joins
+	 * @param ?string $order_by
 	 */
-	public function get($table, $where = NULL, $joins = NULL, $select = NULL, $limit = NULL, $offset = NULL, $left_outer_joins = NULL, $order_by = NULL)
-	{
+	public function get(
+		string $table,
+		?array $where = null,
+		?array $joins = null,
+		?array $select = null,
+		?string $limit = null,
+		?string $offset = null,
+		?array $left_outer_joins = null,
+		?string $order_by = null
+	): mysqli_result|bool {
 
 		// Select
 		$db_select = "*";
@@ -211,10 +208,9 @@ class ParksMySQL
 	 *
 	 * @param string $table
 	 * @param array $fields
-	 * @param boolean $escape
-	 * @return mixed
+	 * @param bool $escape
 	 */
-	public function insert($table, $fields, $escape = false)
+	public function insert(string $table, array $fields, bool $escape = false): mysqli_result|bool
 	{
 		$db_fields = '';
 		$db_values = '';
@@ -231,7 +227,7 @@ class ParksMySQL
 
 			$db_fields .= "`" . $key . "` , ";
 
-			if ($value === NULL) {
+			if ($value === null) {
 				$db_values .= "NULL, ";
 			} else {
 				$db_values .= "'" . $value . "' , ";
@@ -256,11 +252,10 @@ class ParksMySQL
 	 *
 	 * @param string $table
 	 * @param array $fields
-	 * @param array $where
-	 * @param boolean $escape
-	 * @return mixed
+	 * @param ?array $where
+	 * @param bool $escape
 	 */
-	public function update($table, $fields, $where = NULL, $escape = false)
+	public function update(string $table, array $fields, ?array $where = null, bool $escape = false): mysqli_result|bool
 	{
 		$db_fields = '';
 		foreach ($fields as $key  => $value) {
@@ -274,8 +269,8 @@ class ParksMySQL
 				}
 			}
 
-			if ($value === NULL) {
-				$db_fields .= "`" . $key . "` = NULL, ";
+			if ($value === null) {
+				$db_fields .= "`" . $key . "` = null, ";
 			} else {
 				$db_fields .= "`" . $key . "` = '" . $value . "', ";
 			}
@@ -307,10 +302,9 @@ class ParksMySQL
 	 *
 	 * @param string $table
 	 * @param array $where
-	 * @param int $limit
-	 * @return mixed
+	 * @param bool|int $limit
 	 */
-	public function delete($table, $where = [], $limit = false)
+	public function delete(string $table, array $where = [], bool|int $limit = false): mysqli_result|bool
 	{
 		$db_where = '';
 		if (! empty($where) && is_array($where)) {
@@ -340,11 +334,9 @@ class ParksMySQL
 	/**
 	 * Truncate database table
 	 *
-	 * @access public
 	 * @param string $table
-	 * @return mixed
 	 */
-	public function truncate($table)
+	public function truncate(string $table): mysqli_result|bool
 	{
 		if (! empty($table)) {
 			return $this->query("TRUNCATE TABLE `" . $table . "`;");

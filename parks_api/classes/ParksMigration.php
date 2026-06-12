@@ -17,13 +17,13 @@ class ParksMigration
 	/**
 	 * API
 	 */
-	public $api;
+	public ParksAPI $api;
 
 
 	/**
 	 * API releases
 	 */
-	private $releases = [
+	private array $releases = [
 		2,
 		3,
 		4,
@@ -50,24 +50,22 @@ class ParksMigration
 	/**
 	 * Migration version from
 	 */
-	private $version_from;
+	private float $version_from = 0.0;
 
 
 	/**
 	 * Migration version to
 	 */
-	private $version_to;
+	private float $version_to = 0.0;
 
 
 
 	/**
 	 * Constructor
 	 *
-	 * @access public
-	 * @param object $api
-	 * @return void
+	 * @param ParksAPI $api
 	 */
-	function __construct($api)
+	public function __construct(ParksAPI $api)
 	{
 
 		// Api instance
@@ -80,10 +78,8 @@ class ParksMigration
 	/**
 	 * Start migration
 	 *
-	 * @access public
-	 * @return void
 	 */
-	public function start()
+	public function start(): void
 	{
 
 		// Version from
@@ -107,11 +103,9 @@ class ParksMigration
 	/**
 	 * Migrate to specified version
 	 *
-	 * @access public
 	 * @param float $version_to
-	 * @return void
 	 */
-	public function migrate_to($version_to)
+	public function migrate_to(float $version_to): void
 	{
 		if ($version_to > 0) {
 			$this->api->logger->info('Starting migration from version ' . $this->version_from . ' to version ' . $version_to . '...');

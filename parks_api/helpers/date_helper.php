@@ -13,7 +13,6 @@
 /**
  * Show date
  *
- * @access public
  * @param array $date
  * @param object $lang
  * @return string
@@ -84,7 +83,6 @@ function parks_show_date($date, $lang) {
 /**
  * Convert MySQL to a form format
  *
- * @access public
  * @param string $mysql_date
  * @return array
  */
@@ -105,7 +103,6 @@ function parks_mysql2form($mysql_date) {
 /**
  * Convert MySQL to a date format
  *
- * @access public
  * @param mixed $mysql_date
  * @param bool $time (default: false)
  * @param bool $ts (default: false)

@@ -1,0 +1,23 @@
+# -------------------------------------------------------
+# DDEV Project Configuration
+# -------------------------------------------------------
+
+# Project
+name: dev.sdk.paerke
+type: codeigniter
+
+# Domain
+project_tld: local
+
+# Web server
+docroot: ""
+webserver_type: apache-fpm
+
+# PHP
+php_version: "8.5"
+
+# Database
+database:
+    type: mariadb
+    version: "11.8"
+    port: 32780

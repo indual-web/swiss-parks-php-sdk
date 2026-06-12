@@ -17,24 +17,22 @@ class ParksLog
 	/**
 	 * API
 	 */
-	public $api;
+	public ParksAPI $api;
 
 
 	/**
 	 * Logfile path
 	 */
-	private $logfile;
+	private string $logfile;
 
 
 
 	/**
 	 * Constructor
 	 *
-	 * @access public
-	 * @param object $api
-	 * @return void
+	 * @param ParksAPI $api
 	 */
-	function __construct($api)
+	public function __construct(ParksAPI $api)
 	{
 
 		// Api instance
@@ -50,11 +48,9 @@ class ParksLog
 	/**
 	 * Log error message
 	 *
-	 * @access public
 	 * @param string $message
-	 * @return void
 	 */
-	public function error($message)
+	public function error(string $message): void
 	{
 		$this->_log("ERROR", $message);
 	}
@@ -64,11 +60,9 @@ class ParksLog
 	/**
 	 * Log info message
 	 *
-	 * @access public
 	 * @param string $message
-	 * @return void
 	 */
-	public function info($message)
+	public function info(string $message): void
 	{
 		$this->_log("INFO", $message);
 	}
@@ -78,12 +72,10 @@ class ParksLog
 	/**
 	 * Log message
 	 *
-	 * @access private
-	 * @param int $level
+	 * @param string $level
 	 * @param string $message
-	 * @return void
 	 */
-	private function _log($level, $message)
+	private function _log(string $level, string $message): void
 	{
 		$line = date("Y-m-d H:i:s") . "\t" . $level . "\t" . $message . "\n";
 		file_put_contents($this->logfile, $line, FILE_APPEND);

@@ -17,45 +17,45 @@ class ParksImport
 	/**
 	 * API
 	 */
-	public $api;
+	public ParksAPI $api;
 
 
 	/**
 	 * XML object containing all data
 	 */
-	private $xml;
+	private SimpleXMLElement|false $xml = false;
 
 
 	/**
 	 * Necessary Key-Value mappings for XML data
 	 */
-	private $mappings;
+	private array $mappings;
 
 
 	/**
 	 * Constructor
 	 */
-	function __construct($api)
+	public function __construct(ParksAPI $api)
 	{
 
 		// Api instance
 		$this->api = $api;
 
 		// Setup mappings necessary for XML import
-		$this->mappings = array(
-			'langs' => array(
+		$this->mappings = [
+			'langs' => [
 				'de' => 'de',
 				'fr' => 'fr',
 				'it' => 'it',
-				'en' => 'en'
-			),
-			'levels' => array(
-				'' 			=> 0,
-				'easy' 		=> 1,
-				'medium' 	=> 2,
-				'hard' 		=> 3
-			)
-		);
+				'en' => 'en',
+			],
+			'levels' => [
+				'' => 0,
+				'easy' => 1,
+				'medium' => 2,
+				'hard' => 3,
+			],
+		];
 	}
 
 
@@ -66,7 +66,7 @@ class ParksImport
 	 * @param string $url
 	 * @return void
 	 */
-	public function import_map_layers($url)
+	public function import_map_layers(string $url): void
 	{
 
 		// Load xml
@@ -168,7 +168,7 @@ class ParksImport
 	 * @param bool $force
 	 * @return void
 	 */
-	public function import($url, $force = false)
+	public function import(string $url, bool $force = false): void
 	{
 
 		if (empty($url)) {
@@ -327,7 +327,7 @@ class ParksImport
 								if (! empty($offer->{$xml_node_name})) {
 									foreach ($offer->{$xml_node_name} as $node) {
 										$lang = (string)$node->attributes()->language;
-										$available_languages[$lang] = NULL;
+										$available_languages[$lang] = null;
 										$i18n[$lang][$db_column_name] = (string)$node;
 									}
 								}
@@ -380,7 +380,7 @@ class ParksImport
 								if (! empty($offer->InternalInformations->{$xml_node_name})) {
 									foreach ($offer->InternalInformations->{$xml_node_name} as $node) {
 										$lang = (string)$node->attributes()->language;
-										$available_languages[$lang] = NULL;
+										$available_languages[$lang] = null;
 										$i18n[$lang][$db_column_name] = (string)$node;
 									}
 								}
@@ -399,15 +399,15 @@ class ParksImport
 							if (! empty($offer->Dates)) {
 								foreach ($offer->Dates->Date as $date) {
 									$date_from = $date->DateFrom . ($date->TimeFrom ? "T" . $date->TimeFrom : "");
-									$date_to = NULL;
+									$date_to = null;
 									if ($date->DateTo) {
 										$date_to = $date->DateTo . ($date->TimeTo ? "T" . $date->TimeTo : "");
 									}
 
 									$fields = [];
 									$fields['offer_id'] = $offer_id;
-									$fields['date_from'] = empty($date_from) ? NULL : $this->_datetime($date_from);
-									$fields['date_to'] = empty($date_to) ? NULL : $this->_datetime($date_to);
+									$fields['date_from'] = empty($date_from) ? null : $this->_datetime($date_from);
+									$fields['date_to'] = empty($date_to) ? null : $this->_datetime($date_to);
 
 									$this->api->db->insert('offer_date', $fields);
 								}
@@ -878,7 +878,7 @@ class ParksImport
 								}
 
 								// POI
-								$fields['poi'] = NULL;
+								$fields['poi'] = null;
 								if (! empty($offer->POI->OfferId)) {
 									foreach ($offer->POI->OfferId as $poi) {
 										$fields['poi'][] = $poi;
@@ -899,7 +899,7 @@ class ParksImport
 								$fields['status'] = intval($offer->Status->attributes()->identifier);
 
 								// POI
-								$fields['poi'] = NULL;
+								$fields['poi'] = null;
 								if (isset($offer->POI) && ! empty($offer->POI->OfferId)) {
 									foreach ($offer->POI->OfferId as $poi) {
 										$fields['poi'][] = $poi;
@@ -928,7 +928,7 @@ class ParksImport
 				$this->api->logger->info("Deleting offers which were not updated...");
 
 				// Iterate all existing offers
-				$all_offers = $this->api->db->get('offer', NULL, NULL, array('offer_id'));
+				$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
 				while ($offer = mysqli_fetch_assoc($all_offers)) {
 					if (! in_array($offer['offer_id'], $offers_checklist)) {
 						$this->api->db->delete('offer', array('offer_id' => $offer['offer_id']));
@@ -967,11 +967,10 @@ class ParksImport
 	/**
 	 * Clean up offers (remove inactive offers with active id)
 	 *
-	 * @access public
 	 * @param mixed $url
 	 * @return void
 	 */
-	public function clean_up_offers($url)
+	public function clean_up_offers(string $url): void
 	{
 
 		// Load xml
@@ -993,7 +992,7 @@ class ParksImport
 
 			// Remove inactive offers
 			$this->api->logger->info("Clean up offers");
-			$all_offers = $this->api->db->get('offer', NULL, NULL, array('offer_id'));
+			$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
 
 			// Iterate all existing offers
 			while ($offer = mysqli_fetch_assoc($all_offers)) {
@@ -1025,10 +1024,9 @@ class ParksImport
 	/**
 	 * Synchronise target groups
 	 *
-	 * @access public
 	 * @return void
 	 */
-	public function sync_target_groups()
+	public function sync_target_groups(): void
 	{
 
 		// Get and parse json
@@ -1046,10 +1044,9 @@ class ParksImport
 	/**
 	 * Synchronise fields of activity
 	 *
-	 * @access public
 	 * @return void
 	 */
-	public function sync_fields_of_activity()
+	public function sync_fields_of_activity(): void
 	{
 
 		// Get and parse json
@@ -1068,10 +1065,9 @@ class ParksImport
 	/**
 	 * Synchronise categories
 	 *
-	 * @access public
 	 * @return void
 	 */
-	public function sync_categories()
+	public function sync_categories(): void
 	{
 
 		// Get and parse json
@@ -1090,10 +1086,9 @@ class ParksImport
 	/**
 	 * Synchronise accessibility dropdown list
 	 *
-	 * @access public
 	 * @return void
 	 */
-	public function sync_accessibilities()
+	public function sync_accessibilities(): void
 	{
 
 		// Get and parse json
@@ -1114,7 +1109,7 @@ class ParksImport
 	 * @param int $category_id
 	 * @return integer|bool
 	 */
-	private function _get_root_category($category_id)
+	private function _get_root_category(int $category_id): int|false
 	{
 		if (! empty($category_id)) {
 
@@ -1143,7 +1138,7 @@ class ParksImport
 	 * @param array $where
 	 * @return mixed
 	 */
-	private function _insert_or_update($table, $fields, $where)
+	private function _insert_or_update(string $table, array $fields, array $where): mysqli_result|bool
 	{
 		if (! empty($table) && ! empty($fields) && ! empty($where)) {
 
@@ -1162,6 +1157,8 @@ class ParksImport
 			}
 			
 		}
+
+		return false;
 	}
 
 
@@ -1173,7 +1170,7 @@ class ParksImport
 	 * @param string $format
 	 * @return string
 	 */
-	private function _datetime($value, $format = "Y-m-d H:i:s")
+	private function _datetime(string $value, string $format = "Y-m-d H:i:s"): string
 	{
 		$datetime = new DateTime($value);
 		return $datetime->format($format);
@@ -1187,7 +1184,7 @@ class ParksImport
 	 * @param object $contact
 	 * @return string
 	 */
-	private function _address($contact)
+	private function _address(object $contact): string
 	{
 		$address = [];
 
@@ -1245,11 +1242,10 @@ class ParksImport
 	/**
 	 * Get last ID
 	 *
-	 * @access private
 	 * @param mixed $table
 	 * @return mixed
 	 */
-	private function _get_last_id($name_id, $table)
+	private function _get_last_id(string $name_id, string $table): int
 	{
 		$query =  $this->api->db->query('SELECT MAX(' . $name_id . ') as id FROM ' . $table);
 		$result = mysqli_fetch_object($query);
