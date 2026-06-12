@@ -77,15 +77,15 @@ class ParksView
 		$this->return_output = isset($this->config['return_output']) ? $this->config['return_output'] : false;
 
 		// Specific target groups
-		$this->specific_target_groups = array(7, 8, 9, 10, 12);
+		$this->specific_target_groups = [7, 8, 9, 10, 12];
 
 		// Init sbb links for each language
-		$sbb_i18n = array(
+		$sbb_i18n = [
 			'de' => 'https://www.sbb.ch/de/kaufen/pages/fahrplan/fahrplan.xhtml',
 			'fr' => 'https://www.sbb.ch/fr/acheter/pages/fahrplan/fahrplan.xhtml',
 			'it' => 'https://www.sbb.ch/it/acquistare/pages/fahrplan/fahrplan.xhtml',
 			'en' => 'https://www.sbb.ch/en/buying/pages/fahrplan/fahrplan.xhtml',
-		);
+		];
 		$this->sbb_link = $sbb_i18n[$this->api->lang_id];
 
 		// Set script url with all params
@@ -290,10 +290,10 @@ class ParksView
 
 			if (! empty($this->api->model->target_groups)) {
 
-				$target_group_groups = array(
+				$target_group_groups = [
 					$this->api->lang->get('offer_target_group_general_info'),
 					$this->api->lang->get('offer_target_group_specific_info')
-				);
+				];
 
 				$template_data['FILTER_TARGET_GROUPS'] = '
 					<div class="form_element mega_dropdown filter_target_groups">
@@ -1737,7 +1737,7 @@ class ParksView
 		}
 
 		// Institution
-		if (isset($offer->institution) && ! empty($offer->institution) && ! in_array($offer->root_category, array(CATEGORY_EVENT))) {
+		if (isset($offer->institution) && ! empty($offer->institution) && ! in_array($offer->root_category, [CATEGORY_EVENT])) {
 			if ($offer->institution_is_park_partner == 1) {
 				$offer->institution = '<div class="partner"><i>' . $this->api->lang->get('offer_park_partner') . '</i></div>' . auto_text_format($offer->institution);
 			}
@@ -2257,7 +2257,7 @@ class ParksView
 	{
 
 		$offers = $this->api->show_offer_poi_list($pois);
-		$offers = array('data' => $offers, 'total' => count($offers));
+		$offers = ['data' => $offers, 'total' => count($offers)];
 		$output = $this->list_offers($offers, true, $offer_id, $original_category);
 		return $output;
 	}
@@ -3012,7 +3012,7 @@ class ParksView
 		$reset_slug = ! empty($this->config['seo_url_reset_slug']) ? $this->config['seo_url_reset_slug'] : '';
 
 		// Generate title slug
-		$title_slug = url_slug($title, array('transliterate' => true));
+		$title_slug = url_slug($title, ['transliterate' => true]);
 
 		// Prepare script url
 		$script_url = $this->script_url;

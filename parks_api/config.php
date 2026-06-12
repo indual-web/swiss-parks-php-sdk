@@ -165,18 +165,18 @@ $config['show_municipality_filter'] = true;
 | The first entry is the title of the filter, the second entry is the label to show all entries.
 |
 | Example:
-| 	$config['keyword_filter'] = array(
-|		'de' => array('Kategorien', 'Alle', 'Kinder', 'Kultur', 'Entdecken'),
-|		'en' => array('Categories', 'All', 'Children', 'Culture', 'Discover')
-| 	);
+| 	$config['keyword_filter'] = [
+|		'de' => ['Kategorien', 'Alle', 'Kinder', 'Kultur', 'Entdecken'],
+|		'en' => ['Categories', 'All', 'Children', 'Culture', 'Discover']
+| 	];
 |
 */
-$config['keyword_filter'] = array(
-	'de' => array(),
-	'fr' => array(),
-	'it' => array(),
-	'en' => array()
-);
+$config['keyword_filter'] = [
+	'de' => [],
+	'fr' => [],
+	'it' => [],
+	'en' => []
+];
 
 
 /*
@@ -239,14 +239,14 @@ $config['url_param_prefix'] = '';
 |
 */
 $config['default_language'] = 'de';
-$config['available_languages'] = array('de', 'fr', 'it', 'en');
+$config['available_languages'] = ['de', 'fr', 'it', 'en'];
 $config['language_independence'] = true;
-$config['language_priority'] = array(
-	'de' => array('fr', 'it', 'en'),
-	'fr' => array('de', 'it', 'en'),
-	'it' => array('fr', 'de', 'en'),
-	'en' => array('de', 'fr', 'it'),
-);
+$config['language_priority'] = [
+	'de' => ['fr', 'it', 'en'],
+	'fr' => ['de', 'it', 'en'],
+	'it' => ['fr', 'de', 'en'],
+	'en' => ['de', 'fr', 'it'],
+];
 
 
 /*

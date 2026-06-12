@@ -41,12 +41,12 @@ function auto_text_format(string $string, bool $first_line_strong = false): stri
 
 					// Return URL
 					if (! empty($line) && (filter_var($line, FILTER_VALIDATE_URL) == true)) {
-						$return .= '<a href="'.$line.'" class="external_link" target="_blank">'.str_replace(array('http://', 'https://'), '', $line).'</a><br>';
+						$return .= '<a href="'.$line.'" class="external_link" target="_blank">'.str_replace(['http://', 'https://'], '', $line).'</a><br>';
 					}
 
 					// Return email
 					else if (! empty($line) && (filter_var($line, FILTER_VALIDATE_EMAIL) == true)) {
-						$return .= safe_mailto($line, $line, array('class' => 'email_link')).'<br>';
+						$return .= safe_mailto($line, $line, ['class' => 'email_link']).'<br>';
 					}
 
 					// Return line without changes
@@ -126,7 +126,7 @@ function auto_link(string $str, string $type = 'both', bool $popup = FALSE): str
  */
 function nl2p(mixed $text): string {
 
-	return '<p>'.str_replace(array("\r\n", "\r", "\n"), '</p><p>', $text).'</p>';
+	return '<p>'.str_replace(["\r\n", "\r", "\n"], '</p><p>', $text).'</p>';
 }
 
 
@@ -235,18 +235,18 @@ function url_slug(string $str, array $options = []): string {
 	// Make sure string is in UTF-8 and strip invalid UTF-8 characters
 	$str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
 
-	$defaults = array(
+	$defaults = [
 		'delimiter' => '-',
 		'limit' => null,
 		'lowercase' => true,
-		'replacements' => array(),
+		'replacements' => [],
 		'transliterate' => false,
-	);
+	];
 
 	// Merge options
 	$options = array_merge($defaults, $options);
 
-	$char_map = array(
+	$char_map = [
 		// Latin
 		'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',
 		'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
@@ -303,7 +303,7 @@ function url_slug(string $str, array $options = []): string {
 		'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
 		'ā' => 'a', 'č' => 'c', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
 		'š' => 's', 'ū' => 'u', 'ž' => 'z'
-	);
+	];
 
 	// Make custom replacements
 	$str = preg_replace(array_keys($options['replacements']), $options['replacements'], $str);

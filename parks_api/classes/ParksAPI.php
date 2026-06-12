@@ -270,7 +270,6 @@ class ParksAPI
 	 */
 	public static function forScript(): self
 	{
-
 		return new self('', '', '', false);
 	}
 
@@ -281,7 +280,6 @@ class ParksAPI
 	 */
 	public static function forMigration(): self
 	{
-
 		return new self('', '', '', false, false);
 	}
 
@@ -562,7 +560,7 @@ class ParksAPI
 			$flat_categories = $categories;
 
 			// Categories has to be an array
-			$categories = is_array($categories) ? $categories : array($categories);
+			$categories = is_array($categories) ? $categories : [$categories];
 
 			// Check, if categories are not empty
 			$first = reset($categories);
@@ -610,7 +608,7 @@ class ParksAPI
 			}
 
 			// Load view
-			$params = array(
+			$params = [
 				'categories' => $categories,
 				'selected' => $this->filter_data,
 				'filter' => $this->filter,
@@ -624,7 +622,7 @@ class ParksAPI
 				'projects_only' => $projects_only,
 				'show_municipality_filter' => $this->config['show_municipality_filter'] ?? true,
 				'park_id' => $park_id,
-			);
+			];
 
 			return $this->view->filter($params);
 		}
@@ -682,7 +680,7 @@ class ParksAPI
 
 			// Special case: exclude offers from user SAJA in offers list on parks.swiss
 			if (empty($park_id) && strstr($_SERVER['HTTP_HOST'], 'parks.swiss')) {
-				$filter['exclude_park_ids'] = array(37);
+				$filter['exclude_park_ids'] = [37];
 			}
 
 			// Filter keywords by param
@@ -1084,10 +1082,10 @@ class ParksAPI
 			if ($q_api->num_rows > 0) {
 				$this->api = $q_api->fetch_object();
 			} else {
-				$this->api = (object) array(
+				$this->api = (object) [
 					'initialized' => 0,
 					'version' => API_VERSION,
-				);
+				];
 
 				$this->db->insert('api', (array)$this->api);
 			}
@@ -1107,11 +1105,14 @@ class ParksAPI
 				$this->import->import_map_layers($xml_map_layer);
 
 				if ($import_ok) {
+					$this->model->reload_target_groups();
+					$this->model->reload_categories();
+
 					$this->api->initialized = 1;
-					$this->db->update('api', array(
+					$this->db->update('api', [
 						'initialized' => 1,
 						'version' => API_VERSION,
-					));
+					]);
 					$this->api->version = API_VERSION;
 				} else {
 					$this->logger->error('Initial import failed. API is not initialized. Check api_hash and run scripts/force_update.php.');
@@ -1176,7 +1177,7 @@ class ParksAPI
 
 		// Prepare URL params
 		$get_params = false;
-		$allowed_get_params = array('categories', 'target_groups', 'fields_of_activity', 'accessibilities');
+		$allowed_get_params = ['categories', 'target_groups', 'fields_of_activity', 'accessibilities'];
 		foreach ($allowed_get_params as $param) {
 			if (! empty($_GET[$param])) {
 				$get_params = true;
@@ -1184,7 +1185,7 @@ class ParksAPI
 		}
 
 		// Set filter by all types
-		$fields = array('categories', 'date_from', 'date_to', 'search', 'park_id', 'time_required', 'level_technics', 'level_condition', 'route_length_min', 'route_length_max', 'project_status', 'target_groups', 'fields_of_activity', 'municipalities', 'accessibilities');
+		$fields = ['categories', 'date_from', 'date_to', 'search', 'park_id', 'time_required', 'level_technics', 'level_condition', 'route_length_min', 'route_length_max', 'project_status', 'target_groups', 'fields_of_activity', 'municipalities', 'accessibilities'];
 		foreach ($fields as $field) {
 
 			// Get categories from URL
@@ -1273,7 +1274,7 @@ class ParksAPI
 
 			// Remove reset param
 			if ($reset_mode === true) {
-				$url = str_replace(array('?reset=1', '&reset=1'), '', $url);
+				$url = str_replace(['?reset=1', '&reset=1'], '', $url);
 			}
 
 			// Redirect
@@ -1502,11 +1503,11 @@ class ParksAPI
 		if (isset($categories[$index]) && ! empty($categories[$index])) {
 			foreach ($categories[$index] as $id => $category) {
 				if (
-					(($level != 0) || in_array($id, array(CATEGORY_ACTIVITY, CATEGORY_PRODUCT)))
+					(($level != 0) || in_array($id, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
 					&&
-					(($level != 1) || ! in_array($index, array(CATEGORY_ACTIVITY, CATEGORY_PRODUCT)))
+					(($level != 1) || ! in_array($index, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
 					&&
-					(($level != 2) || ! in_array($index, array(CATEGORY_GASTRONOMY_AND_ACCOMMODATION)))
+					(($level != 2) || ! in_array($index, [CATEGORY_GASTRONOMY_AND_ACCOMMODATION]))
 				) {
 					$return[$id] = $category;
 				}
@@ -1515,11 +1516,11 @@ class ParksAPI
 					$childs = $this->_format_categories_for_select($categories, $id, $level + 1);
 					if (! empty($childs)) {
 						if (
-							(($level == 0) && ! in_array($id, array(CATEGORY_ACTIVITY, CATEGORY_PRODUCT)))
+							(($level == 0) && ! in_array($id, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
 							||
-							(($level == 1) && in_array($index, array(CATEGORY_ACTIVITY, CATEGORY_PRODUCT)))
+							(($level == 1) && in_array($index, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
 							||
-							(($level == 2) && in_array($index, array(CATEGORY_GASTRONOMY_AND_ACCOMMODATION)))
+							(($level == 2) && in_array($index, [CATEGORY_GASTRONOMY_AND_ACCOMMODATION]))
 						) {
 							$return[$category] = $childs;
 						} else {
@@ -1588,10 +1589,10 @@ class ParksAPI
 				if (is_string($value)) {
 
 					// Sql injection protection
-					$tmp = str_replace(array("*", "'", '"', ";", "="), "", $value);
+					$tmp = str_replace(["*", "'", '"', ";", "="], "", $value);
 
 					// Cross site scripting protection
-					$tmp = str_replace(array("<", ">"), array("&lt;", "&gt;"), $tmp);
+					$tmp = str_replace(["<", ">"], ["&lt;", "&gt;"], $tmp);
 
 					// Escape html entities
 					$tmp = htmlentities($tmp, ENT_QUOTES);
@@ -1666,29 +1667,29 @@ class ParksAPI
 		$this->config['min_chars_sbb_link'] = 3;
 
 		// Project status
-		$this->config['project_status_de'] = array(
+		$this->config['project_status_de'] = [
 			1 => 'Geplant',
 			2 => 'Laufend',
 			3 => 'Abgeschlossen',
-		);
-		$this->config['project_status_fr'] = array(
+		];
+		$this->config['project_status_fr'] = [
 			1 => 'Planifié',
 			2 => 'En cours',
 			3 => 'Terminé',
-		);
-		$this->config['project_status_it'] = array(
+		];
+		$this->config['project_status_it'] = [
 			1 => 'Pianificato,',
 			2 => 'In corso',
 			3 => 'Concluso',
-		);
-		$this->config['project_status_en'] = array(
+		];
+		$this->config['project_status_en'] = [
 			1 => 'Planned',
 			2 => 'Ongoing',
 			3 => 'Finished',
-		);
+		];
 
 		// Parks
-		$this->config['parks'] = array(
+		$this->config['parks'] = [
 			2  => 'lpb',
 			3  => 'snp',
 			4  => 'jpa',
@@ -1714,25 +1715,25 @@ class ParksAPI
 			37 => 'wja',
 			43 => 'cal',
 			48 => 'pvt'
-		);
+		];
 
 		// Route times
-		$this->config['route_times'] = array(
+		$this->config['route_times'] = [
 			$this->lang->get('offer_time_required_2h'),
 			$this->lang->get('offer_time_required_2_4h'),
 			$this->lang->get('offer_time_required_4_6h'),
 			$this->lang->get('offer_time_required_6h')
-		);
+		];
 
 		// Route levels
-		$this->config['route_levels'] = array(
+		$this->config['route_levels'] = [
 			1 => $this->lang->get('offer_easy'),
 			2 => $this->lang->get('offer_average'),
 			3 => $this->lang->get('offer_difficult')
-		);
+		];
 
 		// Hidden categories on overview and detail page
-		$this->config['hidden_categories'] = array(
+		$this->config['hidden_categories'] = [
 			CATEGORY_EVENT,
 			CATEGORY_PRODUCT,
 			CATEGORY_BOOKING,
@@ -1748,10 +1749,10 @@ class ParksAPI
 			CATEGORY_WINTER_ACTIVITIES,
 			CATEGORY_INFORMATION,
 			CATEGORY_INFRASTRUCTURE,
-		);
+		];
 
 		// Template tags
-		$this->config['template_tags'] = array(
+		$this->config['template_tags'] = [
 			'OFFER_TITLE',
 			'OFFER_SHORT_INFO',
 			'OFFER_CATEGORIES',
@@ -1825,16 +1826,16 @@ class ParksAPI
 			'FILTER_FORM_STOP',
 			'FILTER_RESET_BUTTON',
 			'FILTER_SUBMIT_BUTTON'
-		);
+		];
 
 		// Template conditions
-		$this->config['template_conditions'] = array(
+		$this->config['template_conditions'] = [
 			'OFFER_EVENT',
 			'OFFER_PRODUCT',
 			'OFFER_BOOKING',
 			'OFFER_ACTIVITY',
 			'OFFER_PROJECT',
-		);
+		];
 	}
 
 
@@ -1882,7 +1883,7 @@ class ParksAPI
 	private function _update_api_version(): void
 	{
 
-		$this->db->update('api', array('version' => API_VERSION));
+		$this->db->update('api', ['version' => API_VERSION]);
 
 		if (! empty($this->api)) {
 			$this->api->version = API_VERSION;

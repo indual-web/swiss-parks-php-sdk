@@ -48,12 +48,12 @@ $api = new ParksAPI($language);
 			'link_target' => '_blank', 						// Set the link target for offer detail links in the map
 			'full_height' => false, 						// Show the map over full window height
 			'disable_auto_load_oev' => true,				// Disable auto loading oev layer lower than zoom level 0.3km			
-			'map_extent' => array(							// Overwrite init extent on overview maps and set your own
+			'map_extent' => [							// Overwrite init extent on overview maps and set your own
 				'xmin' => 2590807.0,
 				'ymin' => 1130285.0,
 				'xmax' => 2736607.0,
 				'ymax' => 1235385.0,
-			),
+			],
 			'do_not_group_categories_in_legend' => true,	// Do not group offer categories in legend
 			*/
 		];
@@ -63,8 +63,8 @@ $api = new ParksAPI($language);
 			/*
 			'keywords' => '', 							// Filter by keywords
 			'contact_is_park_partner' => false, 		// true = show only offers from park partners
-			'target_groups' => array(), 				// Filter by target groups
-			'fields_of_activity' => array(), 			// Filter by fields of activity
+			'target_groups' => [], 				// Filter by target groups
+			'fields_of_activity' => [], 			// Filter by fields of activity
 			'search' => '', 							// Filter by an explicit word
 			'online_shop_enabled' => false, 			// true = show online shop products only
 			'barrier_free' => false, 					// true = barrier free offers
@@ -73,14 +73,14 @@ $api = new ParksAPI($language);
 			'is_hint' => false, 						// true = show only hints (Tipps)
 			'offers_is_park_event' => true,				// true = show only park events
 			'has_accessibility_informations' => true,	// true = Filter offers with accessibility informations
-			'offers' => array(),						// Filter by offer ids
+			'offers' => [],						// Filter by offer ids
 			'show_keywords_filter' => true,				// Show keywords filter
 			'hide_user_filter' => false,				// Hide user filter if more than one park is listed as dropdown in the filter
 			'hide_accessibility_filter' => false,		// Hide accessibility filter
-			'system_filter' => array(					// Additional filter set by your system
-				'target_groups' => array(),					// Show only offers for this target groups
-				'fields_of_activity' => array()				// Show only offers in this fields of activity
-			)
+			'system_filter' => [					// Additional filter set by your system
+				'target_groups' => [],					// Show only offers for this target groups
+				'fields_of_activity' => []				// Show only offers in this fields of activity
+			]
 			*/
 		];
 
