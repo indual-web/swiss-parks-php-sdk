@@ -64,6 +64,7 @@ $config['db_hostname'] = "db";
 $config['db_username'] = "db";
 $config['db_password'] = "db";
 $config['db_database'] = "db";
+$config['db_port'] = 3306;
 
 
 /*

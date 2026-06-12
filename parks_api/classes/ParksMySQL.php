@@ -33,6 +33,12 @@ class ParksMySQL
 
 
 	/**
+	 * MySQL Port
+	 */
+	protected int $port;
+
+
+	/**
 	 * MySQL Username
 	 */
 	protected string $username;
@@ -70,6 +76,7 @@ class ParksMySQL
 
 		// DB connection
 		$this->hostname = $api->config['db_hostname'];
+		$this->port = (int) ($api->config['db_port'] ?? 3306);
 		$this->username = $api->config['db_username'];
 		$this->password = $api->config['db_password'];
 		$this->database = $api->config['db_database'];
@@ -86,7 +93,7 @@ class ParksMySQL
 	 */
 	private function connect(): bool
 	{
-		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database);
+		$this->connection = new mysqli($this->hostname, $this->username, $this->password, $this->database, $this->port);
 
 		if ($this->connection->connect_error) {
 			die('Connect Error (' . $this->connection->connect_errno . ') ' . $this->connection->connect_error);
