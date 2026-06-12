@@ -14,7 +14,7 @@ No database server is required: the SDK stores all data in a local SQLite file t
 
 ## Step-by-step
 
-1. Download the latest API release ZIP into your local `downloads/releases` workflow.
+1. Download the latest API release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases) (`Parks-API-<version>.zip`).
 2. Upload/copy the `parks_api` directory into your project.
 3. Configure `parks_api/config.php`.
    - Set `park_id` and `api_hash` from `https://angebote.paerke.ch/en/settings`.

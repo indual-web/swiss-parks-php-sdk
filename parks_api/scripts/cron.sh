@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd /path/to/api/
-php cron.php
+cd /path/to/parks_api/
+php scripts/cron.php

@@ -7,12 +7,14 @@ This guide documents the regular update flow, forced updates, and migration comm
 - File: `parks_api/scripts/cron.php`
 - Command:
   - `php parks_api/scripts/cron.php`
+- Exit code: `0` on success, `1` on import failure or exception (for cron monitoring).
 
 ## Forced update
 
 - File: `parks_api/scripts/force_update.php`
 - Command:
   - `php parks_api/scripts/force_update.php`
+- Exit code: `0` on success, `1` on failure.
 
 ## Migration
 
@@ -20,6 +22,7 @@ This guide documents the regular update flow, forced updates, and migration comm
 - Command:
   - `php parks_api/scripts/migrate.php`
 - Deletes the SQLite database file, recreates it with the current schema, and runs a full import. There are no incremental schema migrations anymore.
+- Exit code: `0` when import completes and the API is initialized, `1` otherwise.
 
 ## Recommended usage
 

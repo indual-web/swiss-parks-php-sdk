@@ -50,7 +50,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 ## 3) Version Workflow
 
 1. **Install**
-   - Place the required API release ZIP in `downloads/`.
+   - Download the required API release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
    - Extract the release ZIP and copy the `parks_api` directory into your project.
 2. **Upgrade**
    - Update SDK/API files to the target release.
@@ -156,12 +156,19 @@ Commands for `cron.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 17) Smoke tests (SDK maintainers only)
+## 17) Smoke tests and CI (SDK maintainers only)
 
 The offline SQLite/query smoke test lives in `tests/smoke_test.php` and is **not** included in release ZIPs built via `deploy.sh`. SDK maintainers can run it after core changes:
 
 ```bash
 php tests/smoke_test.php
+```
+
+GitHub Actions runs the same test on PHP 8.2–8.4 (see `.github/workflows/tests.yml`). To publish a release, tag the version and push the tag — CI builds the ZIP and uploads it to GitHub Releases (see `.github/workflows/release.yml` and [`docs/guides/release-checklist.md`](docs/guides/release-checklist.md)):
+
+```bash
+git tag v22
+git push origin v22
 ```
 
 ---

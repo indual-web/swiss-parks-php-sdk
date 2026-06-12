@@ -290,15 +290,13 @@ class ParksAPI
 
 	/**
 	 * Updates database from XML export
-	 *
-	 * @param bool $force
-	 * @return void
 	 */
-	public function update($force = false)
+	public function update($force = false): bool
 	{
 
-		// Set json header
-		header('Content-Type: application/json');
+		if (PHP_SAPI !== 'cli') {
+			header('Content-Type: application/json');
+		}
 
 		try {
 
@@ -324,14 +322,20 @@ class ParksAPI
 				}
 
 				$this->_output_update_json(true, $message);
-			} else {
-				$this->_output_update_json(false, 'Offer import failed. Check logs and api_hash configuration.');
+
+				return true;
 			}
+
+			$this->_output_update_json(false, 'Offer import failed. Check logs and api_hash configuration.');
+
+			return false;
 
 
 		} catch (Exception $e) {
 
 			$this->_output_update_json(false, 'ADB sync exception: ' . $e->getMessage());
+
+			return false;
 
 		}
 
@@ -342,10 +346,8 @@ class ParksAPI
 	/**
 	 * Migrate database updates
 	 * Rebuilds the database from scratch and runs a full import
-	 *
-	 * @return void
 	 */
-	public function migrate()
+	public function migrate(): bool
 	{
 
 		// Drop and recreate database file with current schema
@@ -354,6 +356,8 @@ class ParksAPI
 		// Re-run setup (triggers a full import)
 		$this->api = null;
 		$this->_setup();
+
+		return ! empty($this->api->initialized);
 
 	}
 

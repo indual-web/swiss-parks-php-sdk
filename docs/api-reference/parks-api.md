@@ -140,8 +140,9 @@ Parameters:
 ### `update($force = false)`
 
 - Runs synchronization from XML export endpoints.
-- Outputs JSON status to the response (`status`, `message`). The legacy key `messsage` is still included for backward compatibility.
-- Returns `status: false` when the offer import fails (for example invalid `api_hash` or unreachable XML export).
+- Returns `true` on successful offer import, `false` on failure.
+- Outputs JSON status (`status`, `message`) to stdout. The legacy key `messsage` is still included for backward compatibility.
+- Sets `Content-Type: application/json` only for non-CLI requests (browser cron).
 
 Parameters:
 
@@ -157,6 +158,7 @@ Static factories for CLI scripts (no page rendering bootstrap):
 ### `migrate()`
 
 - Rebuilds the SQLite database: deletes the database file, recreates it with the current schema, and runs a full import.
+- Returns `true` when the API is initialized after import, `false` otherwise.
 
 ## Output behavior note
 
