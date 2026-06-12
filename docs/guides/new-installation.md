@@ -19,7 +19,7 @@ No database server is required: the SDK stores all data in a local SQLite file t
 3. Configure `parks_api/config.php`.
    - Set `park_id` and `api_hash` from `https://angebote.paerke.ch/en/settings`.
    - Optionally adjust `db_path` (default: `data/park-offers.sqlite`).
-   - See `config.example.php` for optional keys such as `curl_verify_ssl`.
+   - See [configuration.md](configuration.md) for optional keys such as `curl_verify_ssl`.
 4. Run the first import:
    - CLI: `bash parks_api/bin/sync.sh`
    - Web: `[Your project path]/parks_api/scripts/cron.php` (legacy alias for `sync.php`)

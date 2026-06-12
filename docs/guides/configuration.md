@@ -13,7 +13,7 @@ Set these in `parks_api/config.php` on your server (keep this file across SDK up
 - `db_path`
   - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `parks_api/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
 
-Optional for SDK development in git: copy `config.example.php` to `config.local.php` to override `api_hash` and `park_id` locally without committing secrets.
+Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash` and `park_id` locally without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
 
 ## Network settings
 
