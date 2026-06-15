@@ -4,8 +4,8 @@
 
 Templates are located in:
 
-- `parks_api/template/standard/`
-- optionally custom folders, for example `parks_api/template/your-template/`
+- `swiss-parks-sdk/template/standard/`
+- optionally custom folders, for example `swiss-parks-sdk/template/your-template/`
 
 Configuration:
 
@@ -28,7 +28,7 @@ $config['class_view'] = "MyView";
 
 ### Step 2: Use your custom class
 
-File: `parks_api/custom/MyView.php`  
+File: `swiss-parks-sdk/custom/MyView.php`  
 This class extends `ParksView`.
 
 ### Step 3: Override targeted methods
@@ -51,7 +51,7 @@ Best practices:
 
 Additional example:
 
-- `parks_api/custom/ParksSwissView.php`
+- `swiss-parks-sdk/custom/ParksSwissView.php`
 
 ## Related docs
 

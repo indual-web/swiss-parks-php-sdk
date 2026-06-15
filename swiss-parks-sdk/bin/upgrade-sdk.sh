@@ -5,7 +5,7 @@ GITHUB_REPO="${PARKS_API_GITHUB_REPO:-indual-web/swiss-parks-php-sdk}"
 VERSION="${1:-latest}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-PARKS_API_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+SDK_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 
 
@@ -95,14 +95,14 @@ require_command unzip
 require_command rsync
 require_command php
 
-if [ ! -f "$PARKS_API_DIR/autoload.php" ]; then
-	echo "Error: parks_api directory not found at $PARKS_API_DIR" >&2
+if [ ! -f "$SDK_DIR/autoload.php" ]; then
+	echo "Error: SDK directory not found at $SDK_DIR" >&2
 	exit 1
 fi
 
 DOWNLOAD_URLS="$(resolve_download_urls "$VERSION")"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
-BACKUP_DIR="$(dirname "$PARKS_API_DIR")/parks_api-backup-${TIMESTAMP}"
+BACKUP_DIR="$(dirname "$SDK_DIR")/swiss-parks-sdk-backup-${TIMESTAMP}"
 TMP_DIR="$(mktemp -d)"
 ZIP_FILE="$TMP_DIR/release.zip"
 
@@ -137,40 +137,45 @@ if [ "$DOWNLOAD_OK" -ne 1 ]; then
 fi
 
 echo "Creating backup at $BACKUP_DIR"
-cp -a "$PARKS_API_DIR" "$BACKUP_DIR"
+cp -a "$SDK_DIR" "$BACKUP_DIR"
 
 echo "Extracting release..."
 unzip -q "$ZIP_FILE" -d "$TMP_DIR/extracted"
 
 EXTRACT_ROOT="$(find "$TMP_DIR/extracted" -mindepth 1 -maxdepth 1 -type d | head -1)"
-SRC_DIR="$EXTRACT_ROOT/parks_api"
 
-if [ ! -f "$SRC_DIR/autoload.php" ]; then
-	echo "Error: invalid release ZIP (missing parks_api/autoload.php)." >&2
+if [ -f "$EXTRACT_ROOT/autoload.php" ]; then
+	SRC_DIR="$EXTRACT_ROOT"
+elif [ -f "$EXTRACT_ROOT/swiss-parks-sdk/autoload.php" ]; then
+	SRC_DIR="$EXTRACT_ROOT/swiss-parks-sdk"
+elif [ -f "$EXTRACT_ROOT/parks_api/autoload.php" ]; then
+	SRC_DIR="$EXTRACT_ROOT/parks_api"
+else
+	echo "Error: invalid release ZIP (missing swiss-parks-sdk/autoload.php)." >&2
 	exit 1
 fi
 
 echo "Updating SDK core files..."
-rsync -a "$SRC_DIR/autoload.php" "$PARKS_API_DIR/"
-rsync -a "$SRC_DIR/classes/" "$PARKS_API_DIR/classes/"
-rsync -a "$SRC_DIR/database/" "$PARKS_API_DIR/database/"
-rsync -a "$SRC_DIR/helpers/" "$PARKS_API_DIR/helpers/"
-rsync -a "$SRC_DIR/language/" "$PARKS_API_DIR/language/"
-rsync -a "$SRC_DIR/scripts/" "$PARKS_API_DIR/scripts/"
+rsync -a "$SRC_DIR/autoload.php" "$SDK_DIR/"
+rsync -a "$SRC_DIR/classes/" "$SDK_DIR/classes/"
+rsync -a "$SRC_DIR/database/" "$SDK_DIR/database/"
+rsync -a "$SRC_DIR/helpers/" "$SDK_DIR/helpers/"
+rsync -a "$SRC_DIR/language/" "$SDK_DIR/language/"
+rsync -a "$SRC_DIR/scripts/" "$SDK_DIR/scripts/"
 
 if [ -d "$SRC_DIR/bin" ]; then
-	rsync -a "$SRC_DIR/bin/" "$PARKS_API_DIR/bin/"
+	rsync -a "$SRC_DIR/bin/" "$SDK_DIR/bin/"
 fi
 
 if [ -d "$SRC_DIR/template/standard" ]; then
-	rsync -a "$SRC_DIR/template/standard/" "$PARKS_API_DIR/template/standard/"
+	rsync -a "$SRC_DIR/template/standard/" "$SDK_DIR/template/standard/"
 fi
 
 if [ -d "$SRC_DIR/template/parks.swiss" ]; then
-	rsync -a "$SRC_DIR/template/parks.swiss/" "$PARKS_API_DIR/template/parks.swiss/"
+	rsync -a "$SRC_DIR/template/parks.swiss/" "$SDK_DIR/template/parks.swiss/"
 fi
 
-INSTALLED_VERSION="$(grep -E "define\('API_VERSION'," "$PARKS_API_DIR/autoload.php" | sed -E "s/.*API_VERSION', *([^)]+)\).*/\1/")"
+INSTALLED_VERSION="$(grep -E "define\('API_VERSION'," "$SDK_DIR/autoload.php" | sed -E "s/.*API_VERSION', *([^)]+)\).*/\1/")"
 
 echo "SDK files updated to API version $INSTALLED_VERSION."
 echo "Backup: $BACKUP_DIR"
@@ -181,7 +186,7 @@ if [ "${PARKS_API_SKIP_MIGRATE:-0}" = "1" ]; then
 fi
 
 echo "Running migrate.php..."
-if php "$PARKS_API_DIR/scripts/migrate.php"; then
+if php "$SDK_DIR/scripts/migrate.php"; then
 	echo "Upgrade complete."
 	exit 0
 fi

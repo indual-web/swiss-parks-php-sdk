@@ -13,7 +13,7 @@
 $language = 'de';
 
 // Include API
-require_once('parks_api/autoload.php');
+require_once('swiss-parks-sdk/autoload.php');
 
 // Initialize API with default language and optional with an alternative hash
 $api = new ParksAPI($language);

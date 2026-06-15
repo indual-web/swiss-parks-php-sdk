@@ -10,7 +10,7 @@
 ### Database
 
 - The SDK uses a local SQLite file (WAL mode), so reads during a running import are non-blocking.
-- The shipped schema (`parks_api/database/schema.sql`) already contains indexes on common join/filter fields (for example `offer_id`, language/link table columns).
+- The shipped schema (`swiss-parks-sdk/database/schema.sql`) already contains indexes on common join/filter fields (for example `offer_id`, language/link table columns).
 - Event offers with multiple dates appear once per date in list views (`filter_offers()` groups events by `offer_date.date_from`).
 - Use `EXPLAIN QUERY PLAN` for slow queries and optimize indexes based on real workloads.
 - Place the `db_path` directory on fast local storage (avoid network filesystems for SQLite files).

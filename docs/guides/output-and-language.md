@@ -16,10 +16,10 @@ Useful for:
 
 Language files:
 
-- `parks_api/language/de.php`
-- `parks_api/language/fr.php`
-- `parks_api/language/it.php`
-- `parks_api/language/en.php`
+- `swiss-parks-sdk/language/de.php`
+- `swiss-parks-sdk/language/fr.php`
+- `swiss-parks-sdk/language/it.php`
+- `swiss-parks-sdk/language/en.php`
 
 Runtime behavior:
 

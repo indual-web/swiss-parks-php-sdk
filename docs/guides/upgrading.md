@@ -8,7 +8,7 @@ For breaking changes between specific versions, use a [version-specific migratio
 
 ### Option A: CLI upgrade script (preferred)
 
-From the `parks_api/` directory on the server (SSH):
+From the `swiss-parks-sdk/` directory on the server (SSH):
 
 ```bash
 bash bin/upgrade-sdk.sh latest
@@ -19,7 +19,7 @@ bash bin/upgrade-sdk.sh 22
 The script:
 
 1. Downloads the release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
-2. Creates a backup next to `parks_api/` (`parks_api-backup-<timestamp>/`)
+2. Creates a backup next to `swiss-parks-sdk/` (`swiss-parks-sdk-backup-<timestamp>/`)
 3. Replaces SDK core files (`autoload.php`, `classes/`, `database/`, `helpers/`, `language/`, `bin/`, `scripts/`, default templates)
 4. Preserves `config.php`, `custom/`, `data/`, `log/`, and custom templates
 5. Runs `php scripts/migrate.php` (rebuilds SQLite DB + full import)

@@ -24,7 +24,7 @@ This module is optional. If enabled, each offer can show an add/remove favorite 
 
 ## Endpoints and methods
 
-- Script endpoint: `parks_api/scripts/favorite.php`
+- Script endpoint: `swiss-parks-sdk/scripts/favorite.php`
   - Toggle favorite: `favorite.php?offer_id=<id>`
   - Clear all: `favorite.php?action=clean`
 - API methods:

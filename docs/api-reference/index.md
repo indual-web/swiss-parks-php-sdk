@@ -18,7 +18,7 @@ This reference documents the integrator-facing surface of the Swiss Parks PHP SD
 
 This reference is based on:
 
-- `parks_api/classes/ParksAPI.php`
-- `parks_api/config.php`
+- `swiss-parks-sdk/classes/ParksAPI.php`
+- `swiss-parks-sdk/config.php`
 - `example.php`
 

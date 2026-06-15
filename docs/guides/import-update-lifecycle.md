@@ -4,43 +4,43 @@ This guide documents the regular update flow, forced updates, SDK upgrades, and 
 
 ## Directory layout
 
-- `parks_api/bin/` — shell entry points (SSH / crontab)
-- `parks_api/scripts/` — PHP endpoints (CLI and browser)
+- `swiss-parks-sdk/bin/` — shell entry points (SSH / crontab)
+- `swiss-parks-sdk/scripts/` — PHP endpoints (CLI and browser)
 
 ## Standard sync
 
-- PHP: `parks_api/scripts/sync.php`
-- Shell: `parks_api/bin/sync.sh`
+- PHP: `swiss-parks-sdk/scripts/sync.php`
+- Shell: `swiss-parks-sdk/bin/sync.sh`
 - Commands:
-  - `bash parks_api/bin/sync.sh`
-  - `php parks_api/scripts/sync.php`
-- Legacy URL/CLI: `parks_api/scripts/cron.php` (forwards to `sync.php`)
+  - `bash swiss-parks-sdk/bin/sync.sh`
+  - `php swiss-parks-sdk/scripts/sync.php`
+- Legacy URL/CLI: `swiss-parks-sdk/scripts/cron.php` (forwards to `sync.php`)
 - Exit code: `0` on success, `1` on import failure or exception (for cron monitoring).
 
 ## Forced update
 
-- File: `parks_api/scripts/force_update.php`
+- File: `swiss-parks-sdk/scripts/force_update.php`
 - Command:
-  - `php parks_api/scripts/force_update.php`
+  - `php swiss-parks-sdk/scripts/force_update.php`
 - Exit code: `0` on success, `1` on failure.
 
 ## SDK version upgrade
 
-- File: `parks_api/bin/upgrade-sdk.sh`
+- File: `swiss-parks-sdk/bin/upgrade-sdk.sh`
 - Command:
-  - `bash parks_api/bin/upgrade-sdk.sh latest`
-  - `bash parks_api/bin/upgrade-sdk.sh 22`
+  - `bash swiss-parks-sdk/bin/upgrade-sdk.sh latest`
+  - `bash swiss-parks-sdk/bin/upgrade-sdk.sh 22`
 - Downloads the release from GitHub, updates SDK core files (preserves `config.php`, `custom/`, `data/`, `log/`), creates a backup, and runs `migrate.php`.
 - Exit code: `0` on success, `1` on failure.
 - See [upgrade guide](./upgrading.md) for manual ZIP workflow and version-specific migration steps.
 
 ## Migration
 
-- PHP: `parks_api/scripts/migrate.php`
-- Shell: `parks_api/bin/migrate.sh`
+- PHP: `swiss-parks-sdk/scripts/migrate.php`
+- Shell: `swiss-parks-sdk/bin/migrate.sh`
 - Commands:
-  - `bash parks_api/bin/migrate.sh`
-  - `php parks_api/scripts/migrate.php`
+  - `bash swiss-parks-sdk/bin/migrate.sh`
+  - `php swiss-parks-sdk/scripts/migrate.php`
 - Deletes the SQLite database file, recreates it with the current schema, and runs a full import. There are no incremental schema migrations anymore.
 - Exit code: `0` when import completes and the API is initialized, `1` otherwise.
 

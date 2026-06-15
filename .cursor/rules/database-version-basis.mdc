@@ -1,23 +1,24 @@
 ---
-description: Versioniertes SQLite-Schema als Basis der Datenstruktur behandeln
-globs: parks_api/database/schema.sql
+description: Schema- und Migrations-Basis fuer die aktuelle API-Version
+globs: swiss-parks-sdk/database/schema.sql
 alwaysApply: false
 ---
 
-# Datenstruktur-Basis pro Version
+# Datenbank-Version als Basis
 
-- Behandle `parks_api/database/schema.sql` als Schema-Quelle fuer die aktuelle API-Version (`API_VERSION` in `autoload.php`).
-- Das Schema wird beim ersten Start und bei `scripts/migrate.php` automatisch eingespielt.
+- Behandle `swiss-parks-sdk/database/schema.sql` als Schema-Quelle fuer die aktuelle API-Version (`API_VERSION` in `autoload.php`).
+- `migrate.php` loescht die bestehende SQLite-Datei und erstellt sie neu aus diesem Schema.
+- Keine separaten Migrations-SQL-Dateien pro Version — Schema-Aenderungen gehoeren in `schema.sql`.
 
-# Working Rules
+## Bei Schema-Aenderungen
 
-- Schema-Aenderungen immer in `parks_api/database/schema.sql` vornehmen.
-- Schema-Basis ist `schema.sql`, nicht mehr MySQL-Dumps.
-- Nach Schema-Aenderungen: `php parks_api/scripts/migrate.php` pruefen.
+- Schema-Aenderungen immer in `swiss-parks-sdk/database/schema.sql` vornehmen.
+- `API_VERSION` in `autoload.php` erhoehen, wenn das Schema sich aendert.
+- Nach Schema-Aenderungen: `php swiss-parks-sdk/scripts/migrate.php` pruefen.
 
-# Beispiel
+## Referenz
 
-```text
-parks_api/database/schema.sql
-parks_api/autoload.php  -> define('API_VERSION', 22);
+```
+swiss-parks-sdk/database/schema.sql
+swiss-parks-sdk/autoload.php  -> define('API_VERSION', 22);
 ```

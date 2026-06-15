@@ -58,7 +58,7 @@ $config['seo_url_reset_slug'] = 'reset';
 |
 | Imported offers are stored in a local SQLite database file for better
 | performance. The file is created automatically on first run.
-| Relative paths are resolved relative to the parks_api/ folder.
+| Relative paths are resolved relative to the swiss-parks-sdk/ folder.
 | Make sure this directory is writeable by the web server.
 |
 */
@@ -105,7 +105,7 @@ $config['class_view'] = "MyView";
 | Template
 |--------------------------------------------------------------------------
 |
-| Set the template placed in the parks_api/template/ folder.
+| Set the template placed in the swiss-parks-sdk/template/ folder.
 | Create your individual template by creating your own folder,
 | copied from the standard folder.
 |
@@ -222,8 +222,8 @@ $config['prevent_css_js_include'] = false;
 |--------------------------------------------------------------------------
 |
 | Enable favorites module to list all favorites
-| If enabled, set the script path to the parks_api/scripts/favorites.php
-| file, e.g. /plugins/parks_api/scripts (without an ending slash)
+| If enabled, set the script path to the swiss-parks-sdk/scripts/favorites.php
+| file, e.g. /plugins/swiss-parks-sdk/scripts (without an ending slash)
 |
 */
 $config['favorites_extension_available'] = false;

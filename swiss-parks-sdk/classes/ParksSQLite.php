@@ -48,7 +48,7 @@ class ParksSQLite
 		// Api instance
 		$this->api = $api;
 
-		// Resolve database file path (relative paths are relative to parks_api/)
+		// Resolve database file path (relative paths are relative to swiss-parks-sdk/)
 		$path = ! empty($api->config['db_path']) ? $api->config['db_path'] : 'data/park-offers.sqlite';
 		if (substr($path, 0, 1) !== '/') {
 			$path = $api->config['absolute_path'] . '/' . $path;

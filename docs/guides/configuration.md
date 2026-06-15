@@ -1,17 +1,17 @@
-# Core configuration (`parks_api/config.php`)
+# Core configuration (`swiss-parks-sdk/config.php`)
 
-This guide documents the most important runtime settings in `parks_api/config.php`.
+This guide documents the most important runtime settings in `swiss-parks-sdk/config.php`.
 
 ## Required settings
 
-Set these in `parks_api/config.php` on your server (keep this file across SDK updates):
+Set these in `swiss-parks-sdk/config.php` on your server (keep this file across SDK updates):
 
 - `api_hash`
   - Hash from your export configuration on `angebote.paerke.ch`.
 - `park_id`
   - Enter the park ID; you can obtain it by contacting the respective park.
 - `db_path`
-  - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `parks_api/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
+  - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `swiss-parks-sdk/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
 
 Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash` and `park_id` locally without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
 
@@ -34,7 +34,7 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
 - `class_view` (for example `MyView`)
   - Defines which view class renders output.
 - `template_folder` (for example `standard`)
-  - Selects the template set inside `parks_api/template/`.
+  - Selects the template set inside `swiss-parks-sdk/template/`.
 - `prevent_css_js_include`
   - Prevents automatic inclusion of SDK CSS/JS assets.
 - `return_output`

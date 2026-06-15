@@ -5,7 +5,7 @@ Minimal page integration:
 ```php
 <?php
 $language = 'en';
-require_once('parks_api/autoload.php');
+require_once('swiss-parks-sdk/autoload.php');
 $api = new ParksAPI($language);
 
 $categories = [];

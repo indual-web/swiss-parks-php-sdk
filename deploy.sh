@@ -7,38 +7,38 @@ if [ -z "$VERSION" ]; then
 	exit 1
 fi
 
+STAGING_DIR="./release-staging-$VERSION"
+
 # Make temp folder
-mkdir -p ./parks_api_$VERSION
+mkdir -p "$STAGING_DIR/swiss-parks-sdk"
 
 # Copy SDK runtime files only (no docs, releases, tests, or local dev config)
-rsync parks_api/ ./parks_api_$VERSION/parks_api/ \
+rsync swiss-parks-sdk/ "$STAGING_DIR/swiss-parks-sdk/" \
 	--exclude=data \
 	--exclude=log \
 	--exclude=config.local.php \
 	-r
 
 # Include integration example
-cp example.php ./parks_api_$VERSION/
+cp example.php "$STAGING_DIR/"
 
 # Remove unused templates
-rm -Rf ./parks_api_$VERSION/parks_api/template/nationalpark
-rm -Rf ./parks_api_$VERSION/parks_api/template/pfyn
+rm -Rf "$STAGING_DIR/swiss-parks-sdk/template/nationalpark"
+rm -Rf "$STAGING_DIR/swiss-parks-sdk/template/pfyn"
 
 # Delete all subversion files
-find ./parks_api_$VERSION -name ".svn" -exec rm -rf {} \;
+find "$STAGING_DIR" -name ".svn" -exec rm -rf {} \;
 
 # Delete all .DS_Store files
-find ./parks_api_$VERSION -name ".DS_Store" -exec rm -rf {} \;
+find "$STAGING_DIR" -name ".DS_Store" -exec rm -rf {} \;
 
 # Ensure release output directory exists
 mkdir -p ./releases
 
-# Remove old deploy.zip if exists
+# Compress folder (swiss-parks-sdk/ and example.php at archive root)
 rm -f deploy.zip
-
-# Compress folder
-zip -9 -r deploy.zip ./parks_api_$VERSION/*
+( cd "$STAGING_DIR" && zip -9 -r ../deploy.zip . )
 mv ./deploy.zip ./releases/swiss-parks-php-sdk-$VERSION.zip
 
 # Remove temp folder
-rm -Rf ./parks_api_$VERSION
+rm -Rf "$STAGING_DIR"
