@@ -209,6 +209,7 @@ $lang['offer_oclock'] = "Heure";
 $lang['offer_target_group'] = "Ad&eacute;quat pour";
 $lang['offer_target_group_general_info'] = "L'offre est ad&eacute;quate pour";
 $lang['offer_target_group_specific_info'] = "L'offre a &eacute;t&eacute; particuli&egrave;rement d&eacute;velopp&eacute;e pour";
+$lang['offer_fields_of_activity'] = "Domaines d'activit&eacute;";
 $lang['offer_accessibility'] = 'Accessibilité';
 $lang['offer_accessibility_available'] = 'Informations d\'accessibilité OK:GO disponibles';
 

@@ -213,6 +213,7 @@ $lang['offer_oclock'] = 'Time';
 $lang['offer_target_group'] = 'Suitable for';
 $lang['offer_target_group_general_info'] = "The offer is suitable for";
 $lang['offer_target_group_specific_info'] = "The offer has been particularly developed for";
+$lang['offer_fields_of_activity'] = 'Fields of activity';
 $lang['offer_accessibility'] = 'Accessibility';
 $lang['offer_accessibility_available'] = 'OK:GO accessibility information available';
 

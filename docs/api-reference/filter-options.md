@@ -85,7 +85,8 @@ Additional structured filters supported by the model/query layer:
 - `hide_user_filter` (`bool`)
   - Hides user/park selector in filter UI.
 - `hide_accessibility_filter` (`bool`)
-  - Hides accessibility controls in filter UI.
+  - Hides accessibility controls in filter UI for this request.
+  - Does not affect other filters; accessibility is also auto-hidden when the export contains only projects.
 
 ## Runtime notes
 

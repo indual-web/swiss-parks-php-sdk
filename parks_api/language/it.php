@@ -211,6 +211,7 @@ $lang['offer_oclock'] = "ore";
 $lang['offer_target_group'] = "Adatto per";
 $lang['offer_target_group_general_info'] = "L'offerta &eacute; adatta per";
 $lang['offer_target_group_specific_info'] = "L'offerta &eacute; stata specialmente creata per";
+$lang['offer_fields_of_activity'] = 'Settori d\'attivit&agrave;';
 $lang['offer_accessibility'] = 'Accessibilità';
 $lang['offer_accessibility_available'] = 'OK:GO Informazioni sull\'accessibilità disponibili';
 

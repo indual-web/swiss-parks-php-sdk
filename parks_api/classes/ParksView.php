@@ -284,8 +284,8 @@ class ParksView
 			';
 		}
 
-		// Filter: target group
-		if (isset($params['show_target_group_filter']) && ($params['show_target_group_filter'] == true) && empty($params['show_project_filter'])) {
+		// Filter: target group (hidden only when the export contains projects exclusively)
+		if (isset($params['show_target_group_filter']) && ($params['show_target_group_filter'] == true) && empty($params['projects_only'])) {
 			$template_data['FILTER_TARGET_GROUPS'] = '';
 
 			if (! empty($this->api->model->target_groups)) {
@@ -354,6 +354,49 @@ class ParksView
 			}
 		}
 
+		// Filter: fields of activity (hidden only when the export contains projects exclusively)
+		if (isset($params['show_fields_of_activity_filter']) && ($params['show_fields_of_activity_filter'] == true) && empty($params['projects_only'])) {
+			$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '';
+
+			if (! empty($this->api->model->fields_of_activity)) {
+				$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '
+					<div class="form_element mega_dropdown filter_fields_of_activity">
+						<div class="form_group">
+							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_fields_of_activity') . '">
+								<i class="deselect_icon" aria-hidden="true">m</i>
+								<span class="selected_option"></span>
+								<span class="all">' . $this->api->lang->get('offer_fields_of_activity') . '</span>
+								<i class="arrow_icon" aria-hidden="true">b</i>
+							</h4>
+							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
+								<span class="dropdown_filter" role="toolbar">
+									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
+									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+								</span>
+								<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_fields_of_activity') . '">';
+
+				foreach ($this->api->model->fields_of_activity as $field_id => $field_label) {
+					if (empty($this->api->system_filter['fields_of_activity']) || in_array($field_id, $this->api->system_filter['fields_of_activity'])) {
+						$checked = isset($params['selected']['fields_of_activity']) && in_array($field_id, $params['selected']['fields_of_activity']) ? 'checked="checked"' : '';
+						$template_data['FILTER_FIELDS_OF_ACTIVITY'] .= '
+									<label for="' . $fieldname . '_fields_of_activity_' . $field_id . '" role="option" aria-selected="false" tabindex="0">
+										<input name="' . $fieldname . '[fields_of_activity][]" id="' . $fieldname . '_fields_of_activity_' . $field_id . '" ' . $checked . ' value="' . $field_id . '" type="checkbox">
+										<span aria-hidden="true"></span>
+										' . htmlspecialchars($field_label) . '
+									</label>
+								';
+					}
+				}
+
+				$template_data['FILTER_FIELDS_OF_ACTIVITY'] .= '
+								</span>
+							</div>
+						</div>
+					</div>
+				';
+			}
+		}
+
 		// Filter: municipality
 		if (isset($params['show_municipality_filter']) && ($params['show_municipality_filter'] == true)) {
 
@@ -401,8 +444,8 @@ class ParksView
 			}
 		}
 
-		// Filter: accessibility
-		if (isset($params['show_accessibility_filter']) && ($params['show_accessibility_filter'] == true) && empty($params['hide_accessibility_filter']) && empty($params['show_project_filter'])) {
+		// Filter: accessibility (hidden only when the export contains projects exclusively)
+		if (isset($params['show_accessibility_filter']) && ($params['show_accessibility_filter'] == true) && empty($params['hide_accessibility_filter']) && empty($params['projects_only'])) {
 			$template_data['FILTER_ACCESSIBILITIES'] = '';
 
 			// Get accessibility list

@@ -62,8 +62,15 @@ Frequently tuned options:
   - Shows or hides the route filter in the filter UI.
 - `show_target_group_filter`
   - Shows or hides the target group filter.
+  - Automatically hidden when the export contains **only** projects (`projects_only`); shown alongside the project status filter when mixed offer types exist.
+- `show_fields_of_activity_filter` (default: `true`)
+  - Shows or hides the fields of activity filter.
+  - Automatically hidden when the export contains **only** projects (`projects_only`).
 - `show_accessibility_filter`
   - Shows or hides accessibility filter controls.
+  - Automatically hidden when the export contains **only** projects (`projects_only`).
+- `hide_accessibility_filter` (per-request filter option, not config)
+  - Hides accessibility controls for a single page render when passed in the `$filter` array to `show_offers_filter()`.
 - `show_municipality_filter`
   - Shows or hides the municipality filter.
 - `show_event_location_in_overview`

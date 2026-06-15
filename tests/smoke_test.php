@@ -71,6 +71,8 @@ foreach (['de' => 'Veranstaltung', 'fr' => 'Manifestation'] as $lang => $body) {
 }
 $api->db->insert('target_group', ['target_group_id' => 1, 'sort' => 1]);
 $api->db->insert('target_group_i18n', ['target_group_id' => 1, 'language' => 'de', 'body' => 'Familien']);
+$api->db->insert('field_of_activity', ['field_of_activity_id' => 1, 'sort' => 1]);
+$api->db->insert('field_of_activity_i18n', ['field_of_activity_id' => 1, 'language' => 'de', 'body' => 'Natur']);
 
 // Seed offers
 $api->db->begin();
@@ -80,6 +82,7 @@ $api->db->insert('category_link', ['offer_id' => 10, 'category_id' => 101]);
 $api->db->insert('event', ['offer_id' => 10, 'is_park_event' => 1, 'public_transport_stop' => 'Dorfplatz']);
 $api->db->insert('offer_date', ['offer_id' => 10, 'date_from' => '2030-07-01 10:00:00', 'date_to' => '2030-07-01 16:00:00']);
 $api->db->insert('target_group_link', ['offer_id' => 10, 'target_group_id' => 1]);
+$api->db->insert('field_of_activity_link', ['offer_id' => 10, 'field_of_activity_id' => 1]);
 $api->db->insert('accessibility', ['accessibility_id' => 99, 'offer_id' => 10, 'ginto_id' => 'g1']);
 $api->db->insert('accessibility_rating', ['accessibility_rating_id' => 991, 'accessibility_id' => 99, 'description_de' => 'Rollstuhl', 'icon_url' => 'https://x/icon1.svg']);
 $api->db->insert('accessibility_dropdown', ['icon_url' => 'https://x/icon1.svg']);
@@ -93,6 +96,7 @@ $api->db->commit();
 // Model
 $model = new ParksModel($api);
 check('model target groups loaded', $model->target_groups[1] === 'Familien');
+check('model fields of activity loaded', $model->fields_of_activity[1] === 'Natur');
 check('offer_exists', $model->offer_exists(10) === true);
 
 // Main offer filtering (the big query)
@@ -128,6 +132,9 @@ check('target groups resolved', $event_offer->target_groups[1] === 'Familien');
 $filtered = $model->filter_offers(['categories' => [1]], 10, 0);
 check('category filter', count($filtered['data']) === 1 && $filtered['data'][0]->offer_id == 10);
 
+$foa_filtered = $model->filter_offers(['fields_of_activity' => [1]], 10, 0);
+check('fields of activity filter', count($foa_filtered['data']) === 1 && $foa_filtered['data'][0]->offer_id == 10);
+
 // Date filter
 $by_date = $model->filter_offers(['date_from' => '2030-06-30', 'date_to' => '2030-07-02'], 10, 0);
 check('date span filter', is_array($by_date) && count($by_date['data']) === 1);
@@ -143,25 +150,27 @@ $routes = $model->filter_offers(['route_length_min' => 10, 'level_technics' => [
 check('route filter', count($routes['data']) === 1 && $routes['data'][0]->offer_id == 20);
 
 // Count categories mode
-$counts = $model->filter_offers([], null, null, false, true);
+$counts = $model->count_offers_by_category([]);
 check('count categories', $counts->event_count == 1 && $counts->activity_count == 1);
 
-// Only categories mode (iterated with foreach in ParksAPI)
-$cats = $model->filter_offers([], null, null, true, false, false, true);
+// Only categories mode
+$cats = $model->get_filter_categories([]);
 $found_cats = [];
-foreach ($cats as $cat_row) {
-	foreach ($cat_row as $value) {
-		$found_cats[] = $value;
+if ($cats) {
+	while ($cat_row = $cats->fetch_assoc()) {
+		foreach ($cat_row as $value) {
+			$found_cats[] = $value;
+		}
 	}
 }
 check('only categories iterable', in_array(101, $found_cats) && in_array(4, $found_cats));
 
 // Only parks mode
-$parks = $model->filter_offers([], null, null, true, false, false, false, true, false, true);
-check('only parks', $parks->num_rows === 2);
+$parks = $model->get_filter_parks([]);
+check('only parks', $parks && $parks->num_rows === 2);
 
 // Random order
-$random = $model->filter_offers([], 10, 0, false, false, false, false, true, true);
+$random = $model->filter_offers([], 10, 0, false, false, true, true);
 check('order by rand', count($random['data']) === 2);
 
 // Single offer with linked routes

@@ -76,10 +76,19 @@ Parameters:
 
 ## Data access methods
 
-### `get_offers_list($park_id = NULL, $categories = [], $page = NULL, $limit = NULL, $filter = [], $ignore_filter = false, $return_minimal = false, $only_count_categories = false, $map_mode = false)`
+### `get_offers_list($park_id = NULL, $categories = [], $page = NULL, $limit = NULL, $filter = [], $ignore_filter = false, $return_minimal = false, $map_mode = false)`
 
-- Returns offers as data instead of rendering HTML.
+- Returns offers as `array` with keys `data` and `total` (empty when no matches).
 - Wraps the internal query pipeline used by overview rendering.
+
+### `count_offers_by_category($park_id = NULL, $categories = [], $filter = [])`
+
+- Returns category counts as `stdClass|false` (`event_count`, `booking_count`, `activity_count`, `product_count`, `project_count`).
+- Used internally to decide which filter UI elements to show.
+
+### `get_filter_categories($park_id = NULL, $categories = [], $filter = [])`
+
+- Returns `ParksSQLiteResult|false` with `category_id` rows for categories that have matching offers.
 
 Common parameters:
 

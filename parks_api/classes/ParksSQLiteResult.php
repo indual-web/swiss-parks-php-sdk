@@ -10,7 +10,7 @@
 */
 
 
-class ParksSQLiteResult implements IteratorAggregate
+class ParksSQLiteResult
 {
 
 
@@ -82,18 +82,6 @@ class ParksSQLiteResult implements IteratorAggregate
 
 		return ($row === null) ? null : (object) $row;
 	}
-
-
-
-	/**
-	 * Allow iterating the result directly with foreach
-	 */
-	public function getIterator(): ArrayIterator
-	{
-
-		return new ArrayIterator($this->rows);
-	}
-
 
 
 }

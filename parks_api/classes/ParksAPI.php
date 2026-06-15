@@ -540,7 +540,7 @@ class ParksAPI
 			$product_count = 0;
 			$projects_count = 0;
 
-			$offers_count = $this->_get_offers($park_id, $categories, null, NULL, $filter, true, true, true);
+			$offers_count = $this->count_offers_by_category($park_id, $categories, $filter);
 			if (! empty($offers_count)) {
 				$event_count = $offers_count->event_count;
 				$booking_count = $offers_count->booking_count;
@@ -550,10 +550,10 @@ class ParksAPI
 			}
 
 			// Get all categories where at least one offer exists
-			$offer_categories = $this->_get_offers($park_id, $categories, null, NULL, $filter, true, true, false, false, true);
-			if ($offer_categories->num_rows > 0) {
+			$offer_categories = $this->get_filter_categories($park_id, $categories, $filter);
+			if ($offer_categories && $offer_categories->num_rows > 0) {
 				$categories = [];
-				foreach ($offer_categories as $offer_category) {
+				while ($offer_category = $offer_categories->fetch_assoc()) {
 					foreach ($offer_category as $single_category) {
 						if ($single_category > 0) {
 							$categories[$single_category] = $single_category;
@@ -622,6 +622,7 @@ class ParksAPI
 				'show_event_filter' => $show_event_filter,
 				'show_route_filter' => $show_route_filter,
 				'show_target_group_filter' => $this->config['show_target_group_filter'],
+				'show_fields_of_activity_filter' => $this->config['show_fields_of_activity_filter'],
 				'show_accessibility_filter' => $this->config['show_accessibility_filter'],
 				'show_project_filter' => $show_project_filter,
 				'hide_accessibility_filter' => $filter['hide_accessibility_filter'] ?? false,
@@ -716,7 +717,7 @@ class ParksAPI
 			}
 
 			// Get offers and total
-			$offers = $this->_get_offers($park_id, $categories, $this->page, $this->config['offers_per_page'], $filter, false, true);
+			$offers = $this->get_offers_list($park_id, $categories, $this->page, $this->config['offers_per_page'], $filter, false, true);
 
 			// Set total
 			$this->total = ! empty($offers['total']) ? ceil($offers['total'] / $this->config['offers_per_page']) : 0;
@@ -759,7 +760,7 @@ class ParksAPI
 			$this->_set_selected_park($park_id);
 
 			// Get offers and total
-			$offers = $this->_get_offers($park_id, $categories, null, NULL, $filter, false, false, false, true);
+			$offers = $this->get_offers_list($park_id, $categories, null, null, $filter, false, false, true);
 			return $this->_load_maps_api() . $this->view->_get_overview_map($offers['data'] ?? []);
 		}
 
@@ -1035,10 +1036,51 @@ class ParksAPI
 		array $filter = [],
 		bool $ignore_filter = false,
 		bool $return_minimal = false,
-		bool $only_count_categories = false,
 		bool $map_mode = false
-	): ParksSQLiteResult|stdClass|array|false {
-		return $this->_get_offers($park_id, $categories, $page, $limit, $filter, $ignore_filter, $return_minimal, $only_count_categories, $map_mode);
+	): array {
+
+		$filter = $this->_build_offers_filter($park_id, $categories, $filter, $ignore_filter);
+
+		$offset = 0;
+		if (! empty($page) && is_numeric($page)) {
+			$offset = ($page - 1) * $this->config['offers_per_page'];
+		}
+
+		$result = $this->model->filter_offers($filter, $limit, $offset, $return_minimal, $map_mode);
+
+		return is_array($result) ? $result : ['data' => [], 'total' => 0];
+	}
+
+
+
+	/**
+	 * Count offers grouped by main category type
+	 */
+	public function count_offers_by_category(
+		?int $park_id = null,
+		array $categories = [],
+		array $filter = []
+	): stdClass|false {
+
+		$filter = $this->_build_offers_filter($park_id, $categories, $filter, true);
+
+		return $this->model->count_offers_by_category($filter);
+	}
+
+
+
+	/**
+	 * Get category IDs that have at least one matching offer
+	 */
+	public function get_filter_categories(
+		?int $park_id = null,
+		array $categories = [],
+		array $filter = []
+	): ParksSQLiteResult|false {
+
+		$filter = $this->_build_offers_filter($park_id, $categories, $filter, true);
+
+		return $this->model->get_filter_categories($filter);
 	}
 
 
@@ -1112,6 +1154,7 @@ class ParksAPI
 
 				if ($import_ok) {
 					$this->model->reload_target_groups();
+					$this->model->reload_fields_of_activity();
 					$this->model->reload_categories();
 
 					$this->api->initialized = 1;
@@ -1298,41 +1341,29 @@ class ParksAPI
 	public function get_offers(
 		?int $park_id = null,
 		array $categories = []
-	): ParksSQLiteResult|stdClass|array|false {
+	): array {
 
-		// Set park id
-		if (empty($park_id)) {
-			$park_id = $this->park_id;
-		}
-
-		return $this->_get_offers($park_id, $categories);
+		return $this->get_offers_list($park_id, $categories);
 	}
 
 
 
 	/**
-	 * Get offers
+	 * Build filter array for offer queries
 	 */
-	public function _get_offers(
+	private function _build_offers_filter(
 		?int $park_id = null,
 		array $categories = [],
-		?int $page = null,
-		?int $limit = null,
 		array $additional_filter = [],
-		bool $ignore_filter = false,
-		bool $return_minimal = false,
-		bool $only_count_categories = false,
-		bool $map_mode = false,
-		bool $return_only_categories = false
-	): ParksSQLiteResult|stdClass|array|false {
+		bool $ignore_filter = false
+	): array {
 
-		// Set park id
 		if (empty($park_id)) {
 			$park_id = $this->park_id;
 		}
 
-		// Init filter
 		$filter = [];
+
 		if ($ignore_filter == false) {
 			foreach ($this->filter_data as $field => $value) {
 				if (! empty($value)) {
@@ -1341,8 +1372,6 @@ class ParksAPI
 				}
 			}
 		}
-
-		// Overwrite filter fields
 		if (! empty($categories) && ! isset($filter['categories'])) {
 			$filter['categories'] = $categories;
 		}
@@ -1452,13 +1481,7 @@ class ParksAPI
 			$filter['park_id'] = $park_id;
 		}
 
-		// Get offset and limit
-		$offset = 0;
-		if (! empty($page) && is_numeric($page)) {
-			$offset = ($page - 1) * $this->config['offers_per_page'];
-		}
-
-		return $this->model->filter_offers($filter, $limit, $offset, $return_minimal, $only_count_categories, $map_mode, $return_only_categories, true);
+		return $filter;
 	}
 
 
@@ -1819,6 +1842,7 @@ class ParksAPI
 			'FILTER_CATEGORIES',
 			'FILTER_DATES',
 			'FILTER_TARGET_GROUPS',
+			'FILTER_FIELDS_OF_ACTIVITY',
 			'FILTER_MUNICIPALITIES',
 			'FILTER_ACCESSIBILITIES',
 			'FILTER_PARKS',

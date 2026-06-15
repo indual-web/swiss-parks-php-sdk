@@ -33,6 +33,12 @@ class ParksModel
 
 
 	/**
+	 * Fields of activity
+	 */
+	public array $fields_of_activity = [];
+
+
+	/**
 	 * All categories
 	 */
 	public array $categories = [];
@@ -57,7 +63,37 @@ class ParksModel
 		];
 
 		$this->reload_target_groups();
+		$this->reload_fields_of_activity();
 		$this->reload_categories();
+	}
+
+
+
+	/**
+	 * Reload fields of activity from database
+	 */
+	public function reload_fields_of_activity(): void
+	{
+
+		$this->fields_of_activity = [];
+
+		$q_fields = $this->api->db->get(
+			'field_of_activity',
+			['language' => $this->api->lang->lang_id],
+			['field_of_activity_i18n' => 'field_of_activity.field_of_activity_id = field_of_activity_i18n.field_of_activity_id'],
+			null,
+			null,
+			null,
+			null,
+			'field_of_activity.sort'
+		);
+
+		if ($q_fields && $q_fields->num_rows > 0) {
+			while ($row = $q_fields->fetch_object()) {
+				$this->fields_of_activity[$row->field_of_activity_id] = $row->body;
+			}
+		}
+
 	}
 
 
@@ -182,19 +218,76 @@ class ParksModel
 
 
 	/**
-	 * Get offers
+	 * Get offers matching filter criteria
 	 */
 	public function filter_offers(
 		array $filter,
 		?int $limit = null,
 		?int $offset = null,
 		bool $return_minimal = false,
-		bool $only_count_categories = false,
 		bool $map_mode = false,
-		bool $return_only_categories = false,
 		bool $ignore_hint_order = false,
-		bool $order_by_rand = false,
-		bool $return_only_parks = false
+		bool $order_by_rand = false
+	): array|false {
+
+		$result = $this->_query_offers($filter, $limit, $offset, $return_minimal, $map_mode, $ignore_hint_order, $order_by_rand, 'list');
+
+		return is_array($result) ? $result : false;
+	}
+
+
+
+	/**
+	 * Count offers grouped by main category type
+	 */
+	public function count_offers_by_category(array $filter): stdClass|false
+	{
+
+		$result = $this->_query_offers($filter, null, null, false, false, false, false, 'count_categories');
+
+		return ($result instanceof stdClass) ? $result : false;
+	}
+
+
+
+	/**
+	 * Get category IDs that have at least one matching offer
+	 */
+	public function get_filter_categories(array $filter): ParksSQLiteResult|false
+	{
+
+		$result = $this->_query_offers($filter, null, null, false, false, false, false, 'categories');
+
+		return ($result instanceof ParksSQLiteResult) ? $result : false;
+	}
+
+
+
+	/**
+	 * Get parks that have at least one matching offer
+	 */
+	public function get_filter_parks(array $filter): ParksSQLiteResult|false
+	{
+
+		$result = $this->_query_offers($filter, null, null, false, false, true, false, 'parks');
+
+		return ($result instanceof ParksSQLiteResult) ? $result : false;
+	}
+
+
+
+	/**
+	 * Build and run offers query (internal)
+	 */
+	private function _query_offers(
+		array $filter,
+		?int $limit,
+		?int $offset,
+		bool $return_minimal,
+		bool $map_mode,
+		bool $ignore_hint_order,
+		bool $order_by_rand,
+		string $mode
 	): ParksSQLiteResult|stdClass|array|false {
 
 		// Populate date filter
@@ -325,7 +418,7 @@ class ParksModel
 		";
 
 		// Alternative mode: count categories
-		if ($only_count_categories == true) {
+		if ($mode === 'count_categories') {
 			$select = "
 				SELECT
 					COUNT(event.offer_id) as event_count,
@@ -338,14 +431,14 @@ class ParksModel
 		}
 
 		// Alternative mode: get only categories
-		else if ($return_only_categories == true) {
+		else if ($mode === 'categories') {
 			$select = "
 				SELECT category_link.category_id
 				FROM offer main_offer
 			";
 		}
 		// Alternative mode: get only parks
-		else if ($return_only_parks == true) {
+		else if ($mode === 'parks') {
 			$select = "
 				SELECT main_offer.park_id, MIN(main_offer.park) AS park
 				FROM offer main_offer
@@ -828,7 +921,7 @@ class ParksModel
 		}
 
 		// Init having
-		if (! empty($having) && is_array($having) && ($only_count_categories == false) && ($return_only_categories == false) && ($return_only_parks == false)) {
+		if (! empty($having) && is_array($having) && ($mode === 'list')) {
 			$having = " HAVING " . implode(" AND ", $having);
 		} else {
 			$having = "";
@@ -836,11 +929,11 @@ class ParksModel
 
 		// Group and order by
 		$group_by = $order_by = "";
-		if ($return_only_parks == true) {
+		if ($mode === 'parks') {
 			$group_by = " GROUP BY main_offer.park_id ";
 			$order_by = " ORDER BY park ASC ";
 		}
-		else if (($only_count_categories == false) && ($return_only_categories == false)) {
+		else if ($mode === 'list') {
 
 			// Group by
 			$group_by = "
@@ -922,21 +1015,15 @@ class ParksModel
 		// Run query
 		$q_offers = $this->api->db->query($select . $join . $where . $group_by . $having . $order_by . $limit_sql);
 
-		// Return only count of offers
-		if ($only_count_categories == true) {
+		if ($mode === 'count_categories') {
 			return $q_offers->fetch_object();
 		}
 
-		// Return only linked categories
-		elseif ($return_only_categories == true) {
+		if ($mode === 'categories' || $mode === 'parks') {
 			return $q_offers;
 		}
-		// Return only parks
-		elseif ($return_only_parks == true) {
-			return $q_offers;
-		}
-		// Return offer data
-		else if ($q_offers->num_rows > 0) {
+
+		if ($q_offers->num_rows > 0) {
 
 			// Get offers (total ignoring the limit is provided by the window function)
 			$offers = [
@@ -1434,7 +1521,7 @@ class ParksModel
 			$filter['categories'] = $categories;
 		}
 
-		$q_users = $this->filter_offers($filter, null, NULL, true, false, false, false, true, false, true);
+		$q_users = $this->get_filter_parks($filter);
 
 		if ($q_users && ($q_users->num_rows > 0)) {
 			$users = [];
