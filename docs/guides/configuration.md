@@ -20,6 +20,8 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
 - `curl_verify_ssl` (default: `true`)
   - Verifies SSL certificates for export requests to `angebote.paerke.ch`.
   - If import/update fails with SSL or cURL HTTPS errors on shared hosting, set to `false` in `config.php` as a fallback.
+- `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_api_migration`)
+  - Endpoint for `log_migration()` after a successful `migrate.php` run. Also uses `curl_verify_ssl`.
 
 ## Runtime mode: single park vs network-wide
 

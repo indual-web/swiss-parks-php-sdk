@@ -371,7 +371,13 @@ class ParksAPI
 		$this->api = null;
 		$this->_setup();
 
-		return ! empty($this->api->initialized);
+		$success = ! empty($this->api->initialized);
+
+		if ($success && ! $this->log_migration(API_VERSION)) {
+			$this->logger->info('Migration log could not be sent to the central server.');
+		}
+
+		return $success;
 
 	}
 
@@ -1904,6 +1910,73 @@ class ParksAPI
 			'message' => $message,
 			'messsage' => $message,
 		]);
+
+	}
+
+
+
+	/**
+	 * Report successful migration to central log server
+	 *
+	 * Payload must match log_api_migration() on angebote.paerke.ch
+	 * (required: api_version, url).
+	 */
+	public function log_migration(int $version_to = 0): bool
+	{
+
+		if (! function_exists('curl_init')) {
+			return false;
+		}
+
+		$api_version = (string) ($version_to > 0 ? $version_to : API_VERSION);
+		$site_url = (! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['REQUEST_URI']))
+			? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
+			: ((gethostname() ?: 'CLI') . ' (CLI)');
+
+		if ($api_version === '' || $site_url === '') {
+			return false;
+		}
+
+		$payload = [
+			'api_version' => $api_version,
+			'php_version' => PHP_VERSION,
+			'url' => $site_url,
+			'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
+			'hash' => $this->config['api_hash'] ?? '',
+			'park_id' => $this->config['park_id'] ?? '',
+			'file_path' => $_SERVER['SCRIPT_FILENAME'] ?? __FILE__,
+		];
+
+		$url = $this->config['migration_log_url'] ?? 'https://angebote.paerke.ch/migrate/log_api_migration';
+		$verify_ssl = $this->config['curl_verify_ssl'] ?? true;
+
+		$ch = curl_init();
+
+		if ($ch === false) {
+			return false;
+		}
+
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+		curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_REFERER'] ?? '');
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl ? 2 : 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+
+		$response = curl_exec($ch);
+		$http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$success = ($response !== false) && ($http_code >= 200) && ($http_code < 300);
+
+		if (! $success) {
+			$error = curl_error($ch) ?: ('HTTP ' . $http_code);
+			$this->logger->info('Migration log request failed: ' . $error);
+		}
+
+		return $success;
 
 	}
 
