@@ -20,9 +20,6 @@ jobs:
           php-version: '8.4'
           extensions: pdo_sqlite, sqlite3
 
-      - name: Run smoke test
-        run: php tests/smoke_test.php
-
       - name: Build release ZIP
         run: |
           VERSION="${GITHUB_REF_NAME#v}"

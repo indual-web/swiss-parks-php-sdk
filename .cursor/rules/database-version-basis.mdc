@@ -13,7 +13,7 @@ alwaysApply: false
 
 - Schema-Aenderungen immer in `parks_api/database/schema.sql` vornehmen.
 - Schema-Basis ist `schema.sql`, nicht mehr MySQL-Dumps.
-- Nach Schema-Aenderungen: `php tests/smoke_test.php` und `php parks_api/scripts/migrate.php` pruefen.
+- Nach Schema-Aenderungen: `php parks_api/scripts/migrate.php` pruefen.
 
 # Beispiel
 

@@ -1,13 +1,13 @@
 <?php
 /*
-|---------------------------------------------------------------
-| parks.swiss API
-| Netzwerk Schweizer Pärke
-|---------------------------------------------------------------
+|-----------------------------------------------------------------------
+| Swiss Parks PHP SDK
+| https://github.com/indual-web/swiss-parks-php-sdk
+|-----------------------------------------------------------------------
+|
+| Rebuild database and run full import
+|
 */
-
-
-// Include API
 require("../autoload.php");
 
 try {

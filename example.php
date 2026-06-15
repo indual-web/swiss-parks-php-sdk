@@ -1,11 +1,11 @@
 <?php
 /*
-|---------------------------------------------------------------
-| parks.swiss API
-| Netzwerk Schweizer Pärke
-|---------------------------------------------------------------
+|-----------------------------------------------------------------------
+| Swiss Parks PHP SDK
+| https://github.com/indual-web/swiss-parks-php-sdk
+|-----------------------------------------------------------------------
 |
-| Example for displaying a list of offers using the parks.swiss API
+| Example for displaying offers with the Swiss Parks PHP SDK
 |
 */
 

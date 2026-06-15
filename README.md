@@ -157,15 +157,9 @@ Commands for `sync.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 17) Smoke tests and CI (SDK maintainers only)
+## 17) Releases (SDK maintainers only)
 
-The offline SQLite/query smoke test lives in `tests/smoke_test.php` and is **not** included in release ZIPs built via `deploy.sh`. SDK maintainers can run it after core changes:
-
-```bash
-php tests/smoke_test.php
-```
-
-GitHub Actions runs the same test on PHP 8.2–8.4 (see `.github/workflows/tests.yml`). To publish a release, tag the version and push the tag — CI builds the ZIP and uploads it to GitHub Releases (see `.github/workflows/release.yml` and [`docs/guides/release-checklist.md`](docs/guides/release-checklist.md)):
+To publish a release, tag the version and push the tag — CI builds the ZIP and uploads it to GitHub Releases (see `.github/workflows/release.yml` and [`docs/guides/release-checklist.md`](docs/guides/release-checklist.md)):
 
 ```bash
 git tag v22
