@@ -21,4 +21,4 @@ This section contains setup, runtime, and operations guides for the Swiss Parks 
 ## Operations
 
 - [Performance and upgrade strategy](./performance-and-upgrade-strategy.md)
-- [API reference index](../api-reference/index.md)
+- [SDK reference index](../sdk-reference/index.md)

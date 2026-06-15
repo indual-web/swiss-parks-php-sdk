@@ -41,6 +41,6 @@ $api->map_options = [
 
 ## Related docs
 
-- [API reference index](./index.md)
+- [SDK reference index](./index.md)
 - [ParksAPI methods](./parks-api.md)
 

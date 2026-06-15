@@ -205,7 +205,7 @@ if ($api->is_offer_detail()) {
 
 ## Related docs
 
-- [API reference index](./index.md)
+- [SDK reference index](./index.md)
 - [Filter options](./filter-options.md)
 - [Map options](./map-options.md)
 

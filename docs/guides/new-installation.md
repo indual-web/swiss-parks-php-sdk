@@ -43,4 +43,4 @@ No database server is required: the SDK stores all data in a local SQLite file t
 
 - [Guide index](./index.md)
 - [README](../../README.md) (integration overview)
-- [API reference index](../api-reference/index.md)
+- [SDK reference index](../sdk-reference/index.md)

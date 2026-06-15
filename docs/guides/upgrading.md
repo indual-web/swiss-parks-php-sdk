@@ -85,4 +85,4 @@ For v21 rollback after a failed v22 attempt, see [21 to 22 — Rollback](./migra
 - [Migrations index](./migrations/README.md)
 - [Guide index](./index.md)
 - [README](../../README.md) (operations overview)
-- [API reference index](../api-reference/index.md)
+- [SDK reference index](../sdk-reference/index.md)

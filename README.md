@@ -6,7 +6,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 
 - Start here in this `README.md` for setup and workflow overview.
 - Detailed guides are in [`docs/guides/index.md`](docs/guides/index.md).
-- API details are in [`docs/api-reference/index.md`](docs/api-reference/index.md).
+- SDK details are in [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md).
 
 ## Quick navigation
 
@@ -15,7 +15,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 - Migration and update lifecycle: [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
 - Core configuration: [`docs/guides/configuration.md`](docs/guides/configuration.md)
 - Quick start integration: [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md)
-- API reference: [`docs/api-reference/index.md`](docs/api-reference/index.md)
+- SDK reference: [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md)
 
 ---
 
@@ -109,21 +109,21 @@ Commands for `sync.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 9) Public API methods for integrators
+## 9) ParksAPI methods for integrators
 
-- [`docs/api-reference/parks-api.md`](docs/api-reference/parks-api.md)
+- [`docs/sdk-reference/parks-api.md`](docs/sdk-reference/parks-api.md)
 
 ---
 
 ## 10) Filter options and capabilities
 
-- [`docs/api-reference/filter-options.md`](docs/api-reference/filter-options.md)
+- [`docs/sdk-reference/filter-options.md`](docs/sdk-reference/filter-options.md)
 
 ---
 
 ## 11) Map options (`$api->map_options`)
 
-- [`docs/api-reference/map-options.md`](docs/api-reference/map-options.md)
+- [`docs/sdk-reference/map-options.md`](docs/sdk-reference/map-options.md)
 
 ---
 

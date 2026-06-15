@@ -26,4 +26,4 @@ A complete example including tabs and map is available in `example.php`.
 
 - [Guide index](./index.md)
 - [Core configuration](./configuration.md)
-- [ParksAPI methods](../api-reference/parks-api.md)
+- [ParksAPI methods](../sdk-reference/parks-api.md)
