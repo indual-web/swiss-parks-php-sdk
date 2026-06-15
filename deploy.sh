@@ -38,7 +38,7 @@ rm -f deploy.zip
 
 # Compress folder
 zip -9 -r deploy.zip ./parks_api_$VERSION/*
-mv ./deploy.zip ./releases/Parks-API-$VERSION.zip
+mv ./deploy.zip ./releases/swiss-parks-php-sdk-$VERSION.zip
 
 # Remove temp folder
 rm -Rf ./parks_api_$VERSION

@@ -1,6 +1,6 @@
 # Upgrade guide
 
-This guide describes the **generic** upgrade workflow for any Parks-API release.
+This guide describes the **generic** upgrade workflow for any Swiss Parks PHP SDK release.
 
 For breaking changes between specific versions, use a [version-specific migration guide](./migrations/README.md).
 

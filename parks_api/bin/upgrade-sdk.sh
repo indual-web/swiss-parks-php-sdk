@@ -17,7 +17,7 @@ Usage: bash upgrade-sdk.sh [version]
 
   version   Release version (e.g. 22, 21.1) or "latest" (default)
 
-Downloads the Parks-API release from GitHub Releases, replaces SDK core
+Downloads a Swiss Parks PHP SDK release from GitHub Releases, replaces SDK core
 files, preserves config.php, custom/, data/, and log/, then runs migrate.php.
 
 Environment:
@@ -41,7 +41,7 @@ require_command()
 
 
 
-resolve_download_url()
+resolve_download_urls()
 {
 
 	local version="$1"
@@ -77,6 +77,8 @@ resolve_download_url()
 		return
 	fi
 
+	echo "https://github.com/${GITHUB_REPO}/releases/download/${version}/swiss-parks-php-sdk-${version}.zip"
+	echo "https://github.com/${GITHUB_REPO}/releases/download/${version}/Parks-API-${version}.zip"
 	echo "https://github.com/${GITHUB_REPO}/releases/download/v${version}/Parks-API-${version}.zip"
 
 }
@@ -98,7 +100,7 @@ if [ ! -f "$PARKS_API_DIR/autoload.php" ]; then
 	exit 1
 fi
 
-DOWNLOAD_URL="$(resolve_download_url "$VERSION")"
+DOWNLOAD_URLS="$(resolve_download_urls "$VERSION")"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_DIR="$(dirname "$PARKS_API_DIR")/parks_api-backup-${TIMESTAMP}"
 TMP_DIR="$(mktemp -d)"
@@ -114,8 +116,22 @@ cleanup()
 trap cleanup EXIT
 
 echo "Downloading release..."
-if ! curl -fsSL "$DOWNLOAD_URL" -o "$ZIP_FILE"; then
-	echo "Error: download failed ($DOWNLOAD_URL)" >&2
+DOWNLOAD_OK=0
+while IFS= read -r url; do
+	[ -z "$url" ] && continue
+	if curl -fsSL "$url" -o "$ZIP_FILE"; then
+		DOWNLOAD_OK=1
+		break
+	fi
+done <<< "$DOWNLOAD_URLS"
+
+if [ "$DOWNLOAD_OK" -ne 1 ]; then
+	echo "Error: download failed for version $VERSION" >&2
+	echo "Tried:" >&2
+	while IFS= read -r url; do
+		[ -z "$url" ] && continue
+		echo "  $url" >&2
+	done <<< "$DOWNLOAD_URLS"
 	echo "Check the version and that the release exists on GitHub." >&2
 	exit 1
 fi

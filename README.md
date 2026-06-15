@@ -157,18 +157,7 @@ Commands for `sync.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 17) Releases (SDK maintainers only)
-
-To publish a release, tag the version and push the tag — CI builds the ZIP and uploads it to GitHub Releases (see `.github/workflows/release.yml` and [`docs/guides/release-checklist.md`](docs/guides/release-checklist.md)):
-
-```bash
-git tag v22
-git push origin v22
-```
-
----
-
-## 18) Contact
+## 17) Contact
 
 More information:
 

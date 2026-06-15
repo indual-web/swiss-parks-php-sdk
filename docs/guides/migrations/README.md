@@ -55,4 +55,3 @@ After adding a guide:
 1. Add a row to the table in this file.
 2. Link it from [upgrading.md](../upgrading.md) under «Version-specific migrations».
 3. Update [guides index](../index.md) if needed.
-4. Follow the [release checklist](../release-checklist.md) before publishing.
