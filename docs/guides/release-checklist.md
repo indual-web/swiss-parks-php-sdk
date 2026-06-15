@@ -1,6 +1,6 @@
 # Release checklist (maintainers)
 
-Use this checklist before publishing a new Parks-API release ZIP.
+Use this checklist before publishing a new Swiss Parks PHP SDK release ZIP.
 
 ## 1. Version and code
 
@@ -23,13 +23,24 @@ Use this checklist before publishing a new Parks-API release ZIP.
 ## 3. Publish release
 
 - [ ] Tag and push to trigger the GitHub Actions release workflow (`.github/workflows/release.yml`):
-  - `git tag v<version>` (example: `git tag v22`)
-  - `git push origin v<version>`
-- [ ] CI builds `Parks-API-<version>.zip` via `deploy.sh` and publishes a [GitHub Release](https://github.com/indual-web/swiss-parks-php-sdk/releases)
+  - `git tag <version>` (example: `git tag 22`)
+  - `git push origin <version>`
+- [ ] CI builds `swiss-parks-php-sdk-<version>.zip` via `deploy.sh` and publishes a [GitHub Release](https://github.com/indual-web/swiss-parks-php-sdk/releases)
 - [ ] Verify the release asset:
   - contains `parks_api/` and `example.php`
   - does **not** contain `docs/`, `releases/`, `data/`, `log/`, `config.local.php`
 - [ ] Optional local build: `bash deploy.sh <version>` (output in `releases/`, gitignored)
+
+### One-time: rename legacy release ZIPs on GitHub
+
+Older releases used `Parks-API-<version>.zip`. To rename existing GitHub release assets:
+
+```bash
+GITHUB_TOKEN=ghp_... bash bin/rename-github-release-zips.sh --dry-run
+GITHUB_TOKEN=ghp_... bash bin/rename-github-release-zips.sh
+```
+
+Local archives in `releases/` should use `swiss-parks-php-sdk-<version>.zip` (already renamed in the repo).
 
 ## 4. Documentation
 
