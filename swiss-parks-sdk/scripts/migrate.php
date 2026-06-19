@@ -8,7 +8,7 @@
 | Rebuild database and run full import
 |
 */
-require("../autoload.php");
+require __DIR__ . '/../autoload.php';
 
 try {
 
