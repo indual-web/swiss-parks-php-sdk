@@ -732,8 +732,12 @@ class ParksModel
 			$having[] = "
 				(
 					date_from IS NULL
-					OR date_from >= NOW()
-					OR date_to >= NOW()
+					OR datetime(DATE_FORMAT(date_from, '%Y-%m-%d'), '23:59:59') >= NOW()
+					OR (
+						date_to IS NOT NULL
+						AND date_to != '0000-00-00 00:00:00'
+						AND datetime(DATE_FORMAT(date_to, '%Y-%m-%d'), '23:59:59') >= NOW()
+					)
 					OR main_category_id != " . CATEGORY_EVENT . "
 				)
 			";
