@@ -28,10 +28,10 @@ $api = new ParksAPI($language);
 	<title>parks.swiss API Example</title>
 
 	<!-- Parks API CSS  -->
-	<link href="https://angebote.paerke.ch/assets/dist/v22/css/parks.min.css" rel="stylesheet">
+	<link href="https://staging.angebote.paerke.ch/assets/dist/v22/css/parks.min.css" rel="stylesheet">
 
 	<!-- Parks API JS -->
-	<script type="module" src="https://angebote.paerke.ch/assets/dist/v22/parks.min.js"></script>
+	<script type="module" src="https://staging.angebote.paerke.ch/assets/dist/v22/parks.min.js"></script>
 	
 </head>
 <body>
@@ -40,6 +40,7 @@ $api = new ParksAPI($language);
 
 		// Map options
 		$api->map_options = [
+			'full_height' => true,
 			/*
 			'map_initialize_on_load' => false, 				// Load map on page load
 			'show_layers_at_start' => false, 				// Show/hide layers at start after loading
@@ -94,6 +95,10 @@ $api = new ParksAPI($language);
 
 		// Show offer listing
 		else {
+
+			$api->show_offers_map($categories, $filter);
+
+			/*
 			// Show offer filter
 			$api->show_offers_filter($categories, $filter);
 			?>
@@ -115,6 +120,7 @@ $api = new ParksAPI($language);
 				</div>
 			</div>
 			<?php
+			*/
 		}
 		?>
 	</div>

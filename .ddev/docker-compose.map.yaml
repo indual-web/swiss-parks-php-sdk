@@ -1,0 +1,10 @@
+# -------------------------------------------------------
+# DDEV Project Configuration: indual CMS
+# -------------------------------------------------------
+
+services:
+  web:
+    volumes:
+
+      # Load Swiss Parks Map dist files
+      - ${HOME}/Sites/localhost/swiss-parks-map/dist:/var/www/html/dist:ro
