@@ -1372,7 +1372,7 @@ class ParksView
 			}
 
 			// Show long description
-			$description .= '<p class="description">' . output_text($long_description) . '</p>';
+			$description .= '<div class="description">' . output_text($long_description) . '</div>';
 		}
 
 		// Project and research fields
