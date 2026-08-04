@@ -1068,7 +1068,7 @@ class ParksView
 								$output .= '<span>' . $this->api->lang->get('offer_time_required') . ': ' . activity_get_time_required($offer, $this->api->lang) . '</span>';
 							}
 							if (! empty($offer->route_length) && (intval($offer->route_length) > 0)) {
-								$output .= '<span>' . $this->api->lang->get('offer_route_length') . ': ' . $offer->route_length . $this->api->lang->get('offer_route_length_km') . '</span>';
+								$output .= '<span>' . $this->api->lang->get('offer_route_length') . ': ' . number_format((float) $offer->route_length, 1) . $this->api->lang->get('offer_route_length_km') . '</span>';
 							}
 							$output .= '</div>';
 						}
@@ -1592,7 +1592,7 @@ class ParksView
 					$short_info .= '<span>' . $this->api->lang->get('offer_time_required') . ': </span> ' . activity_get_time_required($offer, $this->api->lang);
 				}
 				if (isset($offer->route_length) && (intval($offer->route_length) > 0)) {
-					$short_info .= '<span>' . $this->api->lang->get('offer_route_length') . ':</span> ' . $offer->route_length . ' km ';
+					$short_info .= '<span>' . $this->api->lang->get('offer_route_length') . ':</span> ' . number_format((float) $offer->route_length, 1) . ' km ';
 				}
 				break;
 			case CATEGORY_PROJECT:
@@ -2731,7 +2731,7 @@ class ParksView
 
 		if (! empty($offer)) {
 			if (! empty($offer->route_length) && ($offer->route_length > 0)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_route_length') . '</dt><dd>' . ((intval($offer->route_length) > 0) ? $offer->route_length : '') . ' ' . $this->api->lang->get('offer_route_length_km') . '</dd>';
+				$route_details .= '<dt>' . $this->api->lang->get('offer_route_length') . '</dt><dd>' . ((intval($offer->route_length) > 0) ? number_format((float) $offer->route_length, 1) : '') . ' ' . $this->api->lang->get('offer_route_length_km') . '</dd>';
 			}
 			if (! empty($offer->untarred_route_length) && ($offer->untarred_route_length > 0)) {
 				$route_details .= '<dt>' . $this->api->lang->get('offer_untarred_route_length') . '</dt><dd>' . ((intval($offer->untarred_route_length) > 0) ? $offer->untarred_route_length : '') . ' ' . $this->api->lang->get('offer_route_length_km') . '</dd>';
