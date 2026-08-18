@@ -2472,24 +2472,24 @@ class ParksView
 		$map_view = '
 			<div id="mapContainer" style="min-height: 600px;"></div>
 			<script>
-				window.parksMapConfig = {
+				window.swissParksMapConfig = {
 					containerId: 				\'mapContainer\',
 					initializeOnLoad: 			' . (! empty($this->api->map_options['map_initialize_on_load']) ? 'true' : 'false') . ',
-					show_layers_at_start: 		true,
-					parkperimeter_visibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
-					link_target: 				\'_self\',
-					full_height: 				' . (! empty($this->api->map_options['full_height']) ? 'true' : 'false') . ',
+					showLayersAtStart: 			true,
+					parkperimeterVisibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
+					linkTarget: 				\'_self\',
+					fullHeight: 				' . (! empty($this->api->map_options['full_height']) ? 'true' : 'false') . ',
 					language: 					\'' . $this->api->lang_id . '\',
 					mode: 						\'filter\',
-					syncSettings: 				{ enableUrlSync: false, enableCookieSync: false },
+					statePersistance: 			{ shareableUrl: false, rememberSession: false },
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
-					popup_link_path: 			\'' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $offer_detail_url . '\',
-					seo_url:					' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
+					popupLinkPath: 				\'' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $offer_detail_url . '\',
+					seoUrl:						' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
 					' . (! empty($this->config['park_id']) ? '
 					customWfsLayers: 			[' . $this->_get_map_layers() . '],
-					parks_abbreviation: 		\'' . $this->config['parks'][$this->config['park_id']] . '\', 
+					parksAbbreviation: 			\'' . $this->config['parks'][$this->config['park_id']] . '\',
 					' : '') . '
-					api_key: 					\'' . $this->config['api_hash'] . '\'
+					apiKey: 					\'' . $this->config['api_hash'] . '\'
 				};
 			</script>
 		';
