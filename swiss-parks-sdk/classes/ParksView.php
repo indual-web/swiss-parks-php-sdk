@@ -189,26 +189,13 @@ class ParksView
 
 		// Filter: select categories
 		if (is_array($params['categories']) && ! empty($params['categories'])) {
-			$template_data['FILTER_CATEGORIES'] = '
-				<div class="form_element mega_dropdown">
-					<div class="form_group">
-						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . (! empty($params['projects_only']) ? $this->api->lang->get('projects_all') : $this->api->lang->get('offer_all')) . '">
-							<i class="deselect_icon" aria-hidden="true">m</i>
-							<span class="selected_option" aria-hidden="true"></span>
-							<span class="all">' . (! empty($params['projects_only']) ? $this->api->lang->get('projects_all') : $this->api->lang->get('offer_all')) . '</span>
-							<i class="arrow_icon" aria-hidden="true">b</i>
-						</h4>
-						<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
-							<span class="dropdown_filter" role="toolbar">
-								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
-							</span>';
+			$category_options = '';
 			foreach ($params['categories'] as $key1 => $level1) {
 				if (is_array($level1) && ! empty($level1)) {
 					// Check, if there is more than 1 level down
 					$first_level2 = reset($level1);
 					if (! is_array($first_level2)) {
-						$template_data['FILTER_CATEGORIES'] .= '
+						$category_options .= '
 											<span class="label_wrapper" role="group" aria-label="' . $key1 . '">
 												<label class="category_title" role="button" aria-pressed="false" tabindex="0">
 													<span aria-hidden="true"></span>
@@ -219,7 +206,7 @@ class ParksView
 					foreach ($level1 as $key2 => $level2) {
 						// Level 3
 						if (is_array($level2) && ! empty($level2)) {
-							$template_data['FILTER_CATEGORIES'] .= '
+							$category_options .= '
 												<span class="label_wrapper" role="group" aria-label="' . $key2 . '">
 													<label class="category_title" role="button" aria-pressed="false" tabindex="0">
 														<span aria-hidden="true"></span>
@@ -228,7 +215,7 @@ class ParksView
 											';
 							foreach ($level2 as $key3 => $level3) {
 								$checked = (isset($params['selected']['categories']) && is_array($params['selected']['categories']) && in_array($key3, $params['selected']['categories']) ? 'checked="checked"' : '');
-								$template_data['FILTER_CATEGORIES'] .= '
+								$category_options .= '
 													<label for="' . $fieldname . '_categories_' . $key3 . '" role="option" aria-selected="false" tabindex="0">
 														<input name="' . $fieldname . '[categories][]" ' . $checked . ' value="' . $key3 . '" type="checkbox" id="' . $fieldname . '_categories_' . $key3 . '">
 														<span aria-hidden="true"></span>
@@ -236,12 +223,12 @@ class ParksView
 													</label>
 												';
 							}
-							$template_data['FILTER_CATEGORIES'] .= '</span>';
+							$category_options .= '</span>';
 						}
 						// Level 2
 						else {
 							$checked = (isset($params['selected']['categories']) && is_array($params['selected']['categories']) && in_array($key2, $params['selected']['categories']) ? 'checked="checked"' : '');
-							$template_data['FILTER_CATEGORIES'] .= '
+							$category_options .= '
 												<label for="' . $fieldname . '_categories_' . $key2 . '" role="option" aria-selected="false" tabindex="0">
 													<input name="' . $fieldname . '[categories][]" ' . $checked . ' value="' . $key2 . '" type="checkbox" id="' . $fieldname . '_categories_' . $key2 . '">
 													<span aria-hidden="true"></span>
@@ -252,15 +239,30 @@ class ParksView
 					}
 					// Close group
 					if (! is_array($first_level2)) {
-						$template_data['FILTER_CATEGORIES'] .= '</span>';
+						$category_options .= '</span>';
 					}
 				}
 			}
-			$template_data['FILTER_CATEGORIES'] .= '
+			if ($category_options !== '') {
+				$template_data['FILTER_CATEGORIES'] = '
+					<div class="form_element mega_dropdown">
+						<div class="form_group">
+							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . (! empty($params['projects_only']) ? $this->api->lang->get('projects_all') : $this->api->lang->get('offer_all')) . '">
+								<i class="deselect_icon" aria-hidden="true">m</i>
+								<span class="selected_option" aria-hidden="true"></span>
+								<span class="all">' . (! empty($params['projects_only']) ? $this->api->lang->get('projects_all') : $this->api->lang->get('offer_all')) . '</span>
+								<i class="arrow_icon" aria-hidden="true">b</i>
+							</h4>
+							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
+								<span class="dropdown_filter" role="toolbar">
+									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
+									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+								</span>' . $category_options . '
+							</div>
 						</div>
 					</div>
-				</div>
-			';
+				';
+			}
 		}
 
 		// Filter: date from and date to
@@ -295,33 +297,10 @@ class ParksView
 					$this->api->lang->get('offer_target_group_specific_info')
 				];
 
-				$template_data['FILTER_TARGET_GROUPS'] = '
-					<div class="form_element mega_dropdown filter_target_groups">
-						<div class="form_group">
-							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_target_group_general_info') . '">
-								<i class="deselect_icon" aria-hidden="true">m</i>
-								<span class="selected_option"></span>
-								<span class="all">' . $this->api->lang->get('offer_target_group_general_info') . '</span>
-								<i class="arrow_icon" aria-hidden="true">b</i>
-							</h4>
-							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
-								<span class="dropdown_filter" role="toolbar">
-									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
-								</span>
-								';
+				$target_group_options = '';
 				foreach ($target_group_groups as $target_group_index => $target_group_label) {
 
-					// Target group title
-					$template_data['FILTER_TARGET_GROUPS'] .= '
-										<span class="label_wrapper" role="group" aria-label="' . $target_group_label . '">
-											<label class="category_title" role="button" aria-pressed="false" tabindex="0">
-												<span aria-hidden="true"></span>
-												' . $target_group_label . '
-											</label>
-									';
-
-					// Target group items
+					$group_items = '';
 					foreach ($this->api->model->target_groups as $target_group_id => $target_label) {
 
 						// Check specific target group
@@ -330,7 +309,7 @@ class ParksView
 							// Check main target group restriction
 							if (empty($this->api->system_filter['target_groups']) || in_array($target_group_id, $this->api->system_filter['target_groups'])) {
 								$target_val = isset($params['selected']['target_groups']) && in_array($target_group_id, $params['selected']['target_groups']) ? 'checked="checked"' : '';
-								$template_data['FILTER_TARGET_GROUPS'] .= '
+								$group_items .= '
 													<label for="' . $fieldname . '_target_groups_' . $target_group_id . '" role="option" aria-selected="false" tabindex="0">
 														<input name="' . $fieldname . '[target_groups][]" id="' . $fieldname . '_target_groups_' . $target_group_id . '" ' . $target_val . ' value="' . $target_group_id . '" type="checkbox">
 														<span aria-hidden="true"></span>
@@ -341,16 +320,40 @@ class ParksView
 						}
 					}
 
-					$template_data['FILTER_TARGET_GROUPS'] .= '
+					if ($group_items !== '') {
+						$target_group_options .= '
+										<span class="label_wrapper" role="group" aria-label="' . $target_group_label . '">
+											<label class="category_title" role="button" aria-pressed="false" tabindex="0">
+												<span aria-hidden="true"></span>
+												' . $target_group_label . '
+											</label>
+									' . $group_items . '
 										</span>
 									';
+					}
 				}
-				$template_data['FILTER_TARGET_GROUPS'] .= '
-								</span>
+
+				if ($target_group_options !== '') {
+					$template_data['FILTER_TARGET_GROUPS'] = '
+						<div class="form_element mega_dropdown filter_target_groups">
+							<div class="form_group">
+								<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_target_group_general_info') . '">
+									<i class="deselect_icon" aria-hidden="true">m</i>
+									<span class="selected_option"></span>
+									<span class="all">' . $this->api->lang->get('offer_target_group_general_info') . '</span>
+									<i class="arrow_icon" aria-hidden="true">b</i>
+								</h4>
+								<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
+									<span class="dropdown_filter" role="toolbar">
+										<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
+										<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+									</span>
+									' . $target_group_options . '
+								</div>
 							</div>
 						</div>
-					</div>
-				';
+					';
+				}
 			}
 		}
 
@@ -359,26 +362,11 @@ class ParksView
 			$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '';
 
 			if (! empty($this->api->model->fields_of_activity)) {
-				$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '
-					<div class="form_element mega_dropdown filter_fields_of_activity">
-						<div class="form_group">
-							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_fields_of_activity') . '">
-								<i class="deselect_icon" aria-hidden="true">m</i>
-								<span class="selected_option"></span>
-								<span class="all">' . $this->api->lang->get('offer_fields_of_activity') . '</span>
-								<i class="arrow_icon" aria-hidden="true">b</i>
-							</h4>
-							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
-								<span class="dropdown_filter" role="toolbar">
-									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
-								</span>
-								<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_fields_of_activity') . '">';
-
+				$field_options = '';
 				foreach ($this->api->model->fields_of_activity as $field_id => $field_label) {
 					if (empty($this->api->system_filter['fields_of_activity']) || in_array($field_id, $this->api->system_filter['fields_of_activity'])) {
 						$checked = isset($params['selected']['fields_of_activity']) && in_array($field_id, $params['selected']['fields_of_activity']) ? 'checked="checked"' : '';
-						$template_data['FILTER_FIELDS_OF_ACTIVITY'] .= '
+						$field_options .= '
 									<label for="' . $fieldname . '_fields_of_activity_' . $field_id . '" role="option" aria-selected="false" tabindex="0">
 										<input name="' . $fieldname . '[fields_of_activity][]" id="' . $fieldname . '_fields_of_activity_' . $field_id . '" ' . $checked . ' value="' . $field_id . '" type="checkbox">
 										<span aria-hidden="true"></span>
@@ -388,12 +376,27 @@ class ParksView
 					}
 				}
 
-				$template_data['FILTER_FIELDS_OF_ACTIVITY'] .= '
-								</span>
+				if ($field_options !== '') {
+					$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '
+						<div class="form_element mega_dropdown filter_fields_of_activity">
+							<div class="form_group">
+								<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_fields_of_activity') . '">
+									<i class="deselect_icon" aria-hidden="true">m</i>
+									<span class="selected_option"></span>
+									<span class="all">' . $this->api->lang->get('offer_fields_of_activity') . '</span>
+									<i class="arrow_icon" aria-hidden="true">b</i>
+								</h4>
+								<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
+									<span class="dropdown_filter" role="toolbar">
+										<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
+										<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+									</span>
+									<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_fields_of_activity') . '">' . $field_options . '</span>
+								</div>
 							</div>
 						</div>
-					</div>
-				';
+					';
+				}
 			}
 		}
 

@@ -87,6 +87,7 @@ Additional structured filters supported by the model/query layer:
 - `hide_accessibility_filter` (`bool`)
   - Hides accessibility controls in filter UI for this request.
   - Does not affect other filters; accessibility is also auto-hidden when the export contains only projects.
+- Empty filter dropdowns (categories, target groups, fields of activity, accessibilities) are not rendered when they have no selectable options.
 
 ## Runtime notes
 
