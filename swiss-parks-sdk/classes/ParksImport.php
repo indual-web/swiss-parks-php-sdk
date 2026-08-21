@@ -172,13 +172,17 @@ class ParksImport
 	public function import(string $url, bool $force = false): bool
 	{
 
+		if (PHP_SAPI === 'cli') {
+			@set_time_limit(0);
+		}
+
 		if (empty($url)) {
 			$this->api->logger->error("No URL for XML file specified");
 
 			return false;
 		}
 
-		// Speed up bulk writes with a single transaction
+		// One transaction for meta-sync; offer writes use a fresh transaction per chunk (see loop below)
 		$this->api->db->begin();
 
 		// Sync target groups
@@ -231,10 +235,15 @@ class ParksImport
 
 				// Chunk offers
 				$offers_chunks = array_chunk($offer_list, 300);
-				
+				$chunk_total = count($offers_chunks);
+				$chunk_index = 0;
+
 				if (! empty($offers_chunks)) {
 
 					foreach ($offers_chunks as $offers_chunk) {
+
+						$chunk_index++;
+						$chunk_imported_ids = [];
 
 						// Import every offer
 						foreach ($offers_chunk as $offer) {
@@ -917,12 +926,20 @@ class ParksImport
 							}
 
 							// Check off this offer
-							array_push($offers_checklist, $offer_id);
+							$offers_checklist[$offer_id] = true;
+							$chunk_imported_ids[] = $offer_id;
 							$ctr_imported++;
 
-							$this->api->logger->info("\tImported offer with ID " . $offer_id);
-
 						}
+
+						$this->api->logger->info(
+							"\tChunk " . $chunk_index . "/" . $chunk_total . ": imported " . count($chunk_imported_ids)
+							. " offers (ids: " . implode(',', $chunk_imported_ids) . ")"
+						);
+
+						// Persist this chunk: Keeps finished work if the import aborts mid-run.
+						$this->api->db->commit();
+						$this->api->db->begin();
 					}
 				}
 			}
@@ -936,7 +953,7 @@ class ParksImport
 				// Iterate all existing offers
 				$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
 				while ($offer = $all_offers->fetch_assoc()) {
-					if (! in_array($offer['offer_id'], $offers_checklist)) {
+					if (! isset($offers_checklist[$offer['offer_id']])) {
 						$this->api->db->delete('offer', ['offer_id' => $offer['offer_id']]);
 						$this->api->logger->info("\tDeleted offer with ID " . $offer['offer_id']);
 						$ctr_deleted++;

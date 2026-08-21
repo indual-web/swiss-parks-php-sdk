@@ -5,7 +5,15 @@
 ### PHP/server
 
 - Use sufficient `memory_limit` and `max_execution_time` for import jobs.
-- Run imports via CLI (cron), not via browser.
+- Run imports via CLI (cron), not via browser. CLI imports call `set_time_limit(0)` automatically.
+- Full offer XML is still loaded into memory as one document; size the `memory_limit` for peak XML size, not for chunk size.
+
+### Import chunking
+
+- Offers are processed in chunks of **300**.
+- Each chunk is committed as its own SQLite transaction (after shared meta-sync: categories, target groups, accessibilities, fields of activity).
+- Import logs one summary line per chunk (including offer IDs); per-offer lines are kept for errors and deletions.
+- Incremental syncs use `?since=` when not forcing a full update.
 
 ### Database
 
