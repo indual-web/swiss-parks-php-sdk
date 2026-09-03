@@ -213,7 +213,7 @@ $lang['offer_target_group_general_info'] = "Das Angebot ist geeignet f&uuml;r";
 $lang['offer_target_group_specific_info'] = "Das Angebot wurde speziell entwickelt f&uuml;r";
 $lang['offer_fields_of_activity'] = 'T&auml;tigkeitsfelder';
 $lang['offer_accessibility'] = 'Barrierefreiheit';
-$lang['offer_accessibility_available'] = 'OK:GO Zugänglichkeitsinformationen vorhanden';
+$lang['offer_accessibility_available'] = 'Zugänglichkeitsinformationen vorhanden';
 
 
 /*
