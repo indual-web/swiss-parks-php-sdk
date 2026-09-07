@@ -2464,29 +2464,25 @@ class ParksView
 		// Collect offers by categories
 		$categories_offers_view = collect_categories_by_offers($offers);
 
-		// Get offer detail link
-		$offer_detail_url = '';
-		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
-			$offer_detail_url = $this->get_seo_detail_url() . '/';
-		} else {
-			$offer_detail_url = $this->script_url . (strstr($this->script_url, '?') ? '&amp' : '?') . $this->config['url_param_prefix'] . 'offer' . '=';
-		}
+		// Origin only — the map composes the detail path from seoUrl + language (+ apiKey)
+		$popup_link_origin = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 
 		$map_view = '
-			<div id="mapContainer" style="min-height: 600px;"></div>
+			<div id="swiss-parks-map" style="min-height: 600px;"></div>
 			<script>
 				window.swissParksMapConfig = {
-					containerId: 				\'mapContainer\',
+					containerId: 				\'swiss-parks-map\',
 					initializeOnLoad: 			' . (! empty($this->api->map_options['map_initialize_on_load']) ? 'true' : 'false') . ',
-					showLayersAtStart: 			true,
-					parkperimeterVisibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
-					linkTarget: 				\'_self\',
+					showLayersAtStart: 			' . (! isset($this->api->map_options['show_layers_at_start']) || ! empty($this->api->map_options['show_layers_at_start']) ? 'true' : 'false') . ',
+					parkPerimeterVisibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
+					linkTarget: 				\'' . (! empty($this->api->map_options['link_target']) ? $this->api->map_options['link_target'] : '_self') . '\',
 					fullHeight: 				' . (! empty($this->api->map_options['full_height']) ? 'true' : 'false') . ',
 					language: 					\'' . $this->api->lang_id . '\',
 					mode: 						\'filter\',
-					statePersistance: 			{ shareableUrl: false, rememberSession: false },
+					detailOfferId: 				null,
+					statePersistence: 			{ shareableUrl: false, rememberSession: false },
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
-					popupLinkPath: 				\'' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $offer_detail_url . '\',
+					popupLinkOrigin: 			\'' . $popup_link_origin . '\',
 					seoUrl:						' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
 					' . (! empty($this->config['park_id']) ? '
 					customWfsLayers: 			[' . $this->_get_map_layers() . '],
@@ -2521,33 +2517,30 @@ class ParksView
 		// Collect offers by categories
 		$categories_offers_view = collect_categories_by_offers([$offer] + $pois, true);
 
-		// Get offer detail link
-		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
-			$offer_detail_url = $this->get_seo_detail_url();
-		} else {
-			$param_name = $this->config['url_param_prefix'] . 'offer';
-			$offer_detail_url = $this->script_url . (strstr($this->script_url, '?') ? '&amp' : '?') . $param_name . '=';
-		}
+		// Origin only — the map composes the detail path from seoUrl + language (+ apiKey)
+		$popup_link_origin = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
 
 		$map_view = '
-			<div id="mapContainer" style="min-height: 600px;"></div>
+			<div id="swiss-parks-map" style="min-height: 600px;"></div>
 			<div id="elevation-profile-container"></div>
 			<script>
-				window.parksMapConfig = {
-					containerId: 				\'mapContainer\',
+				window.swissParksMapConfig = {
+					containerId: 				\'swiss-parks-map\',
 					initializeOnLoad: 			' . (! empty($this->api->map_options['map_initialize_on_load']) ? 'true' : 'false') . ',
-					show_layers_at_start: 		true,
-					parkperimeter_visibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
-					link_target: 				\'_self\',
-					full_height: 				' . (! empty($this->api->map_options['full_height']) ? 'true' : 'false') . ',
+					showLayersAtStart: 			false,
+					parkPerimeterVisibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
+					linkTarget: 				\'' . (! empty($this->api->map_options['link_target']) ? $this->api->map_options['link_target'] : '_self') . '\',
+					fullHeight: 				' . (! empty($this->api->map_options['full_height']) ? 'true' : 'false') . ',
 					language: 					\'' . $this->api->lang_id . '\',
 					mode: 						\'detailmap\',
 					detailOfferId: 				\'' . $offer->offer_id . '\',
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
-					popup_link_path: 			\'' . (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == 'on' ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . $offer_detail_url . '\',
-					seo_url:					' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
-					parks_abbreviation: 		\'' . $this->config['parks'][$offer->park_id] . '\', 
-					api_key: 					\'' . $this->config['api_hash'] . '\',
+					popupLinkOrigin: 			\'' . $popup_link_origin . '\',
+					seoUrl:						' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
+					parksAbbreviation: 			\'' . $this->config['parks'][$offer->park_id] . '\',
+					apiKey: 					\'' . $this->config['api_hash'] . '\',
+					disableSidebar: 				true,
+					disableCoordinateDisplayBanner: true
 				};
 			</script>
 		';
