@@ -41,6 +41,7 @@ $api = new ParksAPI($language);
 		// Map options
 		$api->map_options = [
 			'full_height' => true,
+			'map_initialize_on_load' => true,
 			/*
 			'map_initialize_on_load' => false, 				// Load map on page load
 			'show_layers_at_start' => false, 				// Show/hide layers at start after loading
