@@ -2464,8 +2464,8 @@ class ParksView
 		// Collect offers by categories
 		$categories_offers_view = collect_categories_by_offers($offers);
 
-		// Origin only — the map composes the detail path from seoUrl + language (+ apiKey)
-		$popup_link_origin = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+		// Full detail URL template — the map only fills {slug} and {offer_id}
+		$popup_link_template = $this->_get_popup_link_template();
 
 		$map_view = '
 			<div id="swiss-parks-map" style="min-height: 600px;"></div>
@@ -2482,8 +2482,7 @@ class ParksView
 					detailOfferId: 				null,
 					statePersistence: 			{ shareableUrl: false, rememberSession: false },
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
-					popupLinkOrigin: 			\'' . $popup_link_origin . '\',
-					seoUrl:						' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
+					popupLinkTemplate: 			\'' . $popup_link_template . '\',
 					' . (! empty($this->config['park_id']) ? '
 					customWfsLayers: 			[' . $this->_get_map_layers() . '],
 					parksAbbreviation: 			\'' . $this->config['parks'][$this->config['park_id']] . '\',
@@ -2517,9 +2516,10 @@ class ParksView
 		// Collect offers by categories
 		$categories_offers_view = collect_categories_by_offers([$offer] + $pois, true);
 
-		// Origin only — the map composes the detail path from seoUrl + language (+ apiKey)
-		$popup_link_origin = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+		// Full detail URL template — the map only fills {slug} and {offer_id}
+		$popup_link_template = $this->_get_popup_link_template();
 
+		// Prepare map view
 		$map_view = '
 			<div id="swiss-parks-map" style="min-height: 600px;"></div>
 			<div id="elevation-profile-container"></div>
@@ -2535,8 +2535,7 @@ class ParksView
 					mode: 						\'detailmap\',
 					detailOfferId: 				\'' . $offer->offer_id . '\',
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
-					popupLinkOrigin: 			\'' . $popup_link_origin . '\',
-					seoUrl:						' . (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) ? 'true' : 'false') . ',
+					popupLinkTemplate: 			\'' . $popup_link_template . '\',
 					parksAbbreviation: 			\'' . $this->config['parks'][$offer->park_id] . '\',
 					apiKey: 					\'' . $this->config['api_hash'] . '\',
 					disableSidebar: 				true,
@@ -2547,6 +2546,26 @@ class ParksView
 
 		return $map_view;
 
+	}
+
+
+
+	/**
+	 * Build the offer detail URL template for the interactive map
+	 */
+	protected function _get_popup_link_template(): string
+	{
+
+		$origin = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'];
+
+		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
+			return $origin . $this->get_seo_detail_url() . '/{slug}-{offer_id}';
+		}
+
+		$param_name = $this->config['url_param_prefix'] . 'offer';
+		$separator = strstr($this->script_url, '?') ? '&' : '?';
+
+		return $origin . $this->script_url . $separator . $param_name . '={offer_id}';
 	}
 
 

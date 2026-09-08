@@ -28,7 +28,7 @@ Reference for keys that can be passed in `$api->map_options`.
 The renderer writes camelCase keys that match the interactive map schema. Notably:
 
 - Container id is `swiss-parks-map` (not `mapContainer`).
-- `popupLinkOrigin` is the page origin only. The map composes the detail path from `seoUrl`, language and `apiKey` — custom path prefixes (`popupLinkPath`) are no longer supported.
+- `popupLinkTemplate` is the full offer detail URL. The map only substitutes `{slug}` and `{offer_id}`. With SEO URLs this is `{origin}{seoDetailBase}/{slug}-{offer_id}`; otherwise `{origin}{scriptUrl}?offer={offer_id}` (respecting `url_param_prefix`). The old keys `popupLinkOrigin` and `seoUrl` are no longer emitted.
 - `statePersistence` defaults to `{ shareableUrl: false, rememberSession: false }` so the configured park extent can win on load.
 - Detail maps use `window.swissParksMapConfig` with `mode: 'detailmap'` and camelCase keys throughout.
 
