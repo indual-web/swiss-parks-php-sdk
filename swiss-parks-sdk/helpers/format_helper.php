@@ -346,7 +346,57 @@ function ucfirst_utf8(string $str): string {
  */
 function contains_html_tags(string $string): bool {
 
-    return strlen($string) != strlen(strip_tags($string));
+	return strlen($string) != strlen(strip_tags($string));
+}
+
+
+
+/**
+ * Auto-link URLs and emails in HTML text nodes only (skips tags and existing anchors)
+ */
+function auto_link_html(string $str, string $type = 'both', bool $popup = false): string
+{
+
+	$parts = preg_split('/(<[^>]+>)/', $str, -1, PREG_SPLIT_DELIM_CAPTURE);
+	if ($parts === false) {
+		return auto_link($str, $type, $popup);
+	}
+
+	$result = '';
+	$inside_anchor = 0;
+
+	foreach ($parts as $part) {
+		if ($part === '') {
+			continue;
+		}
+
+		// HTML tag: track <a> nesting, never auto-link attributes
+		if ($part[0] === '<') {
+			if (preg_match('/^<\s*a\b/i', $part) === 1) {
+
+				// Self-closing <a ... /> does not wrap following text
+				if (preg_match('/\/\s*>$/', $part) !== 1) {
+					$inside_anchor++;
+				}
+			}
+			else if (preg_match('/^<\s*\/\s*a\b/i', $part) === 1) {
+				$inside_anchor = max(0, $inside_anchor - 1);
+			}
+
+			$result .= $part;
+			continue;
+		}
+
+		// Text node inside an existing link: leave as-is
+		if ($inside_anchor > 0) {
+			$result .= $part;
+			continue;
+		}
+
+		$result .= auto_link($part, $type, $popup);
+	}
+
+	return $result;
 }
 
 
@@ -354,16 +404,13 @@ function contains_html_tags(string $string): bool {
 /**
  * Output text with or without html tags
  */
-function output_text(string $text): string {
+function output_text(string $text): string
+{
 
-	// Text with html tags
-    if (contains_html_tags($text)) {
-		return $text;
+	// HTML (e.g. from XML export): keep markup, still auto-link bare URLs in text
+	if (contains_html_tags($text)) {
+		return auto_link_html($text, 'both', true);
 	}
 
-	// Text without html tags
-	else {
-		return auto_link(nl2br($text), 'both', true);
-	}
-
+	return auto_link(nl2br($text), 'both', true);
 }

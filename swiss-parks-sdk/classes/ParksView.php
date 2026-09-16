@@ -2480,7 +2480,7 @@ class ParksView
 					language: 					\'' . $this->api->lang_id . '\',
 					mode: 						\'filter\',
 					detailOfferId: 				null,
-					statePersistence: 			{ shareableUrl: false, rememberSession: false },
+					statePersistence: 			{ shareableUrl: true, rememberSession: true },
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
 					popupLinkTemplate: 			\'' . $popup_link_template . '\',
 					' . (! empty($this->config['park_id']) ? '
