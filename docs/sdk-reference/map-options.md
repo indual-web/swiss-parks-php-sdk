@@ -21,7 +21,7 @@ Reference for keys that can be passed in `$api->map_options`.
 - `map_extent` (`array{xmin: float, ymin: float, xmax: float, ymax: float}`)
   - Overrides the default map extent with a custom bounding box.
 - `do_not_group_categories_in_legend` (`bool`)
-  - Prevents category grouping in the map legend.
+  - Prevents category grouping in the map layer menu. Emitted as `offerLayersNoGrouping` in `swissParksMapConfig`.
 
 ## Generated `swissParksMapConfig` notes
 
