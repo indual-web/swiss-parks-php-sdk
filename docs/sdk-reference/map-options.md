@@ -15,7 +15,7 @@ Reference for keys that can be passed in `$api->map_options`.
 - `link_target` (`string`)
   - Defines the target for offer links from map interactions (for example `_self` or `_blank`). Read into `linkTarget`; defaults to `_self` in the renderer.
 - `full_height` (`bool`)
-  - Enables full-height map display mode (`fullHeight`).
+  - Enables full-height map display mode (`fullHeight`). Also sets `enableScrollProtection` to the inverse (`false` when full height, `true` otherwise).
 - `disable_auto_load_oev` (`bool`)
   - Disables automatic loading of public transport overlays/data.
 - `map_extent` (`array{xmin: float, ymin: float, xmax: float, ymax: float}`)
