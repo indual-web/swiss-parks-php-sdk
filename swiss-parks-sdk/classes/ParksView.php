@@ -2477,6 +2477,7 @@ class ParksView
 					parkPerimeterVisibility: 	' . (! empty($this->api->map_options['parkperimeter_visibility']) ? 'true' : 'false') . ',
 					linkTarget: 				\'' . (! empty($this->api->map_options['link_target']) ? $this->api->map_options['link_target'] : '_self') . '\',
 					fullHeight: 				' . (! empty($this->api->map_options['full_height']) ? 'true' : 'false') . ',
+					offerLayersNoGrouping: 		' . (! empty($this->api->map_options['do_not_group_categories_in_legend']) ? 'true' : 'false') . ',
 					language: 					\'' . $this->api->lang_id . '\',
 					mode: 						\'filter\',
 					detailOfferId: 				null,
