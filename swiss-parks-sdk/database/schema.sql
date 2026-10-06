@@ -492,7 +492,6 @@ CREATE TABLE `offer_municipality_link` (
 
 CREATE TABLE `map_layer` (
   `map_layer_id` INTEGER PRIMARY KEY,
-  `url` TEXT DEFAULT NULL,
   `languages` TEXT DEFAULT NULL,
   `layer_category` TEXT DEFAULT NULL,
   `layer_position` INTEGER DEFAULT NULL,
@@ -508,6 +507,7 @@ CREATE TABLE `map_layer` (
 CREATE TABLE `map_layer_i18n` (
   `map_layer_id` INTEGER NOT NULL DEFAULT 0,
   `language` TEXT NOT NULL DEFAULT '',
+  `url` TEXT DEFAULT NULL,
   `popup_content` TEXT,
   `layer_title` TEXT DEFAULT NULL,
   PRIMARY KEY (`map_layer_id`, `language`),

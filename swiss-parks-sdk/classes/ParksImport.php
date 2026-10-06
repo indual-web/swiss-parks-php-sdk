@@ -87,11 +87,13 @@ class ParksImport
 						continue;
 					}
 
-					// Populate map layer data
+					$legacy_url = trim((string) $layer->URL);
+					$languages_csv = (string) $layer->URL->attributes()->language;
+
+					// Populate map layer data (legacy URL stays on XML node URL for older consumers)
 					$map_layer = [
 						'map_layer_id' => intval($layer->attributes()->identifier),
-						'url' => (string) trim($layer->URL),
-						'languages' => (string) $layer->URL->attributes()->language,
+						'languages' => $languages_csv,
 						'layer_category' => (string) $layer->LayerCategory ?? 'additional',
 						'layer_position' => (int) $layer->URL->attributes()->position ?? 0,
 						'visible_by_default' => (int) $layer->URL->attributes()->visibility ?? 0,
@@ -134,9 +136,37 @@ class ParksImport
 								}
 							}
 
+							// Prefer ServiceURL per language; fill gaps from legacy URL for CSV languages
+							if (! empty($layer->ServiceURL)) {
+								foreach ($layer->ServiceURL as $service_url) {
+									$language = (string) $service_url->attributes()->language;
+									if ($language === '') {
+										continue;
+									}
+									$key = $map_layer_id . '-' . $language;
+									$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
+									$map_i18n_fields[$key]['language'] = $language;
+									$map_i18n_fields[$key]['url'] = trim((string) $service_url);
+								}
+							}
+
+							// Fallback to legacy URL for CSV languages
+							foreach (array_filter(array_map('trim', explode(',', $languages_csv))) as $language) {
+								$key = $map_layer_id . '-' . $language;
+								if (! empty($map_i18n_fields[$key]['url'])) {
+									continue;
+								}
+								$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
+								$map_i18n_fields[$key]['language'] = $language;
+								$map_i18n_fields[$key]['url'] = $legacy_url;
+							}
+
 							// Insert map layer i18n
 							if (! empty($map_i18n_fields)) {
 								foreach ($map_i18n_fields as $i18n) {
+									if (! isset($i18n['url'])) {
+										$i18n['url'] = '';
+									}
 									if (! $this->api->db->insert('map_layer_i18n', $i18n)) {
 										$this->api->logger->error("Database error: " . $this->api->db->get_last_error());
 										continue;

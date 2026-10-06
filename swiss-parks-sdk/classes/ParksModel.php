@@ -182,12 +182,17 @@ class ParksModel
 				");
 
 				if ($q_layers_i18n->num_rows > 0) {
-					
+
 					$layer_i18n = [];
 
 					// Parse content for each language
 					while ($row_i18n = $q_layers_i18n->fetch_object()) {
 						if (! empty($row_i18n->language)) {
+
+							// Service URL
+							if (! empty($row_i18n->url)) {
+								$layer_i18n[$row_i18n->language]['url'] = $row_i18n->url;
+							}
 
 							// Popup content
 							if (! empty($row_i18n->popup_content)) {
@@ -204,8 +209,17 @@ class ParksModel
 
 					// Add i18n data to row
 					$row->i18n = $layer_i18n;
-					
+
 				}
+
+				// Resolve service URL for the current language (fallback de → fr → it → en)
+				$urls = [];
+				foreach (($row->i18n ?? []) as $language => $fields) {
+					if (! empty($fields['url'])) {
+						$urls[$language] = $fields['url'];
+					}
+				}
+				$row->url = resolve_i18n_url($urls, $this->api->lang->lang_id, $row->languages ?? '');
 
 				$layers[$row->map_layer_id] = $row;
 			}
