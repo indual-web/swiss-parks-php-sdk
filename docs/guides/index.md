@@ -6,7 +6,7 @@ This section contains setup, runtime, and operations guides for the Swiss Parks 
 
 - [New installation](./new-installation.md)
 - [Upgrade guide](./upgrading.md)
-- [Version migrations](./migrations/README.md) (e.g. [v21 to v22](./migrations/21-to-22.md))
+- [Version migrations](./migrations/index.md) (e.g. [v21 to v22](./migrations/21-to-22.md))
 - [Import and update lifecycle (including migration)](./import-update-lifecycle.md)
 
 ## Integration and runtime

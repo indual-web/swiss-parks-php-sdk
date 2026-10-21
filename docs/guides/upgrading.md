@@ -2,7 +2,7 @@
 
 This guide describes the **generic** upgrade workflow for any Swiss Parks PHP SDK release.
 
-For breaking changes between specific versions, use a [version-specific migration guide](./migrations/README.md).
+For breaking changes between specific versions, use a [version-specific migration guide](./migrations/index.md).
 
 ## Recommended upgrade flow
 
@@ -26,7 +26,7 @@ The script:
 
 Exit code: `0` on success, `1` on failure. Set `PARKS_API_SKIP_MIGRATE=1` to update files only.
 
-Apply version-specific config steps from a [migration guide](./migrations/README.md) **before** running the script when a guide requires manual `config.php` changes.
+Apply version-specific config steps from a [migration guide](./migrations/index.md) **before** running the script when a guide requires manual `config.php` changes.
 
 ### Option B: Manual ZIP upgrade
 
@@ -39,7 +39,7 @@ Apply version-specific config steps from a [migration guide](./migrations/README
    - `helpers/`
    - `language/`
    - `bin/`
-4. Apply version-specific steps from a [migration guide](./migrations/README.md) if one exists for your upgrade path.
+4. Apply version-specific steps from a [migration guide](./migrations/index.md) if one exists for your upgrade path.
 5. Run migration:
    - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
    - Deletes the SQLite database file, recreates it with the current schema, and runs a full import.
@@ -60,7 +60,7 @@ Apply version-specific config steps from a [migration guide](./migrations/README
 | --- | --- | --- |
 | v21 (MySQL) | v22 (SQLite) | [21 to 22](./migrations/21-to-22.md) |
 
-New guides are added to [migrations/README.md](./migrations/README.md) when a release needs steps beyond the generic flow above.
+New guides are added to [migrations/index.md](./migrations/index.md) when a release needs steps beyond the generic flow above.
 
 ## Upgrade notes
 
@@ -82,7 +82,7 @@ For v21 rollback after a failed v22 attempt, see [21 to 22 — Rollback](./migra
 
 ## Related docs
 
-- [Migrations index](./migrations/README.md)
+- [Migrations index](./migrations/index.md)
 - [Guide index](./index.md)
-- [README](../../README.md) (operations overview)
+- [Documentation overview](../index.md)
 - [SDK reference index](../sdk-reference/index.md)

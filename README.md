@@ -5,6 +5,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 ## Documentation structure
 
 - Start here in this `README.md` for setup and workflow overview.
+- The documentation entry point is [`docs/index.md`](docs/index.md).
 - Detailed guides are in [`docs/guides/index.md`](docs/guides/index.md).
 - SDK details are in [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md).
 
@@ -80,7 +81,7 @@ Quick summary:
 ## 5) Upgrade from an older version
 
 - Generic workflow: [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
-- Version-specific migrations: [`docs/guides/migrations/README.md`](docs/guides/migrations/README.md)
+- Version-specific migrations: [`docs/guides/migrations/index.md`](docs/guides/migrations/index.md)
 - **v21 → v22 (MySQL to SQLite):** [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
 ---

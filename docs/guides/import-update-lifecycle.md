@@ -57,4 +57,4 @@ This guide documents the regular update flow, forced updates, SDK upgrades, and 
 - [Guide index](./index.md)
 - [New installation](./new-installation.md)
 - [Upgrade guide](./upgrading.md)
-- [Version migrations](./migrations/README.md)
+- [Version migrations](./migrations/index.md)
