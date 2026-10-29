@@ -37,6 +37,8 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
   - Selects the template set inside `swiss-parks-sdk/template/`.
 - `prevent_css_js_include`
   - Prevents automatic inclusion of SDK CSS/JS assets.
+- `interactive_map_url` (default: `https://map.parks.swiss`)
+  - Base URL for the interactive map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`).
 - `return_output`
   - Return generated HTML (`true`) or print directly (`false`).
 - `use_sessions`, `session_name`

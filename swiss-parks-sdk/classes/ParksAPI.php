@@ -1493,13 +1493,10 @@ class ParksAPI
 	{
 		if ($this->config['prevent_css_js_include'] == false) {
 
-			// #TODO: Change to use the local dist files
+			$map_url = rtrim($this->config['interactive_map_url'] ?? 'https://map.parks.swiss', '/');
 			$output = '
-				<link rel="stylesheet" href="/dist/css/style.css" />
-				<link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css" />
-				<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-				<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-				<script type="module" src="/dist/js/swiss-parks-map.umd.js"></script>
+				<link rel="stylesheet" href="' . $map_url . '/dist/css/style.css" />
+				<script type="module" src="' . $map_url . '/dist/js/swiss-parks-map.umd.js"></script>
 			';
 
 			return $this->_output($output);

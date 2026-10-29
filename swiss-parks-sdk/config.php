@@ -218,6 +218,18 @@ $config['prevent_css_js_include'] = false;
 
 /*
 |--------------------------------------------------------------------------
+| Interactive map base URL
+|--------------------------------------------------------------------------
+|
+| Base URL of the swiss-parks-map assets (without trailing slash).
+| Loads /dist/css/style.css and /dist/js/swiss-parks-map.umd.js from here.
+|
+*/
+$config['interactive_map_url'] = 'https://map.parks.swiss';
+
+
+/*
+|--------------------------------------------------------------------------
 | Favorites
 |--------------------------------------------------------------------------
 |

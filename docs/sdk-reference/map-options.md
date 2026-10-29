@@ -29,8 +29,14 @@ The renderer writes camelCase keys that match the interactive map schema. Notabl
 
 - Container id is `swiss-parks-map` (not `mapContainer`).
 - `popupLinkTemplate` is the full offer detail URL. The map only substitutes `{slug}` and `{offer_id}`. With SEO URLs this is `{origin}{seoDetailBase}/{slug}-{offer_id}`; otherwise `{origin}{scriptUrl}?offer={offer_id}` (respecting `url_param_prefix`). The old keys `popupLinkOrigin` and `seoUrl` are no longer emitted.
-- `statePersistence` defaults to `{ shareableUrl: false, rememberSession: false }` so the configured park extent can win on load.
-- Detail maps use `window.swissParksMapConfig` with `mode: 'detailmap'` and camelCase keys throughout.
+- Overview maps set `statePersistence` to `{ shareableUrl: true, rememberSession: true }` so the view and layers stay in the URL and session.
+- Detail maps use `window.swissParksMapConfig` with `mode: 'detailmap'` and camelCase keys throughout. They also set `disableSidebar` and `disableCoordinateDisplayBanner` to `true`.
+
+## Assets
+
+`ParksAPI::_load_maps_api()` loads only the map CSS and the ES module JS (`type="module"`). React and ArcGIS assets are bundled inside `swiss-parks-map`; do not load React 18 or ArcGIS 4.x CSS from the host page.
+
+Base URL comes from `interactive_map_url` in `config.php` (default: `https://map.parks.swiss`). Assets: `{interactive_map_url}/dist/css/style.css` and `{interactive_map_url}/dist/js/swiss-parks-map.umd.js`.
 
 ## Compatibility notes
 
