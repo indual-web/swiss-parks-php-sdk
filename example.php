@@ -58,6 +58,15 @@ $api = new ParksAPI($language);
 				'ymax' => 1235385.0,
 			],
 			'do_not_group_categories_in_legend' => true,	// Do not group offer categories in legend
+			'layers_to_remove' => [						// Hide built-in layers (trail + closure ids)
+				'hiking-trails',
+				'hiking-trails-sperrungen',
+				'shared-mobility-bikes',
+			],
+			'layers_to_add' => [							// Show layers that are hidden by default
+				'bln-gebiete',
+				'shared-mobility-cars',
+			],
 			*/
 		];
 

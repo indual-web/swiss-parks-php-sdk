@@ -39,6 +39,7 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
   - Prevents automatic inclusion of SDK CSS/JS assets.
 - `interactive_map_url` (default: `https://map.parks.swiss`)
   - Base URL for the interactive map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`).
+  - Runtime map behaviour (full height, layers to hide/show, …) is configured via `$api->map_options`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
 - `return_output`
   - Return generated HTML (`true`) or print directly (`false`).
 - `use_sessions`, `session_name`

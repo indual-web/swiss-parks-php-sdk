@@ -2489,6 +2489,7 @@ class ParksView
 					customWfsLayers: 			[' . $this->_get_map_layers() . '],
 					parksAbbreviation: 			\'' . $this->config['parks'][$this->config['park_id']] . '\',
 					' : '') . '
+					' . $this->_get_host_layer_options() . '
 					apiKey: 					\'' . $this->config['api_hash'] . '\'
 				};
 			</script>
@@ -2540,6 +2541,7 @@ class ParksView
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
 					popupLinkTemplate: 			\'' . $popup_link_template . '\',
 					parksAbbreviation: 			\'' . $this->config['parks'][$offer->park_id] . '\',
+					' . $this->_get_host_layer_options() . '
 					apiKey: 					\'' . $this->config['api_hash'] . '\',
 					disableSidebar: 				true,
 					disableCoordinateDisplayBanner: true
@@ -2549,6 +2551,29 @@ class ParksView
 
 		return $map_view;
 
+	}
+
+
+
+	/**
+	 * layersToRemove / layersToAdd from map_options for swissParksMapConfig
+	 */
+	protected function _get_host_layer_options(): string
+	{
+
+		$out = '';
+
+		$remove = map_layer_entries($this->api->map_options['layers_to_remove'] ?? []);
+		if (! empty($remove)) {
+			$out .= 'layersToRemove: ' . json_encode($remove, JSON_UNESCAPED_SLASHES) . ',' . "\n\t\t\t\t\t";
+		}
+
+		$add = map_layer_entries($this->api->map_options['layers_to_add'] ?? []);
+		if (! empty($add)) {
+			$out .= 'layersToAdd: ' . json_encode($add, JSON_UNESCAPED_SLASHES) . ',' . "\n\t\t\t\t\t";
+		}
+
+		return $out;
 	}
 
 

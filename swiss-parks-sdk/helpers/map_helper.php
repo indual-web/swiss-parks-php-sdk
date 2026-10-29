@@ -72,6 +72,28 @@ function collect_categories_by_offers(array $offers, bool $ignore_categories_wit
 
 
 
+/**
+ * Normalize map_options layer id lists to [{ layerId: ... }, ...] for swissParksMapConfig
+ */
+function map_layer_entries(mixed $layers): array
+{
+
+	if (! is_array($layers) || empty($layers)) {
+		return [];
+	}
+
+	$entries = [];
+	foreach ($layers as $layer) {
+		if (is_string($layer) && $layer !== '') {
+			$entries[] = ['layerId' => $layer];
+		} else if (is_array($layer) && ! empty($layer['layerId']) && is_string($layer['layerId'])) {
+			$entries[] = ['layerId' => $layer['layerId']];
+		}
+	}
+
+	return $entries;
+}
+
 
 
 /**
