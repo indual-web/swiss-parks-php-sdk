@@ -73,6 +73,38 @@ function collect_categories_by_offers(array $offers, bool $ignore_categories_wit
 
 
 /**
+ * Resolve a language-specific map layer URL (CSV languages, then de → fr → it → en)
+ */
+function resolve_i18n_url(array $urls, string $lang_id, string $languages_csv = ''): string
+{
+
+	if (! empty($urls[$lang_id])) {
+		return $urls[$lang_id];
+	}
+
+	$fallbacks = array_values(array_filter(array_map('trim', explode(',', $languages_csv))));
+	foreach (['de', 'fr', 'it', 'en'] as $language) {
+		if (! in_array($language, $fallbacks, true)) {
+			$fallbacks[] = $language;
+		}
+	}
+
+	foreach ($fallbacks as $fallback) {
+		if (! empty($urls[$fallback])) {
+			return $urls[$fallback];
+		}
+	}
+
+	if (! empty($urls)) {
+		return (string) reset($urls);
+	}
+
+	return '';
+}
+
+
+
+/**
  * Normalize map_options layer id lists to [{ layerId: ... }, ...] for swissParksMapConfig
  */
 function map_layer_entries(mixed $layers): array

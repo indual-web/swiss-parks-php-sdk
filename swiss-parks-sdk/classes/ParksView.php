@@ -2614,11 +2614,19 @@ class ParksView
 
 		foreach ($map_layers as $layer) {
 
-			// Popup title
-			$popup_title = 'Layer ' . $layer->layer_position;
-			if (! empty($layer->popup_title)) {
-				$popup_title = str_replace(['{', '}'], '', $layer->popup_title);
+			// Popup title: prefer language-specific free-text template, then language-less fallback
+			$popup_title = $layer->i18n[$this->api->lang_id]['popup_title']
+				?? (! empty($layer->popup_title) ? $layer->popup_title : null)
+				?? ('Layer ' . $layer->layer_position);
+
+			// titleField fallback: first attribute name inside {…}
+			$title_field = $popup_title;
+			if (preg_match('/\{([^}]+)\}/', $popup_title, $matches)) {
+				$title_field = $matches[1];
 			}
+
+			$popup_title_escaped = str_replace(["'", "\r\n", "\n"], ["\'", ' ', ' '], $popup_title);
+			$title_field_escaped = str_replace(["'", "\r\n", "\n"], ["\'", ' ', ' '], $title_field);
 
 			// Map layer
 			$map_layer_view .= '
@@ -2634,7 +2642,8 @@ class ParksView
 						position: ' . $layer->layer_position . ',
 					},
 					popup: {
-						titleField: \'' . $popup_title . '\',
+						titleTemplate: \'' . $popup_title_escaped . '\',
+						titleField: \'' . $title_field_escaped . '\',
 						imageUrl: \'' . (! empty($layer->popup_logo) ? $this->config['base_url'] . $layer->popup_logo : '') . '\',
 						contentTemplate: \'' . str_replace(["'", "\r\n", "\n"], ["\'", "<br>", "<br>"], trim($layer->i18n[$this->api->lang_id]['popup_content'] ?? '')) . '\',
 					},

@@ -90,6 +90,21 @@ class ParksImport
 					$legacy_url = trim((string) $layer->URL);
 					$languages_csv = (string) $layer->URL->attributes()->language;
 
+					// Popup titles: language-specific + language-less fallback for older SDKs
+					$fallback_popup_title = '';
+					$popup_titles_by_lang = [];
+					if (! empty($layer->Popup->Title)) {
+						foreach ($layer->Popup->Title as $title) {
+							$language = (string) $title->attributes()->language;
+							$title_value = (string) $title;
+							if ($language === '') {
+								$fallback_popup_title = $title_value;
+								continue;
+							}
+							$popup_titles_by_lang[$language] = $title_value;
+						}
+					}
+
 					// Populate map layer data (legacy URL stays on XML node URL for older consumers)
 					$map_layer = [
 						'map_layer_id' => intval($layer->attributes()->identifier),
@@ -97,7 +112,7 @@ class ParksImport
 						'layer_category' => (string) $layer->LayerCategory ?? 'additional',
 						'layer_position' => (int) $layer->URL->attributes()->position ?? 0,
 						'visible_by_default' => (int) $layer->URL->attributes()->visibility ?? 0,
-						'popup_title' => (string) $layer->Popup->Title ?? '',
+						'popup_title' => $fallback_popup_title,
 						'popup_logo' => (string) $layer->Popup->Logo ?? '',
 					];
 
@@ -113,6 +128,14 @@ class ParksImport
 						if (! empty($map_layer_id)) {
 
 							$map_i18n_fields = [];
+
+							// Popup title per language
+							foreach ($popup_titles_by_lang as $language => $title_value) {
+								$key = $map_layer_id . '-' . $language;
+								$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
+								$map_i18n_fields[$key]['language'] = $language;
+								$map_i18n_fields[$key]['popup_title'] = $title_value;
+							}
 
 							// Popup content
 							if (! empty($layer->Popup->Content)) {

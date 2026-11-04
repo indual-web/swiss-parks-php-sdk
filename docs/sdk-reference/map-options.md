@@ -64,6 +64,7 @@ The renderer writes camelCase keys that match the interactive map schema. Notabl
 
 - Container id is `swiss-parks-map` (not `mapContainer`).
 - `popupLinkTemplate` is the full offer detail URL. The map only substitutes `{slug}` and `{offer_id}`. With SEO URLs this is `{origin}{seoDetailBase}/{slug}-{offer_id}`; otherwise `{origin}{scriptUrl}?offer={offer_id}` (respecting `url_param_prefix`). The old keys `popupLinkOrigin` and `seoUrl` are no longer emitted.
+- Custom map layers (`customWfsLayers`) emit popup `titleTemplate` as free text with attribute placeholders (for example `Kategorie: {DEKategorie}`), taken from the language-specific XML `<Title language="…">` node. `titleField` remains as fallback and contains the first `{attribute}` name.
 - Overview maps set `statePersistence` to `{ shareableUrl: true, rememberSession: true }` so the view and layers stay in the URL and session.
 - Detail maps use `window.swissParksMapConfig` with `mode: 'detailmap'` and camelCase keys throughout. They also set `disableSidebar` and `disableCoordinateDisplayBanner` to `true`.
 - When set, `layers_to_remove` / `layers_to_add` become `layersToRemove` / `layersToAdd` (arrays of `{ layerId }`). Empty or omitted options are left out of the config object.

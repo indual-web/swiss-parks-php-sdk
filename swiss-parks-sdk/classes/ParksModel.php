@@ -194,6 +194,11 @@ class ParksModel
 								$layer_i18n[$row_i18n->language]['url'] = $row_i18n->url;
 							}
 
+							// Popup title
+							if (! empty($row_i18n->popup_title)) {
+								$layer_i18n[$row_i18n->language]['popup_title'] = $row_i18n->popup_title;
+							}
+
 							// Popup content
 							if (! empty($row_i18n->popup_content)) {
 								$layer_i18n[$row_i18n->language]['popup_content'] = $row_i18n->popup_content;
