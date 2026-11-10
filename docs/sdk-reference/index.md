@@ -20,5 +20,5 @@ This reference is based on:
 
 - `swiss-parks-sdk/classes/ParksAPI.php`
 - `swiss-parks-sdk/config.php`
-- `example.php`
+- `index.php`
 

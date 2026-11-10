@@ -5,7 +5,7 @@
 | https://github.com/indual-web/swiss-parks-php-sdk
 |-----------------------------------------------------------------------
 |
-| Global configuration for Parks API
+| Global configuration for the Swiss Parks PHP SDK
 |
 */
 
@@ -209,7 +209,7 @@ $config['return_output'] = false;
 | CSS and JS include mode
 |--------------------------------------------------------------------------
 |
-| Set if view should not include API CSS and JS files automatically.
+| Set if view should not include SDK CSS and JS files automatically.
 | If true, you have to include these files manually in your system.
 |
 */

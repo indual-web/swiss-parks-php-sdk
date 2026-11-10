@@ -62,7 +62,7 @@ Not listed here (and therefore not controlled via these options): layers that st
 
 The renderer writes camelCase keys that match the interactive map schema. Notably:
 
-- Container id is `swiss-parks-map` (not `mapContainer`).
+- Container id is `swiss-parks-map` (not `mapContainer`). Your page must load a `parks.min.js` that looks for `swiss-parks-map` when switching to the map tab; older builds still use `mapContainer` and never start the map.
 - `popupLinkTemplate` is the full offer detail URL. The map only substitutes `{slug}` and `{offer_id}`. With SEO URLs this is `{origin}{seoDetailBase}/{slug}-{offer_id}`; otherwise `{origin}{scriptUrl}?offer={offer_id}` (respecting `url_param_prefix`). The old keys `popupLinkOrigin` and `seoUrl` are no longer emitted.
 - Custom map layers (`customWfsLayers`) emit popup `titleTemplate` as free text with attribute placeholders (for example `Kategorie: {DEKategorie}`), taken from the language-specific XML `<Title language="…">` node. `titleField` remains as fallback and contains the first `{attribute}` name.
 - Overview maps set `statePersistence` to `{ shareableUrl: true, rememberSession: true }` so the view and layers stay in the URL and session.
@@ -77,7 +77,7 @@ Base URL comes from `interactive_map_url` in `config.php` (default: `https://map
 
 ## Compatibility notes
 
-- In `example.php`, all map options are shown as commented examples.
+- Set `$api->map_options` in your integration page; full keys are listed above.
 - Some keys depend on the frontend map bundle/version in use. Validate behavior in your project runtime before relying on it for behavior-critical features.
 
 ## Example

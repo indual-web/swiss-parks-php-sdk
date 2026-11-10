@@ -27,9 +27,9 @@ No database server is required: the SDK stores all data in a local SQLite file t
 5. Verify import success:
    - The SQLite file exists at the configured `db_path`.
    - The `offer` table contains entries.
-6. Integrate SDK rendering into your project pages based on `example.php`.
-   - Add the API bootstrap and rendering calls (`show_offers_filter`, `show_offers_list`, `show_offers_map`, `show_offer_detail`) in your own template/page code.
-   - Include the required frontend assets in your template (`<link ...parks.min.css>` and `<script ...parks.min.js>`), as shown in `example.php`.
+6. Integrate SDK rendering into your project pages based on `index.php`.
+   - Add the SDK bootstrap and rendering calls (`show_offers_filter`, `show_offers_list`, `show_offers_map`, `show_offer_detail`) in your own template/page code.
+   - Include the required frontend assets in your template (`<link ...parks.min.css>` and `<script ...parks.min.js>`), as shown in `index.php`.
 7. Configure a recurring cronjob (for example every 4 hours).
 
 ## Verification checklist

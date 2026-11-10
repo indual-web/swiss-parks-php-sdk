@@ -5,7 +5,7 @@
 | https://github.com/indual-web/swiss-parks-php-sdk
 |-----------------------------------------------------------------------
 |
-| Default view class for API
+| Default view class for the SDK
 |
 */
 
@@ -48,7 +48,7 @@ class ParksView
 
 	/**
 	 * View mode
-	 * true: Returns the API output as string
+	 * true: Returns the SDK output as string
 	 * false: Echoes the output directly
 	 */
 	public bool $return_output;

@@ -6,19 +6,19 @@ alwaysApply: false
 
 # Datenbank-Version als Basis
 
-- Behandle `swiss-parks-sdk/database/schema.sql` als Schema-Quelle fuer die aktuelle API-Version (`API_VERSION` in `autoload.php`).
+- Behandle `swiss-parks-sdk/database/schema.sql` als Schema-Quelle fuer die aktuelle SDK-Version (`SDK_VERSION` in `autoload.php`).
 - `migrate.php` loescht die bestehende SQLite-Datei und erstellt sie neu aus diesem Schema.
 - Keine separaten Migrations-SQL-Dateien pro Version — Schema-Aenderungen gehoeren in `schema.sql`.
 
 ## Bei Schema-Aenderungen
 
 - Schema-Aenderungen immer in `swiss-parks-sdk/database/schema.sql` vornehmen.
-- `API_VERSION` in `autoload.php` erhoehen, wenn das Schema sich aendert.
+- `SDK_VERSION` in `autoload.php` erhoehen, wenn das Schema sich aendert.
 - Nach Schema-Aenderungen: `php swiss-parks-sdk/scripts/migrate.php` pruefen.
 
 ## Referenz
 
 ```
 swiss-parks-sdk/database/schema.sql
-swiss-parks-sdk/autoload.php  -> define('API_VERSION', 22);
+swiss-parks-sdk/autoload.php  -> define('SDK_VERSION', 22);
 ```

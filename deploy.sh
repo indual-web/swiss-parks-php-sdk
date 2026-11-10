@@ -20,7 +20,7 @@ rsync swiss-parks-sdk/ "$STAGING_DIR/swiss-parks-sdk/" \
 	-r
 
 # Include integration example
-cp example.php "$STAGING_DIR/"
+cp index.php "$STAGING_DIR/"
 
 # Remove unused templates
 rm -Rf "$STAGING_DIR/swiss-parks-sdk/template/nationalpark"
@@ -35,7 +35,7 @@ find "$STAGING_DIR" -name ".DS_Store" -exec rm -rf {} \;
 # Ensure release output directory exists
 mkdir -p ./releases
 
-# Compress folder (swiss-parks-sdk/ and example.php at archive root)
+# Compress folder (swiss-parks-sdk/ and index.php at archive root)
 rm -f deploy.zip
 ( cd "$STAGING_DIR" && zip -9 -r ../deploy.zip . )
 mv ./deploy.zip ./releases/swiss-parks-php-sdk-$VERSION.zip

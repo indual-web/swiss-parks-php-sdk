@@ -4,7 +4,7 @@
 | https://github.com/indual-web/swiss-parks-php-sdk
 |-----------------------------------------------------------------------
 |
-| API database (SQLite schema)
+| SDK database (SQLite schema)
 |
 */
 

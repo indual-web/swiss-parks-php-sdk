@@ -42,7 +42,7 @@ This guide documents the regular update flow, forced updates, SDK upgrades, and 
   - `bash swiss-parks-sdk/bin/migrate.sh`
   - `php swiss-parks-sdk/scripts/migrate.php`
 - Deletes the SQLite database file, recreates it with the current schema, and runs a full import. There are no incremental schema migrations anymore.
-- Exit code: `0` when import completes and the API is initialized, `1` otherwise.
+- Exit code: `0` when import completes and the SDK is initialized, `1` otherwise.
 
 ## Recommended usage
 

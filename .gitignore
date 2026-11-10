@@ -1,6 +1,7 @@
 /swiss-parks-sdk/log/*
 /swiss-parks-sdk/data/*
 /swiss-parks-sdk/config.local.php
+/index.local.php
 /releases/*.zip
 /zip/
 .DS_Store

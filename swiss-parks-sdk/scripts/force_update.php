@@ -10,12 +10,12 @@
 */
 
 
-// Include API
+// Include SDK
 require __DIR__ . '/../autoload.php';
 
 try {
 
-	// Initialize API and update local database from XML export
+	// Initialize SDK and update local database from XML export
 	$api = ParksAPI::forScript();
 	exit($api->update(true) ? 0 : 1);
 

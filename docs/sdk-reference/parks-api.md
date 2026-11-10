@@ -168,7 +168,7 @@ Static factories for CLI scripts (no page rendering bootstrap):
 
 - Rebuilds the SQLite database: deletes the database file, recreates it with the current schema, and runs a full import.
 - On success, reports the migration to the central log via `log_migration()` (failure to log does not fail the migration).
-- Returns `true` when the API is initialized after import, `false` otherwise.
+- Returns `true` when the SDK is initialized after import, `false` otherwise.
 
 ### `log_migration(int $version_to = 0)`
 
@@ -176,7 +176,7 @@ Static factories for CLI scripts (no page rendering bootstrap):
 - Required fields: `api_version`, `url` (server returns 404 if either is missing).
 - Optional fields: `php_version`, `ip`, `hash`, `park_id`, `file_path`.
 - Called automatically by `migrate()` after a successful rebuild/import.
-- `$version_to`: target API version; defaults to `API_VERSION` when `0`.
+- `$version_to`: target SDK version; defaults to `SDK_VERSION` when `0`.
 - For CLI runs, `url` is sent as `{hostname} (CLI)`.
 - Returns `true` when the log server responds with HTTP 2xx; otherwise logs locally and returns `false`.
 

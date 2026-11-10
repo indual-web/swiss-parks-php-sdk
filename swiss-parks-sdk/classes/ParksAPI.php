@@ -5,7 +5,7 @@
 | https://github.com/indual-web/swiss-parks-php-sdk
 |-----------------------------------------------------------------------
 |
-| Main API class
+| Main SDK class
 |
 */
 
@@ -95,7 +95,7 @@ class ParksAPI
 
 	/**
 	 * View mode
-	 * true: Returns the API output as string
+	 * true: Returns the SDK output as string
 	 * false: Echoes the output directly
 	 */
 	public bool $return_output = false;
@@ -373,7 +373,7 @@ class ParksAPI
 
 		$success = ! empty($this->api->initialized);
 
-		if ($success && ! $this->log_migration(API_VERSION)) {
+		if ($success && ! $this->log_migration(SDK_VERSION)) {
 			$this->logger->info('Migration log could not be sent to the central server.');
 		}
 
@@ -1132,19 +1132,19 @@ class ParksAPI
 			} else {
 				$this->api = (object) [
 					'initialized' => 0,
-					'version' => API_VERSION,
+					'version' => SDK_VERSION,
 				];
 
 				$this->db->insert('api', (array)$this->api);
 			}
 
-			if (version_compare((string) API_VERSION, (string) $this->api->version, '>')) {
-				$this->logger->info('The current API version is out of date. Please run scripts/migrate.php.');
+			if (version_compare((string) SDK_VERSION, (string) $this->api->version, '>')) {
+				$this->logger->info('The current SDK version is out of date. Please run scripts/migrate.php.');
 			}
 
 			if (! $this->api->initialized) {
 
-				//Initalize API
+				// Initialize SDK
 				$xml = $this->config['xml_export_offer_url'] . $this->hash;
 				$xml_map_layer =  $this->config['xml_export_map_layer_url'] . $this->hash;
 
@@ -1160,15 +1160,15 @@ class ParksAPI
 					$this->api->initialized = 1;
 					$this->db->update('api', [
 						'initialized' => 1,
-						'version' => API_VERSION,
+						'version' => SDK_VERSION,
 					]);
-					$this->api->version = API_VERSION;
+					$this->api->version = SDK_VERSION;
 				} else {
-					$this->logger->error('Initial import failed. API is not initialized. Check api_hash and run scripts/force_update.php.');
+					$this->logger->error('Initial import failed. SDK is not initialized. Check api_hash and run scripts/force_update.php.');
 				}
 			}
 		} else {
-			throw new RuntimeException('API could not be initialized.');
+			throw new RuntimeException('SDK could not be initialized.');
 		}
 	}
 
@@ -1643,7 +1643,7 @@ class ParksAPI
 
 
 	/**
-	 * Get API configuration
+	 * Get SDK configuration
 	 */
 	public function _get_config(): array
 	{
@@ -1676,8 +1676,11 @@ class ParksAPI
 	private function _load_system_config(): void
 	{
 
-		// Base url
-		$this->config['base_url'] = "https://angebote.paerke.ch/";
+		// Base url (overridable via config / config.local.php)
+		if (empty($this->config['base_url'])) {
+			$this->config['base_url'] = 'https://angebote.paerke.ch/';
+		}
+		$this->config['base_url'] = rtrim($this->config['base_url'], '/') . '/';
 
 		// Xml import urls
 		$this->config['xml_export_url'] = $this->config['base_url'] . "export/";
@@ -1905,15 +1908,15 @@ class ParksAPI
 
 
 	/**
-	 * Update stored API version after a successful import or migration
+	 * Update stored SDK version after a successful import or migration
 	 */
 	private function _update_api_version(): void
 	{
 
-		$this->db->update('api', ['version' => API_VERSION]);
+		$this->db->update('api', ['version' => SDK_VERSION]);
 
 		if (! empty($this->api)) {
-			$this->api->version = API_VERSION;
+			$this->api->version = SDK_VERSION;
 		}
 
 	}
@@ -1949,7 +1952,7 @@ class ParksAPI
 			return false;
 		}
 
-		$api_version = (string) ($version_to > 0 ? $version_to : API_VERSION);
+		$api_version = (string) ($version_to > 0 ? $version_to : SDK_VERSION);
 		$site_url = (! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['REQUEST_URI']))
 			? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 			: ((gethostname() ?: 'CLI') . ' (CLI)');

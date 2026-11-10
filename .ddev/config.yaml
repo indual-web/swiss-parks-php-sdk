@@ -10,7 +10,7 @@ type: codeigniter
 project_tld: local
 
 # Web server
-docroot: ""
+docroot: .
 webserver_type: apache-fpm
 
 # PHP

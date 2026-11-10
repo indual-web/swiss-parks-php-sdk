@@ -20,7 +20,7 @@ if ($api->is_offer_detail()) {
 }
 ```
 
-A complete example including tabs and map is available in `example.php`.
+A complete example including tabs and map is available in `index.php`.
 
 ## Related docs
 

@@ -10,7 +10,7 @@
 */
 
 
-// Include API
+// Include SDK
 require __DIR__ . '/../autoload.php';
 $api = new ParksAPI();
 
@@ -23,7 +23,7 @@ if (isset($_GET['offer_id']) && ($_GET['offer_id'] > 0)) {
 // Action: add or remove favorite
 if ($offer_id > 0) {
 
-	// Initialize API and update local database from XML export
+	// Initialize SDK and update local database from XML export
 	echo $api->toggle_favorite($offer_id);
 
 }

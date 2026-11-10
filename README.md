@@ -27,7 +27,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 - Write permissions for the data directory (`swiss-parks-sdk/data/` or your configured `db_path`)
 - Write permissions for the log directory (`swiss-parks-sdk/log/` or your configured path)
 - PHP cURL extension enabled
-- Outbound HTTPS access to `angebote.paerke.ch` and related API endpoints
+- Outbound HTTPS access to `angebote.paerke.ch` and related export endpoints
 - URL file access via PHP stream wrappers (for `file_get_contents()` based sync calls)
 
 ---
@@ -37,7 +37,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 - **Orchestration**
   - `ParksAPI` is the main integration entry point.
 - **Import layer**
-  - `ParksImport` imports offers and synchronizes additional API data sources into the local database.
+  - `ParksImport` imports offers and synchronizes additional export data sources into the local database.
 - **Data/filter layer**
   - `ParksModel` handles SQL filtering, aggregation, and query logic.
 - **Rendering layer**
@@ -51,11 +51,11 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 ## 3) Version Workflow
 
 1. **Install**
-   - Download the required API release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
+   - Download the required SDK release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
    - Extract the release ZIP and copy the `swiss-parks-sdk` directory into your project.
 2. **Upgrade**
    - CLI: `bash swiss-parks-sdk/bin/upgrade-sdk.sh latest` (downloads release, updates core files, runs migration)
-   - Or update SDK/API files manually from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
+   - Or update SDK files manually from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
 3. **Migrate** (if not using `upgrade-sdk.sh`)
    - Run `php swiss-parks-sdk/scripts/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
 
@@ -71,7 +71,7 @@ Use the dedicated guide:
 
 Quick summary:
 
-1. Install SDK files from the release ZIP (`swiss-parks-sdk/` + `example.php`).
+1. Install SDK files from the release ZIP (`swiss-parks-sdk/` + `index.php`).
 2. Configure `swiss-parks-sdk/config.php` (`api_hash`, `park_id`).
 3. Run first import: `bash swiss-parks-sdk/bin/sync.sh` or via browser at `scripts/cron.php` (creates the SQLite database automatically).
 4. Verify data import and configure regular cron execution (`bin/sync.sh`).

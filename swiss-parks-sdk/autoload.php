@@ -5,7 +5,7 @@
 | https://github.com/indual-web/swiss-parks-php-sdk
 |-----------------------------------------------------------------------
 |
-| Autoload API
+| Autoload SDK
 |
 */
 
@@ -23,11 +23,11 @@ if (session_status() == PHP_SESSION_NONE) {
 
 /*
 |--------------------------------------------------------------------------
-| API version
+| SDK version
 |--------------------------------------------------------------------------
 |
 */
-define('API_VERSION', 22);
+define('SDK_VERSION', 22);
 
 
 /*
@@ -98,7 +98,7 @@ foreach (glob(__DIR__.'/helpers/*.php') as $file_path) {
 
 /*
 |--------------------------------------------------------------------------
-| Include main API classes
+| Include main SDK classes
 |--------------------------------------------------------------------------
 |
 */

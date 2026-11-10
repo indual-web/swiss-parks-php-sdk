@@ -30,9 +30,9 @@ Apply version-specific config steps from a [migration guide](./migrations/index.
 
 ### Option B: Manual ZIP upgrade
 
-1. Download the target API/SDK release.
-2. Create a full backup of your current API files.
-3. Replace SDK core files in your API folder:
+1. Download the target SDK release.
+2. Create a full backup of your current SDK files.
+3. Replace SDK core files in your project folder:
    - `autoload.php`
    - `classes/`
    - `database/`
@@ -41,7 +41,7 @@ Apply version-specific config steps from a [migration guide](./migrations/index.
    - `bin/`
 4. Apply version-specific steps from a [migration guide](./migrations/index.md) if one exists for your upgrade path.
 5. Run migration:
-   - `php /{PATH-TO-YOUR-API-FOLDER}/scripts/migrate.php`
+   - `php /{PATH-TO-YOUR-SDK-FOLDER}/scripts/migrate.php`
    - Deletes the SQLite database file, recreates it with the current schema, and runs a full import.
 
 ### Validation (both options)

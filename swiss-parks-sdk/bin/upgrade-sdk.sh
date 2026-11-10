@@ -175,9 +175,9 @@ if [ -d "$SRC_DIR/template/parks.swiss" ]; then
 	rsync -a "$SRC_DIR/template/parks.swiss/" "$SDK_DIR/template/parks.swiss/"
 fi
 
-INSTALLED_VERSION="$(grep -E "define\('API_VERSION'," "$SDK_DIR/autoload.php" | sed -E "s/.*API_VERSION', *([^)]+)\).*/\1/")"
+INSTALLED_VERSION="$(grep -E "define\('SDK_VERSION'," "$SDK_DIR/autoload.php" | sed -E "s/.*SDK_VERSION', *([^)]+)\).*/\1/")"
 
-echo "SDK files updated to API version $INSTALLED_VERSION."
+echo "SDK files updated to version $INSTALLED_VERSION."
 echo "Backup: $BACKUP_DIR"
 
 if [ "${PARKS_API_SKIP_MIGRATE:-0}" = "1" ]; then

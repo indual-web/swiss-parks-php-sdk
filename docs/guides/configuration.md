@@ -13,10 +13,12 @@ Set these in `swiss-parks-sdk/config.php` on your server (keep this file across 
 - `db_path`
   - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `swiss-parks-sdk/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
 
-Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash` and `park_id` locally without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
+Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash`, `park_id`, and `base_url` locally without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
 
 ## Network settings
 
+- `base_url` (default: `https://angebote.paerke.ch/`)
+  - Base URL of the offer database used for XML/JSON exports and asset links. Override in `config.local.php` for staging (for example `https://staging-map.angebote.paerke.ch/`).
 - `curl_verify_ssl` (default: `true`)
   - Verifies SSL certificates for export requests to `angebote.paerke.ch`.
   - If import/update fails with SSL or cURL HTTPS errors on shared hosting, set to `false` in `config.php` as a fallback.
@@ -52,7 +54,7 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
 Frequently tuned options:
 
 - `return_output`
-  - Controls whether API methods return HTML (`true`) or print directly (`false`).
+  - Controls whether SDK methods return HTML (`true`) or print directly (`false`).
 - `prevent_css_js_include`
   - Disables automatic SDK CSS/JS includes when your project loads assets manually.
 - `use_sessions`
