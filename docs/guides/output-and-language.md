@@ -12,6 +12,8 @@ Useful for:
 - CMS integrations with output buffering.
 - Composed layouts where HTML is injected manually.
 
+For WordPress embeds, combine `return_output = true` with `soft_errors = true`. See [WordPress integration](./wordpress-integration.md).
+
 ## Multilingual support
 
 Language files:

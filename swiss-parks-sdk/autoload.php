@@ -12,17 +12,6 @@
 
 /*
 |--------------------------------------------------------------------------
-| Start session
-|--------------------------------------------------------------------------
-|
-*/
-if (session_status() == PHP_SESSION_NONE) {
-	session_start();
-}
-
-
-/*
-|--------------------------------------------------------------------------
 | SDK version
 |--------------------------------------------------------------------------
 |
@@ -82,6 +71,23 @@ define('GINTO_INFOS_AVAILABLE', 1);
 require_once('config.php');
 if (file_exists(__DIR__ . '/config.local.php')) {
 	require_once(__DIR__ . '/config.local.php');
+}
+
+
+/*
+|--------------------------------------------------------------------------
+| Start session
+|--------------------------------------------------------------------------
+|
+| Only when use_sessions is enabled and headers are still writable.
+|
+*/
+if (
+	! empty($config['use_sessions'])
+	&& session_status() == PHP_SESSION_NONE
+	&& ! headers_sent()
+) {
+	session_start();
 }
 
 

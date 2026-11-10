@@ -7,6 +7,7 @@ The PHP SDK imports offer data from the Swiss Parks XML export into a local SQLi
 - [New installation](./guides/new-installation.md)
 - [Core configuration](./guides/configuration.md)
 - [Quick start integration](./guides/quick-start-integration.md)
+- [WordPress integration](./guides/wordpress-integration.md)
 
 ## Upgrade
 

@@ -48,7 +48,7 @@ Parameters:
 
 - Renders one offer detail page.
 - Supports routed detail mode and explicit single-offer mode (`$single_offer_id`).
-- Sends a 404 response and exits if a requested offer does not exist.
+- If a requested offer does not exist: sends a 404 response and exits by default; with `soft_errors = true` returns an empty string instead.
 - The back link returns to the overview URL; the last list/map tab (`#tab_1` / `#tab_2`) is restored by `parks.min.js` via hash + `sessionStorage` (see [Quick start integration](../guides/quick-start-integration.md#listmap-tab-and-back-navigation)).
 
 Parameters:
@@ -145,6 +145,25 @@ Parameters:
 
 - Clears all favorites for the current visitor (cookie reset).
 
+### `set_script_url($url)`
+
+- Sets the view `script_url` / `script_url_with_params` used for forms and links.
+- Does not change session scoping; pass `$page_url` to the `ParksAPI` constructor for that.
+- Useful in CMS embeds where `REQUEST_URI` is not the offers page permalink.
+
+Parameters:
+
+- `$url` (`string`): path or path with query string.
+
+### `abort($message)`
+
+- Prints `$message` and exits by default.
+- With `soft_errors = true`, throws `RuntimeException` instead (CMS-safe bootstrap/language failures).
+
+Parameters:
+
+- `$message` (`string`)
+
 ## Import and maintenance methods
 
 ### `update($force = false)`
@@ -188,6 +207,8 @@ Rendering methods call view methods that honor `config['return_output']`:
 
 - `false` (default): HTML is printed directly.
 - `true`: HTML is returned as string (useful for CMS composition/output buffering).
+
+`soft_errors` is independent of `return_output`. See [WordPress integration](../guides/wordpress-integration.md).
 
 ## Minimal integration example
 

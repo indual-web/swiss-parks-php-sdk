@@ -206,6 +206,19 @@ $config['return_output'] = false;
 
 /*
 |--------------------------------------------------------------------------
+| Soft errors (CMS / embed mode)
+|--------------------------------------------------------------------------
+|
+| When true, bootstrap/language failures throw RuntimeException and a
+| missing offer detail returns an empty string instead of header/exit.
+| Default: false (standalone echo + exit behaviour).
+|
+*/
+$config['soft_errors'] = false;
+
+
+/*
+|--------------------------------------------------------------------------
 | CSS and JS include mode
 |--------------------------------------------------------------------------
 |

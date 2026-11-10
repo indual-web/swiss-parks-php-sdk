@@ -44,8 +44,10 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
   - Runtime map behaviour (full height, layers to hide/show, …) is configured via `$api->map_options`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
 - `return_output`
   - Return generated HTML (`true`) or print directly (`false`).
+- `soft_errors`
+  - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Default `false`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
 - `use_sessions`, `session_name`
-  - Enables SDK session-based state and sets namespace/cookie prefix.
+  - Enables SDK session-based state and sets namespace/cookie prefix. Autoload starts a PHP session only when `use_sessions` is enabled and headers are not sent yet.
 - `language_independence`, `language_priority`
   - Controls multilingual fallback behavior.
 
@@ -55,6 +57,8 @@ Frequently tuned options:
 
 - `return_output`
   - Controls whether SDK methods return HTML (`true`) or print directly (`false`).
+- `soft_errors`
+  - Soft failure mode for CMS embeds (`RuntimeException` / empty detail instead of `exit()`).
 - `prevent_css_js_include`
   - Disables automatic SDK CSS/JS includes when your project loads assets manually.
 - `use_sessions`

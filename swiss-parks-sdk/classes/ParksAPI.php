@@ -189,8 +189,7 @@ class ParksAPI
 				if (class_exists($this->config['class_view'])) {
 					$this->view = new $this->config['class_view']($this);
 				} else {
-					echo 'The custom view file does not exist.';
-					exit();
+					$this->abort('The custom view file does not exist.');
 				}
 
 				// Init seo urls
@@ -680,8 +679,20 @@ class ParksAPI
 			// Default urls
 			else {
 				$param_name = $this->config['url_param_prefix'] . 'page';
+				$form_param_name = $this->config['form_prefix'] . 'page';
+
+				// Prefer url_param_prefix
 				if (isset($_GET[$param_name]) && $_GET[$param_name] >= 1) {
 					$this->page = $_GET[$param_name];
+				}
+
+				// Fallback for older form_prefix bookmarks
+				elseif (
+					$form_param_name !== $param_name
+					&& isset($_GET[$form_param_name])
+					&& $_GET[$form_param_name] >= 1
+				) {
+					$this->page = $_GET[$form_param_name];
 				}
 			}
 
@@ -896,6 +907,11 @@ class ParksAPI
 					return $return;
 					
 				} else {
+
+					// Soft errors: let CMS decide how to render missing offers
+					if (! empty($this->config['soft_errors'])) {
+						return '';
+					}
 
 					// Show 404 error
 					header('HTTP/1.0 404 Not Found');
@@ -1610,23 +1626,54 @@ class ParksAPI
 	 */
 	public function _security_checks(): void
 	{
-		if (! empty($_GET) && is_array($_GET)) {
-			foreach ($_GET as $key => $value) {
-				if (is_string($value)) {
 
-					// Sql injection protection
-					$tmp = str_replace(["*", "'", '"', ";", "="], "", $value);
+		// Nothing to sanitize
+		if (empty($_GET) || ! is_array($_GET)) {
+			return;
+		}
 
-					// Cross site scripting protection
-					$tmp = str_replace(["<", ">"], ["&lt;", "&gt;"], $tmp);
+		// Prefixes used by SDK query/form params
+		$url_prefix = ! empty($this->config['url_param_prefix']) ? (string) $this->config['url_param_prefix'] : '';
+		$form_prefix = ! empty($this->config['form_prefix']) ? (string) $this->config['form_prefix'] : '';
 
-					// Escape html entities
-					$tmp = htmlentities($tmp, ENT_QUOTES);
+		// Known unprefixed SDK keys (CMS query vars stay untouched)
+		$known_keys = [
+			'offer',
+			'page',
+			'reset',
+			'poi',
+			'tab',
+			'keyword',
+			'filter',
+			'force_back_to_referer',
+			'original_category',
+		];
 
-					// Reset param
-					$_GET[$key] = $tmp;
-				}
+		foreach ($_GET as $key => $value) {
+			if (! is_string($value)) {
+				continue;
 			}
+
+			// Allowlist: known keys or prefixed SDK params
+			$key_string = (string) $key;
+			$is_sdk_key = in_array($key_string, $known_keys, true)
+				|| ($url_prefix !== '' && str_starts_with($key_string, $url_prefix))
+				|| ($form_prefix !== '' && str_starts_with($key_string, $form_prefix));
+
+			if (! $is_sdk_key) {
+				continue;
+			}
+
+			// Sql injection protection
+			$tmp = str_replace(["*", "'", '"', ";", "="], "", $value);
+
+			// Cross site scripting protection
+			$tmp = str_replace(["<", ">"], ["&lt;", "&gt;"], $tmp);
+
+			// Escape html entities
+			$tmp = htmlentities($tmp, ENT_QUOTES);
+
+			$_GET[$key] = $tmp;
 		}
 	}
 
@@ -1667,6 +1714,47 @@ class ParksAPI
 		}
 
 		return $config;
+	}
+
+
+
+	/**
+	 * Abort with exit, or throw when soft_errors is enabled
+	 */
+	public function abort(string $message): void
+	{
+
+		// CMS / embed mode
+		if (! empty($this->config['soft_errors'])) {
+			throw new RuntimeException($message);
+		}
+
+		// Standalone mode
+		echo $message;
+		exit();
+	}
+
+
+
+	/**
+	 * Set view script URLs (path used for forms/links; query string optional)
+	 */
+	public function set_script_url(string $url): void
+	{
+
+		// View not bootstrapped (CLI / forScript)
+		if (empty($this->view)) {
+			return;
+		}
+
+		// Keep full URL including query string
+		$this->view->script_url_with_params = $url;
+
+		// Strip query string for form/action base path
+		$param_start = strpos($url, '?');
+		$this->view->script_url = ($param_start > 0)
+			? substr($url, 0, $param_start)
+			: $url;
 	}
 
 

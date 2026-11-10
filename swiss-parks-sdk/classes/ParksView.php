@@ -1162,7 +1162,7 @@ class ParksView
 
 		// Previous link
 		if ($page > 1) {
-			$param_name = $this->config['form_prefix'] . 'page';
+			$param_name = $this->config['url_param_prefix'] . 'page';
 			$link = $this->script_url_with_params;
 
 			$output .= '<div class="prev_wrap">';
@@ -1201,7 +1201,7 @@ class ParksView
 
 		// Next page link
 		if ($page < $total) {
-			$param_name = $this->config['form_prefix'] . 'page';
+			$param_name = $this->config['url_param_prefix'] . 'page';
 			$link = $this->script_url_with_params;
 
 			$output .= '<div class="next_wrap">';
@@ -1241,7 +1241,7 @@ class ParksView
 
 		// Page numbers
 		if ($total > 1) {
-			$param_name = $this->config['form_prefix'] . 'page';
+			$param_name = $this->config['url_param_prefix'] . 'page';
 			$pagination_max_numbers = $this->api->config['pagination_max_numbers'] ? intval($this->api->config['pagination_max_numbers']) : 5;
 			$half_pages_start = floor($pagination_max_numbers / 2);
 			$half_pages_end = ceil($pagination_max_numbers / 2) - 1;

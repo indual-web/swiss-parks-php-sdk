@@ -61,14 +61,12 @@ class ParksLanguage
 
 		// Error, no language file found
 		else {
-			echo 'The language file does not exist.';
-			exit();
+			$this->api->abort('The language file does not exist.');
 		}
 
 		// Check language labels
 		if (! is_array($labels)) {
-			echo 'Your language file does not appear to be formatted correctly.';
-			exit();
+			$this->api->abort('Your language file does not appear to be formatted correctly.');
 		}
 
 		// Set labels

@@ -16,6 +16,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 - Migration and update lifecycle: [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
 - Core configuration: [`docs/guides/configuration.md`](docs/guides/configuration.md)
 - Quick start integration: [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md)
+- WordPress integration: [`docs/guides/wordpress-integration.md`](docs/guides/wordpress-integration.md)
 - SDK reference: [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md)
 
 ---
@@ -101,6 +102,7 @@ Configuration details for `swiss-parks-sdk/config.php`:
 Integration example and implementation basics:
 
 - [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md)
+- WordPress / CMS embeds: [`docs/guides/wordpress-integration.md`](docs/guides/wordpress-integration.md)
 
 ---
 
