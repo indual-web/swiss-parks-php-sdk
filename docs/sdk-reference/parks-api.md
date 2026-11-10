@@ -49,6 +49,7 @@ Parameters:
 - Renders one offer detail page.
 - Supports routed detail mode and explicit single-offer mode (`$single_offer_id`).
 - Sends a 404 response and exits if a requested offer does not exist.
+- The back link returns to the overview URL; the last list/map tab (`#tab_1` / `#tab_2`) is restored by `parks.min.js` via hash + `sessionStorage` (see [Quick start integration](../guides/quick-start-integration.md#listmap-tab-and-back-navigation)).
 
 Parameters:
 

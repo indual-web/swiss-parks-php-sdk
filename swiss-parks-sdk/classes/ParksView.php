@@ -2021,10 +2021,6 @@ class ParksView
 				// Back to overview button
 				else {
 
-					// Get slug config
-					$detail_slug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
-					$poi_slug = ! empty($this->config['seo_url_poi_slug']) ? $this->config['seo_url_poi_slug'] : '';
-
 					// Handle seo urls
 					if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
 
@@ -2042,44 +2038,14 @@ class ParksView
 				}
 			}
 
-			// History back button to referer page
-			elseif (
-				! empty($_SERVER['HTTP_REFERER']) 
-				&& 
-				(
-					! empty($_GET['force_back_to_referer'])
-					||
-					(
-						strstr($_SERVER['HTTP_REFERER'], $this->script_url)
-						&&
-						! strstr($_SERVER['HTTP_REFERER'], '?offer=')
-					)
-				)
-			) {
+			// Optional: force browser history back (e.g. external referer)
+			elseif (! empty($_GET['force_back_to_referer']) && ! empty($_SERVER['HTTP_REFERER'])) {
 				$template_data['OFFER_BACK_LINK'] = '<a class="go_back back_to_overview" href="javascript:void(0);" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->api->lang->get('back_to_overview') . '</span></a>';
 			}
 
-			// Default back button with reload, referrer is empty
+			// Default: overview URL (list/map tab restored by parks.min.js)
 			else {
-
-				// Set default back link
-				$back_link = $this->script_url;
-
-				// Check seo url
-				if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
-
-					// Get detail slug
-					$detail_slug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
-
-					// Remove detail segments
-					$detail_segment_pos = strpos($this->script_url, '/' . $detail_slug);
-					if ($detail_segment_pos !== false) {
-						$back_link = substr($this->script_url, 0, $detail_segment_pos);
-					}
-
-				}
-
-				// Set placeholder
+				$back_link = $this->_get_overview_back_url();
 				$template_data['OFFER_BACK_LINK'] = '<a class="back_to_overview" href="' . $back_link . '" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->api->lang->get('back_to_overview') . '</span></a>';
 			}
 		}
@@ -2496,6 +2462,29 @@ class ParksView
 		';
 
 		return $this->_output($map_view);
+	}
+
+
+
+	/**
+	 * Overview URL for the detail back link (SEO-aware)
+	 *
+	 * Tab restore (#tab_1 list / #tab_2 map) is handled client-side by parks.min.js.
+	 */
+	protected function _get_overview_back_url(): string
+	{
+
+		$back_link = $this->script_url;
+
+		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
+			$detail_slug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
+			$detail_segment_pos = strpos($this->script_url, '/' . $detail_slug);
+			if ($detail_segment_pos !== false) {
+				$back_link = substr($this->script_url, 0, $detail_segment_pos);
+			}
+		}
+
+		return $back_link;
 	}
 
 

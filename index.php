@@ -67,7 +67,10 @@ $api->map_options = [];
 			<?= $api->show_offers_filter($categories, $filter) ?>
 
 
-			<!-- Tabs: list and map (markup expected by parks.min.js) -->
+			<!--
+				Tabs: list and map (markup expected by parks.min.js).
+				Active tab is kept in #tab_1 / #tab_2 and restored after detail “back”.
+			-->
 			<div id="content_top">
 				<ul class="tab_list move_offer_total" role="tablist" aria-hidden="true">
 					<li data="tab_1" role="tab" class="current" aria-controls="tab_1"><?= $api->lang->get('offer_list') ?></li>
