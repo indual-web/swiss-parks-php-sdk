@@ -59,6 +59,8 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 3. **Migrate** (if not using `upgrade-sdk.sh`)
    - Run `php swiss-parks-sdk/scripts/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
 
+Maintainers: push a version tag (`22`, `22.1`) to publish the ZIP automatically via GitHub Actions. Details: [import and update lifecycle](docs/guides/import-update-lifecycle.md#publish-a-github-release).
+
 The SQLite database file is created automatically on first run from `swiss-parks-sdk/database/schema.sql`; no manual schema import is needed.
 
 ---

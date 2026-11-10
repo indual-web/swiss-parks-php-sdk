@@ -78,6 +78,7 @@ resolve_download_urls()
 	fi
 
 	echo "https://github.com/${GITHUB_REPO}/releases/download/${version}/swiss-parks-php-sdk-${version}.zip"
+	echo "https://github.com/${GITHUB_REPO}/releases/download/v${version}/swiss-parks-php-sdk-${version}.zip"
 	echo "https://github.com/${GITHUB_REPO}/releases/download/${version}/Parks-API-${version}.zip"
 	echo "https://github.com/${GITHUB_REPO}/releases/download/v${version}/Parks-API-${version}.zip"
 

@@ -24,6 +24,19 @@ This guide documents the regular update flow, forced updates, SDK upgrades, and 
   - `php swiss-parks-sdk/scripts/force_update.php`
 - Exit code: `0` on success, `1` on failure.
 
+## Publish a GitHub release
+
+Releases are created from version tags. Pushing a tag runs `.github/workflows/release.yml`, which builds the ZIP via `deploy.sh` and publishes it as a GitHub Release asset.
+
+- Preferred tags: `22`, `22.1` (optional `v` prefix is accepted)
+- Asset name: `swiss-parks-php-sdk-<version>.zip`
+- Local fallback (without CI): `bash ./deploy.sh 22`
+
+```bash
+git tag 22
+git push origin 22
+```
+
 ## SDK version upgrade
 
 - File: `swiss-parks-sdk/bin/upgrade-sdk.sh`

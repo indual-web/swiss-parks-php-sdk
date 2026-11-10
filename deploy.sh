@@ -1,13 +1,20 @@
 #!/bin/bash
+set -euo pipefail
 
-VERSION=$1
+VERSION="${1:-}"
 
 if [ -z "$VERSION" ]; then
 	echo "Usage: ./deploy.sh <version>"
+	echo "Example: ./deploy.sh 22"
+	echo "CI: triggered automatically on version tags (see .github/workflows/release.yml)"
 	exit 1
 fi
 
+# Strip optional leading v so ZIP names stay swiss-parks-php-sdk-22.zip
+VERSION="${VERSION#v}"
+
 STAGING_DIR="./release-staging-$VERSION"
+ZIP_NAME="swiss-parks-php-sdk-$VERSION.zip"
 
 # Make temp folder
 mkdir -p "$STAGING_DIR/swiss-parks-sdk"
@@ -38,7 +45,9 @@ mkdir -p ./releases
 # Compress folder (swiss-parks-sdk/ and index.php at archive root)
 rm -f deploy.zip
 ( cd "$STAGING_DIR" && zip -9 -r ../deploy.zip . )
-mv ./deploy.zip ./releases/swiss-parks-php-sdk-$VERSION.zip
+mv ./deploy.zip "./releases/$ZIP_NAME"
 
 # Remove temp folder
 rm -Rf "$STAGING_DIR"
+
+echo "Created ./releases/$ZIP_NAME"
