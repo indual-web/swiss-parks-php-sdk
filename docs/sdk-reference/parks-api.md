@@ -173,8 +173,9 @@ Static factories for CLI scripts (no page rendering bootstrap):
 ### `log_migration(int $version_to = 0)`
 
 - Sends a JSON payload to `migration_log_url` matching the `log_api_migration` endpoint contract.
-- Required fields: `api_version`, `url` (server returns 404 if either is missing).
-- Optional fields: `php_version`, `ip`, `hash`, `park_id`, `file_path`.
+- Required fields: `api_version`, `url`, `hash` (`api_hash`). Skips the request when `api_hash` is empty.
+- Optional fields: `php_version`, `ip`, `park_id`, `file_path`.
+- Signs the exact JSON body with HMAC-SHA256 using `api_hash` and sends the digest in the `X-Api-Migration-Signature` header. The central server accepts the log only when the hash matches a known export configuration and the signature is valid.
 - Called automatically by `migrate()` after a successful rebuild/import.
 - `$version_to`: target SDK version; defaults to `SDK_VERSION` when `0`.
 - For CLI runs, `url` is sent as `{hostname} (CLI)`.

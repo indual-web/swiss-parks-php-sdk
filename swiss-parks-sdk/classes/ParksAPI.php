@@ -1943,34 +1943,48 @@ class ParksAPI
 	 * Report successful migration to central log server
 	 *
 	 * Payload must match log_api_migration() on angebote.paerke.ch
-	 * (required: api_version, url).
+	 * (required: api_version, url, hash). Body is signed with HMAC-SHA256
+	 * using api_hash (header X-Api-Migration-Signature).
 	 */
 	public function log_migration(int $version_to = 0): bool
 	{
 
+		// Central log endpoint is reached via HTTPS POST
 		if (! function_exists('curl_init')) {
 			return false;
 		}
 
+		// api_hash is required: used as HMAC key and verified server-side against export configs
+		$api_hash = (string) ($this->config['api_hash'] ?? '');
 		$api_version = (string) ($version_to > 0 ? $version_to : SDK_VERSION);
+
+		// Prefer the current request URL; fall back to hostname when run from CLI
 		$site_url = (! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['REQUEST_URI']))
 			? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 			: ((gethostname() ?: 'CLI') . ' (CLI)');
 
-		if ($api_version === '' || $site_url === '') {
+		if ($api_hash === '' || $api_version === '' || $site_url === '') {
 			return false;
 		}
 
+		// Payload contract must stay in sync with log_api_migration() on angebote.paerke.ch
 		$payload = [
 			'api_version' => $api_version,
 			'php_version' => PHP_VERSION,
 			'url' => $site_url,
 			'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
-			'hash' => $this->config['api_hash'] ?? '',
+			'hash' => $api_hash,
 			'park_id' => $this->config['park_id'] ?? '',
 			'file_path' => $_SERVER['SCRIPT_FILENAME'] ?? __FILE__,
 		];
 
+		// Sign the exact JSON bytes that will be posted (server verifies the same string)
+		$body = json_encode($payload);
+		if ($body === false) {
+			return false;
+		}
+
+		$signature = hash_hmac('sha256', $body, $api_hash);
 		$url = $this->config['migration_log_url'] ?? 'https://angebote.paerke.ch/migrate/log_api_migration';
 		$verify_ssl = $this->config['curl_verify_ssl'] ?? true;
 
@@ -1982,8 +1996,12 @@ class ParksAPI
 
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_POST, true);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
+			'Content-Type: application/json',
+			// Digest of $body with api_hash; must match server-side hash_hmac()
+			'X-Api-Migration-Signature: ' . $signature,
+		]);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
 		curl_setopt($ch, CURLOPT_REFERER, $_SERVER['HTTP_REFERER'] ?? '');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3);
@@ -1995,6 +2013,7 @@ class ParksAPI
 		$http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		$success = ($response !== false) && ($http_code >= 200) && ($http_code < 300);
 
+		// Logging failure must not fail the migration itself
 		if (! $success) {
 			$error = curl_error($ch) ?: ('HTTP ' . $http_code);
 			$this->logger->info('Migration log request failed: ' . $error);
