@@ -75,6 +75,8 @@ Apply version-specific config steps from a [migration guide](./migrations/index.
 | --- | --- | --- |
 | v21 (MySQL) | v22 (SQLite) | [21 to 22](./migrations/21-to-22.md) |
 
+For **v21 → v22**, follow that guide before relying on `upgrade-sdk.sh`: config must move to `config/config.php` with `db_path`, and integrator PHP / frontend / cron still need manual updates (camelCase API, `v22` assets, `bin/sync.sh`).
+
 New guides are added to [migrations/index.md](./migrations/index.md) when a release needs steps beyond the generic flow above.
 
 ## Upgrade notes

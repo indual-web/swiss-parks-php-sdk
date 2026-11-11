@@ -8,7 +8,7 @@ Use the generic [upgrade guide](../upgrading.md) for the standard workflow. Open
 
 | From | To | Guide | Breaking changes |
 | --- | --- | --- | --- |
-| v21 (MySQL) | v22 (SQLite) | [21 to 22](./21-to-22.md) | Database layer, `config.php` |
+| v21 (MySQL) | v22 (SQLite) | [21 to 22](./21-to-22.md) | SQLite + folder layout, `config/config.php`, camelCase API, frontend `v22`, cron/favorites paths |
 
 ## When to add a new guide
 

@@ -13,6 +13,7 @@ The PHP SDK imports offer data from the Swiss Parks XML export into a local SQLi
 
 - [Upgrade guide](./guides/upgrading.md)
 - [Version migrations](./guides/migrations/index.md)
+- [v21 → v22 (MySQL to SQLite)](./guides/migrations/21-to-22.md)
 
 ## Guides
 

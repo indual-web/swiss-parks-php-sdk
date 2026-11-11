@@ -13,6 +13,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 
 - New installation: [`docs/guides/new-installation.md`](docs/guides/new-installation.md)
 - Upgrade: [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
+- **v21 → v22 migration:** [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 - Migration and update lifecycle: [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
 - Core configuration: [`docs/guides/configuration.md`](docs/guides/configuration.md)
 - Quick start integration: [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md)
@@ -83,9 +84,28 @@ Quick summary:
 
 ## 5) Upgrade from an older version
 
-- Generic workflow: [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
+- Generic workflow (any release): [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
 - Version-specific migrations: [`docs/guides/migrations/index.md`](docs/guides/migrations/index.md)
-- **v21 → v22 (MySQL to SQLite):** [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
+
+### v21 → v22 (required reading)
+
+Full step-by-step guide: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
+
+v22 is not a drop-in file replace. Integrators coming from v21 must plan for:
+
+| Change | Action |
+| --- | --- |
+| Folder `parks_api/` → `swiss-parks-sdk/` | Rename and update `require_once` |
+| MySQL → SQLite | Remove `db_*` credentials; set `db_path` (default `writable/data/park-offers.sqlite`) |
+| Config path | Move settings to `swiss-parks-sdk/config/config.php` |
+| PHP `8.2`–`8.5` + `pdo_sqlite` | Raise host PHP if still on 7.4–8.1 |
+| Public API camelCase | e.g. `show_offers_filter` → `showOffersFilter` (also update `custom/MyView.php`) |
+| Frontend `v22` assets | `…/dist/frontend/v22/` as `type="module"`; drop jQuery; map id `swiss-parks-map` |
+| Cron | `scripts/cron.php` → `bin/sync.sh` (`--force` replaces `force_update.php`) |
+| Favorites endpoint | `scripts/favorite.php` → `public/favorites.php` |
+| Layout renames | `language/`→`lang/`, `template/`→`templates/`, `log/`→`writable/log/`; helpers → `ParksDate` / `ParksFormat` / `ParksMap` |
+
+After files and config are ready, rebuild the DB with `php swiss-parks-sdk/bin/migrate.php` (or let `upgrade-sdk.sh 22` run it). Offer data is re-imported from the XML export; MySQL is not migrated.
 
 ---
 
