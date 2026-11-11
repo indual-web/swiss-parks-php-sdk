@@ -1,205 +1,43 @@
-# PHP SDK Documentation - Swiss Parks Network
+# Swiss Parks PHP SDK
 
-This PHP SDK imports offer data from an XML export into a local SQLite database file (created automatically, no database server required) and renders filter, list, map, and detail views for server-side PHP integrations.
+PHP SDK that imports Swiss Parks offer XML into a local SQLite database and renders filter, list, map, and detail views. No database server is required.
 
-## Documentation structure
+Full documentation: [`docs/index.md`](docs/index.md)
 
-- Start here in this `README.md` for setup and workflow overview.
-- The documentation entry point is [`docs/index.md`](docs/index.md).
-- Detailed guides are in [`docs/guides/index.md`](docs/guides/index.md).
-- SDK details are in [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md).
-
-## Quick navigation
-
-- New installation: [`docs/guides/new-installation.md`](docs/guides/new-installation.md)
-- Upgrade: [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
-- **v21 → v22 migration:** [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
-- Migration and update lifecycle: [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
-- Core configuration: [`docs/guides/configuration.md`](docs/guides/configuration.md)
-- Quick start integration: [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md)
-- WordPress integration: [`docs/guides/wordpress-integration.md`](docs/guides/wordpress-integration.md)
-- SDK reference: [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md)
-
----
-
-## 1) Requirements
+## Requirements
 
 - PHP `>= 8.2` and `<= 8.5`
-- PHP `pdo_sqlite` extension (bundled with PHP by default), SQLite `>= 3.25`
-- Write permissions for the data directory (`swiss-parks-sdk/writable/data/` or your configured `db_path`)
-- Write permissions for the log directory (`swiss-parks-sdk/writable/log/` or your configured path)
-- PHP cURL extension enabled
-- Outbound HTTPS access to `angebote.paerke.ch` and related export endpoints
-- URL file access via PHP stream wrappers (for `file_get_contents()` based sync calls)
+- PHP `pdo_sqlite` (SQLite `>= 3.25`)
+- Write access for `swiss-parks-sdk/writable/data/` and `writable/log/` (or your configured paths)
+- PHP cURL and outbound HTTPS to `angebote.paerke.ch`
 
----
+## Developer paths
 
-## 2) Architecture Overview
-
-- **Orchestration**
-  - `ParksAPI` is the main integration entry point.
-- **Import layer**
-  - `ParksImport` imports offers and synchronizes additional export data sources into the local database.
-- **Data/filter layer**
-  - `ParksModel` handles SQL filtering, aggregation, and query logic.
-- **Rendering layer**
-  - `ParksView` renders filter, list, map, pagination, and detail output.
-  - `custom/MyView.php` can override methods from `ParksView`.
-- **Language layer**
-  - `ParksLanguage` loads translation labels and runtime language context.
-
----
-
-## 3) Version Workflow
-
-1. **Install**
-   - Download the required SDK release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
-   - Extract the release ZIP and copy the `swiss-parks-sdk` directory into your project.
-2. **Upgrade**
-   - CLI: `bash swiss-parks-sdk/bin/upgrade-sdk.sh latest` (downloads release, updates core files, runs migration)
-   - Or update SDK files manually from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
-3. **Migrate** (if not using `upgrade-sdk.sh`)
-   - Run `php swiss-parks-sdk/bin/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
-
-Maintainers: push a version tag (`22`, `22.1`) to publish the ZIP automatically via GitHub Actions. Details: [import and update lifecycle](docs/guides/import-update-lifecycle.md#publish-a-github-release).
-
-The SQLite database file is created automatically on first run from `swiss-parks-sdk/database/schema.sql`; no manual schema import is needed.
-
----
-
-## 4) New Installation
-
-Use the dedicated guide:
-
-- [`docs/guides/new-installation.md`](docs/guides/new-installation.md)
-
-Quick summary:
-
-1. Install SDK files from the release ZIP (`swiss-parks-sdk/` + `index.php`).
-2. Configure `swiss-parks-sdk/config/config.php` (`api_hash`, `park_id`).
-3. Run first import: `bash swiss-parks-sdk/bin/sync.sh` (creates the SQLite database automatically; use `--force` for a full import).
-4. Verify data import and configure regular cron execution (`bin/sync.sh`).
-
----
-
-## 5) Upgrade from an older version
-
-- Generic workflow (any release): [`docs/guides/upgrading.md`](docs/guides/upgrading.md)
-- Version-specific migrations: [`docs/guides/migrations/index.md`](docs/guides/migrations/index.md)
-
-### v21 → v22 (required reading)
-
-Full step-by-step guide: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
-
-v22 is not a drop-in file replace. Integrators coming from v21 must plan for:
-
-| Change | Action |
+| Path | Start here |
 | --- | --- |
-| Folder `parks_api/` → `swiss-parks-sdk/` | Rename and update `require_once` |
-| MySQL → SQLite | Remove `db_*` credentials; set `db_path` (default `writable/data/park-offers.sqlite`) |
-| Config path | Move settings to `swiss-parks-sdk/config/config.php` |
-| PHP `8.2`–`8.5` + `pdo_sqlite` | Raise host PHP if still on 7.4–8.1 |
-| Public API camelCase | e.g. `show_offers_filter` → `showOffersFilter` (also update `custom/MyView.php`) |
-| Frontend `v22` assets | `…/dist/frontend/v22/` as `type="module"`; drop jQuery; map id `swiss-parks-map` |
-| Cron | `scripts/cron.php` → `bin/sync.sh` (`--force` replaces `force_update.php`) |
-| Favorites endpoint | `scripts/favorite.php` → `public/favorites.php` |
-| Layout renames | `language/`→`lang/`, `template/`→`templates/`, `log/`→`writable/log/`; helpers → `ParksDate` / `ParksFormat` / `ParksMap` |
+| Documentation hub | [`docs/index.md`](docs/index.md) |
+| PHP integration | [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md) |
+| WordPress | [`docs/guides/wordpress-integration.md`](docs/guides/wordpress-integration.md) |
+| Upgrade | [`docs/guides/upgrading.md`](docs/guides/upgrading.md) |
 
-After files and config are ready, rebuild the DB with `php swiss-parks-sdk/bin/migrate.php` (or let `upgrade-sdk.sh 22` run it). Offer data is re-imported from the XML export; MySQL is not migrated.
+First install: [`docs/guides/new-installation.md`](docs/guides/new-installation.md) · Config: [`docs/guides/configuration.md`](docs/guides/configuration.md) · Reference: [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md)
 
----
+## Coming from v21?
 
-## 6) Core Configuration
+v22 is not a drop-in replace. Plan for:
 
-Configuration details for `swiss-parks-sdk/config/config.php`:
+- Folder `parks_api/` → `swiss-parks-sdk/`, config at `config/config.php`
+- MySQL → SQLite (`db_path`); data is re-imported from XML, not migrated
+- Public API camelCase (`show_offers_filter` → `showOffersFilter`)
+- Frontend `…/dist/frontend/v22/` as `type="module"`; map container `swiss-parks-map`
+- Cron `bin/sync.sh`; favorites `public/favorites.php`
 
-- [`docs/guides/configuration.md`](docs/guides/configuration.md)
+Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
----
+## Contact
 
-## 7) Quick Start Integration
-
-Integration example and implementation basics:
-
-- [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md)
-- WordPress / CMS embeds: [`docs/guides/wordpress-integration.md`](docs/guides/wordpress-integration.md)
-
----
-
-## 8) Import and Update Lifecycle
-
-Commands for `sync` / `sync --force` and `migrate` are documented in:
-
-- [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
-
----
-
-## 9) ParksAPI methods for integrators
-
-- [`docs/sdk-reference/parks-api.md`](docs/sdk-reference/parks-api.md)
-
----
-
-## 10) Filter options and capabilities
-
-- [`docs/sdk-reference/filter-options.md`](docs/sdk-reference/filter-options.md)
-
----
-
-## 11) Map options (`$api->mapOptions`)
-
-- [`docs/sdk-reference/map-options.md`](docs/sdk-reference/map-options.md)
-
----
-
-## 12) Templating and Custom View
-
-- [`docs/guides/templating-and-custom-view.md`](docs/guides/templating-and-custom-view.md)
-
----
-
-## 13) Output Mode and Multilingual Support
-
-- [`docs/guides/output-and-language.md`](docs/guides/output-and-language.md)
-
----
-
-## 14) SEO URLs
-
-- [`docs/guides/seo-urls.md`](docs/guides/seo-urls.md)
-
----
-
-## 15) Favorites
-
-- [`docs/guides/favorites.md`](docs/guides/favorites.md)
-
----
-
-## 16) Tests (Git checkout only)
-
-PHPUnit and Composer are **dev tooling** for the Git repository. They are not part of the release ZIP. CI runs the suite on PHP 8.2–8.5.
-
-- Focus: favorites cookie helpers (`ParksFavorites`) and a few pure `ParksFormat` checks — not full render/import coverage
-- Install: `composer install`
-- Run: `vendor/bin/phpunit` (or `composer test`)
-- Sync smoke: `bash swiss-parks-sdk/bin/sync-smoke.sh` (full sync + offer count) or `--quick` (DB count only). Skips with exit `0` when `api_hash` is unset.
-
----
-
-## 17) Performance and Upgrade Strategy
-
-- [`docs/guides/performance-and-upgrade-strategy.md`](docs/guides/performance-and-upgrade-strategy.md)
-
----
-
-## 18) Contact
-
-More information:
-
-- [parks.swiss](https://www.parks.swiss)
+[parks.swiss](https://www.parks.swiss) · [info@parks.swiss](mailto:info@parks.swiss)
 
 **Network of Swiss Parks**  
 Monbijoustrasse 61, CH-3007 Bern  
-+41 (0)31 381 10 71  
-[info@parks.swiss](mailto:info@parks.swiss)
++41 (0)31 381 10 71
