@@ -29,7 +29,7 @@ class ParksAPI
 	/**
 	 * Park ID
 	 */
-	public ?int $park_id = null;
+	public ?int $parkId = null;
 
 
 	/**
@@ -41,7 +41,7 @@ class ParksAPI
 	/**
 	 * Language
 	 */
-	public string $lang_id = '';
+	public string $langId = '';
 	public ?ParksLanguage $lang = null;
 
 
@@ -84,13 +84,13 @@ class ParksAPI
 	/**
 	 * Single offer view mode
 	 */
-	public bool $single_mode = false;
+	public bool $singleMode = false;
 
 
 	/**
 	 * Map options
 	 */
-	public array $map_options = [];
+	public array $mapOptions = [];
 
 
 	/**
@@ -98,17 +98,17 @@ class ParksAPI
 	 * true: Returns the SDK output as string
 	 * false: Echoes the output directly
 	 */
-	public bool $return_output = false;
+	public bool $returnOutput = false;
 
 
 	/**
 	 * Filter object and data
 	 */
 	public bool $filter = false;
-	public array $filter_data = [];
-	public array $system_filter = [];
-	public bool $filter_hide_users = false;
-	public bool $filter_display_keywords = false;
+	public array $filterData = [];
+	public array $systemFilter = [];
+	public bool $filterHideUsers = false;
+	public bool $filterDisplayKeywords = false;
 
 
 	/**
@@ -121,13 +121,13 @@ class ParksAPI
 	/**
 	 * Session
 	 */
-	public string $session_name = '';
+	public string $sessionName = '';
 
 
 	/**
 	 * Favorites
 	 */
-	public string $favorites_cookie_name = '';
+	public string $favoritesCookieName = '';
 	public array $favorites = [];
 
 
@@ -144,13 +144,13 @@ class ParksAPI
 	) {
 
 		// Get config
-		$this->config = $this->_get_config();
+		$this->config = $this->getConfig();
 
 		// Check config
 		if (! empty($this->config)) {
 
 			// Get park id
-			$this->park_id = ! empty($this->config['park_id']) ? $this->config['park_id'] : null;
+			$this->parkId = ! empty($this->config['park_id']) ? $this->config['park_id'] : null;
 
 			// Set absolute path
 			$dirname = dirname(__FILE__);
@@ -158,11 +158,11 @@ class ParksAPI
 
 			// Set data hash
 			$this->hash = ! empty($hash) ? $hash : $this->config['api_hash'];
-			$this->return_output = isset($this->config['return_output']) ? $this->config['return_output'] : false;
+			$this->returnOutput = isset($this->config['return_output']) ? $this->config['return_output'] : false;
 
 			// Instance of ParksLanguage
 			$this->lang = new ParksLanguage($language, $this);
-			$this->lang_id = $this->lang->lang_id;
+			$this->langId = $this->lang->langId;
 
 			// Instance of ParksLog
 			$this->logger = new ParksLog($this);
@@ -177,10 +177,10 @@ class ParksAPI
 			$this->import = new ParksImport($this);
 
 			// Load system config
-			$this->_load_system_config();
+			$this->loadSystemConfig();
 
 			if ($bootstrap_setup) {
-				$this->_setup();
+				$this->setup();
 			}
 
 			if ($bootstrap_rendering) {
@@ -204,7 +204,7 @@ class ParksAPI
 					if ($session_url == '') {
 
 						// Set session name for seo urls
-						$session_url = $this->view->script_url;
+						$session_url = $this->view->scriptUrl;
 						if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && ! empty($session_url)) {
 
 							// Clean url from double slashes
@@ -224,12 +224,12 @@ class ParksAPI
 					}
 
 					// Set session
-					$this->session_name = $this->config['session_name'] . '_' . md5($session_url ?? 'default');
+					$this->sessionName = $this->config['session_name'] . '_' . md5($session_url ?? 'default');
 
 					// Get favorites
-					$this->favorites_cookie_name = $this->config['session_name'] . '_favorites';
-					if (! empty($_COOKIE[$this->favorites_cookie_name])) {
-						$this->favorites = unserialize($_COOKIE[$this->favorites_cookie_name], ['allowed_classes' => false]) ?: [];
+					$this->favoritesCookieName = $this->config['session_name'] . '_favorites';
+					if (! empty($_COOKIE[$this->favoritesCookieName])) {
+						$this->favorites = unserialize($_COOKIE[$this->favoritesCookieName], ['allowed_classes' => false]) ?: [];
 					}
 
 				}
@@ -239,7 +239,7 @@ class ParksAPI
 
 				// Reset filter with seo urls
 				if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
-					if (! empty($this->view->script_url) && strstr($this->view->script_url, '/' . $reset_slug)) {
+					if (! empty($this->view->scriptUrl) && strstr($this->view->scriptUrl, '/' . $reset_slug)) {
 						$reset_filter = true;
 					}
 				}
@@ -251,13 +251,13 @@ class ParksAPI
 
 				// Reset or init filter
 				if ($reset_filter === true) {
-					$this->_reset_filter();
+					$this->resetFilter();
 				} else {
-					$this->_init_filter();
+					$this->initFilter();
 				}
 
 				// Load template
-				$this->load_template();
+				$this->loadTemplate();
 			}
 		}
 	}
@@ -265,7 +265,7 @@ class ParksAPI
 
 
 	/**
-	 * CLI bootstrap without page rendering (cron, force_update)
+	 * CLI bootstrap without page rendering (sync, migrate helpers)
 	 */
 	public static function forScript(): self
 	{
@@ -287,10 +287,10 @@ class ParksAPI
 	/**
 	 * Echo or return HTML depending on output mode
 	 */
-	private function _output(string $output): ?string
+	private function output(string $output): ?string
 	{
 
-		if ($this->return_output === true) {
+		if ($this->returnOutput === true) {
 			return $output;
 		}
 
@@ -320,11 +320,11 @@ class ParksAPI
 
 			// Import data from XML into database
 			$import_ok = $this->import->import($xml, $force);
-			$map_layers_ok = $this->import->import_map_layers($xml_map_layer);
-			$cleanup_ok = $this->import->clean_up_offers($xml_active_offers);
+			$map_layers_ok = $this->import->importMapLayers($xml_map_layer);
+			$cleanup_ok = $this->import->cleanUpOffers($xml_active_offers);
 
 			if ($import_ok) {
-				$this->_update_api_version();
+				$this->updateApiVersion();
 
 				$message = 'The offers were successfully synchronised.';
 				if (! $map_layers_ok) {
@@ -334,19 +334,19 @@ class ParksAPI
 					$message .= ' Inactive offer cleanup failed.';
 				}
 
-				$this->_output_update_json(true, $message);
+				$this->outputUpdateJson(true, $message);
 
 				return true;
 			}
 
-			$this->_output_update_json(false, 'Offer import failed. Check logs and api_hash configuration.');
+			$this->outputUpdateJson(false, 'Offer import failed. Check logs and api_hash configuration.');
 
 			return false;
 
 
 		} catch (Exception $e) {
 
-			$this->_output_update_json(false, 'ADB sync exception: ' . $e->getMessage());
+			$this->outputUpdateJson(false, 'ADB sync exception: ' . $e->getMessage());
 
 			return false;
 
@@ -368,11 +368,11 @@ class ParksAPI
 
 		// Re-run setup (triggers a full import)
 		$this->api = null;
-		$this->_setup();
+		$this->setup();
 
 		$success = ! empty($this->api->initialized);
 
-		if ($success && ! $this->log_migration(SDK_VERSION)) {
+		if ($success && ! $this->logMigration(SDK_VERSION)) {
 			$this->logger->info('Migration log could not be sent to the central server.');
 		}
 
@@ -385,18 +385,18 @@ class ParksAPI
 	/**
 	 * Load template
 	 */
-	public function load_template(): void
+	public function loadTemplate(): void
 	{
 
 		// Load detail template
-		if (file_exists(__DIR__ . '/../template/' . $this->config['template_folder'] . '/detail.tpl')) {
-			$this->template['detail'] = file_get_contents(__DIR__ . '/../template/' . $this->config['template_folder'] . '/detail.tpl');
+		if (file_exists(__DIR__ . '/../templates/' . $this->config['template_folder'] . '/detail.tpl')) {
+			$this->template['detail'] = file_get_contents(__DIR__ . '/../templates/' . $this->config['template_folder'] . '/detail.tpl');
 			$this->template['detail'] = preg_replace("/<!--(.*?)-->/s", "", $this->template['detail']);
 		}
 
 		// Load filter template
-		if (file_exists(__DIR__ . '/../template/' . $this->config['template_folder'] . '/filter.tpl')) {
-			$this->template['filter'] = file_get_contents(__DIR__ . '/../template/' . $this->config['template_folder'] . '/filter.tpl');
+		if (file_exists(__DIR__ . '/../templates/' . $this->config['template_folder'] . '/filter.tpl')) {
+			$this->template['filter'] = file_get_contents(__DIR__ . '/../templates/' . $this->config['template_folder'] . '/filter.tpl');
 			$this->template['filter'] = preg_replace("/<!--(.*?)-->/s", "", $this->template['filter']);
 		}
 	}
@@ -406,7 +406,7 @@ class ParksAPI
 	/**
 	 * Compile template
 	 */
-	public function compile_template(string $section, array $template_data = [], array $conditions = []): string
+	public function compileTemplate(string $section, array $template_data = [], array $conditions = []): string
 	{
 		if (! empty($section)) {
 
@@ -498,74 +498,65 @@ class ParksAPI
 	/**
 	 * Displays filter for offers
 	 */
-	public function show_offers_filter(array $categories = [], array $filter = [], ?int $park_id = null): ?string
+	public function showOffersFilter(array $categories = [], array $filter = [], ?int $parkId = null): ?string
 	{
 
 		// System filter: target groups
 		if (! empty($filter['system_filter']['target_groups'])) {
-			$this->system_filter['target_groups'] = $filter['system_filter']['target_groups'];
+			$this->systemFilter['target_groups'] = $filter['system_filter']['target_groups'];
 			unset($filter['system_filter']['target_groups']);
 		}
 
 		// System filter: fields of activity
 		if (! empty($filter['system_filter']['fields_of_activity'])) {
-			$this->system_filter['fields_of_activity'] = $filter['system_filter']['fields_of_activity'];
+			$this->systemFilter['fields_of_activity'] = $filter['system_filter']['fields_of_activity'];
 			unset($filter['system_filter']['fields_of_activity']);
 		}
 
 		// Init option to hide user filter
 		if (! empty($filter['hide_user_filter']) && ($filter['hide_user_filter'] === true)) {
-			$this->filter_hide_users = true;
+			$this->filterHideUsers = true;
 			unset($filter['hide_user_filter']);
 		}
 
 		// Init option filter display with keywords
 		if (! empty($filter['show_keywords_filter']) && ($filter['show_keywords_filter'] === true)) {
-			$this->filter_display_keywords = true;
+			$this->filterDisplayKeywords = true;
 			unset($filter['show_keywords_filter']);
 		}
 
 		// Set park id
-		if (empty($park_id)) {
-			$park_id = $this->park_id;
+		if (empty($parkId)) {
+			$parkId = $this->parkId;
 		}
 
-		if (! $this->is_offer_detail() || $this->config['always_show_filter'] == true) {
+		if (! $this->isOfferDetail() || $this->config['always_show_filter'] == true) {
 
-			// Get all offers and count activities and projects
+			// One meta query: type counts, category IDs, parks
 			$event_count = 0;
 			$booking_count = 0;
 			$activity_count = 0;
 			$product_count = 0;
 			$projects_count = 0;
+			$flat_categories = [];
+			$users = [];
 
-			$offers_count = $this->count_offers_by_category($park_id, $categories, $filter);
-			if (! empty($offers_count)) {
-				$event_count = $offers_count->event_count;
-				$booking_count = $offers_count->booking_count;
-				$activity_count = $offers_count->activity_count;
-				$product_count = $offers_count->product_count;
-				$projects_count = $offers_count->project_count;
-			}
-
-			// Get all categories where at least one offer exists
-			$offer_categories = $this->get_filter_categories($park_id, $categories, $filter);
-			if ($offer_categories && $offer_categories->num_rows > 0) {
-				$categories = [];
-				while ($offer_category = $offer_categories->fetch_assoc()) {
-					foreach ($offer_category as $single_category) {
-						if ($single_category > 0) {
-							$categories[$single_category] = $single_category;
-						}
-					}
+			$filter_for_meta = $this->normalizeOffersFilter($parkId, $categories, $filter, true);
+			$filter_meta = $this->model->getFilterMeta($filter_for_meta);
+			if (! empty($filter_meta)) {
+				$event_count = $filter_meta['event_count'];
+				$booking_count = $filter_meta['booking_count'];
+				$activity_count = $filter_meta['activity_count'];
+				$product_count = $filter_meta['product_count'];
+				$projects_count = $filter_meta['project_count'];
+				$flat_categories = $filter_meta['category_ids'];
+				if (empty($this->parkId) && ($this->filterHideUsers == false)) {
+					$users = $filter_meta['parks'];
 				}
 			}
 
-			// Flat categories
-			$flat_categories = $categories;
-
 			// Categories has to be an array
-			$categories = is_array($categories) ? $categories : [$categories];
+			$categories = is_array($flat_categories) ? $flat_categories : [$flat_categories];
 
 			// Check, if categories are not empty
 			$first = reset($categories);
@@ -573,9 +564,9 @@ class ParksAPI
 				$categories = false;
 			}
 
-			// Prepare categories for select field
-			$categories = $this->_prepare_categories($categories);
-			$categories = $this->_format_categories_for_select($categories);
+			// Group and flatten categories for select field
+			$categories = $this->groupCategoriesByParent($categories);
+			$categories = $this->flattenCategoriesForSelect($categories);
 
 			// Check if event filter (date-from, date-to) should be displayed
 			$show_event_filter = false;
@@ -595,27 +586,18 @@ class ParksAPI
 				$show_project_filter = true;
 			}
 
-			// Prepare parks/users for select
-			$users = [];
-			if (empty($this->park_id) && ($this->filter_hide_users == false)) {
-
-				// Keep park selector independent from visitor filter state.
-				$users = $this->model->get_all_users($flat_categories, $filter);
-				
-			}
-
 			// Check if only projects exists in export
-			$projects_only = false;
+			$projectsOnly = false;
 			if ($projects_count > 0) {
 				if (($event_count == 0) && ($booking_count == 0) && ($activity_count == 0) && ($product_count == 0)) {
-					$projects_only = true;
+					$projectsOnly = true;
 				}
 			}
 
 			// Load view
 			$params = [
 				'categories' => $categories,
-				'selected' => $this->filter_data,
+				'selected' => $this->filterData,
 				'filter' => $this->filter,
 				'users' => $users ?? [],
 				'show_event_filter' => $show_event_filter,
@@ -625,9 +607,9 @@ class ParksAPI
 				'show_accessibility_filter' => $this->config['show_accessibility_filter'],
 				'show_project_filter' => $show_project_filter,
 				'hide_accessibility_filter' => $filter['hide_accessibility_filter'] ?? false,
-				'projects_only' => $projects_only,
+				'projects_only' => $projectsOnly,
 				'show_municipality_filter' => $this->config['show_municipality_filter'] ?? true,
-				'park_id' => $park_id,
+				'park_id' => $parkId,
 			];
 
 			return $this->view->filter($params);
@@ -641,35 +623,35 @@ class ParksAPI
 	/**
 	 * Displays list of offers (optionally filtered)
 	 */
-	public function show_offers_list(array $categories = [], array $filter = [], ?int $park_id = null): ?string
+	public function showOffersList(array $categories = [], array $filter = [], ?int $parkId = null): ?string
 	{
 
 		// System filter: target groups
 		if (! empty($filter['system_filter']['target_groups'])) {
-			$this->system_filter['target_groups'] = $filter['system_filter']['target_groups'];
+			$this->systemFilter['target_groups'] = $filter['system_filter']['target_groups'];
 			unset($filter['system_filter']['target_groups']);
 		}
 
 		// System filter: fields of activity
 		if (! empty($filter['system_filter']['fields_of_activity'])) {
-			$this->system_filter['fields_of_activity'] = $filter['system_filter']['fields_of_activity'];
+			$this->systemFilter['fields_of_activity'] = $filter['system_filter']['fields_of_activity'];
 			unset($filter['system_filter']['fields_of_activity']);
 		}
 
 		// Set park id
-		if (empty($park_id)) {
-			$park_id = $this->park_id;
+		if (empty($parkId)) {
+			$parkId = $this->parkId;
 		}
 
-		if ($this->is_offer_detail() == false) {
+		if ($this->isOfferDetail() == false) {
 			$this->page = 1;
 
 			// Handle seo urls
 			$page_slug = ! empty($this->config['seo_url_page_slug']) ? $this->config['seo_url_page_slug'] : '';
-			if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->script_url, '/' . $page_slug . '/')) {
+			if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->scriptUrl, '/' . $page_slug . '/')) {
 
 				// Split url by slashes
-				$seo_url = explode('/', $this->view->script_url);
+				$seo_url = explode('/', $this->view->scriptUrl);
 
 				// Get page id
 				$page_segment_pos = count($seo_url) - 1;
@@ -697,24 +679,24 @@ class ParksAPI
 			}
 
 			// Special case: exclude offers from user SAJA in offers list on parks.swiss
-			if (empty($park_id) && strstr($_SERVER['HTTP_HOST'], 'parks.swiss')) {
+			if (empty($parkId) && strstr($_SERVER['HTTP_HOST'], 'parks.swiss')) {
 				$filter['exclude_park_ids'] = [37];
 			}
 
 			// Filter keywords by param
-			if ((isset($_REQUEST['keyword']) || ! empty($_SESSION[$this->session_name]['keyword'])) && ! empty($this->config['keyword_filter'][$this->lang_id])) {
+			if ((isset($_REQUEST['keyword']) || ! empty($_SESSION[$this->sessionName]['keyword'])) && ! empty($this->config['keyword_filter'][$this->langId])) {
 
 				$get_keyword = '';
 
 				// Save selected keyword into session
 				if (isset($_REQUEST['keyword'])) {
-					$_SESSION[$this->session_name]['keyword'] = $_REQUEST['keyword'];
+					$_SESSION[$this->sessionName]['keyword'] = $_REQUEST['keyword'];
 					$get_keyword = $_REQUEST['keyword'];
 				}
 
 				// Get selected keyword from session
-				else if (! empty($_SESSION[$this->session_name]['keyword'])) {
-					$get_keyword = $_SESSION[$this->session_name]['keyword'];
+				else if (! empty($_SESSION[$this->sessionName]['keyword'])) {
+					$get_keyword = $_SESSION[$this->sessionName]['keyword'];
 				}
 
 				// Prepare keyword, replace special chars
@@ -722,19 +704,19 @@ class ParksAPI
 				$get_keyword = str_replace("-_-", "/", $get_keyword);
 
 				// Check keyword
-				if (in_array($get_keyword, $this->config['keyword_filter'][$this->lang_id])) {
+				if (in_array($get_keyword, $this->config['keyword_filter'][$this->langId])) {
 					$filter['keywords'] = $get_keyword;
 				}
 			}
 
 			// Get offers and total
-			$offers = $this->get_offers_list($park_id, $categories, $this->page, $this->config['offers_per_page'], $filter, false, true);
+			$offers = $this->getOffersList($parkId, $categories, $this->page, $this->config['offers_per_page'], $filter, false, true);
 
 			// Set total
 			$this->total = ! empty($offers['total']) ? ceil($offers['total'] / $this->config['offers_per_page']) : 0;
 
 			// Show offers list
-			return $this->view->list_offers($offers);
+			return $this->view->listOffers($offers);
 		}
 
 		return '';
@@ -745,34 +727,34 @@ class ParksAPI
 	/**
 	 * Displays map of offers (optionally filtered)
 	 */
-	public function show_offers_map(array $categories = [], array $filter = [], ?int $park_id = null): string
+	public function showOffersMap(array $categories = [], array $filter = [], ?int $parkId = null): string
 	{
 
 		// System filter: target groups
 		if (! empty($filter['system_filter']['target_groups'])) {
-			$this->system_filter['target_groups'] = $filter['system_filter']['target_groups'];
+			$this->systemFilter['target_groups'] = $filter['system_filter']['target_groups'];
 			unset($filter['system_filter']['target_groups']);
 		}
 
 		// System filter: fields of activity
 		if (! empty($filter['system_filter']['fields_of_activity'])) {
-			$this->system_filter['fields_of_activity'] = $filter['system_filter']['fields_of_activity'];
+			$this->systemFilter['fields_of_activity'] = $filter['system_filter']['fields_of_activity'];
 			unset($filter['system_filter']['fields_of_activity']);
 		}
 
 		// Set park id
-		if (empty($park_id)) {
-			$park_id = $this->park_id;
+		if (empty($parkId)) {
+			$parkId = $this->parkId;
 		}
 
-		if (! $this->is_offer_detail()) {
+		if (! $this->isOfferDetail()) {
 
 			// Set park
-			$this->_set_selected_park($park_id);
+			$this->setSelectedPark($parkId);
 
 			// Get offers and total
-			$offers = $this->get_offers_list($park_id, $categories, null, null, $filter, false, false, true);
-			return $this->_load_maps_api() . $this->view->_get_overview_map($offers['data'] ?? []);
+			$offers = $this->getOffersList($parkId, $categories, null, null, $filter, false, false, true);
+			return $this->loadMapsApi() . $this->view->getOverviewMap($offers['data'] ?? []);
 		}
 
 		return '';
@@ -783,20 +765,16 @@ class ParksAPI
 	/**
 	 * Displays list of poi (get by id)
 	 */
-	public function show_offer_poi_list(?array $poi = null): array
+	public function showOfferPoiList(?array $poi = null): array
 	{
-		$offers = [];
 
-		if (is_array($poi) && ! empty($poi)) {
-			foreach ($poi as $offer_id) {
-				$poi_offer = $this->model->get_offer($offer_id);
-				if (! empty($poi_offer)) {
-					array_push($offers, $poi_offer);
-				}
-			}
+		if (! is_array($poi) || empty($poi)) {
+			return [];
 		}
 
-		return $offers;
+		$result = $this->model->filterOffers(['offers' => $poi]);
+
+		return is_array($result) ? ($result['data'] ?? []) : [];
 	}
 
 
@@ -804,13 +782,14 @@ class ParksAPI
 	/**
 	 * Show offers total
 	 */
-	public function show_total(): ?string
+	public function showTotal(): ?string
 	{
 
 		if ($this->total > 0) {
-			$total = $this->total . ' ' . (($this->total == 1) ? $this->lang->get('offer') : $this->lang->get('offers'));
+			$label = ($this->total == 1) ? $this->lang->get('offer') : $this->lang->get('offers');
+			$total = number_format((int) $this->total, 0, '.', "'") . ' ' . $label;
 
-			return $this->_output($total);
+			return $this->output($total);
 		}
 
 		return null;
@@ -821,9 +800,9 @@ class ParksAPI
 	/**
 	 * Displays pagination
 	 */
-	public function show_offers_pagination(): ?string
+	public function showOffersPagination(): ?string
 	{
-		if (! $this->is_offer_detail()) {
+		if (! $this->isOfferDetail()) {
 			return $this->view->pagination($this->page, $this->total);
 		}
 
@@ -835,10 +814,10 @@ class ParksAPI
 	/**
 	 * Display detail of offer
 	 */
-	public function show_offer_detail(?int $single_offer_id = null): string
+	public function showOfferDetail(?int $single_offer_id = null): string
 	{
 
-		if ($this->is_offer_detail() || ! empty($single_offer_id)) {
+		if ($this->isOfferDetail() || ! empty($single_offer_id)) {
 
 			// Init
 			$original_offer_id = 0;
@@ -848,20 +827,20 @@ class ParksAPI
 
 			// Single offer mode
 			if (! empty($single_offer_id) && (intval($single_offer_id) > 0)) {
-				$this->single_mode = true;
+				$this->singleMode = true;
 				$offer_id = intval($single_offer_id);
 			}
 			// Default mode
 			else {
 
 				// Handle seo urls
-				if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->script_url, '/' . $detail_slug . '/')) {
+				if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->scriptUrl, '/' . $detail_slug . '/')) {
 
 					// Remove slash on last string position
-					$script_url = rtrim($this->view->script_url, '/');
+					$scriptUrl = rtrim($this->view->scriptUrl, '/');
 
 					// Split url by slashes
-					$seo_url = explode('/', $script_url);
+					$seo_url = explode('/', $scriptUrl);
 
 					// Handle poi details
 					if (in_array($poi_slug, $seo_url)) {
@@ -894,14 +873,14 @@ class ParksAPI
 			if (! empty($offer_id)) {
 
 				// Get offer
-				$offer = $this->model->get_offer($offer_id);
+				$offer = $this->model->getOffer($offer_id);
 				if (! empty($offer)) {
 
 					// Set selected park
-					$this->_set_selected_park($offer->park_id);
+					$this->setSelectedPark($offer->parkId);
 
 					// Load view
-					$return = $this->_load_maps_api();
+					$return = $this->loadMapsApi();
 					$return .= $this->view->detail($offer, $original_offer_id);
 
 					return $return;
@@ -932,23 +911,23 @@ class ParksAPI
 	/**
 	 * Display all visitor favorites
 	 */
-	public function show_favorites(): ?string
+	public function showFavorites(): ?string
 	{
 
 		// Offer detail
-		if ($this->is_offer_detail()) {
-			return $this->show_offer_detail();
+		if ($this->isOfferDetail()) {
+			return $this->showOfferDetail();
 		}
 
 		// Offer list
 		if (! empty($this->favorites)) {
-			return $this->show_offers_list([], ['offers' => $this->favorites]);
+			return $this->showOffersList([], ['offers' => $this->favorites]);
 		}
 
 		// No favorites set
 		$message = '<p class="no_results">' . $this->lang->get('favorites_empty') . '</p>';
 
-		return $this->_output($message);
+		return $this->output($message);
 	}
 
 
@@ -957,7 +936,7 @@ class ParksAPI
 	 * Toggle favorite state
 	 * Add or remove favorite from list
 	 */
-	public function toggle_favorite(int $offer_id): bool
+	public function toggleFavorite(int $offer_id): bool
 	{
 		if (($offer_id > 0) && ($this->config['use_sessions'] == true)) {
 
@@ -974,7 +953,7 @@ class ParksAPI
 			}
 
 			// Save cookie
-			setcookie($this->favorites_cookie_name, serialize($this->favorites), time() + (60 * 60 * 24 * 365), '/');
+			setcookie($this->favoritesCookieName, serialize($this->favorites), time() + (60 * 60 * 24 * 365), '/');
 
 			return $return;
 		}
@@ -987,11 +966,11 @@ class ParksAPI
 	/**
 	 * Empty favorites
 	 */
-	public function clean_favorites(): void
+	public function cleanFavorites(): void
 	{
 
 		// Empty cookie
-		setcookie($this->favorites_cookie_name, '', time(), '/');
+		setcookie($this->favoritesCookieName, '', time(), '/');
 
 	}
 
@@ -1000,7 +979,7 @@ class ParksAPI
 	/**
 	 * Returns if detail page should be displayed
 	 */
-	public function is_offer_detail(): bool
+	public function isOfferDetail(): bool
 	{
 
 		// Init
@@ -1010,9 +989,9 @@ class ParksAPI
 		$detail_slug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
 
 		// Check seo url
-		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->script_url, '/' . $detail_slug . '/')) {
+		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->scriptUrl, '/' . $detail_slug . '/')) {
 			$is_offer_detail = true;
-		} elseif (($offer_id > 0) && $this->model->offer_exists($offer_id)) {
+		} elseif (($offer_id > 0) && $this->model->offerExists($offer_id)) {
 			$is_offer_detail = true;
 		}
 
@@ -1024,7 +1003,7 @@ class ParksAPI
 	/**
 	 * Returns if filter is active
 	 */
-	public function is_filter_activated(): bool
+	public function isFilterActivated(): bool
 	{
 		return $this->filter;
 	}
@@ -1034,9 +1013,9 @@ class ParksAPI
 	/**
 	 * Returns filter data
 	 */
-	public function get_filter_data(): array
+	public function getFilterData(): array
 	{
-		return $this->filter_data;
+		return $this->filterData;
 	}
 
 
@@ -1044,8 +1023,8 @@ class ParksAPI
 	/**
 	 * Get list of offers
 	 */
-	public function get_offers_list(
-		?int $park_id = null,
+	public function getOffersList(
+		?int $parkId = null,
 		array $categories = [],
 		?int $page = null,
 		?int $limit = null,
@@ -1055,14 +1034,14 @@ class ParksAPI
 		bool $map_mode = false
 	): array {
 
-		$filter = $this->_build_offers_filter($park_id, $categories, $filter, $ignore_filter);
+		$filter = $this->normalizeOffersFilter($parkId, $categories, $filter, $ignore_filter);
 
 		$offset = 0;
 		if (! empty($page) && is_numeric($page)) {
 			$offset = ($page - 1) * $this->config['offers_per_page'];
 		}
 
-		$result = $this->model->filter_offers($filter, $limit, $offset, $return_minimal, $map_mode);
+		$result = $this->model->filterOffers($filter, $limit, $offset, $return_minimal, $map_mode);
 
 		return is_array($result) ? $result : ['data' => [], 'total' => 0];
 	}
@@ -1072,15 +1051,15 @@ class ParksAPI
 	/**
 	 * Count offers grouped by main category type
 	 */
-	public function count_offers_by_category(
-		?int $park_id = null,
+	public function countOffersByCategory(
+		?int $parkId = null,
 		array $categories = [],
 		array $filter = []
 	): stdClass|false {
 
-		$filter = $this->_build_offers_filter($park_id, $categories, $filter, true);
+		$filter = $this->normalizeOffersFilter($parkId, $categories, $filter, true);
 
-		return $this->model->count_offers_by_category($filter);
+		return $this->model->countOffersByCategory($filter);
 	}
 
 
@@ -1088,15 +1067,15 @@ class ParksAPI
 	/**
 	 * Get category IDs that have at least one matching offer
 	 */
-	public function get_filter_categories(
-		?int $park_id = null,
+	public function getFilterCategories(
+		?int $parkId = null,
 		array $categories = [],
 		array $filter = []
 	): ParksSQLiteResult|false {
 
-		$filter = $this->_build_offers_filter($park_id, $categories, $filter, true);
+		$filter = $this->normalizeOffersFilter($parkId, $categories, $filter, true);
 
-		return $this->model->get_filter_categories($filter);
+		return $this->model->getFilterCategories($filter);
 	}
 
 
@@ -1104,9 +1083,9 @@ class ParksAPI
 	/**
 	 * Get offer details
 	 */
-	public function get_offer_detail(int $offer_id): object|false
+	public function getOfferDetail(int $offer_id): object|false
 	{
-		return $this->model->get_offer($offer_id);
+		return $this->model->getOffer($offer_id);
 	}
 
 
@@ -1114,9 +1093,9 @@ class ParksAPI
 	/**
 	 * Get list of categories
 	 */
-	public function get_categories_list(): array
+	public function getCategoriesList(): array
 	{
-		return $this->model->get_all_categories();
+		return $this->model->getAllCategories();
 	}
 
 
@@ -1124,9 +1103,9 @@ class ParksAPI
 	/**
 	 * Get list of categories preformatted for select inputs
 	 */
-	public function get_categories_list_for_select(): array
+	public function getCategoriesListForSelect(): array
 	{
-		$categories = $this->model->get_category_tree();
+		$categories = $this->model->getCategoryTree();
 		return $categories;
 	}
 
@@ -1135,16 +1114,16 @@ class ParksAPI
 	/**
 	 * Setup process
 	 */
-	private function _setup(): void
+	private function setup(): void
 	{
 
-		$this->_security_checks();
+		$this->securityChecks();
 
 		$q_api = $this->db->get('api');
 
 		if ($q_api) {
-			if ($q_api->num_rows > 0) {
-				$this->api = $q_api->fetch_object();
+			if ($q_api->numRows > 0) {
+				$this->api = $q_api->fetchObject();
 			} else {
 				$this->api = (object) [
 					'initialized' => 0,
@@ -1155,7 +1134,7 @@ class ParksAPI
 			}
 
 			if (version_compare((string) SDK_VERSION, (string) $this->api->version, '>')) {
-				$this->logger->info('The current SDK version is out of date. Please run scripts/migrate.php.');
+				$this->logger->info('The current SDK version is out of date. Please run: bash bin/migrate.sh');
 			}
 
 			if (! $this->api->initialized) {
@@ -1166,12 +1145,12 @@ class ParksAPI
 
 				// Import data from XML into database
 				$import_ok = $this->import->import($xml);
-				$this->import->import_map_layers($xml_map_layer);
+				$this->import->importMapLayers($xml_map_layer);
 
 				if ($import_ok) {
-					$this->model->reload_target_groups();
-					$this->model->reload_fields_of_activity();
-					$this->model->reload_categories();
+					$this->model->reloadTargetGroups();
+					$this->model->reloadFieldsOfActivity();
+					$this->model->reloadCategories();
 
 					$this->api->initialized = 1;
 					$this->db->update('api', [
@@ -1180,7 +1159,7 @@ class ParksAPI
 					]);
 					$this->api->version = SDK_VERSION;
 				} else {
-					$this->logger->error('Initial import failed. SDK is not initialized. Check api_hash and run scripts/force_update.php.');
+					$this->logger->error('Initial import failed. SDK is not initialized. Check api_hash and run: bash bin/sync.sh --force (or php bin/sync.php --force)');
 				}
 			}
 		} else {
@@ -1193,19 +1172,19 @@ class ParksAPI
 	/**
 	 * Set current selected park
 	 */
-	public function _set_selected_park(?int $park_id = null): void
+	public function setSelectedPark(?int $parkId = null): void
 	{
 
 		// Init park id
-		if (empty($park_id)) {
-			$park_id = $this->park_id;
+		if (empty($parkId)) {
+			$parkId = $this->parkId;
 		}
 
 		if ($this->config['use_sessions'] == true) {
-			if (! empty($park_id) && ($park_id > 0) && ! empty($this->config['parks'][$park_id])) {
-				$_SESSION[$this->session_name]['selectedPark'] = $this->config['parks'][$park_id];
+			if (! empty($parkId) && ($parkId > 0) && ! empty($this->config['parks'][$parkId])) {
+				$_SESSION[$this->sessionName]['selectedPark'] = $this->config['parks'][$parkId];
 			} else {
-				unset($_SESSION[$this->session_name]['selectedPark']);
+				unset($_SESSION[$this->sessionName]['selectedPark']);
 			}
 		}
 	}
@@ -1215,7 +1194,7 @@ class ParksAPI
 	/**
 	 * Validate hash
 	 */
-	public function _validate_hash(): bool
+	public function validateHash(): bool
 	{
 		$validate = file_get_contents($this->config['xml_export_url'] . 'validate/' . $this->hash);
 
@@ -1233,7 +1212,7 @@ class ParksAPI
 	/**
 	 * Init filter
 	 */
-	public function _init_filter(): void
+	public function initFilter(): void
 	{
 
 		// Init
@@ -1275,7 +1254,7 @@ class ParksAPI
 						// Set filter by params
 						if (! empty($get_values)) {
 							$this->filter = true;
-							$this->filter_data[$param] = $get_values;
+							$this->filterData[$param] = $get_values;
 						}
 					}
 				}
@@ -1284,24 +1263,24 @@ class ParksAPI
 			// Post data
 			elseif (! empty($post_data)) {
 				$this->filter = true;
-				$this->filter_data[$field] = isset($post_data[$field]) ? $post_data[$field] : null;
+				$this->filterData[$field] = isset($post_data[$field]) ? $post_data[$field] : null;
 			}
 
 			// Session data
-			elseif ($this->config['use_sessions'] && (isset($_SESSION[$this->session_name]['filter'][$field]) && ! empty($_SESSION[$this->session_name]['filter'][$field]))) {
+			elseif ($this->config['use_sessions'] && (isset($_SESSION[$this->sessionName]['filter'][$field]) && ! empty($_SESSION[$this->sessionName]['filter'][$field]))) {
 				$this->filter = true;
-				$this->filter_data[$field] = $_SESSION[$this->session_name]['filter'][$field];
+				$this->filterData[$field] = $_SESSION[$this->sessionName]['filter'][$field];
 			}
 		}
 
 		// Set filter in session
 		if ($this->config['use_sessions']) {
-			$_SESSION[$this->session_name]['filter'] = $this->filter_data;
+			$_SESSION[$this->sessionName]['filter'] = $this->filterData;
 		}
 
 		// Reload page
 		if (! empty($post_data) || ($get_params === true)) {
-			$this->_reload_page();
+			$this->reloadPage();
 		}
 	}
 
@@ -1310,11 +1289,11 @@ class ParksAPI
 	/**
 	 * Reset filter
 	 */
-	public function _reset_filter(): void
+	public function resetFilter(): void
 	{
-		$this->filter_data = [];
+		$this->filterData = [];
 		if ($this->config['use_sessions']) {
-			unset($_SESSION[$this->session_name]['filter']);
+			unset($_SESSION[$this->sessionName]['filter']);
 		}
 	}
 
@@ -1323,19 +1302,19 @@ class ParksAPI
 	/**
 	 * Reload page
 	 */
-	protected function _reload_page(bool $reset_mode = false): never
+	protected function reloadPage(bool $reset_mode = false): never
 	{
 
 		// SEO URLs
 		if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true)) {
-			header('Location: ' . $this->view->script_url);
+			header('Location: ' . $this->view->scriptUrl);
 		}
 
 		// No SEO URLs
 		else {
 
 			// Set URL
-			$url = $this->view->script_url_with_params;
+			$url = $this->view->scriptUrlWithParams;
 
 			// Remove reset param
 			if ($reset_mode === true) {
@@ -1354,34 +1333,34 @@ class ParksAPI
 	/**
 	 * Get offers
 	 */
-	public function get_offers(
-		?int $park_id = null,
+	public function getOffers(
+		?int $parkId = null,
 		array $categories = []
 	): array {
 
-		return $this->get_offers_list($park_id, $categories);
+		return $this->getOffersList($parkId, $categories);
 	}
 
 
 
 	/**
-	 * Build filter array for offer queries
+	 * Normalize filter array for offer queries
 	 */
-	private function _build_offers_filter(
-		?int $park_id = null,
+	private function normalizeOffersFilter(
+		?int $parkId = null,
 		array $categories = [],
 		array $additional_filter = [],
 		bool $ignore_filter = false
 	): array {
 
-		if (empty($park_id)) {
-			$park_id = $this->park_id;
+		if (empty($parkId)) {
+			$parkId = $this->parkId;
 		}
 
 		$filter = [];
 
 		if ($ignore_filter == false) {
-			foreach ($this->filter_data as $field => $value) {
+			foreach ($this->filterData as $field => $value) {
 				if (! empty($value)) {
 					$fieldname = substr($field, strlen($this->config['form_prefix']), strlen($field));
 					$filter[$fieldname] = $value;
@@ -1493,8 +1472,8 @@ class ParksAPI
 		}
 
 		// Park id
-		if (! empty($park_id)) {
-			$filter['park_id'] = $park_id;
+		if (! empty($parkId)) {
+			$filter['park_id'] = $parkId;
 		}
 
 		return $filter;
@@ -1505,7 +1484,7 @@ class ParksAPI
 	/**
 	 * Load map api
 	 */
-	public function _load_maps_api(): ?string
+	public function loadMapsApi(): ?string
 	{
 		if ($this->config['prevent_css_js_include'] == false) {
 
@@ -1515,7 +1494,7 @@ class ParksAPI
 				<script type="module" src="' . $map_url . '/dist/js/swiss-parks-map.umd.js"></script>
 			';
 
-			return $this->_output($output);
+			return $this->output($output);
 		}
 
 		return '';
@@ -1524,9 +1503,9 @@ class ParksAPI
 
 
 	/**
-	 * Format categories for selcect-field
+	 * Flatten category tree for select-field options
 	 */
-	public function _format_categories_for_select(array $categories, int $index = 0, int $level = 0): array
+	public function flattenCategoriesForSelect(array $categories, int $index = 0, int $level = 0): array
 	{
 		$return = [];
 
@@ -1555,7 +1534,7 @@ class ParksAPI
 				}
 
 				if (isset($categories[$id])) {
-					$childs = $this->_format_categories_for_select($categories, $id, $level + 1);
+					$childs = $this->flattenCategoriesForSelect($categories, $id, $level + 1);
 					if (! empty($childs)) {
 						if (
 							(($level == 0) && ! in_array($id, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
@@ -1579,15 +1558,15 @@ class ParksAPI
 
 
 	/**
-	 * Prepare categories
+	 * Group categories by parent id for filter UI
 	 */
-	public function _prepare_categories(array|false $categories = false): array
+	public function groupCategoriesByParent(array|false $categories = false): array
 	{
 		$return = [];
 		$parents = [];
 
 		// Get all categories
-		$all_categories = $this->model->get_all_categories();
+		$all_categories = $this->model->getAllCategories();
 
 		// Get all parents
 		if (is_array($categories) && ! empty($categories)) {
@@ -1624,7 +1603,7 @@ class ParksAPI
 	/**
 	 * Security checks
 	 */
-	public function _security_checks(): void
+	public function securityChecks(): void
 	{
 
 		// Nothing to sanitize
@@ -1682,7 +1661,7 @@ class ParksAPI
 	/**
 	 * Add slashes
 	 */
-	public function _add_slashes(mixed &$item, mixed $key): void
+	public function addSlashes(mixed &$item, mixed $key): void
 	{
 		$item = (! is_array($item) ? addslashes($item) : $item);
 	}
@@ -1692,11 +1671,11 @@ class ParksAPI
 	/**
 	 * Get SDK configuration
 	 */
-	public function _get_config(): array
+	public function getConfig(): array
 	{
 
 		// Load config file
-		$config_dir = realpath(dirname(__FILE__)) . '/..';
+		$config_dir = realpath(dirname(__FILE__)) . '/../config';
 		if (file_exists($config_path = $config_dir . '/config.php')) {
 			require($config_path);
 			if (file_exists($config_dir . '/config.local.php')) {
@@ -1739,7 +1718,7 @@ class ParksAPI
 	/**
 	 * Set view script URLs (path used for forms/links; query string optional)
 	 */
-	public function set_script_url(string $url): void
+	public function setScriptUrl(string $url): void
 	{
 
 		// View not bootstrapped (CLI / forScript)
@@ -1748,11 +1727,11 @@ class ParksAPI
 		}
 
 		// Keep full URL including query string
-		$this->view->script_url_with_params = $url;
+		$this->view->scriptUrlWithParams = $url;
 
 		// Strip query string for form/action base path
 		$param_start = strpos($url, '?');
-		$this->view->script_url = ($param_start > 0)
+		$this->view->scriptUrl = ($param_start > 0)
 			? substr($url, 0, $param_start)
 			: $url;
 	}
@@ -1761,7 +1740,7 @@ class ParksAPI
 	/**
 	 * Load system config and merge with user config
 	 */
-	private function _load_system_config(): void
+	private function loadSystemConfig(): void
 	{
 
 		// Base url (overridable via config / config.local.php)
@@ -1960,37 +1939,57 @@ class ParksAPI
 
 	/**
 	 * Load external xml source
+	 *
+	 * Downloads to a temp file first so curl does not keep a second full copy in memory
+	 * alongside SimpleXML (full exports can exceed the default 128M limit).
 	 */
-	public function load_external_xml(string $url): SimpleXMLElement|false
+	public function loadExternalXml(string $url): SimpleXMLElement|false
 	{
-		if ($url != '') {
 
-			// Init CURL
-			$ch = curl_init();
-
-			// Set CURL options
-			curl_setopt($ch, CURLOPT_URL, $url);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-			curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-
-			// SSL verification (disable via config only when required)
-			$verify_ssl = $this->config['curl_verify_ssl'] ?? true;
-			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl ? 2 : 0);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
-
-			// Get external data
-			$external_data = curl_exec($ch);
-
-			// Error: No data found
-			if (empty($external_data)) {
-				return false;
-			}
-
-			// Success: Return xml
-			return simplexml_load_string($external_data);
+		if ($url === '') {
+			return false;
 		}
 
-		return false;
+		if (PHP_SAPI === 'cli') {
+			@ini_set('memory_limit', '512M');
+		}
+
+		$tmp_path = tempnam(sys_get_temp_dir(), 'parks-xml-');
+		if ($tmp_path === false) {
+			return false;
+		}
+
+		$fp = fopen($tmp_path, 'w+b');
+		if ($fp === false) {
+			@unlink($tmp_path);
+			return false;
+		}
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_FILE, $fp);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_FAILONERROR, true);
+
+		$verify_ssl = $this->config['curl_verify_ssl'] ?? true;
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl ? 2 : 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
+
+		$ok = curl_exec($ch);
+		$curl_errno = curl_errno($ch);
+		$http_code = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		unset($ch);
+		fclose($fp);
+
+		if (($ok === false) || ($curl_errno !== 0) || ($http_code >= 400) || (filesize($tmp_path) === 0)) {
+			@unlink($tmp_path);
+			return false;
+		}
+
+		$xml = simplexml_load_file($tmp_path);
+		@unlink($tmp_path);
+
+		return ($xml !== false) ? $xml : false;
 	}
 
 
@@ -1998,7 +1997,7 @@ class ParksAPI
 	/**
 	 * Update stored SDK version after a successful import or migration
 	 */
-	private function _update_api_version(): void
+	private function updateApiVersion(): void
 	{
 
 		$this->db->update('api', ['version' => SDK_VERSION]);
@@ -2014,7 +2013,7 @@ class ParksAPI
 	/**
 	 * Output JSON status for update scripts
 	 */
-	private function _output_update_json(bool $status, string $message): void
+	private function outputUpdateJson(bool $status, string $message): void
 	{
 
 		echo json_encode([
@@ -2034,7 +2033,7 @@ class ParksAPI
 	 * (required: api_version, url, hash). Body is signed with HMAC-SHA256
 	 * using api_hash (header X-Api-Migration-Signature).
 	 */
-	public function log_migration(int $version_to = 0): bool
+	public function logMigration(int $version_to = 0): bool
 	{
 
 		// Central log endpoint is reached via HTTPS POST

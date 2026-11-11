@@ -29,7 +29,7 @@ class ParksLanguage
 	/**
 	 * language id
 	 */
-	public string $lang_id;
+	public string $langId;
 
 
 	/**
@@ -42,21 +42,21 @@ class ParksLanguage
 	/**
 	 * Constructor
 	 */
-	public function __construct(string $lang_id, ParksAPI $api)
+	public function __construct(string $langId, ParksAPI $api)
 	{
 
 		// Api instance
 		$this->api = $api;
 
 		// Load language file
-		if (! empty($lang_id) && in_array($lang_id, $this->api->config['available_languages']) && file_exists($this->api->config['absolute_path'] . '/language/' . strtolower($lang_id) . '.php')) {
-			$labels = require($this->api->config['absolute_path'] . '/language/' . strtolower($lang_id) . '.php');
+		if (! empty($langId) && in_array($langId, $this->api->config['available_languages']) && file_exists($this->api->config['absolute_path'] . '/lang/' . strtolower($langId) . '.php')) {
+			$labels = require($this->api->config['absolute_path'] . '/lang/' . strtolower($langId) . '.php');
 		}
 
 		// Load default language file
-		elseif (file_exists($this->api->config['absolute_path'] . '/language/de.php')) {
-			$labels = require($this->api->config['absolute_path'] . '/language/de.php');
-			$lang_id = 'de';
+		elseif (file_exists($this->api->config['absolute_path'] . '/lang/de.php')) {
+			$labels = require($this->api->config['absolute_path'] . '/lang/de.php');
+			$langId = 'de';
 		}
 
 		// Error, no language file found
@@ -73,8 +73,8 @@ class ParksLanguage
 		$this->labels = $labels;
 
 		// Set language id
-		$this->lang_id = $lang_id;
-		$this->lang = strtolower($lang_id);
+		$this->langId = $langId;
+		$this->lang = strtolower($langId);
 
 	}
 

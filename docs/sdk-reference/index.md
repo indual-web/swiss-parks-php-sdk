@@ -6,7 +6,7 @@ This reference documents the integrator-facing surface of the Swiss Parks PHP SD
 
 - Public integration methods from `ParksAPI` used in typical project integration.
 - Filter keys for `$filter` arrays.
-- Map configuration keys for `$api->map_options`.
+- Map configuration keys for `$api->mapOptions`.
 
 ## Pages
 
@@ -19,6 +19,6 @@ This reference documents the integrator-facing surface of the Swiss Parks PHP SD
 This reference is based on:
 
 - `swiss-parks-sdk/classes/ParksAPI.php`
-- `swiss-parks-sdk/config.php`
+- `swiss-parks-sdk/config/config.php`
 - `index.php`
 

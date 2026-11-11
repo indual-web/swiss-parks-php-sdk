@@ -1,6 +1,12 @@
-/swiss-parks-sdk/log/*
-/swiss-parks-sdk/data/*
-/swiss-parks-sdk/config.local.php
+/swiss-parks-sdk/writable/data/*
+!/swiss-parks-sdk/writable/data/.htaccess
+!/swiss-parks-sdk/writable/data/index.html
+!/swiss-parks-sdk/writable/data/.gitkeep
+/swiss-parks-sdk/writable/log/*
+!/swiss-parks-sdk/writable/log/.htaccess
+!/swiss-parks-sdk/writable/log/index.html
+!/swiss-parks-sdk/writable/log/.gitkeep
+/swiss-parks-sdk/config/config.local.php
 /index.local.php
 /releases/*.zip
 /zip/
@@ -8,3 +14,5 @@
 __pycache__/
 *.pyc
 tmp_*.php
+tmp_migrate_structure.py
+tmp_build_helpers.py

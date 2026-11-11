@@ -63,11 +63,11 @@ class ParksImport
 	/**
 	 * Method for importing xml map layers into database
 	 */
-	public function import_map_layers(string $url): bool
+	public function importMapLayers(string $url): bool
 	{
 
 		// Load xml
-		$this->xml = $this->api->load_external_xml($url);
+		$this->xml = $this->api->loadExternalXml($url);
 
 		// Check XML
 		if ($this->xml !== false) {
@@ -118,13 +118,13 @@ class ParksImport
 
 					// Insert map layer
 					if (! $this->api->db->insert('map_layer', $map_layer)) {
-						$this->api->logger->error("Database error: " . $this->api->db->get_last_error());
+						$this->api->logger->error("Database error: " . $this->api->db->getLastError());
 						continue;
 					}
 					else {
 
 						// Get last inserted map layer id
-						$map_layer_id = $this->_get_last_id('map_layer_id', 'map_layer');
+						$map_layer_id = $this->getLastId('map_layer_id', 'map_layer');
 						if (! empty($map_layer_id)) {
 
 							$map_i18n_fields = [];
@@ -191,7 +191,7 @@ class ParksImport
 										$i18n['url'] = '';
 									}
 									if (! $this->api->db->insert('map_layer_i18n', $i18n)) {
-										$this->api->logger->error("Database error: " . $this->api->db->get_last_error());
+										$this->api->logger->error("Database error: " . $this->api->db->getLastError());
 										continue;
 									}
 								}
@@ -239,20 +239,20 @@ class ParksImport
 		$this->api->db->begin();
 
 		// Sync target groups
-		$this->sync_target_groups();
+		$this->syncTargetGroups();
 
 		// Sync categories
-		$this->sync_categories();
+		$this->syncCategories();
 
 		// Sync accessibility dropdown list
-		$this->sync_accessibilities();
+		$this->syncAccessibilities();
 
 		// Sync fields of activity
-		$this->sync_fields_of_activity();
+		$this->syncFieldsOfActivity();
 
 		// Add param to url with last import timestamp
 		if ($force !== true) {
-			$api_info = $this->api->db->get('api')->fetch_assoc();
+			$api_info = $this->api->db->get('api')->fetchAssoc();
 			$last_import = $api_info['last_import'];
 			if (! empty($last_import)) {
 				$url .= '?since=' . $last_import;
@@ -265,7 +265,7 @@ class ParksImport
 		}
 
 		// Load external data
-		$this->xml = $this->api->load_external_xml($url);
+		$this->xml = $this->api->loadExternalXml($url);
 
 		// Check xml
 		if ($this->xml !== false) {
@@ -323,10 +323,10 @@ class ParksImport
 							$fields = [
 								'park_id' => (int)$offer->ParkId,
 								'park' => (string)$offer->Park,
-								'institution' => $this->_address($offer->Institution),
+								'institution' => $this->formatContactAddress($offer->Institution),
 								'institution_location' => (string)$offer->Institution->Locality,
 								'institution_is_park_partner' => (int)$offer->Institution->ParkPartner,
-								'contact' => $this->_address($offer->Contact),
+								'contact' => $this->formatContactAddress($offer->Contact),
 								'contact_is_park_partner' => (int)$offer->Contact->ParkPartner,
 								'is_hint' => ! empty((int) $offer->IsHint) ? 1 : 0,
 								'barrier_free' => (int)$offer->BarrierFree,
@@ -335,13 +335,13 @@ class ParksImport
 								'latitude' => (float)$offer->Latitude,
 								'longitude' => (float)$offer->Longitude,
 								'keywords' => (string)$offer->Keywords,
-								'created_at' => $this->_datetime($offer->attributes()->createdAt),
-								'modified_at' => $this->_datetime($offer->attributes()->modifiedAt),
+								'created_at' => $this->formatDatetime($offer->attributes()->createdAt),
+								'modified_at' => $this->formatDatetime($offer->attributes()->modifiedAt),
 							];
 
 							// Error handling
-							if (! $this->_insert_or_update('offer', $fields, ['offer_id' => $offer_id])) {
-								$this->api->logger->error("Database error (offer id " . $offer_id . "): " . $this->api->db->get_last_error());
+							if (! $this->insertOrUpdate('offer', $fields, ['offer_id' => $offer_id])) {
+								$this->api->logger->error("Database error (offer id " . $offer_id . "): " . $this->api->db->getLastError());
 								continue;
 							}
 
@@ -457,7 +457,7 @@ class ParksImport
 							// Insert or update i18n data for offer
 							foreach ($i18n as $language => $data) {
 								if (! empty($data)) {
-									$this->_insert_or_update('offer_i18n', $data, ['offer_id' => $offer_id, 'language' => $language]);
+									$this->insertOrUpdate('offer_i18n', $data, ['offer_id' => $offer_id, 'language' => $language]);
 								}
 							}
 
@@ -473,8 +473,8 @@ class ParksImport
 
 									$fields = [
 										'offer_id' => $offer_id,
-										'date_from' => empty($date_from) ? null : $this->_datetime($date_from),
-										'date_to' => empty($date_to) ? null : $this->_datetime($date_to),
+										'date_from' => empty($date_from) ? null : $this->formatDatetime($date_from),
+										'date_to' => empty($date_to) ? null : $this->formatDatetime($date_to),
 									];
 
 									$this->api->db->insert('offer_date', $fields);
@@ -611,7 +611,7 @@ class ParksImport
 											$rating['description_' . $language] = (string)$name;
 										}
 										$rating['icon_url'] = (string)$accessibility->RatingIcon;
-										$this->_insert_or_update('accessibility_rating', $rating, ['accessibility_rating_id' => $rating_id]);
+										$this->insertOrUpdate('accessibility_rating', $rating, ['accessibility_rating_id' => $rating_id]);
 									}
 								}
 							}
@@ -631,7 +631,7 @@ class ParksImport
 										'park_id' => (int)$offer->ParkId,
 										'municipality' => $municipality_name,
 									];
-									$this->_insert_or_update('municipality', $municipality_data, ['municipality_id' => $municipality_id, 'park_id' => $municipality_data['park_id']]);
+									$this->insertOrUpdate('municipality', $municipality_data, ['municipality_id' => $municipality_id, 'park_id' => $municipality_data['park_id']]);
 
 									// Create municipality link
 									$this->api->db->insert('offer_municipality_link', ['offer_id' => $offer_id, 'municipality_id' => $municipality_id]);
@@ -639,7 +639,7 @@ class ParksImport
 							}
 
 							// Get root category id
-							$root_category_id = $this->_get_root_category(intval($offer->Categories->Category[0]->attributes()->identifier));
+							$root_category_id = $this->getRootCategory(intval($offer->Categories->Category[0]->attributes()->identifier));
 
 							// Subscription
 							if (($root_category_id == CATEGORY_EVENT) || ($root_category_id == CATEGORY_BOOKING)) {
@@ -647,9 +647,9 @@ class ParksImport
 
 								$fields['subscription_mandatory'] = (int)$offer->Subscription->SubscriptionMandatory;
 								$fields['online_subscription_enabled'] = (int)$offer->Subscription->OnlineSubscriptionEnabled;
-								$fields['subscription_contact'] = $this->_address($offer->Subscription->SubscriptionContact);
+								$fields['subscription_contact'] = $this->formatContactAddress($offer->Subscription->SubscriptionContact);
 								$fields['subscription_link'] = (string)$offer->Subscription->SubscriptionLink;
-								$this->_insert_or_update('subscription', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('subscription', $fields, ['offer_id' => $offer_id]);
 
 								// Subscription i18n
 								if (isset($offer->Subscription->Details)) {
@@ -659,7 +659,7 @@ class ParksImport
 										$subscription_detail['language'] = (string)$detail->attributes()->language;
 										$subscription_detail_where = $subscription_detail;
 										$subscription_detail['subscription_details'] = (string)$detail;
-										$this->_insert_or_update('subscription_i18n', $subscription_detail, $subscription_detail_where);
+										$this->insertOrUpdate('subscription_i18n', $subscription_detail, $subscription_detail_where);
 									}
 								} else {
 									$this->api->db->delete('subscription_i18n', ['offer_id' => $offer_id]);
@@ -675,7 +675,7 @@ class ParksImport
 								$fields['public_transport_stop'] = (string)$offer->PublicTransportStop;
 								$fields['kind_of_event'] = (string)$offer->Kind;
 
-								$this->_insert_or_update('event', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('event', $fields, ['offer_id' => $offer_id]);
 							}
 
 							// Products
@@ -709,13 +709,13 @@ class ParksImport
 
 								}
 
-								$this->_insert_or_update('product', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('product', $fields, ['offer_id' => $offer_id]);
 
 								// Suppliers
 								$this->api->db->delete('supplier', ['offer_id' => $offer_id]);
 								if ($offer->Suppliers) {
 									foreach ($offer->Suppliers->Supplier as $supplier) {
-										$this->api->db->insert('supplier', ['offer_id' => $offer_id, 'contact' => $this->_address($supplier), 'is_park_partner' => (int)$supplier->ParkPartner]);
+										$this->api->db->insert('supplier', ['offer_id' => $offer_id, 'contact' => $this->formatContactAddress($supplier), 'is_park_partner' => (int)$supplier->ParkPartner]);
 									}
 								}
 
@@ -730,7 +730,7 @@ class ParksImport
 											$offer_i18n['language'] = (string)$payment_term->attributes()->language;
 											$offer_i18n_where = $offer_i18n;
 											$offer_i18n['online_shop_payment_terms'] = (string)$payment_term;
-											$this->_insert_or_update('offer_i18n', $offer_i18n, $offer_i18n_where);
+											$this->insertOrUpdate('offer_i18n', $offer_i18n, $offer_i18n_where);
 										}
 									}
 
@@ -742,7 +742,7 @@ class ParksImport
 											$offer_i18n['language'] = (string)$delivery_condition->attributes()->language;
 											$offer_i18n_where = $offer_i18n;
 											$offer_i18n['online_shop_delivery_conditions'] = (string)$delivery_condition;
-											$this->_insert_or_update('offer_i18n', $offer_i18n, $offer_i18n_where);
+											$this->insertOrUpdate('offer_i18n', $offer_i18n, $offer_i18n_where);
 										}
 									}
 
@@ -759,7 +759,7 @@ class ParksImport
 											$this->api->db->insert('product_article', [
 												'product_article_id' => $article_id,
 												'offer_id' => $offer_id,
-												'supplier_contact' => $this->_address($article->Supplier),
+												'supplier_contact' => $this->formatContactAddress($article->Supplier),
 												'is_food' => (int)$is_food,
 											]);
 
@@ -771,7 +771,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$title->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_title'] = (string)$title;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -783,7 +783,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$description->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_description'] = (string)$description;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -795,7 +795,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$ingredients->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_ingredients'] = (string)$ingredients;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -807,7 +807,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$allergens->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_allergens'] = (string)$allergens;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -819,7 +819,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$nutritional_values->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_nutritional_values'] = (string)$nutritional_values;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -831,7 +831,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$identity_label->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_identity_label'] = (string)$identity_label;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -843,7 +843,7 @@ class ParksImport
 													$article_i18n['language'] = (string)$quantity_indication->attributes()->language;
 													$article_i18n_where = $article_i18n;
 													$article_i18n['article_quantity_indication'] = (string)$quantity_indication;
-													$this->_insert_or_update('product_article_i18n', $article_i18n, $article_i18n_where);
+													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
 												}
 											}
 
@@ -896,13 +896,13 @@ class ParksImport
 									$fields['season_months'] = implode(',', $months);
 								}
 
-								$this->_insert_or_update('booking', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('booking', $fields, ['offer_id' => $offer_id]);
 
 								// Accommodations
 								$this->api->db->delete('accommodation', ['offer_id' => $offer_id]);
 								if ($offer->Accommodations) {
 									foreach ($offer->Accommodations->Accommodation as $accommodation) {
-										$this->api->db->insert('accommodation', ['offer_id' => $offer_id, 'contact' => $this->_address($accommodation), 'is_park_partner' => (int)$accommodation->ParkPartner]);
+										$this->api->db->insert('accommodation', ['offer_id' => $offer_id, 'contact' => $this->formatContactAddress($accommodation), 'is_park_partner' => (int)$accommodation->ParkPartner]);
 									}
 								}
 							}
@@ -954,7 +954,7 @@ class ParksImport
 									$fields['poi'] = implode(',', $fields['poi']) . ',';
 								}
 
-								$this->_insert_or_update('activity', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('activity', $fields, ['offer_id' => $offer_id]);
 								
 							}
 
@@ -975,7 +975,7 @@ class ParksImport
 									$fields['poi'] = implode(',', $fields['poi']);
 								}
 
-								$this->_insert_or_update('project', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('project', $fields, ['offer_id' => $offer_id]);
 							}
 
 							// Check off this offer
@@ -1005,7 +1005,7 @@ class ParksImport
 
 				// Iterate all existing offers
 				$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
-				while ($offer = $all_offers->fetch_assoc()) {
+				while ($offer = $all_offers->fetchAssoc()) {
 					if (! isset($offers_checklist[$offer['offer_id']])) {
 						$this->api->db->delete('offer', ['offer_id' => $offer['offer_id']]);
 						$this->api->logger->info("\tDeleted offer with ID " . $offer['offer_id']);
@@ -1021,6 +1021,11 @@ class ParksImport
 			}
 
 			$this->api->db->update('api', ['last_import' => time()]);
+
+			// Rebuild full-text search index after offer mutations
+			if ($this->api->db->rebuildOfferFts()) {
+				$this->api->logger->info('Rebuilt offer full-text search index.');
+			}
 
 			// Log message
 			$message = 'Import finished successfully.';
@@ -1045,11 +1050,11 @@ class ParksImport
 	/**
 	 * Clean up offers (remove inactive offers with active id)
 	 */
-	public function clean_up_offers(string $url): bool
+	public function cleanUpOffers(string $url): bool
 	{
 
 		// Load xml
-		$this->xml = $this->api->load_external_xml($url);
+		$this->xml = $this->api->loadExternalXml($url);
 
 		// Init
 		$active_offers = [];
@@ -1071,7 +1076,7 @@ class ParksImport
 			$all_offers = $this->api->db->get('offer', null, null, ['offer_id']);
 
 			// Iterate all existing offers
-			while ($offer = $all_offers->fetch_assoc()) {
+			while ($offer = $all_offers->fetchAssoc()) {
 
 				// Delete inactive offer
 				if (! in_array($offer['offer_id'], $active_offers)) {
@@ -1082,6 +1087,10 @@ class ParksImport
 			}
 
 			$this->api->db->commit();
+
+			if ($ctr_deleted > 0) {
+				$this->api->db->rebuildOfferFts();
+			}
 
 			// Log result
 			if ($ctr_deleted == 0) {
@@ -1105,16 +1114,16 @@ class ParksImport
 	/**
 	 * Synchronise target groups
 	 */
-	public function sync_target_groups(): void
+	public function syncTargetGroups(): void
 	{
 
 		// Get and parse json
 		$json = file_get_contents($this->api->config['json_export_target_groups']);
-		$target_groups = json_decode($json, true);
+		$targetGroups = json_decode($json, true);
 
 		// Sync target groups
-		if (! empty($target_groups) && is_array($target_groups)) {
-			$this->api->model->sync_target_groups($target_groups);
+		if (! empty($targetGroups) && is_array($targetGroups)) {
+			$this->api->model->syncTargetGroups($targetGroups);
 		}
 	}
 
@@ -1123,16 +1132,16 @@ class ParksImport
 	/**
 	 * Synchronise fields of activity
 	 */
-	public function sync_fields_of_activity(): void
+	public function syncFieldsOfActivity(): void
 	{
 
 		// Get and parse json
 		$json = file_get_contents($this->api->config['json_export_fields_of_activity']);
-		$fields_of_activity = json_decode($json, true);
+		$fieldsOfActivity = json_decode($json, true);
 
 		// Sync fields of activity
-		if (! empty($fields_of_activity) && is_array($fields_of_activity)) {
-			$this->api->model->sync_fields_of_activity($fields_of_activity);
+		if (! empty($fieldsOfActivity) && is_array($fieldsOfActivity)) {
+			$this->api->model->syncFieldsOfActivity($fieldsOfActivity);
 		}
 		
 	}
@@ -1142,7 +1151,7 @@ class ParksImport
 	/**
 	 * Synchronise categories
 	 */
-	public function sync_categories(): void
+	public function syncCategories(): void
 	{
 
 		// Get and parse json
@@ -1151,7 +1160,7 @@ class ParksImport
 
 		// Sync categories
 		if (! empty($categories) && is_array($categories)) {
-			$this->api->model->sync_categories($categories);
+			$this->api->model->syncCategories($categories);
 		}
 		
 	}
@@ -1161,7 +1170,7 @@ class ParksImport
 	/**
 	 * Synchronise accessibility dropdown list
 	 */
-	public function sync_accessibilities(): void
+	public function syncAccessibilities(): void
 	{
 
 		// Get and parse json
@@ -1170,7 +1179,7 @@ class ParksImport
 
 		// Sync dropdown options
 		if (! empty($options) && is_array($options)) {
-			$this->api->model->sync_accessibilities($options);
+			$this->api->model->syncAccessibilities($options);
 		}
 	}
 
@@ -1179,14 +1188,14 @@ class ParksImport
 	/**
 	 * Private method for retrieving the root category
 	 */
-	private function _get_root_category(int $category_id): int|false
+	private function getRootCategory(int $category_id): int|false
 	{
 		if (! empty($category_id)) {
 
 			while ($category_id > 0) {
 				$q_category = $this->api->db->get('category', ['category_id' => $category_id]);
-				if ($q_category->num_rows > 0) {
-					$category = $q_category->fetch_object();
+				if ($q_category->numRows > 0) {
+					$category = $q_category->fetchObject();
 					$category_id = $category->parent_id;
 					$last_category_id = $category->category_id;
 				}
@@ -1203,7 +1212,7 @@ class ParksImport
 	/**
 	 * Private method for inserting or updating db record
 	 */
-	private function _insert_or_update(string $table, array $fields, array $where): bool
+	private function insertOrUpdate(string $table, array $fields, array $where): bool
 	{
 		if (! empty($table) && ! empty($fields) && ! empty($where)) {
 
@@ -1211,7 +1220,7 @@ class ParksImport
 			$exists = $this->api->db->get($table, $where);
 
 			// Update db record
-			if ($exists->num_rows > 0) {
+			if ($exists->numRows > 0) {
 				return $this->api->db->update($table, $fields, $where);
 			}
 
@@ -1229,9 +1238,9 @@ class ParksImport
 
 
 	/**
-	 * Private method for parsing Date/Time
+	 * Format Date/Time value for SQLite storage
 	 */
-	private function _datetime(string $value, string $format = "Y-m-d H:i:s"): string
+	private function formatDatetime(string $value, string $format = "Y-m-d H:i:s"): string
 	{
 		$datetime = new DateTime($value);
 		return $datetime->format($format);
@@ -1240,9 +1249,9 @@ class ParksImport
 
 
 	/**
-	 * Private method for parsing Address from XML
+	 * Format contact address string from XML contact node
 	 */
-	private function _address(object $contact): string
+	private function formatContactAddress(object $contact): string
 	{
 		$address = [];
 
@@ -1300,10 +1309,10 @@ class ParksImport
 	/**
 	 * Get last ID
 	 */
-	private function _get_last_id(string $name_id, string $table): int
+	private function getLastId(string $name_id, string $table): int
 	{
 		$query =  $this->api->db->query('SELECT MAX(' . $name_id . ') as id FROM ' . $table);
-		$result = $query->fetch_object();
+		$result = $query->fetchObject();
 
 		return $result->id;
 	}

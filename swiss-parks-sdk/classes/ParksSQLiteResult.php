@@ -17,7 +17,7 @@ class ParksSQLiteResult
 	/**
 	 * Number of rows in the result
 	 */
-	public int $num_rows;
+	public int $numRows;
 
 
 	/**
@@ -40,7 +40,7 @@ class ParksSQLiteResult
 	{
 
 		$this->rows = array_values($rows);
-		$this->num_rows = count($this->rows);
+		$this->numRows = count($this->rows);
 
 	}
 
@@ -49,10 +49,10 @@ class ParksSQLiteResult
 	/**
 	 * Fetch next row as associative array
 	 */
-	public function fetch_assoc(): ?array
+	public function fetchAssoc(): ?array
 	{
 
-		if ($this->cursor >= $this->num_rows) {
+		if ($this->cursor >= $this->numRows) {
 			return null;
 		}
 
@@ -64,10 +64,10 @@ class ParksSQLiteResult
 	/**
 	 * Fetch next row as associative array
 	 */
-	public function fetch_array(): ?array
+	public function fetchArray(): ?array
 	{
 
-		return $this->fetch_assoc();
+		return $this->fetchAssoc();
 	}
 
 
@@ -75,10 +75,10 @@ class ParksSQLiteResult
 	/**
 	 * Fetch next row as object
 	 */
-	public function fetch_object(): ?object
+	public function fetchObject(): ?object
 	{
 
-		$row = $this->fetch_assoc();
+		$row = $this->fetchAssoc();
 
 		return ($row === null) ? null : (object) $row;
 	}

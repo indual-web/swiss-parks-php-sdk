@@ -14,7 +14,7 @@ alwaysApply: false
 
 - Schema-Aenderungen immer in `swiss-parks-sdk/database/schema.sql` vornehmen.
 - `SDK_VERSION` in `autoload.php` erhoehen, wenn das Schema sich aendert.
-- Nach Schema-Aenderungen: `php swiss-parks-sdk/scripts/migrate.php` pruefen.
+- Nach Schema-Aenderungen: `php swiss-parks-sdk/bin/migrate.php` pruefen.
 
 ## Referenz
 

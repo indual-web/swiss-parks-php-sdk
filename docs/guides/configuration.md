@@ -1,17 +1,17 @@
-# Core configuration (`swiss-parks-sdk/config.php`)
+# Core configuration (`swiss-parks-sdk/config/config.php`)
 
-This guide documents the most important runtime settings in `swiss-parks-sdk/config.php`.
+This guide documents the most important runtime settings in `swiss-parks-sdk/config/config.php`.
 
 ## Required settings
 
-Set these in `swiss-parks-sdk/config.php` on your server (keep this file across SDK updates):
+Set these in `swiss-parks-sdk/config/config.php` on your server (keep this file across SDK updates):
 
 - `api_hash`
   - Hash from your export configuration on `angebote.paerke.ch`.
 - `park_id`
   - Enter the park ID; you can obtain it by contacting the respective park.
 - `db_path`
-  - Path to the SQLite database file (default: `data/park-offers.sqlite`). Relative paths are resolved relative to the `swiss-parks-sdk/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
+  - Path to the SQLite database file (default: `writable/data/park-offers.sqlite`). Relative paths are resolved relative to the `swiss-parks-sdk/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
 
 Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash`, `park_id`, and `base_url` locally without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
 
@@ -36,13 +36,13 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
 - `class_view` (for example `MyView`)
   - Defines which view class renders output.
 - `template_folder` (for example `standard`)
-  - Selects the template set inside `swiss-parks-sdk/template/`.
+  - Selects the template set inside `swiss-parks-sdk/templates/`.
 - `prevent_css_js_include`
   - Prevents automatic inclusion of SDK CSS/JS assets.
 - `interactive_map_url` (default: `https://map.parks.swiss`)
   - Base URL for the interactive map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`).
-  - Runtime map behaviour (full height, layers to hide/show, …) is configured via `$api->map_options`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
-- `return_output`
+  - Runtime map behaviour (full height, layers to hide/show, …) is configured via `$api->mapOptions`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
+- `returnOutput`
   - Return generated HTML (`true`) or print directly (`false`).
 - `soft_errors`
   - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Default `false`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
@@ -55,7 +55,7 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
 
 Frequently tuned options:
 
-- `return_output`
+- `returnOutput`
   - Controls whether SDK methods return HTML (`true`) or print directly (`false`).
 - `soft_errors`
   - Soft failure mode for CMS embeds (`RuntimeException` / empty detail instead of `exit()`).
@@ -79,7 +79,7 @@ Frequently tuned options:
   - Shows or hides accessibility filter controls.
   - Automatically hidden when the export contains **only** projects (`projects_only`).
 - `hide_accessibility_filter` (per-request filter option, not config)
-  - Hides accessibility controls for a single page render when passed in the `$filter` array to `show_offers_filter()`.
+  - Hides accessibility controls for a single page render when passed in the `$filter` array to `showOffersFilter()`.
 - `show_municipality_filter`
   - Shows or hides the municipality filter.
 - `show_event_location_in_overview`

@@ -42,9 +42,12 @@ CREATE TABLE `offer` (
   `created_at` TEXT DEFAULT NULL
 );
 
+CREATE INDEX `idx_offer_park_id` ON `offer` (`park_id`);
+
 
 -- Table offer_i18n
 -- ------------------------------------------------------------
+
 
 CREATE TABLE `offer_i18n` (
   `offer_id` INTEGER NOT NULL DEFAULT 0,
@@ -96,6 +99,7 @@ CREATE TABLE `offer_date` (
 );
 
 CREATE INDEX `idx_offer_date_offer_id` ON `offer_date` (`offer_id`);
+CREATE INDEX `idx_offer_date_date_from` ON `offer_date` (`date_from`);
 
 
 -- Table category
@@ -414,6 +418,8 @@ CREATE TABLE `field_of_activity_link` (
   FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
 );
 
+CREATE INDEX `idx_field_of_activity_link_field_of_activity_id` ON `field_of_activity_link` (`field_of_activity_id`);
+
 
 -- Table accessibility
 -- ------------------------------------------------------------
@@ -485,6 +491,8 @@ CREATE TABLE `offer_municipality_link` (
   PRIMARY KEY (`offer_id`, `municipality_id`),
   FOREIGN KEY (`offer_id`) REFERENCES `offer` (`offer_id`) ON DELETE CASCADE
 );
+
+CREATE INDEX `idx_offer_municipality_link_municipality_id` ON `offer_municipality_link` (`municipality_id`);
 
 
 -- Table map_layer

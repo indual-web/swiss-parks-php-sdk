@@ -11,12 +11,12 @@ $api = new ParksAPI($language);
 $categories = [];
 $filter = [];
 
-if ($api->is_offer_detail()) {
-    $api->show_offer_detail();
+if ($api->isOfferDetail()) {
+    $api->showOfferDetail();
 } else {
-    $api->show_offers_filter($categories, $filter);
-    $api->show_offers_list($categories, $filter);
-    $api->show_offers_pagination();
+    $api->showOffersFilter($categories, $filter);
+    $api->showOffersList($categories, $filter);
+    $api->showOffersPagination();
 }
 ```
 

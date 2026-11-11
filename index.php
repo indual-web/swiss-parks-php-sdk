@@ -6,7 +6,7 @@
 |-----------------------------------------------------------------------
 |
 | Copy this file into your project and adapt language, filters, and layout.
-| Before first use, set api_hash and park_id in swiss-parks-sdk/config.php
+| Before first use, set api_hash and park_id in swiss-parks-sdk/config/config.php
 | and run the import:
 | https://github.com/indual-web/swiss-parks-php-sdk/blob/main/docs/guides/new-installation.md
 |
@@ -32,7 +32,7 @@ $filter = [];
 
 // Optional map behaviour:
 // https://github.com/indual-web/swiss-parks-php-sdk/blob/main/docs/sdk-reference/map-options.md
-$api->map_options = [];
+$api->mapOptions = [];
 
 ?>
 <!DOCTYPE html>
@@ -54,17 +54,17 @@ $api->map_options = [];
 </head>
 <body>
 
-	<!-- Example: use is_offer_detail() to switch layout/CSS for the detail page -->
-	<div id="parks_offer_wrap" class="<?= $api->is_offer_detail() ? 'detail' : '' ?>">
+	<!-- Example: use isOfferDetail() to switch layout/CSS for the detail page -->
+	<div id="parks_offer_wrap" class="<?= $api->isOfferDetail() ? 'detail' : '' ?>">
 
-		<?php if ($api->is_offer_detail()) { ?>
+		<?php if ($api->isOfferDetail()) { ?>
 
-			<?= $api->show_offer_detail() ?>
+			<?= $api->showOfferDetail() ?>
 
 		<?php } else { ?>
 
 			<?php // Filter form (categories, search, …) ?>
-			<?= $api->show_offers_filter($categories, $filter) ?>
+			<?= $api->showOffersFilter($categories, $filter) ?>
 
 
 			<!--
@@ -81,12 +81,12 @@ $api->map_options = [];
 			<div id="content">
 
 				<div class="tab_content tab_content_1 show">
-					<?= $api->show_offers_list($categories, $filter) ?>
-					<?= $api->show_offers_pagination() ?>
+					<?= $api->showOffersList($categories, $filter) ?>
+					<?= $api->showOffersPagination() ?>
 				</div>
 
 				<div class="tab_content tab_content_2" aria-hidden="true">
-					<?= $api->show_offers_map($categories, $filter) ?>
+					<?= $api->showOffersMap($categories, $filter) ?>
 				</div>
 
 			</div>

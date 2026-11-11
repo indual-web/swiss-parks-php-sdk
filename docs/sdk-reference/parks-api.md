@@ -4,7 +4,7 @@ Integrator-facing methods from `ParksAPI`, grouped by purpose.
 
 ## Rendering methods
 
-### `show_offers_filter($categories = [], $filter = [], $park_id = NULL)`
+### `showOffersFilter($categories = [], $filter = [], $park_id = NULL)`
 
 - Renders the filter UI for an overview page.
 - Applies `system_filter` hard constraints and selected UI toggles from `$filter`.
@@ -16,11 +16,11 @@ Parameters:
 - `$filter` (`array`): filter values and UI flags (see `filter-options.md`).
 - `$park_id` (`int|null`): explicit park override; falls back to configured/default park.
 
-### `show_offers_list($categories = [], $filter = [], $park_id = NULL)`
+### `showOffersList($categories = [], $filter = [], $park_id = NULL)`
 
 - Renders the offer overview list.
 - Reads pagination from request (`?page=` or SEO page slug mode).
-- Updates internal pagination state used by `show_offers_pagination()`.
+- Updates internal pagination state used by `showOffersPagination()`.
 
 Parameters:
 
@@ -28,10 +28,10 @@ Parameters:
 - `$filter` (`array`)
 - `$park_id` (`int|null`)
 
-### `show_offers_map($categories = [], $filter = [], $park_id = NULL)`
+### `showOffersMap($categories = [], $filter = [], $park_id = NULL)`
 
 - Renders the overview map for the current result set.
-- Uses `$api->map_options` for map runtime configuration.
+- Uses `$api->mapOptions` for map runtime configuration.
 
 Parameters:
 
@@ -39,12 +39,12 @@ Parameters:
 - `$filter` (`array`)
 - `$park_id` (`int|null`)
 
-### `show_offers_pagination()`
+### `showOffersPagination()`
 
 - Renders pagination for the most recent list query context.
 - Returns an empty string on detail pages.
 
-### `show_offer_detail($single_offer_id = NULL)`
+### `showOfferDetail($single_offer_id = NULL)`
 
 - Renders one offer detail page.
 - Supports routed detail mode and explicit single-offer mode (`$single_offer_id`).
@@ -55,7 +55,7 @@ Parameters:
 
 - `$single_offer_id` (`int|null`): optional forced detail ID.
 
-### `show_favorites()`
+### `showFavorites()`
 
 - Renders favorites overview (or detail view if current request is detail).
 - Uses visitor favorites from the favorites cookie/session context.
@@ -118,7 +118,7 @@ Parameters:
 
 ## Runtime and state methods
 
-### `is_offer_detail()`
+### `isOfferDetail()`
 
 - Returns `true` if current request resolves to a detail page.
 - Supports both parameter-based and SEO URL detail detection.
@@ -131,7 +131,7 @@ Parameters:
 
 - Returns normalized active filter values from runtime state.
 
-### `toggle_favorite($offer_id)`
+### `toggleFavorite($offer_id)`
 
 - Adds/removes one offer ID from favorites.
 - Persists state in the favorites cookie.
@@ -141,11 +141,11 @@ Parameters:
 
 - `$offer_id` (`int`)
 
-### `clean_favorites()`
+### `cleanFavorites()`
 
 - Clears all favorites for the current visitor (cookie reset).
 
-### `set_script_url($url)`
+### `setScriptUrl($url)`
 
 - Sets the view `script_url` / `script_url_with_params` used for forms and links.
 - Does not change session scoping; pass `$page_url` to the `ParksAPI` constructor for that.
@@ -181,7 +181,7 @@ Parameters:
 
 Static factories for CLI scripts (no page rendering bootstrap):
 
-- `ParksAPI::forScript()` — used by `sync.php` (and legacy `cron.php`) and `force_update.php`
+- `ParksAPI::forScript()` — used by `sync.php` (`--force` for full import)
 - `ParksAPI::forMigration()` — used by `migrate.php` (also skips `_setup()`)
 
 ### `migrate()`
@@ -203,12 +203,12 @@ Static factories for CLI scripts (no page rendering bootstrap):
 
 ## Output behavior note
 
-Rendering methods call view methods that honor `config['return_output']`:
+Rendering methods call view methods that honor `config['returnOutput']`:
 
 - `false` (default): HTML is printed directly.
 - `true`: HTML is returned as string (useful for CMS composition/output buffering).
 
-`soft_errors` is independent of `return_output`. See [WordPress integration](../guides/wordpress-integration.md).
+`soft_errors` is independent of `returnOutput`. See [WordPress integration](../guides/wordpress-integration.md).
 
 ## Minimal integration example
 
@@ -217,12 +217,12 @@ $api = new ParksAPI('en');
 $categories = [];
 $filter = [];
 
-if ($api->is_offer_detail()) {
-    echo $api->show_offer_detail();
+if ($api->isOfferDetail()) {
+    echo $api->showOfferDetail();
 } else {
-    echo $api->show_offers_filter($categories, $filter);
-    echo $api->show_offers_list($categories, $filter);
-    echo $api->show_offers_pagination();
+    echo $api->showOffersFilter($categories, $filter);
+    echo $api->showOffersList($categories, $filter);
+    echo $api->showOffersPagination();
 }
 ```
 

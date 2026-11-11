@@ -35,7 +35,13 @@ class ParksSQLite
 	/**
 	 * Last error message
 	 */
-	protected string $last_error = '';
+	protected string $lastError = '';
+
+
+	/**
+	 * Whether offer_fts (FTS5) is available
+	 */
+	private bool $offerFtsAvailable = false;
 
 
 
@@ -49,7 +55,7 @@ class ParksSQLite
 		$this->api = $api;
 
 		// Resolve database file path (relative paths are relative to swiss-parks-sdk/)
-		$path = ! empty($api->config['db_path']) ? $api->config['db_path'] : 'data/park-offers.sqlite';
+		$path = ! empty($api->config['db_path']) ? $api->config['db_path'] : 'writable/data/park-offers.sqlite';
 		if (substr($path, 0, 1) !== '/') {
 			$path = $api->config['absolute_path'] . '/' . $path;
 		}
@@ -57,6 +63,17 @@ class ParksSQLite
 
 		$this->connect();
 
+	}
+
+
+
+	/**
+	 * Whether full-text search table is usable
+	 */
+	public function isOfferFtsAvailable(): bool
+	{
+
+		return $this->offerFtsAvailable;
 	}
 
 
@@ -94,12 +111,16 @@ class ParksSQLite
 		$this->connection->exec('PRAGMA busy_timeout = 5000;');
 
 		// Register MySQL compatible SQL functions
-		$this->_register_functions();
+		$this->registerFunctions();
 
 		// Create schema on first run
 		$has_schema = $this->connection->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'api'");
 		if (($has_schema === false) || (count($has_schema->fetchAll()) === 0)) {
-			$this->_create_schema();
+			$this->createSchema();
+			$this->ensureOfferFts(true);
+		} else {
+			$this->ensurePerformanceIndexes();
+			$this->ensureOfferFts(false);
 		}
 
 		return true;
@@ -108,9 +129,133 @@ class ParksSQLite
 
 
 	/**
+	 * Add missing read-path indexes on existing databases (no rebuild required)
+	 */
+	private function ensurePerformanceIndexes(): void
+	{
+
+		$indexes = [
+			'idx_offer_park_id' => 'CREATE INDEX IF NOT EXISTS `idx_offer_park_id` ON `offer` (`park_id`)',
+			'idx_offer_date_date_from' => 'CREATE INDEX IF NOT EXISTS `idx_offer_date_date_from` ON `offer_date` (`date_from`)',
+			'idx_field_of_activity_link_field_of_activity_id' => 'CREATE INDEX IF NOT EXISTS `idx_field_of_activity_link_field_of_activity_id` ON `field_of_activity_link` (`field_of_activity_id`)',
+			'idx_offer_municipality_link_municipality_id' => 'CREATE INDEX IF NOT EXISTS `idx_offer_municipality_link_municipality_id` ON `offer_municipality_link` (`municipality_id`)',
+		];
+
+		foreach ($indexes as $sql) {
+			$this->connection->exec($sql);
+		}
+	}
+
+
+
+	/**
+	 * Ensure offer_fts exists; optionally rebuild when empty
+	 */
+	private function ensureOfferFts(bool $fresh_schema): void
+	{
+
+		$create_sql = "
+			CREATE VIRTUAL TABLE IF NOT EXISTS `offer_fts` USING fts5(
+				`offer_id` UNINDEXED,
+				`language` UNINDEXED,
+				`body`,
+				tokenize = 'unicode61 remove_diacritics 2'
+			)
+		";
+		if ($this->connection->exec($create_sql) === false) {
+			$this->offerFtsAvailable = false;
+			return;
+		}
+
+		$this->offerFtsAvailable = true;
+
+		if ($fresh_schema) {
+			return;
+		}
+
+		$fts_count = $this->connection->query('SELECT COUNT(*) AS total FROM offer_fts');
+		$offer_count = $this->connection->query('SELECT COUNT(*) AS total FROM offer');
+		if ($fts_count === false || $offer_count === false) {
+			return;
+		}
+
+		$fts_total = (int) ($fts_count->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
+		$offer_total = (int) ($offer_count->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
+		if (($fts_total === 0) && ($offer_total > 0)) {
+			$this->rebuildOfferFts();
+		}
+	}
+
+
+
+	/**
+	 * Rebuild offer_fts from offer + offer_i18n (+ keywords)
+	 */
+	public function rebuildOfferFts(?array $offer_ids = null): bool
+	{
+
+		if (! $this->offerFtsAvailable) {
+			return false;
+		}
+
+		$where = '';
+		if ($offer_ids !== null) {
+			$ids = array_values(array_unique(array_filter(array_map('intval', $offer_ids))));
+			if (empty($ids)) {
+				return true;
+			}
+			$ids_sql = implode(',', $ids);
+			if ($this->connection->exec("DELETE FROM offer_fts WHERE offer_id IN (" . $ids_sql . ")") === false) {
+				return false;
+			}
+			$where = " WHERE offer.offer_id IN (" . $ids_sql . ")";
+		} else {
+			if ($this->connection->exec('DELETE FROM offer_fts') === false) {
+				return false;
+			}
+		}
+
+		$sql = "
+			INSERT INTO offer_fts (offer_id, language, body)
+			SELECT
+				offer.offer_id,
+				offer_i18n.language,
+				IFNULL(offer.keywords, '') || ' ' ||
+				IFNULL(offer_i18n.title, '') || ' ' ||
+				IFNULL(offer_i18n.abstract, '') || ' ' ||
+				IFNULL(offer_i18n.description_medium, '') || ' ' ||
+				IFNULL(offer_i18n.description_long, '') || ' ' ||
+				IFNULL(offer_i18n.details, '') || ' ' ||
+				IFNULL(offer_i18n.price, '') || ' ' ||
+				IFNULL(offer_i18n.location_details, '') || ' ' ||
+				IFNULL(offer_i18n.opening_hours, '') || ' ' ||
+				IFNULL(offer_i18n.benefits, '') || ' ' ||
+				IFNULL(offer_i18n.requirements, '') || ' ' ||
+				IFNULL(offer_i18n.additional_informations, '') || ' ' ||
+				IFNULL(offer_i18n.catering_informations, '') || ' ' ||
+				IFNULL(offer_i18n.material_rent, '') || ' ' ||
+				IFNULL(offer_i18n.safety_instructions, '') || ' ' ||
+				IFNULL(offer_i18n.signalization, '') || ' ' ||
+				IFNULL(offer_i18n.other_infrastructure, '') || ' ' ||
+				IFNULL(offer_i18n.project_initial_situation, '') || ' ' ||
+				IFNULL(offer_i18n.project_goal, '') || ' ' ||
+				IFNULL(offer_i18n.project_further_information, '') || ' ' ||
+				IFNULL(offer_i18n.project_results, '') || ' ' ||
+				IFNULL(offer_i18n.project_partner, '')
+			FROM offer
+			INNER JOIN offer_i18n ON offer_i18n.offer_id = offer.offer_id
+			" . $where . "
+		";
+
+		return $this->connection->exec($sql) !== false;
+	}
+
+
+
+	/**
 	 * Create database schema from SQL file
 	 */
-	private function _create_schema(): void
+	private function createSchema(): void
 	{
 
 		$schema = file_get_contents(__DIR__ . '/../database/schema.sql');
@@ -119,7 +264,7 @@ class ParksSQLite
 		}
 
 		if ($this->connection->exec($schema) === false) {
-			throw new RuntimeException('The database schema could not be created: ' . $this->get_last_error());
+			throw new RuntimeException('The database schema could not be created: ' . $this->getLastError());
 		}
 
 	}
@@ -180,7 +325,7 @@ class ParksSQLite
 	/**
 	 * Get last error
 	 */
-	public function get_last_error(): string
+	public function getLastError(): string
 	{
 		$error = $this->connection->errorInfo();
 
@@ -208,7 +353,7 @@ class ParksSQLite
 		$statement = $this->connection->query($sql);
 
 		if ($statement === false) {
-			$this->last_error = $this->get_last_error();
+			$this->lastError = $this->getLastError();
 			return false;
 		}
 
@@ -398,7 +543,7 @@ class ParksSQLite
 	/**
 	 * Register a custom SQL function
 	 */
-	private function _create_function(string $name, callable $callback, int $num_args): void
+	private function createFunction(string $name, callable $callback, int $num_args): void
 	{
 
 		if (method_exists($this->connection, 'createFunction')) {
@@ -424,26 +569,26 @@ class ParksSQLite
 	/**
 	 * Register MySQL compatible SQL functions
 	 */
-	private function _register_functions(): void
+	private function registerFunctions(): void
 	{
 
 		// NOW()
-		$this->_create_function('NOW', function () {
+		$this->createFunction('NOW', function () {
 			return date('Y-m-d H:i:s');
 		}, 0);
 
 		// CURDATE()
-		$this->_create_function('CURDATE', function () {
+		$this->createFunction('CURDATE', function () {
 			return date('Y-m-d');
 		}, 0);
 
 		// RAND()
-		$this->_create_function('RAND', function () {
+		$this->createFunction('RAND', function () {
 			return mt_rand() / mt_getrandmax();
 		}, 0);
 
 		// DATE_FORMAT(date, format) with MySQL format specifiers
-		$this->_create_function('DATE_FORMAT', function ($value, $format) {
+		$this->createFunction('DATE_FORMAT', function ($value, $format) {
 
 			if (($value === null) || ($value === '')) {
 				return null;
@@ -473,7 +618,7 @@ class ParksSQLite
 		}, 2);
 
 		// DATEDIFF(date1, date2) returns difference in days
-		$this->_create_function('DATEDIFF', function ($date1, $date2) {
+		$this->createFunction('DATEDIFF', function ($date1, $date2) {
 
 			$time1 = ($date1 !== null) ? strtotime(substr((string) $date1, 0, 10)) : false;
 			$time2 = ($date2 !== null) ? strtotime(substr((string) $date2, 0, 10)) : false;
@@ -486,12 +631,12 @@ class ParksSQLite
 		}, 2);
 
 		// CONCAT(...)
-		$this->_create_function('CONCAT', function (...$values) {
+		$this->createFunction('CONCAT', function (...$values) {
 			return implode('', array_map(fn ($value) => (string) $value, $values));
 		}, -1);
 
 		// CONCAT_WS(separator, ...) skips NULL values like MySQL
-		$this->_create_function('CONCAT_WS', function ($separator, ...$values) {
+		$this->createFunction('CONCAT_WS', function ($separator, ...$values) {
 			return implode($separator, array_filter($values, fn ($value) => $value !== null));
 		}, -1);
 

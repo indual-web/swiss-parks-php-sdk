@@ -33,9 +33,9 @@ The script:
 
 1. Downloads the release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
 2. Creates a backup next to `swiss-parks-sdk/` (`swiss-parks-sdk-backup-<timestamp>/`)
-3. Replaces SDK core files (`autoload.php`, `classes/`, `database/`, `helpers/`, `language/`, `bin/`, `scripts/`, default templates)
-4. Preserves `config.php`, `custom/`, `data/`, `log/`, and custom templates
-5. Runs `php scripts/migrate.php` (rebuilds SQLite DB + full import)
+3. Replaces SDK core files (`autoload.php`, `classes/`, `database/`, `lang/`, `templates/` core, `bin/`, `public/`, `config/config.dist.php`)
+4. Preserves `config/config.php`, `custom/`, `writable/`, and custom templates
+5. Runs `php bin/migrate.php` (rebuilds SQLite DB + full import)
 
 Exit code: `0` on success, `1` on failure. Set `PARKS_API_SKIP_MIGRATE=1` to update files only.
 
@@ -49,12 +49,14 @@ Apply version-specific config steps from a [migration guide](./migrations/index.
    - `autoload.php`
    - `classes/`
    - `database/`
-   - `helpers/`
-   - `language/`
+   - `lang/`
+   - `templates/` (core themes)
    - `bin/`
+   - `public/`
+   - `config/config.dist.php`
 4. Apply version-specific steps from a [migration guide](./migrations/index.md) if one exists for your upgrade path.
 5. Run migration:
-   - `php /{PATH-TO-YOUR-SDK-FOLDER}/scripts/migrate.php`
+   - `php /{PATH-TO-YOUR-SDK-FOLDER}/bin/migrate.php`
    - Deletes the SQLite database file, recreates it with the current schema, and runs a full import.
 
 ### Validation (both options)

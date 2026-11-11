@@ -48,7 +48,7 @@ class ParksLog
 	 */
 	public function error(string $message): void
 	{
-		$this->_log("ERROR", $message);
+		$this->log("ERROR", $message);
 	}
 
 
@@ -58,7 +58,7 @@ class ParksLog
 	 */
 	public function info(string $message): void
 	{
-		$this->_log("INFO", $message);
+		$this->log("INFO", $message);
 	}
 
 
@@ -66,7 +66,7 @@ class ParksLog
 	/**
 	 * Log message
 	 */
-	private function _log(string $level, string $message): void
+	private function log(string $level, string $message): void
 	{
 		$line = date("Y-m-d H:i:s") . "\t" . $level . "\t" . $message . "\n";
 		file_put_contents($this->logfile, $line, FILE_APPEND);

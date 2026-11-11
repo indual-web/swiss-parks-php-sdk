@@ -24,7 +24,7 @@ alwaysApply: false
 ```markdown
 ## Practical starter configuration
 
-- `return_output`
+- `returnOutput`
   - Returns HTML (`true`) or prints directly (`false`).
 ```
 

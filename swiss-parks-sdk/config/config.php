@@ -1,0 +1,323 @@
+<?php
+/*
+|-----------------------------------------------------------------------
+| Swiss Parks PHP SDK
+| https://github.com/indual-web/swiss-parks-php-sdk
+|-----------------------------------------------------------------------
+|
+| Global configuration for the Swiss Parks PHP SDK
+|
+*/
+
+$config = [];
+
+
+/*
+|--------------------------------------------------------------------------
+| API Hash Key
+|--------------------------------------------------------------------------
+|
+| This hash is needed to import the data via XML.
+| Create an export configuration on https://angebote.paerke.ch and
+| put your Hashkey in here.
+|
+*/
+$config['api_hash'] = "insert-your-hash-here";
+
+
+/*
+|--------------------------------------------------------------------------
+| Your park
+|--------------------------------------------------------------------------
+|
+| Set your park ID here.
+|
+*/
+$config['park_id'] = 0;
+
+
+/*
+|--------------------------------------------------------------------------
+| SEO URLs
+|--------------------------------------------------------------------------
+|
+| Set true if your environment uses SEO URLs.
+|
+*/
+$config['seo_urls'] = false;
+$config['seo_url_detail_slug'] = 'offer-detail';
+$config['seo_url_poi_slug'] = 'poi';
+$config['seo_url_page_slug'] = 'page';
+$config['seo_url_reset_slug'] = 'reset';
+
+
+/*
+|--------------------------------------------------------------------------
+| SQLite Database
+|--------------------------------------------------------------------------
+|
+| Imported offers are stored in a local SQLite database file for better
+| performance. The file is created automatically on first run.
+| Relative paths are resolved relative to the swiss-parks-sdk/ folder.
+| Make sure this directory is writeable by the web server.
+|
+*/
+$config['db_path'] = "writable/data/park-offers.sqlite";
+
+
+/*
+|--------------------------------------------------------------------------
+| cURL SSL verification
+|--------------------------------------------------------------------------
+|
+| Verify SSL certificates for export requests to angebote.paerke.ch.
+| Set to false only when your environment cannot validate HTTPS.
+|
+*/
+$config['curl_verify_ssl'] = true;
+
+
+/*
+|--------------------------------------------------------------------------
+| Migration log endpoint
+|--------------------------------------------------------------------------
+|
+| URL for reporting successful SDK migrations to the central log server.
+|
+*/
+$config['migration_log_url'] = 'https://angebote.paerke.ch/migrate/log_api_migration';
+
+
+/*
+|--------------------------------------------------------------------------
+| Custom view
+|--------------------------------------------------------------------------
+|
+| Set your custom view class (optional subclass of ParksView).
+| Place custom classes in the "custom" folder, or use a shipped class
+| such as "ParksSwissView". Default: ParksView
+|
+*/
+$config['class_view'] = "ParksView";
+
+
+/*
+|--------------------------------------------------------------------------
+| Template
+|--------------------------------------------------------------------------
+|
+| Set the template placed in the swiss-parks-sdk/templates/ folder.
+| Create your individual template by creating your own folder,
+| copied from the standard folder.
+|
+ */
+$config['template_folder'] = 'standard';
+
+
+/*
+|--------------------------------------------------------------------------
+| Custom view options
+|--------------------------------------------------------------------------
+|
+| 'always_show_filter' => Show filter on detail pages
+| 'show_route_filter' => Show route filter
+| 'show_target_group_filter' => Show target group filter
+| 'show_fields_of_activity_filter' => Show fields of activity filter
+| 'show_route_filter_min_count' => Define minimum activities for route filter
+| 'offers_per_page' => How many offers should be displayed per page?
+| 'n_th_point' => Each n-th point of routes shown on the overview map (speeds up overviews with map)
+| 'n_th_point_min_count' => Routes with less than this amount of route points won't be shortened
+| 'pagination_max_numbers' => Define how many pages should be displayed in the pagination (in overviews)
+| 'detail_thumbnail_size' => Thumbnail size on detail pages
+| 'placeholder_image' => Set the path to your default placeholder image (if no image is set)
+| 'image_enlargement' => Link image enlargements while using plugins like fancybox or lightbox
+| 'detail_limit_dates' => Limit amount of dates displayed after loading on the offer detail page
+| 'filter_keywords_with_and' => Filter offers by keywords with AND restriction (default: OR)
+| 'show_park_name' => Show park name on overview and on detail page
+| 'show_event_location_in_overview' => Show event location on overview
+| 'show_short_description_in_overview' => Show short offer description on overview
+| 'show_keywords_in_overview' => Show offer keywords on overview
+| 'show_button_in_overview' => Show link button in overview
+| 'poi_listing_link_target' => Set the detail link target in poi listing e.g. '_blank'
+| 'heading_offer_title_in_overview' => Set the heading html tag for offer titles in overview
+| 'show_accessibility_filter' => Show accessibility filter
+| 'show_municipality_filter' => Show municipality filter
+|
+*/
+$config['always_show_filter'] = false;
+$config['show_route_filter'] = true;
+$config['show_target_group_filter'] = true;
+$config['show_fields_of_activity_filter'] = true;
+$config['show_route_filter_min_count'] = 5;
+$config['offers_per_page'] = 10;
+$config['n_th_point'] = 2;
+$config['n_th_point_min_count'] = 100;
+$config['pagination_max_numbers'] = 5;
+$config['overview_thumbnail_size'] = 'medium';
+$config['detail_thumbnail_size'] = 'large';
+$config['placeholder_image'] = 'https://angebote.paerke.ch/img/placeholder.png';
+$config['image_enlargement'] = true;
+$config['detail_limit_dates'] = 5;
+$config['filter_keywords_with_and'] = false;
+$config['show_park_name'] = false;
+$config['show_event_location_in_overview'] = true;
+$config['show_short_description_in_overview'] = false;
+$config['show_keywords_in_overview'] = false;
+$config['show_button_in_overview'] = false;
+$config['poi_listing_link_target'] = '';
+$config['heading_offer_title_in_overview'] = 'h3';
+$config['show_accessibility_filter'] = true;
+$config['show_municipality_filter'] = true;
+
+
+/*
+|--------------------------------------------------------------------------
+| Keyword filter
+|--------------------------------------------------------------------------
+|
+| Set keywords for the optinally keyword filter.
+| The first entry is the title of the filter, the second entry is the label to show all entries.
+|
+| Example:
+| 	$config['keyword_filter'] = [
+|		'de' => ['Kategorien', 'Alle', 'Kinder', 'Kultur', 'Entdecken'],
+|		'en' => ['Categories', 'All', 'Children', 'Culture', 'Discover']
+| 	];
+|
+*/
+$config['keyword_filter'] = [
+	'de' => [],
+	'fr' => [],
+	'it' => [],
+	'en' => []
+];
+
+
+/*
+|--------------------------------------------------------------------------
+| View mode
+|--------------------------------------------------------------------------
+|
+| Set if view should be returned or directly displayed
+| Default: false, output will automatically displayed
+|
+*/
+$config['return_output'] = false;
+
+
+/*
+|--------------------------------------------------------------------------
+| Soft errors (CMS / embed mode)
+|--------------------------------------------------------------------------
+|
+| When true, bootstrap/language failures throw RuntimeException and a
+| missing offer detail returns an empty string instead of header/exit.
+| Default: false (standalone echo + exit behaviour).
+|
+*/
+$config['soft_errors'] = false;
+
+
+/*
+|--------------------------------------------------------------------------
+| CSS and JS include mode
+|--------------------------------------------------------------------------
+|
+| Set if view should not include SDK CSS and JS files automatically.
+| If true, you have to include these files manually in your system.
+|
+*/
+$config['prevent_css_js_include'] = false;
+
+
+/*
+|--------------------------------------------------------------------------
+| Interactive map base URL
+|--------------------------------------------------------------------------
+|
+| Base URL of the swiss-parks-map assets (without trailing slash).
+| Loads /dist/css/style.css and /dist/js/swiss-parks-map.umd.js from here.
+|
+*/
+$config['interactive_map_url'] = 'https://map.parks.swiss';
+
+
+/*
+|--------------------------------------------------------------------------
+| Favorites
+|--------------------------------------------------------------------------
+|
+| Enable favorites module to list all favorites
+| If enabled, set favorites_script_path to the public favorites endpoint
+| directory, e.g. /plugins/swiss-parks-sdk/public (without an ending slash),
+| or to a CMS/plugin URL that calls ParksAPI::toggleFavorite().
+|
+*/
+$config['favorites_extension_available'] = false;
+$config['favorites_script_path'] = '';
+
+
+/*
+|--------------------------------------------------------------------------
+| API prefixes
+|--------------------------------------------------------------------------
+|
+| Prevent equal namespaces with a unique prefix
+|
+*/
+$config['form_prefix'] = '';
+$config['url_param_prefix'] = '';
+
+
+/*
+|--------------------------------------------------------------------------
+| Languages
+|--------------------------------------------------------------------------
+|
+| Set all available languages in your environment and your default language.
+| Also specifiy if offers should be displayed or not whether it exists in the selected language
+|
+*/
+$config['default_language'] = 'de';
+$config['available_languages'] = ['de', 'fr', 'it', 'en'];
+$config['language_independence'] = true;
+$config['language_priority'] = [
+	'de' => ['fr', 'it', 'en'],
+	'fr' => ['de', 'it', 'en'],
+	'it' => ['fr', 'de', 'en'],
+	'en' => ['de', 'fr', 'it'],
+];
+
+
+/*
+|--------------------------------------------------------------------------
+| PHP session
+|--------------------------------------------------------------------------
+|
+*/
+$config['use_sessions'] = true;
+$config['session_name'] = "parks_api";
+
+
+/*
+|--------------------------------------------------------------------------
+| Logs
+|--------------------------------------------------------------------------
+|
+| Define the folder where log files are stored.
+| Make sure this directory is writeable.
+|
+*/
+$config['log_directory'] = "writable/log/";
+
+
+/*
+|--------------------------------------------------------------------------
+| Formats
+|--------------------------------------------------------------------------
+|
+| Specify date format for PHP & database queries
+|
+*/
+$config['db_date_format'] = "%d.%m.%Y %H:%i";
+$config['php_date_format'] = "d.m.Y H:i";

@@ -11,7 +11,7 @@ This module is optional. If enabled, each offer can show an add/remove favorite 
 ## Enable/disable behavior
 
 - `favorites_extension_available = true` enables the feature.
-- `favorites_script_path` must point to your API script folder.
+- `favorites_script_path` must point to the folder that contains `favorites.php` (for example `/plugins/swiss-parks-sdk/public`), or to a CMS endpoint URL.
 - `use_sessions = true` must be enabled for persistent favorites behavior.
 - `session_name` defines the cookie/session prefix used by the favorites module.
 - If disabled, no favorite link is shown in offer listings.
@@ -24,13 +24,13 @@ This module is optional. If enabled, each offer can show an add/remove favorite 
 
 ## Endpoints and methods
 
-- Script endpoint: `swiss-parks-sdk/scripts/favorite.php`
-  - Toggle favorite: `favorite.php?offer_id=<id>`
-  - Clear all: `favorite.php?action=clean`
+- Script endpoint: `swiss-parks-sdk/public/favorites.php`
+  - Toggle favorite: `favorites.php?offer_id=<id>`
+  - Clear all: `favorites.php?action=clean`
 - API methods:
-  - `toggle_favorite($offer_id)`
-  - `show_favorites()`
-  - `clean_favorites()`
+  - `toggleFavorite($offer_id)`
+  - `showFavorites()`
+  - `cleanFavorites()`
 
 ## Related docs
 

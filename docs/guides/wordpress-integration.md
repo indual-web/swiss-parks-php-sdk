@@ -4,9 +4,9 @@ This SDK is CMS-agnostic. There is no official WordPress plugin in this reposito
 
 ## Recommended configuration
 
-Set these in `swiss-parks-sdk/config.php` (or `config.local.php`):
+Set these in `swiss-parks-sdk/config/config.php` (or `config.local.php`):
 
-- `return_output`
+- `returnOutput`
   - Set to `true` so rendering methods return HTML for shortcodes/templates.
 - `soft_errors`
   - Set to `true` in CMS embeds. Missing offers return an empty string; bootstrap/language failures throw `RuntimeException` instead of `exit()`.
@@ -29,14 +29,14 @@ $language = 'de'; // map from WPML/Polylang if needed
 $page_url = get_permalink(); // session scope only
 
 $api = new ParksAPI($language, '', $page_url);
-$api->set_script_url(parse_url($page_url, PHP_URL_PATH) ?: '/');
+$api->setScriptUrl(parse_url($page_url, PHP_URL_PATH) ?: '/');
 
-if ($api->is_offer_detail()) {
-    echo $api->show_offer_detail();
+if ($api->isOfferDetail()) {
+    echo $api->showOfferDetail();
 } else {
-    echo $api->show_offers_filter();
-    echo $api->show_offers_list();
-    echo $api->show_offers_pagination();
+    echo $api->showOffersFilter();
+    echo $api->showOffersList();
+    echo $api->showOffersPagination();
 }
 ```
 
@@ -48,7 +48,7 @@ The WordPress layer should own:
 
 - Shortcodes or page templates
 - `wp_enqueue_style` / `wp_enqueue_script` for `parks.min.css` / `parks.min.js` (and map assets if needed)
-- Cron or WP-CLI calling `bin/sync.sh` / `scripts/sync.php` (do not expose sync publicly)
+- Cron or WP-CLI calling `bin/sync.sh` / `bin/sync.php` (do not expose sync publicly)
 - SEO rewrite rules / query vars when `seo_urls` is enabled
 - Favorites endpoint wiring via `favorites_script_path`
 - A dedicated offers page for filter POST → redirect (PRG). The SDK does not soft-disable that redirect.

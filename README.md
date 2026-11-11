@@ -25,8 +25,8 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
 
 - PHP `>= 8.2` and `<= 8.5`
 - PHP `pdo_sqlite` extension (bundled with PHP by default), SQLite `>= 3.25`
-- Write permissions for the data directory (`swiss-parks-sdk/data/` or your configured `db_path`)
-- Write permissions for the log directory (`swiss-parks-sdk/log/` or your configured path)
+- Write permissions for the data directory (`swiss-parks-sdk/writable/data/` or your configured `db_path`)
+- Write permissions for the log directory (`swiss-parks-sdk/writable/log/` or your configured path)
 - PHP cURL extension enabled
 - Outbound HTTPS access to `angebote.paerke.ch` and related export endpoints
 - URL file access via PHP stream wrappers (for `file_get_contents()` based sync calls)
@@ -58,7 +58,7 @@ This PHP SDK imports offer data from an XML export into a local SQLite database 
    - CLI: `bash swiss-parks-sdk/bin/upgrade-sdk.sh latest` (downloads release, updates core files, runs migration)
    - Or update SDK files manually from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
 3. **Migrate** (if not using `upgrade-sdk.sh`)
-   - Run `php swiss-parks-sdk/scripts/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
+   - Run `php swiss-parks-sdk/bin/migrate.php` to rebuild the SQLite database with the current schema and run a full import.
 
 Maintainers: push a version tag (`22`, `22.1`) to publish the ZIP automatically via GitHub Actions. Details: [import and update lifecycle](docs/guides/import-update-lifecycle.md#publish-a-github-release).
 
@@ -75,8 +75,8 @@ Use the dedicated guide:
 Quick summary:
 
 1. Install SDK files from the release ZIP (`swiss-parks-sdk/` + `index.php`).
-2. Configure `swiss-parks-sdk/config.php` (`api_hash`, `park_id`).
-3. Run first import: `bash swiss-parks-sdk/bin/sync.sh` or via browser at `scripts/cron.php` (creates the SQLite database automatically).
+2. Configure `swiss-parks-sdk/config/config.php` (`api_hash`, `park_id`).
+3. Run first import: `bash swiss-parks-sdk/bin/sync.sh` (creates the SQLite database automatically; use `--force` for a full import).
 4. Verify data import and configure regular cron execution (`bin/sync.sh`).
 
 ---
@@ -91,7 +91,7 @@ Quick summary:
 
 ## 6) Core Configuration
 
-Configuration details for `swiss-parks-sdk/config.php`:
+Configuration details for `swiss-parks-sdk/config/config.php`:
 
 - [`docs/guides/configuration.md`](docs/guides/configuration.md)
 
@@ -108,7 +108,7 @@ Integration example and implementation basics:
 
 ## 8) Import and Update Lifecycle
 
-Commands for `sync.php`, `force_update.php`, and migration are documented in:
+Commands for `sync` / `sync --force` and `migrate` are documented in:
 
 - [`docs/guides/import-update-lifecycle.md`](docs/guides/import-update-lifecycle.md)
 
@@ -126,7 +126,7 @@ Commands for `sync.php`, `force_update.php`, and migration are documented in:
 
 ---
 
-## 11) Map options (`$api->map_options`)
+## 11) Map options (`$api->mapOptions`)
 
 - [`docs/sdk-reference/map-options.md`](docs/sdk-reference/map-options.md)
 

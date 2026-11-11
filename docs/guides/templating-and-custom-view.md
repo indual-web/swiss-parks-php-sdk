@@ -4,8 +4,8 @@
 
 Templates are located in:
 
-- `swiss-parks-sdk/template/standard/`
-- optionally custom folders, for example `swiss-parks-sdk/template/your-template/`
+- `swiss-parks-sdk/templates/standard/`
+- optionally custom folders, for example `swiss-parks-sdk/templates/your-template/`
 
 Configuration:
 
@@ -20,38 +20,50 @@ Important:
 
 ### Step 1: Activate a custom view class
 
-In `config.php`:
+In `config/config.php`:
 
 ```php
-$config['class_view'] = "MyView";
+$config['class_view'] = 'MyView';
 ```
 
-### Step 2: Use your custom class
+Default is `ParksView`. For the parks.swiss theme helpers use `ParksSwissView` (shipped in `classes/`).
+
+### Step 2: Add your custom class
 
 File: `swiss-parks-sdk/custom/MyView.php`  
-This class extends `ParksView`.
+This class extends `ParksView` and is auto-loaded from `custom/`.
+
+```php
+<?php
+
+class MyView extends ParksView
+{
+
+	public function overwriteTemplateData(array $template_data, object $offer): array
+	{
+
+		return parent::overwriteTemplateData($template_data, $offer);
+	}
+
+}
+```
 
 ### Step 3: Override targeted methods
 
 Common extension points:
 
-- `overwrite_template_data(array $template_data, object $offer): array`
+- `overwriteTemplateData(array $template_data, object $offer): array`
   - Fine-grained template data changes before rendering.
 - Full rendering methods from `ParksView`, for example:
   - `filter(...)`
-  - `list_offers(...)`
+  - `listOffers(...)`
   - `detail(...)`
-  - helper methods like `_get_detail_event(...)`, `_get_detail_product(...)`, etc.
 
 Best practices:
 
 - Override only methods you really need.
 - Prefer extending behavior with `parent::...`.
 - Keep customizations in `custom/`; keep core files update-safe.
-
-Additional example:
-
-- `swiss-parks-sdk/custom/ParksSwissView.php`
 
 ## Related docs
 

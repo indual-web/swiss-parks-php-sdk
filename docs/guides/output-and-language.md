@@ -2,9 +2,9 @@
 
 ## Output mode
 
-- `return_output = false` (default)
+- `returnOutput = false` (default)
   - Methods print output directly (`echo`).
-- `return_output = true`
+- `returnOutput = true`
   - Methods return HTML as string.
 
 Useful for:
@@ -12,16 +12,16 @@ Useful for:
 - CMS integrations with output buffering.
 - Composed layouts where HTML is injected manually.
 
-For WordPress embeds, combine `return_output = true` with `soft_errors = true`. See [WordPress integration](./wordpress-integration.md).
+For WordPress embeds, combine `returnOutput = true` with `soft_errors = true`. See [WordPress integration](./wordpress-integration.md).
 
 ## Multilingual support
 
 Language files:
 
-- `swiss-parks-sdk/language/de.php`
-- `swiss-parks-sdk/language/fr.php`
-- `swiss-parks-sdk/language/it.php`
-- `swiss-parks-sdk/language/en.php`
+- `swiss-parks-sdk/lang/de.php`
+- `swiss-parks-sdk/lang/fr.php`
+- `swiss-parks-sdk/lang/it.php`
+- `swiss-parks-sdk/lang/en.php`
 
 Runtime behavior:
 

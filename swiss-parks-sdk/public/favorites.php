@@ -24,11 +24,11 @@ if (isset($_GET['offer_id']) && ($_GET['offer_id'] > 0)) {
 if ($offer_id > 0) {
 
 	// Initialize SDK and update local database from XML export
-	echo $api->toggle_favorite($offer_id);
+	echo $api->toggleFavorite($offer_id);
 
 }
 
 // Action: remove all favorites
 if (isset($_GET['action']) && ($_GET['action'] == 'clean')) {
-	$api->clean_favorites();
+	$api->cleanFavorites();
 }

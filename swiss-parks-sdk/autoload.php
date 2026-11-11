@@ -68,9 +68,9 @@ define('GINTO_INFOS_AVAILABLE', 1);
 |--------------------------------------------------------------------------
 |
 */
-require_once('config.php');
-if (file_exists(__DIR__ . '/config.local.php')) {
-	require_once(__DIR__ . '/config.local.php');
+require_once __DIR__ . '/config/config.php';
+if (file_exists(__DIR__ . '/config/config.local.php')) {
+	require_once __DIR__ . '/config/config.local.php';
 }
 
 
@@ -93,23 +93,26 @@ if (
 
 /*
 |--------------------------------------------------------------------------
-| Include helper functions
-|--------------------------------------------------------------------------
-|
-*/
-foreach (glob(__DIR__.'/helpers/*.php') as $file_path) {
-	require_once($file_path);
-}
-
-
-/*
-|--------------------------------------------------------------------------
 | Include main SDK classes
 |--------------------------------------------------------------------------
 |
 */
-foreach (glob(__DIR__.'/classes/*.php') as $file_path) {
-	require_once($file_path);
+$class_files = glob(__DIR__ . '/classes/*.php') ?: [];
+usort($class_files, static function (string $a, string $b): int {
+	$rank = static function (string $path): int {
+		$base = basename($path);
+		if ($base === 'ParksView.php') {
+			return 0;
+		}
+		if (str_ends_with($base, 'View.php')) {
+			return 2;
+		}
+		return 1;
+	};
+	return $rank($a) <=> $rank($b) ?: strcmp($a, $b);
+});
+foreach ($class_files as $file_path) {
+	require_once $file_path;
 }
 
 
@@ -119,6 +122,6 @@ foreach (glob(__DIR__.'/classes/*.php') as $file_path) {
 |--------------------------------------------------------------------------
 |
 */
-foreach (glob(__DIR__.'/custom/*.php') as $file_path) {
-	require_once($file_path);
+foreach (glob(__DIR__ . '/custom/*.php') as $file_path) {
+	require_once $file_path;
 }
