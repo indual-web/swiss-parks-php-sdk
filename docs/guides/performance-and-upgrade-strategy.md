@@ -1,4 +1,4 @@
-# Performance and upgrade strategy
+# Performance
 
 ## Performance recommendations
 
@@ -38,32 +38,19 @@
 - Choose a cron interval matching your business needs.
 - Monitor logs in `log_directory`.
 
-## Upgrade strategy
+## Keep upgrades safe
 
-1. Download the new SDK version.
-2. Update core files.
-3. Re-apply/compare only your custom layers (`custom/`, custom templates, `config.php`).
-4. Run `bin/migrate.php` (rebuilds the SQLite database and runs a full import).
-5. Validate:
-   - filter
-   - list
-   - map
-   - detail
-   - multilingual behavior
+Avoid changing core files whenever possible. Prefer:
 
-## Project rule for maintainability
-
-Avoid changing core files whenever possible.
-Use these extension points instead:
-
-- `config.php`
+- `config/config.php`
 - `custom/*.php`
-- `template/<your-folder>/`
+- `templates/<your-folder>/`
 
-This keeps upgrades safe and reduces merge risk.
+Upgrade workflow: [Upgrade guide](./upgrading.md). Version-specific steps: [migrations](./migrations/index.md).
 
 ## Related docs
 
 - [Guide index](./index.md)
+- [Documentation hub](../index.md)
 - [Upgrade guide](./upgrading.md)
 - [Import and update lifecycle](./import-update-lifecycle.md)

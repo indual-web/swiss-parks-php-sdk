@@ -1,15 +1,16 @@
 # Guides
 
-This section contains setup, runtime, and operations guides for the Swiss Parks PHP SDK.
+Start with the [documentation hub](../index.md) (Start → PHP | WordPress | Upgrade). This page lists every guide file.
 
 ## Setup and upgrade
 
 - [New installation](./new-installation.md)
 - [Upgrade guide](./upgrading.md)
-- [Version migrations](./migrations/index.md) (e.g. [v21 to v22](./migrations/21-to-22.md))
-- [Import and update lifecycle (including migration)](./import-update-lifecycle.md)
+- [Version migrations](./migrations/index.md)
+- [Migration: v21 to v22](./migrations/21-to-22.md)
+- [Import and update lifecycle](./import-update-lifecycle.md)
 
-## Integration and runtime
+## Integration
 
 - [Core configuration](./configuration.md)
 - [Quick start integration](./quick-start-integration.md)
@@ -22,4 +23,10 @@ This section contains setup, runtime, and operations guides for the Swiss Parks 
 ## Operations
 
 - [Performance and upgrade strategy](./performance-and-upgrade-strategy.md)
+
+## Reference
+
 - [SDK reference index](../sdk-reference/index.md)
+- [ParksAPI methods](../sdk-reference/parks-api.md)
+- [Filter options](../sdk-reference/filter-options.md)
+- [Map options](../sdk-reference/map-options.md)
