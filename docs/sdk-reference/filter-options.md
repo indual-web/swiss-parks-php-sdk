@@ -1,3 +1,5 @@
+[Docs](../index.md) › [SDK reference](./index.md) › Filter options
+
 # Filter options
 
 Reference for keys that can be passed in `$filter`.

@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Core configuration
+
 # Core configuration (`swiss-parks-sdk/config/config.php`)
 
 This guide documents the most important runtime settings in `swiss-parks-sdk/config/config.php`.

@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Performance
+
 # Performance
 
 ## Performance recommendations

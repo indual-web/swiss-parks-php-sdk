@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Favorites
+
 # Favorites module
 
 This module is optional. If enabled, each offer can show an add/remove favorite link for visitors.

@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Quick start integration
+
 # Quick start integration
 
 Minimal page integration:

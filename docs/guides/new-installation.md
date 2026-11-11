@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › New installation
+
 # New installation guide
 
 This guide describes the first-time setup of the SDK in a new environment.

@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Output mode and multilingual support
+
 # Output mode and multilingual support
 
 ## Output mode

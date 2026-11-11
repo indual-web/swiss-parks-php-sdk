@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Import and update lifecycle
+
 # Import and update lifecycle
 
 This guide documents sync, forced full import, SDK upgrades, and migration.

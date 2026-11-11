@@ -1,3 +1,5 @@
+[Docs](../../index.md) › [Guides](../index.md) › Migrations
+
 # Version migrations
 
 This folder contains **version-specific migration guides** for upgrades that need more than replacing core files and running `migrate.php`.

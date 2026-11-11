@@ -1,6 +1,8 @@
+[Docs](../index.md) › Guides
+
 # Guides
 
-Start with the [documentation hub](../index.md) (Start → PHP | WordPress | Upgrade). This page lists every guide file.
+This page lists every guide file.
 
 ## Setup and upgrade
 

@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › WordPress integration
+
 # WordPress integration
 
 This SDK is CMS-agnostic. There is **no official WordPress plugin** in this repository. Wrap the SDK in your own plugin (recommended) or theme.

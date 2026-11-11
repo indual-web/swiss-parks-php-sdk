@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › SEO URLs
+
 # SEO URLs
 
 If your environment uses SEO routing:

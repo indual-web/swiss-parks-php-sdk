@@ -1,3 +1,5 @@
+[Docs](../index.md) › [SDK reference](./index.md) › ParksAPI methods
+
 # ParksAPI methods
 
 Integrator-facing methods from `ParksAPI`, grouped by purpose.

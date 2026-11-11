@@ -1,3 +1,5 @@
+[Docs](../index.md) › SDK reference
+
 # SDK reference
 
 This reference documents the integrator-facing surface of the Swiss Parks PHP SDK.

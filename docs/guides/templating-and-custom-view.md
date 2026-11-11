@@ -1,3 +1,5 @@
+[Docs](../index.md) › [Guides](./index.md) › Templating and custom view
+
 # Templating and custom view
 
 ## Templating

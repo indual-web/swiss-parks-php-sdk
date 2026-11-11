@@ -1,3 +1,5 @@
+[Docs](../index.md) › [SDK reference](./index.md) › Map options
+
 # Map options
 
 Reference for keys that can be passed in `$api->mapOptions`.
