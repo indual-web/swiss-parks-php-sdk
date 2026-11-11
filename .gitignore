@@ -16,3 +16,16 @@ __pycache__/
 tmp_*.php
 tmp_migrate_structure.py
 tmp_build_helpers.py
+
+# APM (local-only; this repository is public)
+apm.yml
+apm.lock.yaml
+apm_modules/
+.apm/
+AGENTS.md
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+.cursor/
+.agents/
+.mcp.json
