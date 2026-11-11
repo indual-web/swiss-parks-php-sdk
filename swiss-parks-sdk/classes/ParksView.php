@@ -2530,7 +2530,7 @@ class ParksView
 					detailOfferId: 				\'' . $offer->offer_id . '\',
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
 					popupLinkTemplate: 			\'' . $popup_link_template . '\',
-					parksAbbreviation: 			\'' . $this->config['parks'][$offer->parkId] . '\',
+					parksAbbreviation: 			\'' . $this->config['parks'][$offer->park_id] . '\',
 					' . $this->getHostLayerOptions() . '
 					apiKey: 					\'' . $this->config['api_hash'] . '\',
 					disableSidebar: 				true,

@@ -1787,7 +1787,7 @@ class ParksModel
 			$users = [];
 
 			while ($row = $q_users->fetchObject()) {
-				$users[$row->parkId] = $row->park;
+				$users[$row->park_id] = $row->park;
 			}
 
 			return $users;

@@ -875,7 +875,7 @@ class ParksAPI
 				if (! empty($offer)) {
 
 					// Set selected park
-					$this->setSelectedPark($offer->parkId);
+					$this->setSelectedPark($offer->park_id);
 
 					// Load view
 					$return = $this->loadMapsApi();
