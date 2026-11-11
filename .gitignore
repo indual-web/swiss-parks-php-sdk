@@ -10,6 +10,10 @@
 /index.local.php
 /releases/*.zip
 /zip/
+/vendor/
+composer.lock
+.phpunit.cache/
+/tools/phpunit.phar
 .DS_Store
 __pycache__/
 *.pyc
@@ -25,7 +29,7 @@ apm_modules/
 AGENTS.md
 CLAUDE.md
 CLAUDE.local.md
-.claude/
-.cursor/
-.agents/
+.claude
+.cursor
+.agents
 .mcp.json

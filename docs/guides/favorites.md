@@ -19,8 +19,11 @@ This module is optional. If enabled, each offer can show an add/remove favorite 
 ## Storage and lifecycle
 
 - Favorites are stored in a cookie named `<session_name>_favorites`.
-- The cookie stores offer IDs and is updated when visitors add/remove favorites.
+- The cookie value is JSON (offer ID map), handled by `ParksFavorites`. Invalid or legacy non-JSON payloads are ignored (empty favorites).
+- Cookie flags: `path=/`, `SameSite=Lax`, and `Secure` when the request is HTTPS.
+- The cookie is updated when visitors add/remove favorites.
 - A clean action is available to clear all favorites.
+- There is no CSRF token on the drop-in endpoint; WordPress/CMS wrappers should use their own nonce if they expose a custom favorites URL.
 
 ## Endpoints and methods
 

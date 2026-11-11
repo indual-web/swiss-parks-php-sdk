@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| Logger
+| Built by indual · www.indual.ch
 |
 */
 
@@ -71,7 +69,6 @@ class ParksLog
 		$line = date("Y-m-d H:i:s") . "\t" . $level . "\t" . $message . "\n";
 		file_put_contents($this->logfile, $line, FILE_APPEND);
 	}
-
 
 
 }

@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| ParksFormat
+| Built by indual · www.indual.ch
 |
 */
 
@@ -14,48 +12,52 @@ class ParksFormat
 {
 
 
+	/**
+	 * Format multi-line contact/address text: link URLs and emails, optional strong first line
+	 */
 	public static function autoTextFormat(string $string, bool $first_line_strong = false): string {
 
 		$return = '';
 		if ($string != '') {
 
-			// Explode lines
+			// Process line by line so each value can become a link or stay plain text
 			$is_first_line = true;
 			$new_lines = explode("\n", $string);
 
 			if (! empty($new_lines)) {
 				foreach ($new_lines as $line) {
+
+					// Skip list markers that appear as a lone dash
 					if ($line != '-') {
 
-						// Trim line
 						$line = trim($line);
 
-						// Check URLs
+						// Bare www-hosts are not valid URLs for filter_var without a scheme
 						if (substr($line, 0, 4) == 'www.') {
 							$line = 'http://'.$line;
 						}
 
-						// Make first line strong
+						// Optionally wrap only the first non-empty content line
 						if (($first_line_strong == true) && ($is_first_line == true)) {
 							$return .= '<strong>';
 						}
 
-						// Return URL
+						// Whole line is a URL: show host without scheme, open in a new tab
 						if (! empty($line) && (filter_var($line, FILTER_VALIDATE_URL) == true)) {
 							$return .= '<a href="'.$line.'" class="external_link" target="_blank">'.str_replace(['http://', 'https://'], '', $line).'</a><br>';
 						}
 
-						// Return email
+						// Whole line is an email: use obfuscated mailto to hinder scrapers
 						else if (! empty($line) && (filter_var($line, FILTER_VALIDATE_EMAIL) == true)) {
 							$return .= self::safeMailto($line, $line, ['class' => 'email_link']).'<br>';
 						}
 
-						// Return line without changes
+						// Plain text line
 						else {
 							$return .= $line.'<br>';
 						}
 
-						// Close strong first line
+						// Close the optional strong wrapper after the first line
 						if (($first_line_strong == true) && ($is_first_line == true)) {
 							$return .= '</strong>';
 							$first_line_strong = false;
@@ -64,7 +66,7 @@ class ParksFormat
 				}
 			}
 
-			// Remove duplicated breaklines
+			// Collapse accidental double breaks from empty lines
 			$return = str_replace('<br><br>', '<br>', $return);
 
 		}
@@ -144,16 +146,19 @@ class ParksFormat
 			$title = $email;
 		}
 
+		// Build the anchor as character chunks; values prefixed with "|" are written as HTML entities
 		for ($i = 0; $i < 16; $i++) {
 			$x[] = substr('<a href="mailto:', $i, 1);
 		}
 
+		// Encode the address so it never appears as plain text in the HTML source
 		for ($i = 0; $i < strlen($email); $i++) {
 			$x[] = "|".ord(substr($email, $i, 1));
 		}
 
 		$x[] = '"';
 
+		// Optional HTML attributes: array values are entity-encoded, string attrs are left as-is
 		if ($attributes != '') {
 			if (is_array($attributes)) {
 				foreach ($attributes as $key => $val) {
@@ -173,6 +178,7 @@ class ParksFormat
 
 		$x[] = '>';
 
+		// Link text: ASCII as entities; multi-byte UTF-8 sequences are decoded to a single code point
 		$temp = [];
 		for ($i = 0; $i < strlen($title); $i++) {
 			$ordinal = ord($title[$i]);
@@ -197,6 +203,7 @@ class ParksFormat
 
 		$x[] = '<'; $x[] = '/'; $x[] = 'a'; $x[] = '>';
 
+		// Reverse so the JS loop can reconstruct the markup without the full address in source order
 		$x = array_reverse($x);
 		ob_start();
 
@@ -358,6 +365,7 @@ class ParksFormat
 	public static function autoLinkHtml(string $str, string $type = 'both', bool $popup = false): string
 	{
 
+		// Split into tags and text nodes so we never rewrite attribute values
 		$parts = preg_split('/(<[^>]+>)/', $str, -1, PREG_SPLIT_DELIM_CAPTURE);
 		if ($parts === false) {
 			return self::autoLink($str, $type, $popup);
@@ -394,6 +402,7 @@ class ParksFormat
 				continue;
 			}
 
+			// Bare URLs and emails in free text only
 			$result .= self::autoLink($part, $type, $popup);
 		}
 
@@ -413,7 +422,9 @@ class ParksFormat
 			return self::autoLinkHtml($text, 'both', true);
 		}
 
+		// Plain text: preserve line breaks, then auto-link
 		return self::autoLink(nl2br($text), 'both', true);
 	}
+
 
 }

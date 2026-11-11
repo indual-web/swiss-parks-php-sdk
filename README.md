@@ -156,13 +156,24 @@ Commands for `sync` / `sync --force` and `migrate` are documented in:
 
 ---
 
-## 16) Performance and Upgrade Strategy
+## 16) Tests (Git checkout only)
+
+PHPUnit and Composer are **dev tooling** for the Git repository. They are not part of the release ZIP. CI runs the suite on PHP 8.2–8.5.
+
+- Focus: favorites cookie helpers (`ParksFavorites`) and a few pure `ParksFormat` checks — not full render/import coverage
+- Install: `composer install`
+- Run: `vendor/bin/phpunit` (or `composer test`)
+- Sync smoke: `bash swiss-parks-sdk/bin/sync-smoke.sh` (full sync + offer count) or `--quick` (DB count only). Skips with exit `0` when `api_hash` is unset.
+
+---
+
+## 17) Performance and Upgrade Strategy
 
 - [`docs/guides/performance-and-upgrade-strategy.md`](docs/guides/performance-and-upgrade-strategy.md)
 
 ---
 
-## 17) Contact
+## 18) Contact
 
 More information:
 

@@ -1,9 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
+|
+| Built by indual · www.indual.ch
 |
 | Sync offer data from XML export
 |

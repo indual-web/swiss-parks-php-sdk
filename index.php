@@ -1,9 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK — example integration
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
+|
+| Built by indual · www.indual.ch
 |
 | Copy this file into your project and adapt language, filters, and layout.
 | Before first use, set api_hash and park_id in swiss-parks-sdk/config/config.php
@@ -44,9 +44,11 @@ $api->mapOptions = [];
 	<title>Swiss Parks PHP SDK — Example</title>
 
 	<!--
-		Required SDK frontend assets (CSS + JS). Host them yourself or keep this CDN.
-		Use a parks.min.js that knows container id "swiss-parks-map" (staging-map below).
-		Older builds still look for "mapContainer" and the map tab will stay empty.
+		Required SDK frontend assets (CSS + JS) for SDK line v22:
+		- parks.min.css / parks.min.js under …/dist/frontend/v22/
+		- Currently staging (swap to the production host before a public release)
+		- parks.min.js must target container id "swiss-parks-map"
+		  Older builds still look for "mapContainer" and the map tab stays empty
 	-->
 	<link href="https://staging-map.angebote.paerke.ch/dist/frontend/v22/css/parks.min.css" rel="stylesheet">
 	<script type="module" src="https://staging-map.angebote.paerke.ch/dist/frontend/v22/parks.min.js"></script>

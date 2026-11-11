@@ -47,7 +47,7 @@ Wrap bootstrap in `try/catch` when `soft_errors` is enabled.
 The WordPress layer should own:
 
 - Shortcodes or page templates
-- `wp_enqueue_style` / `wp_enqueue_script` for `parks.min.css` / `parks.min.js` (and map assets if needed)
+- `wp_enqueue_style` / `wp_enqueue_script` for the SDK `v22` `parks.min.css` / `parks.min.js` (same staging/production URLs as in `index.php`; map assets if needed)
 - Cron or WP-CLI calling `bin/sync.sh` / `bin/sync.php` (do not expose sync publicly)
 - SEO rewrite rules / query vars when `seo_urls` is enabled
 - Favorites endpoint wiring via `favorites_script_path`

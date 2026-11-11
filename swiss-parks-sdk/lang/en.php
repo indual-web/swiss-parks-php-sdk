@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| German language file
+| Built by indual · www.indual.ch
 |
 */
 

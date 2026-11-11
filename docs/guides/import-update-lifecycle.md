@@ -56,6 +56,7 @@ git push origin 22
 - Cron: `bin/sync.sh` (incremental).
 - Incomplete data: `bin/sync.sh --force`.
 - Schema / SDK upgrade: `bin/upgrade-sdk.sh` or `bin/migrate.sh` when core files are already updated.
+- Smoke check (Git checkout): `bin/sync-smoke.sh` or `bin/sync-smoke.sh --quick`.
 - Favorites HTTP endpoint (optional): `public/favorites.php`.
 
 ## Related docs

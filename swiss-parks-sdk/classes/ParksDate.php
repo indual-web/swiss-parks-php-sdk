@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| ParksDate
+| Built by indual · www.indual.ch
 |
 */
 
@@ -14,6 +12,9 @@ class ParksDate
 {
 
 
+	/**
+	 * Format an offer date range (and optional time list) for detail/list output
+	 */
 	public static function formatOfferDate(array $date, ParksLanguage $lang): string {
 
 		$return = '';
@@ -54,9 +55,10 @@ class ParksDate
 
 		if (empty($date['times'])) {
 
-			// Date to
+			// Single range (no discrete time list): append "to" date/time when it differs
 			if (! empty($date['date_to']) && ! empty($date['date_to']['date']) && ($date['date_from'] != $date['date_to'])) {
 
+				// Show the connector when the end day or a non-midnight end time differs
 				if (($date['date_from']['date'] != $date['date_to']['date']) || (! empty($date['date_to']['hour']) && ($date['date_to']['hour'] != '00'))) {
 					$return .= ' '.$lang->get('general_to').' ';
 				}
@@ -110,6 +112,7 @@ class ParksDate
 
 			$date_explode = explode("-", $date);
 
+			// MySQL zero-dates and incomplete values must not become 01.01.1970
 			if (count($date_explode) < 3 || (intval($date_explode[0]) == 0) && (intval($date_explode[1]) == 0) && (intval($date_explode[2]) == 0)) {
 				return '';
 			}
@@ -287,5 +290,6 @@ class ParksDate
 
 		return $return;
 	}
+
 
 }

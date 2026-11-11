@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| Main model
+| Built by indual · www.indual.ch
 |
 */
 
@@ -325,6 +323,7 @@ class ParksModel
 	public function getFilterMeta(array $filter): array|false
 	{
 
+		// Reuse the last meta payload when the filter has not changed
 		$cache_key = md5(serialize($filter));
 		if ($this->filterMetaCacheKey === $cache_key) {
 			return $this->filterMetaCache;
@@ -338,6 +337,7 @@ class ParksModel
 			return false;
 		}
 
+		// category_ids arrive as a comma-separated GROUP_CONCAT string
 		$category_ids = [];
 		if (! empty($result->category_ids)) {
 			foreach (explode(',', (string) $result->category_ids) as $category_id) {
@@ -348,6 +348,7 @@ class ParksModel
 			}
 		}
 
+		// park_pairs use RS/US separators from GROUP_CONCAT(park_id || US || name)
 		$parks = [];
 		if (! empty($result->park_pairs)) {
 			foreach (explode("\x1e", (string) $result->park_pairs) as $pair) {
@@ -883,6 +884,8 @@ class ParksModel
 			if (! empty($search_words)) {
 				$fts_match = $this->buildFtsMatchQuery($search_words);
 				if ($fts_match !== '' && $this->api->db->isOfferFtsAvailable()) {
+
+					// Numeric tokens also match offer_id directly (handy for support lookups)
 					$id_matches = [];
 					foreach ($search_words as $word) {
 						if (ctype_digit($word)) {
@@ -899,6 +902,8 @@ class ParksModel
 						? '(' . implode(' OR ', $id_matches) . ' OR ' . $fts_clause . ')'
 						: $fts_clause;
 				} else {
+
+					// No FTS table: AND across words, OR across many i18n/keyword columns
 					$search_query = "(";
 					foreach ($search_words as $word) {
 						$word = $this->api->db->escape($word);
@@ -1369,6 +1374,7 @@ class ParksModel
 			}
 		}
 
+		// Attach batch-loaded relations; keep target groups in catalogue sort order
 		foreach ($offers as $offer) {
 			$offer_id = (int) $offer->offer_id;
 
@@ -1397,6 +1403,7 @@ class ParksModel
 			$offer->dates = $dates_by_offer[$offer_id] ?? [];
 			$offer->images = $images_by_offer[$offer_id] ?? [];
 
+			// Status is only meaningful for project/research root categories
 			if (in_array($offer->root_category, [CATEGORY_PROJECT, CATEGORY_RESEARCH])) {
 				$offer->project_status = $offer->status ?? null;
 			}
@@ -1488,6 +1495,8 @@ class ParksModel
 			if ($offer->online_shop_enabled == true) {
 				$language_priority = $this->api->config['language_priority'][$this->api->lang->langId];
 				if (! empty($language_priority) && is_array($language_priority)) {
+
+					// Nested CASE picks the best available article language for the current UI lang
 					$q_articles = $this->api->db->query("
 
 						SELECT *
@@ -1556,7 +1565,7 @@ class ParksModel
 			}
 		}
 
-		// Poi
+		// POI CSV may reference deleted offers; keep only IDs that still exist
 		if (! empty($offer->poi) && ($offer->poi != '') && ! is_array($offer->poi)) {
 			$poi = explode(',', $offer->poi);
 			$existing_poi = [];
@@ -1578,7 +1587,7 @@ class ParksModel
 			$offer->poi = $existing_poi;
 		}
 
-		// Linked routes
+		// Activities that list this offer in their poi CSV are reverse-linked routes
 		$linked_routes = [];
 		$q_linked_routes = $this->api->db->query("
 			SELECT offer_id
@@ -1597,6 +1606,8 @@ class ParksModel
 				}
 			}
 			$candidate_ids = array_values(array_unique($candidate_ids));
+
+			// Drop candidates whose offer row was removed after the activity link was stored
 			if (! empty($candidate_ids)) {
 				$q_poi = $this->api->db->query("
 					SELECT offer_id
@@ -1690,6 +1701,8 @@ class ParksModel
 
 			$q_additional = $this->buildAdditionalInfosSql($filter);
 			if (! empty($q_additional)) {
+
+				// Keep root categories visible even when no child matches the filter
 				$q_categories_string .= "AND (1 " . $q_additional . ") OR (c1.parent_id = 0)";
 			}
 		}
@@ -2049,11 +2062,15 @@ class ParksModel
 			if ($word === '') {
 				continue;
 			}
+
+			// Strip FTS operators/punctuation so user input cannot break MATCH syntax
 			$word = preg_replace('/[^\p{L}\p{N}_]+/u', ' ', $word) ?? '';
 			$word = trim($word);
 			if ($word === '') {
 				continue;
 			}
+
+			// Quoted token + trailing * = phrase prefix match; words combined with AND
 			$parts[] = '"' . str_replace('"', '', $word) . '"*';
 		}
 
@@ -2101,6 +2118,7 @@ class ParksModel
 								$additional_query .= " AND offer.contact_is_park_partner = '" . $value . "'";
 								break;
 
+							// Handled elsewhere or not expressible as a simple offer column
 							case 'search':
 							case 'order_by':
 							case 'has_accessibility_informations':
@@ -2112,6 +2130,8 @@ class ParksModel
 								break;
 
 							default:
+
+								// Remaining keys map 1:1 to offer columns (callers must pass known fields only)
 								if (! empty($key) && is_string($key) && (strlen($key) > 2)) {
 									$additional_query .= " AND offer." . $key . " = '" . $value . "'";
 								}
@@ -2198,7 +2218,6 @@ class ParksModel
 
 		return false;
 	}
-
 
 
 }

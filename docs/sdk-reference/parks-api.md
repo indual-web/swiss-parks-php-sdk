@@ -58,7 +58,7 @@ Parameters:
 ### `showFavorites()`
 
 - Renders favorites overview (or detail view if current request is detail).
-- Uses visitor favorites from the favorites cookie/session context.
+- Uses visitor favorites from the favorites cookie (JSON offer IDs) / session context.
 - If no favorites exist, renders a localized empty message.
 
 ### `show_total()`
@@ -134,7 +134,7 @@ Parameters:
 ### `toggleFavorite($offer_id)`
 
 - Adds/removes one offer ID from favorites.
-- Persists state in the favorites cookie.
+- Persists state in the favorites cookie as JSON (`SameSite=Lax`, `Secure` on HTTPS).
 - Returns `true` when added, `false` when removed or not possible.
 
 Parameters:

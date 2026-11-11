@@ -28,7 +28,9 @@ No database server is required: the SDK stores all data in a local SQLite file t
    - The `offer` table contains entries.
 6. Integrate SDK rendering into your project pages based on `index.php`.
    - Add the SDK bootstrap and rendering calls (`showOffersFilter`, `showOffersList`, `showOffersMap`, `showOfferDetail`) in your own template/page code.
-   - Include the required frontend assets in your template (`parks.min.css` and `parks.min.js`), as shown in `index.php`.
+   - Include the required frontend assets in your template (`parks.min.css` and `parks.min.js` from the `v22` frontend path), as shown in `index.php`.
+   - Until the public release, the example uses the staging host `https://staging-map.angebote.paerke.ch/dist/frontend/v22/…`. Switch to the production CDN host before going live.
+   - Use a `parks.min.js` build that looks for map container id `swiss-parks-map` (older builds expect `mapContainer` and leave the map tab empty).
 7. Configure a recurring cronjob (for example every 4 hours).
 
 ## Verification checklist

@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| Default view class for the SDK
+| Built by indual · www.indual.ch
 |
 */
 
@@ -2423,7 +2421,7 @@ class ParksView
 	/**
 	 * Get overview map
 	 */
-	public function getOverviewMap(array $offers, bool $poi_detail = false, int $offer_id = 0): ?string
+	protected function getOverviewMap(array $offers, bool $poi_detail = false, int $offer_id = 0): ?string
 	{
 
 		if (empty($offers)) {
@@ -3144,7 +3142,6 @@ class ParksView
 		// Set detail url
 		return $url;
 	}
-
 
 
 }

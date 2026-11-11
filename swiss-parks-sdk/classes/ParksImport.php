@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| Import XML data into database
+| Built by indual · www.indual.ch
 |
 */
 
@@ -1253,6 +1251,8 @@ class ParksImport
 	 */
 	private function formatContactAddress(object $contact): string
 	{
+
+		// Multi-line contact block for autoTextFormat (company, name, address, phones, email, URL)
 		$address = [];
 
 		if (! empty($contact->Company)) {
@@ -1260,6 +1260,8 @@ class ParksImport
 		}
 
 		if (! empty($contact->FirstName) || ! empty($contact->LastName)) {
+
+			// Named key keeps the person line in place when company is missing
 			$address['name'] = '';
 			
 			if (! empty($contact->FirstName)) {
@@ -1297,6 +1299,7 @@ class ParksImport
 			$address[] = $contact->Email;
 		}
 
+		// Skip scheme-only placeholders from the XML export
 		if (! empty($contact->URL) && ($contact->URL != 'https://') && ($contact->URL != 'http://')) {
 			$address[] = $contact->URL;
 		}
@@ -1316,7 +1319,6 @@ class ParksImport
 
 		return $result->id;
 	}
-
 
 
 }

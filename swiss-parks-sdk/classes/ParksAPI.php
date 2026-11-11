@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| Main SDK class
+| Built by indual · www.indual.ch
 |
 */
 
@@ -229,7 +227,7 @@ class ParksAPI
 					// Get favorites
 					$this->favoritesCookieName = $this->config['session_name'] . '_favorites';
 					if (! empty($_COOKIE[$this->favoritesCookieName])) {
-						$this->favorites = unserialize($_COOKIE[$this->favoritesCookieName], ['allowed_classes' => false]) ?: [];
+						$this->favorites = ParksFavorites::parseCookie((string) $_COOKIE[$this->favoritesCookieName]);
 					}
 
 				}
@@ -952,8 +950,7 @@ class ParksAPI
 				$return = true;
 			}
 
-			// Save cookie
-			setcookie($this->favoritesCookieName, serialize($this->favorites), time() + (60 * 60 * 24 * 365), '/');
+			$this->saveFavoritesCookie($this->favorites);
 
 			return $return;
 		}
@@ -969,9 +966,25 @@ class ParksAPI
 	public function cleanFavorites(): void
 	{
 
-		// Empty cookie
-		setcookie($this->favoritesCookieName, '', time(), '/');
+		$this->favorites = [];
+		$this->saveFavoritesCookie([]);
 
+	}
+
+
+
+	/**
+	 * Persist favorites cookie as JSON
+	 */
+	private function saveFavoritesCookie(array $favorites): void
+	{
+
+		$empty = empty($favorites);
+		setcookie(
+			$this->favoritesCookieName,
+			$empty ? '' : ParksFavorites::encodeCookie($favorites),
+			ParksFavorites::cookieOptions($empty, ParksFavorites::requestIsSecure())
+		);
 	}
 
 
@@ -1125,6 +1138,8 @@ class ParksAPI
 			if ($q_api->numRows > 0) {
 				$this->api = $q_api->fetchObject();
 			} else {
+
+				// First boot: create the api row so later requests can detect init state
 				$this->api = (object) [
 					'initialized' => 0,
 					'version' => SDK_VERSION,
@@ -1133,17 +1148,17 @@ class ParksAPI
 				$this->db->insert('api', (array)$this->api);
 			}
 
+			// Schema may already be newer than the stored version; migrate is a separate step
 			if (version_compare((string) SDK_VERSION, (string) $this->api->version, '>')) {
 				$this->logger->info('The current SDK version is out of date. Please run: bash bin/migrate.sh');
 			}
 
 			if (! $this->api->initialized) {
 
-				// Initialize SDK
+				// First successful import marks the SDK as initialized
 				$xml = $this->config['xml_export_offer_url'] . $this->hash;
 				$xml_map_layer =  $this->config['xml_export_map_layer_url'] . $this->hash;
 
-				// Import data from XML into database
 				$import_ok = $this->import->import($xml);
 				$this->import->importMapLayers($xml_map_layer);
 
@@ -1172,7 +1187,7 @@ class ParksAPI
 	/**
 	 * Set current selected park
 	 */
-	public function setSelectedPark(?int $parkId = null): void
+	private function setSelectedPark(?int $parkId = null): void
 	{
 
 		// Init park id
@@ -1194,7 +1209,7 @@ class ParksAPI
 	/**
 	 * Validate hash
 	 */
-	public function validateHash(): bool
+	private function validateHash(): bool
 	{
 		$validate = file_get_contents($this->config['xml_export_url'] . 'validate/' . $this->hash);
 
@@ -1212,7 +1227,7 @@ class ParksAPI
 	/**
 	 * Init filter
 	 */
-	public function initFilter(): void
+	private function initFilter(): void
 	{
 
 		// Init
@@ -1289,7 +1304,7 @@ class ParksAPI
 	/**
 	 * Reset filter
 	 */
-	public function resetFilter(): void
+	private function resetFilter(): void
 	{
 		$this->filterData = [];
 		if ($this->config['use_sessions']) {
@@ -1484,7 +1499,7 @@ class ParksAPI
 	/**
 	 * Load map api
 	 */
-	public function loadMapsApi(): ?string
+	private function loadMapsApi(): ?string
 	{
 		if ($this->config['prevent_css_js_include'] == false) {
 
@@ -1505,24 +1520,27 @@ class ParksAPI
 	/**
 	 * Flatten category tree for select-field options
 	 */
-	public function flattenCategoriesForSelect(array $categories, int $index = 0, int $level = 0): array
+	private function flattenCategoriesForSelect(array $categories, int $index = 0, int $level = 0): array
 	{
+
 		$return = [];
 
-		// Get main category on top
+		// Detect the top-level root category for special Product handling below
 		$main_category = [];
 		if (isset($categories[0]) && is_array($categories[0])) {
 			$main_category = array_keys($categories[0]);
 			$main_category = reset($main_category);
 		}
 
-		// Special cases
+		// Product-only trees start under Gastronomy-and-Accommodation for the select UI
 		if (($level == 0) && ($index == 0) && ($main_category == CATEGORY_PRODUCT) && isset($categories[CATEGORY_GASTRONOMY_AND_ACCOMMODATION]) && (count($categories[CATEGORY_PRODUCT]) == 1)) {
 			$index = CATEGORY_GASTRONOMY_AND_ACCOMMODATION;
 		}
 
 		if (isset($categories[$index]) && ! empty($categories[$index])) {
 			foreach ($categories[$index] as $id => $category) {
+
+				// Level rules: skip intermediate Activity/Product/Gastronomy nodes in the flat list
 				if (
 					(($level != 0) || in_array($id, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
 					&&
@@ -1536,6 +1554,8 @@ class ParksAPI
 				if (isset($categories[$id])) {
 					$childs = $this->flattenCategoriesForSelect($categories, $id, $level + 1);
 					if (! empty($childs)) {
+
+						// Nest children under a label for Activity/Product/Gastronomy branches; otherwise merge flat
 						if (
 							(($level == 0) && ! in_array($id, [CATEGORY_ACTIVITY, CATEGORY_PRODUCT]))
 							||
@@ -1560,7 +1580,7 @@ class ParksAPI
 	/**
 	 * Group categories by parent id for filter UI
 	 */
-	public function groupCategoriesByParent(array|false $categories = false): array
+	private function groupCategoriesByParent(array|false $categories = false): array
 	{
 		$return = [];
 		$parents = [];
@@ -1603,7 +1623,7 @@ class ParksAPI
 	/**
 	 * Security checks
 	 */
-	public function securityChecks(): void
+	private function securityChecks(): void
 	{
 
 		// Nothing to sanitize
@@ -1659,19 +1679,9 @@ class ParksAPI
 
 
 	/**
-	 * Add slashes
-	 */
-	public function addSlashes(mixed &$item, mixed $key): void
-	{
-		$item = (! is_array($item) ? addslashes($item) : $item);
-	}
-
-
-
-	/**
 	 * Get SDK configuration
 	 */
-	public function getConfig(): array
+	private function getConfig(): array
 	{
 
 		// Load config file
@@ -1950,10 +1960,12 @@ class ParksAPI
 			return false;
 		}
 
+		// CLI sync of large exports needs a higher ceiling than typical web requests
 		if (PHP_SAPI === 'cli') {
 			@ini_set('memory_limit', '512M');
 		}
 
+		// Stream into a temp file so the full XML is not held in PHP memory twice
 		$tmp_path = tempnam(sys_get_temp_dir(), 'parks-xml-');
 		if ($tmp_path === false) {
 			return false;
@@ -1971,6 +1983,7 @@ class ParksAPI
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLOPT_FAILONERROR, true);
 
+		// Integrators may disable verify for local/dev endpoints via curl_verify_ssl
 		$verify_ssl = $this->config['curl_verify_ssl'] ?? true;
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, $verify_ssl ? 2 : 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $verify_ssl);
@@ -1981,6 +1994,7 @@ class ParksAPI
 		unset($ch);
 		fclose($fp);
 
+		// Treat transport errors, HTTP failures and empty bodies as missing XML
 		if (($ok === false) || ($curl_errno !== 0) || ($http_code >= 400) || (filesize($tmp_path) === 0)) {
 			@unlink($tmp_path);
 			return false;

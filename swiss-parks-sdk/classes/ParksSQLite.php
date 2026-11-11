@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| SQLite connection and queries
+| Built by indual · www.indual.ch
 |
 */
 
@@ -162,6 +160,8 @@ class ParksSQLite
 				tokenize = 'unicode61 remove_diacritics 2'
 			)
 		";
+
+		// Older SQLite builds without FTS5 fall back to LIKE search
 		if ($this->connection->exec($create_sql) === false) {
 			$this->offerFtsAvailable = false;
 			return;
@@ -169,10 +169,12 @@ class ParksSQLite
 
 		$this->offerFtsAvailable = true;
 
+		// Fresh schema is filled by the upcoming import; nothing to backfill yet
 		if ($fresh_schema) {
 			return;
 		}
 
+		// Existing DB with offers but empty FTS (e.g. upgrade): rebuild once
 		$fts_count = $this->connection->query('SELECT COUNT(*) AS total FROM offer_fts');
 		$offer_count = $this->connection->query('SELECT COUNT(*) AS total FROM offer');
 		if ($fts_count === false || $offer_count === false) {
@@ -198,6 +200,7 @@ class ParksSQLite
 			return false;
 		}
 
+		// Partial rebuild for changed offers; full wipe when no ID list is given
 		$where = '';
 		if ($offer_ids !== null) {
 			$ids = array_values(array_unique(array_filter(array_map('intval', $offer_ids))));
@@ -215,6 +218,7 @@ class ParksSQLite
 			}
 		}
 
+		// One searchable body per offer/language: keywords plus the main i18n text fields
 		$sql = "
 			INSERT INTO offer_fts (offer_id, language, body)
 			SELECT
@@ -641,7 +645,6 @@ class ParksSQLite
 		}, -1);
 
 	}
-
 
 
 }

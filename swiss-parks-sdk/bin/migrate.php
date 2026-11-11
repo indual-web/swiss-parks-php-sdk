@@ -1,11 +1,9 @@
 <?php
 /*
-|-----------------------------------------------------------------------
 | Swiss Parks PHP SDK
 | https://github.com/indual-web/swiss-parks-php-sdk
-|-----------------------------------------------------------------------
 |
-| Rebuild database and run full import
+| Built by indual · www.indual.ch
 |
 */
 require __DIR__ . '/../autoload.php';
