@@ -45,7 +45,7 @@ class ParksDate
 
 		// Show all times
 		if (! empty($date['times'])) {
-			$return .= self::parksShowTimes($date['times']);
+			$return .= self::formatOfferTimes($date['times']);
 		}
 
 		// Show time from

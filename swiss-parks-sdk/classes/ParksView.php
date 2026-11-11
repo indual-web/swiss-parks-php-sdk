@@ -2421,7 +2421,7 @@ class ParksView
 	/**
 	 * Get overview map
 	 */
-	protected function getOverviewMap(array $offers, bool $poi_detail = false, int $offer_id = 0): ?string
+	public function getOverviewMap(array $offers, bool $poi_detail = false, int $offer_id = 0): ?string
 	{
 
 		if (empty($offers)) {
