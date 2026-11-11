@@ -71,7 +71,7 @@ The renderer writes camelCase keys that match the interactive map schema. Notabl
 
 ## Assets
 
-`ParksAPI::_load_maps_api()` loads only the map CSS and the ES module JS (`type="module"`). React and ArcGIS assets are bundled inside `swiss-parks-map`; do not load React 18 or ArcGIS 4.x CSS from the host page.
+The SDK loads only the map CSS and the ES module JS (`type="module"`) when rendering maps. React and ArcGIS assets are bundled inside `swiss-parks-map`; do not load React 18 or ArcGIS 4.x CSS from the host page.
 
 Base URL comes from `interactive_map_url` in `config.php` (default: `https://map.parks.swiss`). Assets: `{interactive_map_url}/dist/css/style.css` and `{interactive_map_url}/dist/js/swiss-parks-map.umd.js`.
 

@@ -23,7 +23,7 @@ Optional for SDK development in git: create `config.local.php` next to `config.p
   - Verifies SSL certificates for export requests to `angebote.paerke.ch`.
   - If import/update fails with SSL or cURL HTTPS errors on shared hosting, set to `false` in `config.php` as a fallback.
 - `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_api_migration`)
-  - Endpoint for `log_migration()` after a successful `migrate.php` run. Also uses `curl_verify_ssl`. Requests are HMAC-SHA256 signed with `api_hash` (`X-Api-Migration-Signature`); the server verifies the hash against a known export configuration.
+  - Endpoint for `logMigration()` after a successful `migrate.php` run. Also uses `curl_verify_ssl`. Requests are HMAC-SHA256 signed with `api_hash` (`X-Api-Migration-Signature`); the server verifies the hash against a known export configuration.
 
 ## Runtime mode: single park vs network-wide
 

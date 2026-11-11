@@ -61,12 +61,12 @@ Parameters:
 - Uses visitor favorites from the favorites cookie (JSON offer IDs) / session context.
 - If no favorites exist, renders a localized empty message.
 
-### `show_total()`
+### `showTotal()`
 
 - Returns/prints total pages label text (localized `offer/offers` label).
 - Useful after list rendering where total pages are known.
 
-### `show_offer_poi_list($poi = NULL)`
+### `showOfferPoiList($poi = NULL)`
 
 - Utility method to resolve POI offer IDs into offer objects.
 - Mainly used by map/detail rendering internals and custom extensions.
@@ -77,17 +77,17 @@ Parameters:
 
 ## Data access methods
 
-### `get_offers_list($park_id = NULL, $categories = [], $page = NULL, $limit = NULL, $filter = [], $ignore_filter = false, $return_minimal = false, $map_mode = false)`
+### `getOffersList($park_id = NULL, $categories = [], $page = NULL, $limit = NULL, $filter = [], $ignore_filter = false, $return_minimal = false, $map_mode = false)`
 
 - Returns offers as `array` with keys `data` and `total` (empty when no matches).
 - Wraps the internal query pipeline used by overview rendering.
 
-### `count_offers_by_category($park_id = NULL, $categories = [], $filter = [])`
+### `countOffersByCategory($park_id = NULL, $categories = [], $filter = [])`
 
 - Returns category counts as `stdClass|false` (`event_count`, `booking_count`, `activity_count`, `product_count`, `project_count`).
 - Used internally to decide which filter UI elements to show.
 
-### `get_filter_categories($park_id = NULL, $categories = [], $filter = [])`
+### `getFilterCategories($park_id = NULL, $categories = [], $filter = [])`
 
 - Returns `ParksSQLiteResult|false` with `category_id` rows for categories that have matching offers.
 
@@ -100,7 +100,7 @@ Common parameters:
 - `$ignore_filter` (`bool`): bypass active visitor filter state when needed.
 - `$map_mode` (`bool`): optimize payload for map scenarios.
 
-### `get_offer_detail($offer_id)`
+### `getOfferDetail($offer_id)`
 
 - Returns one normalized offer object by ID.
 
@@ -108,11 +108,11 @@ Parameters:
 
 - `$offer_id` (`int`)
 
-### `get_categories_list()`
+### `getCategoriesList()`
 
 - Returns all categories.
 
-### `get_categories_list_for_select()`
+### `getCategoriesListForSelect()`
 
 - Returns category tree data formatted for select/dropdown use cases.
 
@@ -123,11 +123,11 @@ Parameters:
 - Returns `true` if current request resolves to a detail page.
 - Supports both parameter-based and SEO URL detail detection.
 
-### `is_filter_activated()`
+### `isFilterActivated()`
 
 - Returns whether a filter is currently active in runtime state.
 
-### `get_filter_data()`
+### `getFilterData()`
 
 - Returns normalized active filter values from runtime state.
 
@@ -182,15 +182,15 @@ Parameters:
 Static factories for CLI scripts (no page rendering bootstrap):
 
 - `ParksAPI::forScript()` — used by `sync.php` (`--force` for full import)
-- `ParksAPI::forMigration()` — used by `migrate.php` (also skips `_setup()`)
+- `ParksAPI::forMigration()` — used by `migrate.php` (also skips page setup)
 
 ### `migrate()`
 
 - Rebuilds the SQLite database: deletes the database file, recreates it with the current schema, and runs a full import.
-- On success, reports the migration to the central log via `log_migration()` (failure to log does not fail the migration).
+- On success, reports the migration to the central log via `logMigration()` (failure to log does not fail the migration).
 - Returns `true` when the SDK is initialized after import, `false` otherwise.
 
-### `log_migration(int $version_to = 0)`
+### `logMigration(int $version_to = 0)`
 
 - Sends a JSON payload to `migration_log_url` matching the `log_api_migration` endpoint contract.
 - Required fields: `api_version`, `url`, `hash` (`api_hash`). Skips the request when `api_hash` is empty.
