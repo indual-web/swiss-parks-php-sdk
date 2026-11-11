@@ -13,9 +13,10 @@
 /vendor/
 composer.lock
 .phpunit.cache/
-/tools/phpunit.phar
+/tools
 .DS_Store
 __pycache__/
+/.vscode
 *.pyc
 tmp_*.php
 tmp_migrate_structure.py
@@ -33,4 +34,3 @@ CLAUDE.local.md
 .cursor
 .agents
 .mcp.json
-.vscode
