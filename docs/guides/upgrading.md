@@ -81,9 +81,9 @@ For **v21 → v22**, follow that guide before relying on `upgrade-sdk.sh`: confi
 
 New guides are added to [migrations/index.md](./migrations/index.md) when a release needs steps beyond the generic flow above.
 
-### Legacy packages (v14–v21.1)
+### Older packages (v14–v21.1)
 
-Historical MySQL ZIPs are not published from this repository. Download them from [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy) (`releases/`). That archive is frozen; supported upgrade path into the current line is **v21 → v22**.
+ZIPs for versions before v22 are not published from this repository. Download them from [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy) (`releases/`). That archive is frozen; supported upgrade path into the current line is **v21 → v22**.
 
 ## Upgrade notes
 
