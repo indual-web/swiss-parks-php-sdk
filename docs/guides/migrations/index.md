@@ -12,6 +12,14 @@ Use the generic [upgrade guide](../upgrading.md) for the standard workflow. Open
 | --- | --- | --- | --- |
 | v21 (MySQL) | v22 (SQLite) | [21 to 22](./21-to-22.md) | SQLite + folder layout, `config/config.php`, camelCase API, frontend `v22`, cron/favorites paths |
 
+## Legacy MySQL packages (v14–v21.1)
+
+Packages **before v22** (MySQL, folder `parks_api/`) are frozen and live in a separate archive repository:
+
+- [indual-web/swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
+
+ZIPs for v14–v21.1 are under `releases/` there. Incremental MySQL schema steps are inside each package’s `ParksMigration.php` (run via `scripts/migrate.php`). There are no separate migration guides for upgrades within that line; prefer **v21.1**, then follow [21 to 22](./21-to-22.md).
+
 ## When to add a new guide
 
 Create a new file `{from}-to-{to}.md` when a release includes at least one of:

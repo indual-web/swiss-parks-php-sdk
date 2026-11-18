@@ -8,9 +8,10 @@ This page lists every guide file.
 
 - [New installation](./new-installation.md)
 - [Upgrade guide](./upgrading.md)
-- [Version migrations](./migrations/index.md)
+- [Version migrations](./migrations/index.md) (incl. legacy MySQL v14–v21.1)
 - [Migration: v21 to v22](./migrations/21-to-22.md)
 - [Import and update lifecycle](./import-update-lifecycle.md)
+- Legacy ZIPs: [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 
 ## Integration
 

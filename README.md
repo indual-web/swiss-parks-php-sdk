@@ -34,6 +34,8 @@ v22 is not a drop-in replace. Plan for:
 
 Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
+Older MySQL packages (v14–v21.1) are archived at [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy).
+
 ## Contact
 
 [parks.swiss](https://www.parks.swiss) · [info@parks.swiss](mailto:info@parks.swiss)
