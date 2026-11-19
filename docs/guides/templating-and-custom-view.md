@@ -17,7 +17,7 @@ Important:
 
 - Do not edit core templates directly.
 - Create your own template folder based on `standard`.
-- `ParksSDK::loadTemplate()` loads `detail.tpl` / `filter.tpl`; `compileTemplate($section, $template_data, $conditions)` fills placeholders and condition blocks (see [ParksSDK methods](../sdk-reference/parks-sdk.md#template-helpers)).
+- `ParksSDK::loadTemplate()` loads `detail.tpl` / `filter.tpl`; `compileTemplate($section, $templateData, $conditions)` fills placeholders and condition blocks (see [ParksSDK methods](../sdk-reference/parks-sdk.md#template-helpers)).
 
 ## Overriding methods (custom view)
 
@@ -42,10 +42,10 @@ This class extends `ParksView` and is auto-loaded from `custom/`.
 class MyView extends ParksView
 {
 
-	public function overwriteTemplateData(array $template_data, object $offer): array
+	public function overwriteTemplateData(array $templateData, object $offer): array
 	{
 
-		return parent::overwriteTemplateData($template_data, $offer);
+		return parent::overwriteTemplateData($templateData, $offer);
 	}
 
 }
@@ -55,7 +55,7 @@ class MyView extends ParksView
 
 Common extension points:
 
-- `overwriteTemplateData(array $template_data, object $offer): array`
+- `overwriteTemplateData(array $templateData, object $offer): array`
   - Fine-grained template data changes before rendering.
 - Full rendering methods from `ParksView`, for example:
   - `filter(...)`

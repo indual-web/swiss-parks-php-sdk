@@ -114,10 +114,10 @@ class ParksSQLite
 		$this->ensureMetaTable();
 
 		// Create schema on first run (offer marks an existing DB even if meta is missing)
-		$has_schema = $this->connection->query(
+		$hasSchema = $this->connection->query(
 			"SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('meta', 'offer')"
 		);
-		if (($has_schema === false) || (count($has_schema->fetchAll()) === 0)) {
+		if (($hasSchema === false) || (count($hasSchema->fetchAll()) === 0)) {
 			$this->createSchema();
 			$this->ensureOfferFts(true);
 		} else {
@@ -195,10 +195,10 @@ class ParksSQLite
 	/**
 	 * Ensure offer_fts exists; optionally rebuild when empty
 	 */
-	private function ensureOfferFts(bool $fresh_schema): void
+	private function ensureOfferFts(bool $freshSchema): void
 	{
 
-		$create_sql = "
+		$createSql = "
 			CREATE VIRTUAL TABLE IF NOT EXISTS `offer_fts` USING fts5(
 				`offer_id` UNINDEXED,
 				`language` UNINDEXED,
@@ -208,7 +208,7 @@ class ParksSQLite
 		";
 
 		// Older SQLite builds without FTS5 fall back to LIKE search
-		if ($this->connection->exec($create_sql) === false) {
+		if ($this->connection->exec($createSql) === false) {
 			$this->offerFtsAvailable = false;
 			return;
 		}
@@ -216,20 +216,20 @@ class ParksSQLite
 		$this->offerFtsAvailable = true;
 
 		// Fresh schema is filled by the upcoming import; nothing to backfill yet
-		if ($fresh_schema) {
+		if ($freshSchema) {
 			return;
 		}
 
 		// Existing DB with offers but empty FTS (e.g. upgrade): rebuild once
-		$fts_count = $this->connection->query('SELECT COUNT(*) AS total FROM offer_fts');
-		$offer_count = $this->connection->query('SELECT COUNT(*) AS total FROM offer');
-		if ($fts_count === false || $offer_count === false) {
+		$ftsCount = $this->connection->query('SELECT COUNT(*) AS total FROM offer_fts');
+		$offerCount = $this->connection->query('SELECT COUNT(*) AS total FROM offer');
+		if ($ftsCount === false || $offerCount === false) {
 			return;
 		}
 
-		$fts_total = (int) ($fts_count->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-		$offer_total = (int) ($offer_count->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
-		if (($fts_total === 0) && ($offer_total > 0)) {
+		$ftsTotal = (int) ($ftsCount->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
+		$offerTotal = (int) ($offerCount->fetch(PDO::FETCH_ASSOC)['total'] ?? 0);
+		if (($ftsTotal === 0) && ($offerTotal > 0)) {
 			$this->rebuildOfferFts();
 		}
 	}
@@ -239,7 +239,7 @@ class ParksSQLite
 	/**
 	 * Rebuild offer_fts from offer + offer_i18n (+ keywords)
 	 */
-	public function rebuildOfferFts(?array $offer_ids = null): bool
+	public function rebuildOfferFts(?array $offerIds = null): bool
 	{
 
 		if (! $this->offerFtsAvailable) {
@@ -248,16 +248,16 @@ class ParksSQLite
 
 		// Partial rebuild for changed offers; full wipe when no ID list is given
 		$where = '';
-		if ($offer_ids !== null) {
-			$ids = array_values(array_unique(array_filter(array_map('intval', $offer_ids))));
+		if ($offerIds !== null) {
+			$ids = array_values(array_unique(array_filter(array_map('intval', $offerIds))));
 			if (empty($ids)) {
 				return true;
 			}
-			$ids_sql = implode(',', $ids);
-			if ($this->connection->exec("DELETE FROM offer_fts WHERE offer_id IN (" . $ids_sql . ")") === false) {
+			$idsSql = implode(',', $ids);
+			if ($this->connection->exec("DELETE FROM offer_fts WHERE offer_id IN (" . $idsSql . ")") === false) {
 				return false;
 			}
-			$where = " WHERE offer.offer_id IN (" . $ids_sql . ")";
+			$where = " WHERE offer.offer_id IN (" . $idsSql . ")";
 		} else {
 			if ($this->connection->exec('DELETE FROM offer_fts') === false) {
 				return false;
@@ -430,60 +430,60 @@ class ParksSQLite
 		?array $select = null,
 		?string $limit = null,
 		?string $offset = null,
-		?array $left_outer_joins = null,
-		?string $order_by = null
+		?array $leftOuterJoins = null,
+		?string $orderBy = null
 	): ParksSQLiteResult|bool {
 
 		// Select
-		$db_select = "*";
+		$dbSelect = "*";
 		if ($select && is_array($select)) {
-			$db_select = "*";
+			$dbSelect = "*";
 			foreach ($select as $key => $value) {
 				if (!is_numeric($key)) {
-					$db_select .= ", " . $key . " AS " . $value;
+					$dbSelect .= ", " . $key . " AS " . $value;
 				} else {
-					$db_select .= ", " . $value;
+					$dbSelect .= ", " . $value;
 				}
 			}
 		}
 
 		// Inner joins
-		$db_joins = "";
+		$dbJoins = "";
 		if ($joins && is_array($joins)) {
 			foreach ($joins as $key => $value) {
-				$db_joins .= " INNER JOIN `" . $key . "` ON " . $value;
+				$dbJoins .= " INNER JOIN `" . $key . "` ON " . $value;
 			}
-			$db_joins .= " ";
+			$dbJoins .= " ";
 		}
 
 		// Left outer joins
-		if ($left_outer_joins && is_array($left_outer_joins)) {
-			foreach ($left_outer_joins as $key => $value) {
-				$db_joins .= " LEFT OUTER JOIN `" . $key . "` ON " . $value;
+		if ($leftOuterJoins && is_array($leftOuterJoins)) {
+			foreach ($leftOuterJoins as $key => $value) {
+				$dbJoins .= " LEFT OUTER JOIN `" . $key . "` ON " . $value;
 			}
 		}
 
 		// Where
-		$db_where = "";
+		$dbWhere = "";
 		if ($where && is_array($where)) {
-			$db_where = " WHERE ";
+			$dbWhere = " WHERE ";
 			foreach ($where as $key => $value) {
-				$db_where .= $key . " = '" . $this->escape($value) . "' AND ";
+				$dbWhere .= $key . " = '" . $this->escape($value) . "' AND ";
 			}
-			$db_where = substr($db_where, 0, -4);
+			$dbWhere = substr($dbWhere, 0, -4);
 		}
 
-		$db_limit = "";
+		$dbLimit = "";
 		if ($limit && is_numeric($limit)) {
-			$db_limit = " LIMIT " . (isset($offset) && is_numeric($offset) ? intval($offset) . ', ' : '') . intval($limit);
+			$dbLimit = " LIMIT " . (isset($offset) && is_numeric($offset) ? intval($offset) . ', ' : '') . intval($limit);
 		}
 
 		// Order by
-		if (! empty($order_by)) {
-			$order_by = " ORDER BY " . $order_by;
+		if (! empty($orderBy)) {
+			$orderBy = " ORDER BY " . $orderBy;
 		}
 
-		return $this->query("SELECT " . $db_select . " FROM `" . $table . "`" . $db_joins . $db_where . $order_by . $db_limit . ";");
+		return $this->query("SELECT " . $dbSelect . " FROM `" . $table . "`" . $dbJoins . $dbWhere . $orderBy . $dbLimit . ";");
 	}
 
 
@@ -494,8 +494,8 @@ class ParksSQLite
 	public function insert(string $table, array $fields): bool
 	{
 
-		$db_fields = '';
-		$db_values = '';
+		$dbFields = '';
+		$dbValues = '';
 		foreach ($fields as $key => $value) {
 
 			if (! empty($value)) {
@@ -503,21 +503,21 @@ class ParksSQLite
 				$value = $this->escape($value);
 			}
 
-			$db_fields .= "`" . $key . "` , ";
+			$dbFields .= "`" . $key . "` , ";
 
 			if ($value === null) {
-				$db_values .= "NULL, ";
+				$dbValues .= "NULL, ";
 			} else {
-				$db_values .= "'" . $value . "' , ";
+				$dbValues .= "'" . $value . "' , ";
 			}
 		}
-		$db_fields = substr($db_fields, 0, -2);
-		$db_values = substr($db_values, 0, -2);
+		$dbFields = substr($dbFields, 0, -2);
+		$dbValues = substr($dbValues, 0, -2);
 
-		$status = (bool) $this->query("INSERT INTO `" . $table . "` (" . $db_fields . ") VALUES (" . $db_values . ");");
+		$status = (bool) $this->query("INSERT INTO `" . $table . "` (" . $dbFields . ") VALUES (" . $dbValues . ");");
 
 		if (! $status) {
-			$this->sdk->logger->error("INSERT INTO `" . $table . "` (" . $db_fields . ") VALUES (" . $db_values . ");");
+			$this->sdk->logger->error("INSERT INTO `" . $table . "` (" . $dbFields . ") VALUES (" . $dbValues . ");");
 		}
 
 		return $status;
@@ -531,7 +531,7 @@ class ParksSQLite
 	public function update(string $table, array $fields, ?array $where = null): bool
 	{
 
-		$db_fields = '';
+		$dbFields = '';
 		foreach ($fields as $key  => $value) {
 
 			if (! empty($value)) {
@@ -540,26 +540,26 @@ class ParksSQLite
 			}
 
 			if ($value === null) {
-				$db_fields .= "`" . $key . "` = null, ";
+				$dbFields .= "`" . $key . "` = null, ";
 			} else {
-				$db_fields .= "`" . $key . "` = '" . $value . "', ";
+				$dbFields .= "`" . $key . "` = '" . $value . "', ";
 			}
 		}
-		$db_fields = substr($db_fields, 0, -2);
+		$dbFields = substr($dbFields, 0, -2);
 
-		$db_where = '';
+		$dbWhere = '';
 		if ($where && is_array($where)) {
-			$db_where = " WHERE ";
+			$dbWhere = " WHERE ";
 			foreach ($where as $key => $value) {
-				$db_where .= "`" . $key . "` = '" . $this->escape($value) . "' AND ";
+				$dbWhere .= "`" . $key . "` = '" . $this->escape($value) . "' AND ";
 			}
-			$db_where = substr($db_where, 0, -4);
+			$dbWhere = substr($dbWhere, 0, -4);
 		}
 
-		$status = (bool) $this->query("UPDATE `" . $table . "` SET " . $db_fields . $db_where . ";");
+		$status = (bool) $this->query("UPDATE `" . $table . "` SET " . $dbFields . $dbWhere . ";");
 
 		if (! $status) {
-			$this->sdk->logger->error("UPDATE `" . $table . "` SET " . $db_fields . $db_where . ";");
+			$this->sdk->logger->error("UPDATE `" . $table . "` SET " . $dbFields . $dbWhere . ";");
 		}
 
 		return $status;
@@ -573,19 +573,19 @@ class ParksSQLite
 	public function delete(string $table, array $where = []): bool
 	{
 
-		$db_where = '';
+		$dbWhere = '';
 		if (! empty($where) && is_array($where)) {
-			$db_where = " WHERE ";
+			$dbWhere = " WHERE ";
 			foreach ($where as $key  => $value) {
-				$db_where .= "`" . $key . "` = '" . $this->escape($value) . "' AND ";
+				$dbWhere .= "`" . $key . "` = '" . $this->escape($value) . "' AND ";
 			}
-			$db_where = substr($db_where, 0, -4);
+			$dbWhere = substr($dbWhere, 0, -4);
 		}
 
-		$status = (bool) $this->query("DELETE FROM `" . $table . "`" . $db_where . ";");
+		$status = (bool) $this->query("DELETE FROM `" . $table . "`" . $dbWhere . ";");
 
 		if (! $status) {
-			$this->sdk->logger->error("DELETE FROM `" . $table . "`" . $db_where . ";");
+			$this->sdk->logger->error("DELETE FROM `" . $table . "`" . $dbWhere . ";");
 		}
 
 		return $status;
@@ -596,11 +596,11 @@ class ParksSQLite
 	/**
 	 * Register a custom SQL function
 	 */
-	private function createFunction(string $name, callable $callback, int $num_args): void
+	private function createFunction(string $name, callable $callback, int $numArgs): void
 	{
 
 		if (method_exists($this->connection, 'createFunction')) {
-			$this->connection->createFunction($name, $callback, $num_args);
+			$this->connection->createFunction($name, $callback, $numArgs);
 			return;
 		}
 
@@ -612,8 +612,8 @@ class ParksSQLite
 			throw new RuntimeException('SQLite user-defined functions are not supported by this PDO driver.');
 		}
 
-		$legacy_register = 'sqliteCreateFunction';
-		$this->connection->{$legacy_register}($name, $callback, $num_args);
+		$legacyRegister = 'sqliteCreateFunction';
+		$this->connection->{$legacyRegister}($name, $callback, $numArgs);
 
 	}
 

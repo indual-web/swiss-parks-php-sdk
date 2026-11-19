@@ -6,7 +6,7 @@ Integrator-facing methods from `ParksSDK`, grouped by purpose. Parameter names m
 
 ## Constructor
 
-### `__construct($language = '', $hash = '', $page_url = '', $bootstrap_rendering = true, $bootstrap_setup = true)`
+### `__construct($language = '', $hash = '', $pageUrl = '', $bootstrapRendering = true, $bootstrapSetup = true)`
 
 Creates the SDK instance, loads config, and optionally bootstraps sessions/filters and view rendering.
 
@@ -14,11 +14,11 @@ Parameters:
 
 - `$language` (`string`): active UI/content language (`de`, `fr`, `it`, `en`). Invalid values fall back to `de`.
 - `$hash` (`string`): optional API hash override; empty uses `config['api_hash']`.
-- `$page_url` (`string`): stable page URL for session scoping in CMS embeds (for example the offers permalink). Empty uses the current request URL.
-- `$bootstrap_rendering` (`bool`): when `true`, loads templates and prepares the view for HTML output.
-- `$bootstrap_setup` (`bool`): when `true`, runs page setup (sessions, filter state, request parsing).
+- `$pageUrl` (`string`): stable page URL for session scoping in CMS embeds (for example the offers permalink). Empty uses the current request URL.
+- `$bootstrapRendering` (`bool`): when `true`, loads templates and prepares the view for HTML output.
+- `$bootstrapSetup` (`bool`): when `true`, runs page setup (sessions, filter state, request parsing).
 
-CMS tip: pass `$page_url` for session scope and call `setScriptUrl()` with the offers path so forms and links stay on the correct page. See [WordPress integration](../guides/wordpress-integration.md).
+CMS tip: pass `$pageUrl` for session scope and call `setScriptUrl()` with the offers path so forms and links stay on the correct page. See [WordPress integration](../guides/wordpress-integration.md).
 
 Static factories without page rendering:
 
@@ -67,16 +67,16 @@ Parameters:
 - Renders pagination for the most recent list query context.
 - Returns an empty string on detail pages.
 
-### `showOfferDetail($single_offer_id = null)`
+### `showOfferDetail($singleOfferId = null)`
 
 - Renders one offer detail page.
-- Supports routed detail mode and explicit single-offer mode (`$single_offer_id`).
+- Supports routed detail mode and explicit single-offer mode (`$singleOfferId`).
 - If a requested offer does not exist: sends a 404 response and exits by default; with `soft_errors = true` returns an empty string instead.
 - The back link returns to the overview URL; the last list/map tab (`#tab_1` / `#tab_2`) is restored by `parks.min.js` via hash + `sessionStorage` (see [Quick start integration](../guides/quick-start-integration.md#listmap-tab-and-back-navigation)).
 
 Parameters:
 
-- `$single_offer_id` (`int|null`): optional forced detail ID.
+- `$singleOfferId` (`int|null`): optional forced detail ID.
 
 ### `showFavorites()`
 
@@ -105,14 +105,14 @@ Relevant for custom views; see [Templating and custom view](../guides/templating
 
 - Loads `detail.tpl` and `filter.tpl` from the configured `template_folder` into `$sdk->template`.
 
-### `compileTemplate($section, $template_data = [], $conditions = [])`
+### `compileTemplate($section, $templateData = [], $conditions = [])`
 
 - Compiles a loaded template section (`detail`, `filter`, …) with placeholders and condition blocks.
 - Returns the rendered HTML string.
 
 ## Data access methods
 
-### `getOffersList($parkId = null, $categories = [], $page = null, $limit = null, $filter = [], $ignore_filter = false, $return_minimal = false, $map_mode = false)`
+### `getOffersList($parkId = null, $categories = [], $page = null, $limit = null, $filter = [], $ignoreFilter = false, $returnMinimal = false, $mapMode = false)`
 
 - Returns offers as `array` with keys `data` and `total` (empty when no matches).
 - Wraps the internal query pipeline used by overview rendering.
@@ -135,17 +135,17 @@ Common parameters:
 - `$categories` (`array`): category scope.
 - `$page`, `$limit` (`int|null`): paging controls.
 - `$filter` (`array`): same filter structure as rendering methods.
-- `$ignore_filter` (`bool`): bypass active visitor filter state when needed.
-- `$return_minimal` (`bool`): lighter offer payload when full detail fields are not needed.
-- `$map_mode` (`bool`): optimize payload for map scenarios.
+- `$ignoreFilter` (`bool`): bypass active visitor filter state when needed.
+- `$returnMinimal` (`bool`): lighter offer payload when full detail fields are not needed.
+- `$mapMode` (`bool`): optimize payload for map scenarios.
 
-### `getOfferDetail($offer_id)`
+### `getOfferDetail($offerId)`
 
 - Returns one normalized offer object by ID.
 
 Parameters:
 
-- `$offer_id` (`int`)
+- `$offerId` (`int`)
 
 ### `getCategoriesList()`
 
@@ -174,7 +174,7 @@ Parameters:
 
 - Returns normalized active filter values from runtime state.
 
-### `toggleFavorite($offer_id)`
+### `toggleFavorite($offerId)`
 
 - Adds/removes one offer ID from favorites.
 - Requires `use_sessions = true`; otherwise returns `false` without changing state.
@@ -183,7 +183,7 @@ Parameters:
 
 Parameters:
 
-- `$offer_id` (`int`)
+- `$offerId` (`int`)
 
 ### `cleanFavorites()`
 
@@ -192,7 +192,7 @@ Parameters:
 ### `setScriptUrl($url)`
 
 - Sets the view `script_url` / `script_url_with_params` used for forms and links.
-- Does not change session scoping; pass `$page_url` to the `ParksSDK` constructor for that.
+- Does not change session scoping; pass `$pageUrl` to the `ParksSDK` constructor for that.
 - Useful in CMS embeds where `REQUEST_URI` is not the offers page permalink.
 
 Parameters:

@@ -15,17 +15,17 @@ class ParksFormat
 	/**
 	 * Format multi-line contact/address text: link URLs and emails, optional strong first line
 	 */
-	public static function autoTextFormat(string $string, bool $first_line_strong = false): string {
+	public static function autoTextFormat(string $string, bool $firstLineStrong = false): string {
 
 		$return = '';
 		if ($string != '') {
 
 			// Process line by line so each value can become a link or stay plain text
-			$is_first_line = true;
-			$new_lines = explode("\n", $string);
+			$isFirstLine = true;
+			$newLines = explode("\n", $string);
 
-			if (! empty($new_lines)) {
-				foreach ($new_lines as $line) {
+			if (! empty($newLines)) {
+				foreach ($newLines as $line) {
 
 					// Skip list markers that appear as a lone dash
 					if ($line != '-') {
@@ -34,33 +34,33 @@ class ParksFormat
 
 						// Bare www-hosts are not valid URLs for filter_var without a scheme
 						if (substr($line, 0, 4) == 'www.') {
-							$line = 'http://'.$line;
+							$line = 'http://' . $line;
 						}
 
 						// Optionally wrap only the first non-empty content line
-						if (($first_line_strong == true) && ($is_first_line == true)) {
+						if (($firstLineStrong == true) && ($isFirstLine == true)) {
 							$return .= '<strong>';
 						}
 
 						// Whole line is a URL: show host without scheme, open in a new tab
 						if (! empty($line) && (filter_var($line, FILTER_VALIDATE_URL) == true)) {
-							$return .= '<a href="'.$line.'" class="external_link" target="_blank">'.str_replace(['http://', 'https://'], '', $line).'</a><br>';
+							$return .= '<a href="' . $line . '" class="external_link" target="_blank">' . str_replace(['http://', 'https://'], '', $line) . '</a><br>';
 						}
 
 						// Whole line is an email: use obfuscated mailto to hinder scrapers
 						else if (! empty($line) && (filter_var($line, FILTER_VALIDATE_EMAIL) == true)) {
-							$return .= self::safeMailto($line, $line, ['class' => 'email_link']).'<br>';
+							$return .= self::safeMailto($line, $line, ['class' => 'email_link']) . '<br>';
 						}
 
 						// Plain text line
 						else {
-							$return .= $line.'<br>';
+							$return .= $line . '<br>';
 						}
 
 						// Close the optional strong wrapper after the first line
-						if (($first_line_strong == true) && ($is_first_line == true)) {
+						if (($firstLineStrong == true) && ($isFirstLine == true)) {
 							$return .= '</strong>';
-							$first_line_strong = false;
+							$firstLineStrong = false;
 						}
 					}
 				}
@@ -102,7 +102,7 @@ class ParksFormat
 				//
 				// With PREG_OFFSET_CAPTURE, both of the above is an array,
 				// where the actual value is held in [0] and its offset at the [1] index.
-				$a = '<a href="'.(strpos($match[1][0], '/') ? '' : 'http://').$match[0][0].'"'.$target.'>'.$match[0][0].'</a>';
+				$a = '<a href="' . (strpos($match[1][0], '/') ? '' : 'http://') . $match[0][0] . '"' . $target . '>' . $match[0][0] . '</a>';
 				$str = substr_replace($str, $a, $match[0][1], strlen($match[0][0]));
 			}
 		}
@@ -129,7 +129,7 @@ class ParksFormat
 	 */
 	public static function nl2p(mixed $text): string {
 
-		return '<p>'.str_replace(["\r\n", "\r", "\n"], '</p><p>', $text).'</p>';
+		return '<p>' . str_replace(["\r\n", "\r", "\n"], '</p><p>', $text) . '</p>';
 	}
 
 
@@ -153,7 +153,7 @@ class ParksFormat
 
 		// Encode the address so it never appears as plain text in the HTML source
 		for ($i = 0; $i < strlen($email); $i++) {
-			$x[] = "|".ord(substr($email, $i, 1));
+			$x[] = "|" . ord(substr($email, $i, 1));
 		}
 
 		$x[] = '"';
@@ -162,9 +162,9 @@ class ParksFormat
 		if ($attributes != '') {
 			if (is_array($attributes)) {
 				foreach ($attributes as $key => $val) {
-					$x[] =  ' '.$key.'="';
+					$x[] =  ' ' . $key . '="';
 					for ($i = 0; $i < strlen($val); $i++) {
-						$x[] = "|".ord(substr($val, $i, 1));
+						$x[] = "|" . ord(substr($val, $i, 1));
 					}
 					$x[] = '"';
 				}
@@ -184,7 +184,7 @@ class ParksFormat
 			$ordinal = ord($title[$i]);
 
 			if ($ordinal < 128) {
-				$x[] = "|".$ordinal;
+				$x[] = "|" . $ordinal;
 			}
 			else {
 				if (count($temp) == 0) {
@@ -194,7 +194,7 @@ class ParksFormat
 				$temp[] = $ordinal;
 				if (count($temp) == $count) {
 					$number = ($count == 3) ? (($temp['0'] % 16) * 4096) + (($temp['1'] % 64) * 64) + ($temp['2'] % 64) : (($temp['0'] % 32) * 64) + ($temp['1'] % 64);
-					$x[] = "|".$number;
+					$x[] = "|" . $number;
 					$count = 1;
 					$temp = [];
 				}
@@ -254,7 +254,7 @@ class ParksFormat
 		// Merge options
 		$options = array_merge($defaults, $options);
 
-		$char_map = [
+		$charMap = [
 			// Latin
 			'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',
 			'È' => 'E', 'É' => 'E', 'Ê' => 'E', 'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
@@ -318,7 +318,7 @@ class ParksFormat
 
 		// Transliterate characters to ASCII
 		if ($options['transliterate']) {
-			$str = str_replace(array_keys($char_map), $char_map, $str);
+			$str = str_replace(array_keys($charMap), $charMap, $str);
 		}
 
 		// Replace non-alphanumeric characters with our delimiter
@@ -372,7 +372,7 @@ class ParksFormat
 		}
 
 		$result = '';
-		$inside_anchor = 0;
+		$insideAnchor = 0;
 
 		foreach ($parts as $part) {
 			if ($part === '') {
@@ -385,11 +385,11 @@ class ParksFormat
 
 					// Self-closing <a ... /> does not wrap following text
 					if (preg_match('/\/\s*>$/', $part) !== 1) {
-						$inside_anchor++;
+						$insideAnchor++;
 					}
 				}
 				else if (preg_match('/^<\s*\/\s*a\b/i', $part) === 1) {
-					$inside_anchor = max(0, $inside_anchor - 1);
+					$insideAnchor = max(0, $insideAnchor - 1);
 				}
 
 				$result .= $part;
@@ -397,7 +397,7 @@ class ParksFormat
 			}
 
 			// Text node inside an existing link: leave as-is
-			if ($inside_anchor > 0) {
+			if ($insideAnchor > 0) {
 				$result .= $part;
 				continue;
 			}

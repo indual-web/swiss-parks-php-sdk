@@ -41,7 +41,7 @@ class ParksDate
 		}
 
 		// Date from
-		$return .= '<strong>'.self::formatOfferDateLabel($date['date_from']['date'], $lang).'</strong> ';
+		$return .= '<strong>' . self::formatOfferDateLabel($date['date_from']['date'], $lang) . '</strong> ';
 
 		// Show all times
 		if (! empty($date['times'])) {
@@ -50,7 +50,7 @@ class ParksDate
 
 		// Show time from
 		elseif (! empty($date['date_from']['hour']) && ($date['date_from']['hour'] != '00')) {
-			$return .= $date['date_from']['hour'].":".$date['date_from']['minute'];
+			$return .= $date['date_from']['hour'] . ":" . $date['date_from']['minute'];
 		}
 
 		if (empty($date['times'])) {
@@ -60,15 +60,15 @@ class ParksDate
 
 				// Show the connector when the end day or a non-midnight end time differs
 				if (($date['date_from']['date'] != $date['date_to']['date']) || (! empty($date['date_to']['hour']) && ($date['date_to']['hour'] != '00'))) {
-					$return .= ' '.$lang->get('general_to').' ';
+					$return .= ' ' . $lang->get('general_to') . ' ';
 				}
 
 				if ($date['date_from']['date'] != $date['date_to']['date']) {
-					$return .= '<strong>'.self::formatOfferDateLabel($date['date_to']['date'], $lang).'</strong> ';
+					$return .= '<strong>' . self::formatOfferDateLabel($date['date_to']['date'], $lang) . '</strong> ';
 				}
 
 				if (! empty($date['date_to']['hour']) && ($date['date_to']['hour'] != '00')) {
-					$return .= $date['date_to']['hour'].":".$date['date_to']['minute'];
+					$return .= $date['date_to']['hour'] . ":" . $date['date_to']['minute'];
 				}
 
 			}
@@ -139,14 +139,14 @@ class ParksDate
 	/**
 	 * Convert MySQL to a form format
 	 */
-	public static function parksMysql2form(string $mysql_date): array {
+	public static function parksMysql2form(string $mysqlDate): array {
 
 		$return = [];
 
-		if (! empty($mysql_date)) {
-			$return['date'] = substr($mysql_date, 0, 10);
-			$return['hour'] = substr($mysql_date, 11, 2);
-			$return['minute'] = substr($mysql_date, 14, 2);
+		if (! empty($mysqlDate)) {
+			$return['date'] = substr($mysqlDate, 0, 10);
+			$return['hour'] = substr($mysqlDate, 11, 2);
+			$return['minute'] = substr($mysqlDate, 14, 2);
 		}
 
 		return $return;
@@ -157,28 +157,28 @@ class ParksDate
 	/**
 	 * Convert MySQL to a date format
 	 */
-	public static function parksMysql2date(mixed $mysql_date, bool $time = false, bool $ts = false): string|int {
+	public static function parksMysql2date(mixed $mysqlDate, bool $time = false, bool $ts = false): string|int {
 
-		if (! empty($mysql_date)) {
-			$date = substr($mysql_date, 0, 10);
-			$date_time = '';
+		if (! empty($mysqlDate)) {
+			$date = substr($mysqlDate, 0, 10);
+			$dateTime = '';
 			if ($time != false) {
-				$date_time = ' '.substr($mysql_date, 11);
+				$dateTime = ' ' . substr($mysqlDate, 11);
 			}
 
-			$date_explode = explode("-", $date);
+			$dateExplode = explode("-", $date);
 
 			// MySQL zero-dates and incomplete values must not become 01.01.1970
-			if (count($date_explode) < 3 || (intval($date_explode[0]) == 0) && (intval($date_explode[1]) == 0) && (intval($date_explode[2]) == 0)) {
+			if (count($dateExplode) < 3 || (intval($dateExplode[0]) == 0) && (intval($dateExplode[1]) == 0) && (intval($dateExplode[2]) == 0)) {
 				return '';
 			}
 
-			$date_explode_ts = mktime(0, 0, 0, $date_explode[1], $date_explode[2], $date_explode[0]);
+			$dateExplodeTs = mktime(0, 0, 0, $dateExplode[1], $dateExplode[2], $dateExplode[0]);
 			if ($ts == true) {
-				return $date_explode_ts;
+				return $dateExplodeTs;
 			}
 
-			return date('d.m.Y', $date_explode_ts).$date_time;
+			return date('d.m.Y', $dateExplodeTs) . $dateTime;
 		}
 
 		return '';
@@ -227,13 +227,13 @@ class ParksDate
 	/**
 	 * Split hours and minutes by minutes
 	 */
-	public static function parksSplitHoursAndMinutes(int $total_minutes): array {
+	public static function parksSplitHoursAndMinutes(int $totalMinutes): array {
 
-	    if ($total_minutes >= 1) {
+	    if ($totalMinutes >= 1) {
 
 			// Split total minutes into hours and minutes
-		    $hours = floor($total_minutes / 60);
-			$minutes = ($total_minutes % 60);
+		    $hours = floor($totalMinutes / 60);
+			$minutes = ($totalMinutes % 60);
 
 			// Return result
 			return [
@@ -254,35 +254,35 @@ class ParksDate
 	 * - If a filter was set: Sets it to the filter date
 	 * - If the event is in the future: No changes
 	 */
-	public static function parksAdjustDateFrom(string $date_from = '', string $date_to = '', string $filter_from = ''): string {
+	public static function parksAdjustDateFrom(string $dateFrom = '', string $dateTo = '', string $filterFrom = ''): string {
 
-		if (! empty($date_from) && ! empty($date_to)) {
+		if (! empty($dateFrom) && ! empty($dateTo)) {
 
 			// Init dates
-			$date_from = new DateTime($date_from);
-			$date_to = new DateTime($date_to);
-			$filter_date = new DateTime($filter_from);
+			$dateFrom = new DateTime($dateFrom);
+			$dateTo = new DateTime($dateTo);
+			$filterDate = new DateTime($filterFrom);
 			$today = new DateTime();
 
 			// Multiple days
-			if ($date_from->format('Y-m-d') != $date_to->format('Y-m-d')) {
+			if ($dateFrom->format('Y-m-d') != $dateTo->format('Y-m-d')) {
 
 				// Overwrite with filter date
-				if (! empty($filter_from) && ($filter_date > $date_from) && ($filter_date < $date_to)) {
-					return $filter_date->format('Y-m-d');
+				if (! empty($filterFrom) && ($filterDate > $dateFrom) && ($filterDate < $dateTo)) {
+					return $filterDate->format('Y-m-d');
 				}
 
 				// Set date to current day, if it takes multiple days and it started in the past
-				else if (($today > $date_from) && ($date_to > $today)) {
+				else if (($today > $dateFrom) && ($dateTo > $today)) {
 					return $today->format('Y-m-d');
 				}
 
 			}
 
-			return $date_from->format('Y-m-d H:i');
+			return $dateFrom->format('Y-m-d H:i');
 		}
 
-		return $date_from;
+		return $dateFrom;
 	}
 
 
@@ -290,7 +290,7 @@ class ParksDate
 	/**
 	 * Activities: Get time required info and return formatted value
 	 */
-	public static function activityGetTimeRequired(object $offer, ParksLanguage $lang, bool $short_labels = false): string {
+	public static function activityGetTimeRequired(object $offer, ParksLanguage $lang, bool $shortLabels = false): string {
 
 		// Init
 		$return = '';
@@ -299,40 +299,40 @@ class ParksDate
 		if ( ! empty($offer->time_required_minutes)) {
 
 			// Split hours and minutes
-			$time_required = self::parksSplitHoursAndMinutes($offer->time_required_minutes);
+			$timeRequired = self::parksSplitHoursAndMinutes($offer->time_required_minutes);
 
 			// Set hours
 			$hours = '';
-			if (! empty($time_required['hours']) && ($time_required['hours'] > 0)) {
+			if (! empty($timeRequired['hours']) && ($timeRequired['hours'] > 0)) {
 
 				// Set label for hours (singular, plural)
-				$label_hours = 'h';
-				if ($short_labels == false) {
-					$label_hours = ($time_required['hours'] == 1) ? $lang->get('offer_hour') : $lang->get('offer_hours');
+				$labelHours = 'h';
+				if ($shortLabels == false) {
+					$labelHours = ($timeRequired['hours'] == 1) ? $lang->get('offer_hour') : $lang->get('offer_hours');
 				}
 
 				// Set hours
-				$hours = intval($time_required['hours']).' '.$label_hours;
+				$hours = intval($timeRequired['hours']) . ' ' . $labelHours;
 
 			}
 
 			// Set minutes
 			$minutes = '';
-			if (! empty($time_required['minutes']) && ($time_required['minutes'] > 0)) {
+			if (! empty($timeRequired['minutes']) && ($timeRequired['minutes'] > 0)) {
 
 				// Set label for hours (singular, plural)
-				$label_minutes = 'min';
-				if ($short_labels == false) {
-					$label_minutes = ($time_required['minutes'] == 1) ? $lang->get('offer_minute') : $lang->get('offer_minutes');
+				$labelMinutes = 'min';
+				if ($shortLabels == false) {
+					$labelMinutes = ($timeRequired['minutes'] == 1) ? $lang->get('offer_minute') : $lang->get('offer_minutes');
 				}
 
 				// Set minutes
-				$minutes = ' '.intval($time_required['minutes']).' '.$label_minutes;
+				$minutes = ' ' . intval($timeRequired['minutes']) . ' ' . $labelMinutes;
 
 			}
 
 			// Return hours and minutes
-			$return = $hours.$minutes; 
+			$return = $hours . $minutes; 
 
 		} 
 

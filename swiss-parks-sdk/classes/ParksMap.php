@@ -15,16 +15,16 @@ class ParksMap
 	/**
 	 * Build category → offer-id map fragment for swissParksMapConfig.offersData
 	 */
-	public static function formatOffersByCategoryJs(array $offers, bool $ignore_categories_with_subcategories = false): string {
+	public static function formatOffersByCategoryJs(array $offers, bool $ignoreCategoriesWithSubcategories = false): string {
 
 		if (empty($offers)) {
 			return '';
 		}
 
-		$categories_offers = [];
+		$categoriesOffers = [];
 
 		// Populate categories with subcategories
-		$categories_with_subcategories = [
+		$categoriesWithSubcategories = [
 			CATEGORY_EVENT,
 			CATEGORY_PRODUCT,
 				CATEGORY_INFORMATION,
@@ -46,29 +46,29 @@ class ParksMap
 		foreach ($offers as $offer) {
 
 			if (! empty($offer->categories) && is_array($offer->categories)) {
-				foreach ($offer->categories as $category_id => $category) {
+				foreach ($offer->categories as $categoryId => $category) {
 
 					// Skip categories with subcategories
-					if ($ignore_categories_with_subcategories && in_array($category_id, $categories_with_subcategories)) {
+					if ($ignoreCategoriesWithSubcategories && in_array($categoryId, $categoriesWithSubcategories)) {
 						continue;
 					}
 
 					// Add offer to category
-					$categories_offers[$category_id][] = $offer->offer_id;
+					$categoriesOffers[$categoryId][] = $offer->offer_id;
 
 				}
 			}
 		}
 
-		$categories_offers_view = '';
+		$categoriesOffersView = '';
 
-		if (! empty($categories_offers)) {
-			foreach ($categories_offers as $category_id => $offer_ids) {
-				$categories_offers_view .= $category_id . ': [\'' . implode('\', \'', $offer_ids) . '\'],';
+		if (! empty($categoriesOffers)) {
+			foreach ($categoriesOffers as $categoryId => $offerIds) {
+				$categoriesOffersView .= $categoryId . ': [\'' . implode('\', \'', $offerIds) . '\'],';
 			}
 		}
 
-		return $categories_offers_view;
+		return $categoriesOffersView;
 	}
 
 
@@ -76,7 +76,7 @@ class ParksMap
 	/**
 	 * Resolve a language-specific map layer URL (CSV languages, then de → fr → it → en)
 	 */
-	public static function resolveI18nUrl(array $urls, string $langId, string $languages_csv = ''): string
+	public static function resolveI18nUrl(array $urls, string $langId, string $languagesCsv = ''): string
 	{
 
 		if (! empty($urls[$langId])) {
@@ -84,7 +84,7 @@ class ParksMap
 		}
 
 		// Prefer the park's configured language order, then the default CH order
-		$fallbacks = array_values(array_filter(array_map('trim', explode(',', $languages_csv))));
+		$fallbacks = array_values(array_filter(array_map('trim', explode(',', $languagesCsv))));
 		foreach (['de', 'fr', 'it', 'en'] as $language) {
 			if (! in_array($language, $fallbacks, true)) {
 				$fallbacks[] = $language;

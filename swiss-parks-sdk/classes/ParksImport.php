@@ -84,64 +84,64 @@ class ParksImport
 						continue;
 					}
 
-					$legacy_url = trim((string) $layer->URL);
-					$languages_csv = (string) $layer->URL->attributes()->language;
+					$legacyUrl = trim((string) $layer->URL);
+					$languagesCsv = (string) $layer->URL->attributes()->language;
 
 					// Popup titles: language-specific + language-less fallback for older SDKs
-					$fallback_popup_title = '';
-					$popup_titles_by_lang = [];
+					$fallbackPopupTitle = '';
+					$popupTitlesByLang = [];
 					if (! empty($layer->Popup->Title)) {
 						foreach ($layer->Popup->Title as $title) {
 							$language = (string) $title->attributes()->language;
-							$title_value = (string) $title;
+							$titleValue = (string) $title;
 							if ($language === '') {
-								$fallback_popup_title = $title_value;
+								$fallbackPopupTitle = $titleValue;
 								continue;
 							}
-							$popup_titles_by_lang[$language] = $title_value;
+							$popupTitlesByLang[$language] = $titleValue;
 						}
 					}
 
 					// Populate map layer data (legacy URL stays on XML node URL for older consumers)
-					$map_layer = [
+					$mapLayer = [
 						'map_layer_id' => intval($layer->attributes()->identifier),
-						'languages' => $languages_csv,
+						'languages' => $languagesCsv,
 						'layer_category' => (string) $layer->LayerCategory ?? 'additional',
 						'layer_position' => (int) $layer->URL->attributes()->position ?? 0,
 						'visible_by_default' => (int) $layer->URL->attributes()->visibility ?? 0,
-						'popup_title' => $fallback_popup_title,
+						'popup_title' => $fallbackPopupTitle,
 						'popup_logo' => (string) $layer->Popup->Logo ?? '',
 					];
 
 					// Insert map layer
-					if (! $this->sdk->db->insert('map_layer', $map_layer)) {
+					if (! $this->sdk->db->insert('map_layer', $mapLayer)) {
 						$this->sdk->logger->error("Database error: " . $this->sdk->db->getLastError());
 						continue;
 					}
 					else {
 
 						// Get last inserted map layer id
-						$map_layer_id = $this->getLastId('map_layer_id', 'map_layer');
-						if (! empty($map_layer_id)) {
+						$mapLayerId = $this->getLastId('map_layer_id', 'map_layer');
+						if (! empty($mapLayerId)) {
 
-							$map_i18n_fields = [];
+							$mapI18nFields = [];
 
 							// Popup title per language
-							foreach ($popup_titles_by_lang as $language => $title_value) {
-								$key = $map_layer_id . '-' . $language;
-								$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
-								$map_i18n_fields[$key]['language'] = $language;
-								$map_i18n_fields[$key]['popup_title'] = $title_value;
+							foreach ($popupTitlesByLang as $language => $titleValue) {
+								$key = $mapLayerId . '-' . $language;
+								$mapI18nFields[$key]['map_layer_id'] = $mapLayerId;
+								$mapI18nFields[$key]['language'] = $language;
+								$mapI18nFields[$key]['popup_title'] = $titleValue;
 							}
 
 							// Popup content
 							if (! empty($layer->Popup->Content)) {
 								foreach ($layer->Popup->Content as $content) {
 									$language = (string) $content->attributes()->language;
-									$key = $map_layer_id . '-' . $language;
-									$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
-									$map_i18n_fields[$key]['language'] = $language;
-									$map_i18n_fields[$key]['popup_content'] = (string) $content ?? null;
+									$key = $mapLayerId . '-' . $language;
+									$mapI18nFields[$key]['map_layer_id'] = $mapLayerId;
+									$mapI18nFields[$key]['language'] = $language;
+									$mapI18nFields[$key]['popup_content'] = (string) $content ?? null;
 								}
 							}
 
@@ -149,41 +149,41 @@ class ParksImport
 							if (! empty($layer->LayerTitle)) {
 								foreach ($layer->LayerTitle as $title) {
 									$language = (string) $title->attributes()->language;
-									$key = $map_layer_id . '-' . $language;
-									$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
-									$map_i18n_fields[$key]['language'] = $language;
-									$map_i18n_fields[$key]['layer_title'] = (string) $title ?? null;
+									$key = $mapLayerId . '-' . $language;
+									$mapI18nFields[$key]['map_layer_id'] = $mapLayerId;
+									$mapI18nFields[$key]['language'] = $language;
+									$mapI18nFields[$key]['layer_title'] = (string) $title ?? null;
 								}
 							}
 
 							// Prefer ServiceURL per language; fill gaps from legacy URL for CSV languages
 							if (! empty($layer->ServiceURL)) {
-								foreach ($layer->ServiceURL as $service_url) {
-									$language = (string) $service_url->attributes()->language;
+								foreach ($layer->ServiceURL as $serviceUrl) {
+									$language = (string) $serviceUrl->attributes()->language;
 									if ($language === '') {
 										continue;
 									}
-									$key = $map_layer_id . '-' . $language;
-									$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
-									$map_i18n_fields[$key]['language'] = $language;
-									$map_i18n_fields[$key]['url'] = trim((string) $service_url);
+									$key = $mapLayerId . '-' . $language;
+									$mapI18nFields[$key]['map_layer_id'] = $mapLayerId;
+									$mapI18nFields[$key]['language'] = $language;
+									$mapI18nFields[$key]['url'] = trim((string) $serviceUrl);
 								}
 							}
 
 							// Fallback to legacy URL for CSV languages
-							foreach (array_filter(array_map('trim', explode(',', $languages_csv))) as $language) {
-								$key = $map_layer_id . '-' . $language;
-								if (! empty($map_i18n_fields[$key]['url'])) {
+							foreach (array_filter(array_map('trim', explode(',', $languagesCsv))) as $language) {
+								$key = $mapLayerId . '-' . $language;
+								if (! empty($mapI18nFields[$key]['url'])) {
 									continue;
 								}
-								$map_i18n_fields[$key]['map_layer_id'] = $map_layer_id;
-								$map_i18n_fields[$key]['language'] = $language;
-								$map_i18n_fields[$key]['url'] = $legacy_url;
+								$mapI18nFields[$key]['map_layer_id'] = $mapLayerId;
+								$mapI18nFields[$key]['language'] = $language;
+								$mapI18nFields[$key]['url'] = $legacyUrl;
 							}
 
 							// Insert map layer i18n
-							if (! empty($map_i18n_fields)) {
-								foreach ($map_i18n_fields as $i18n) {
+							if (! empty($mapI18nFields)) {
+								foreach ($mapI18nFields as $i18n) {
 									if (! isset($i18n['url'])) {
 										$i18n['url'] = '';
 									}
@@ -249,9 +249,9 @@ class ParksImport
 
 		// Add param to url with last import timestamp
 		if ($force !== true) {
-			$last_import = $this->sdk->meta->last_import ?? null;
-			if (! empty($last_import)) {
-				$url .= '?since=' . $last_import;
+			$lastImport = $this->sdk->meta->last_import ?? null;
+			if (! empty($lastImport)) {
+				$url .= '?since=' . $lastImport;
 			} else {
 				$force = true;
 				$this->sdk->logger->info("Enabling FORCE mode because timestamp for last import is empty");
@@ -270,46 +270,46 @@ class ParksImport
 			$this->sdk->logger->info("Starting XML import from " . $url);
 
 			// Init
-			$ctr_imported = 0;
-			$ctr_deleted = 0;
-			$offers_checklist = [];
+			$ctrImported = 0;
+			$ctrDeleted = 0;
+			$offersChecklist = [];
 
 			if (! empty($this->xml)) {
 
 				// Iterate over each offer and add it to the array
-				$offer_list = [];
+				$offerList = [];
 				foreach ($this->xml->Offer as $offer) {
-					$offer_list[] = $offer;
+					$offerList[] = $offer;
 				}
 
 				// Chunk offers
-				$offers_chunks = array_chunk($offer_list, 300);
-				$chunk_total = count($offers_chunks);
-				$chunk_index = 0;
+				$offersChunks = array_chunk($offerList, 300);
+				$chunkTotal = count($offersChunks);
+				$chunkIndex = 0;
 
-				if (! empty($offers_chunks)) {
+				if (! empty($offersChunks)) {
 
-					foreach ($offers_chunks as $offers_chunk) {
+					foreach ($offersChunks as $offersChunk) {
 
-						$chunk_index++;
-						$chunk_imported_ids = [];
+						$chunkIndex++;
+						$chunkImportedIds = [];
 
 						// Import every offer
-						foreach ($offers_chunk as $offer) {
+						foreach ($offersChunk as $offer) {
 
 							// Init offer
-							$offer_id = intval($offer->attributes()->identifier);
-							$deleted_at = $offer->attributes()->deletedAt;
+							$offerId = intval($offer->attributes()->identifier);
+							$deletedAt = $offer->attributes()->deletedAt;
 							$status = $offer->attributes()->status;
 
 							// Check if offer should be deleted
-							if (! empty($deleted_at) || ($status != OFFER_STATUS_ACTIVE)) {
+							if (! empty($deletedAt) || ($status != OFFER_STATUS_ACTIVE)) {
 								if ($force == false) {
 
 									// Delete offer from db and continue
-									$this->sdk->db->delete('offer', ['offer_id' => $offer_id]);
-									$this->sdk->logger->info("\tDeleted offer with ID " . $offer_id);
-									$ctr_deleted++;
+									$this->sdk->db->delete('offer', ['offer_id' => $offerId]);
+									$this->sdk->logger->info("\tDeleted offer with ID " . $offerId);
+									$ctrDeleted++;
 								}
 
 								continue;
@@ -336,16 +336,16 @@ class ParksImport
 							];
 
 							// Error handling
-							if (! $this->insertOrUpdate('offer', $fields, ['offer_id' => $offer_id])) {
-								$this->sdk->logger->error("Database error (offer id " . $offer_id . "): " . $this->sdk->db->getLastError());
+							if (! $this->insertOrUpdate('offer', $fields, ['offer_id' => $offerId])) {
+								$this->sdk->logger->error("Database error (offer id " . $offerId . "): " . $this->sdk->db->getLastError());
 								continue;
 							}
 
 							// Categories
-							$this->sdk->db->delete('category_link', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('category_link', ['offer_id' => $offerId]);
 							foreach ($offer->Categories->Category as $category) {
-								$category_id = $category->attributes()->identifier;
-								$this->sdk->db->insert('category_link', ['offer_id' => $offer_id, 'category_id' => $category_id]);
+								$categoryId = $category->attributes()->identifier;
+								$this->sdk->db->insert('category_link', ['offer_id' => $offerId, 'category_id' => $categoryId]);
 							}
 
 							// Offer i18n
@@ -355,10 +355,10 @@ class ParksImport
 							}
 
 							// Clean i18n data
-							$this->sdk->db->delete('offer_i18n', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('offer_i18n', ['offer_id' => $offerId]);
 
 							// Define i18n fields
-							$i18n_fields = [
+							$i18nFields = [
 								'Title' => 'title',
 								'Abstract' => 'abstract',
 								'MediumDescription' => 'description_medium',
@@ -383,22 +383,22 @@ class ParksImport
 							];
 
 							// Setup i18n values
-							$available_languages = [];
-							foreach ($i18n_fields as $xml_node_name => $db_column_name) {
+							$availableLanguages = [];
+							foreach ($i18nFields as $xmlNodeName => $dbColumnName) {
 
 								// Node is set in xml
-								if (! empty($offer->{$xml_node_name})) {
-									foreach ($offer->{$xml_node_name} as $node) {
+								if (! empty($offer->{$xmlNodeName})) {
+									foreach ($offer->{$xmlNodeName} as $node) {
 										$lang = (string)$node->attributes()->language;
-										$available_languages[$lang] = null;
-										$i18n[$lang][$db_column_name] = (string)$node;
+										$availableLanguages[$lang] = null;
+										$i18n[$lang][$dbColumnName] = (string)$node;
 									}
 								}
 
 								// Node is not set > clean this value from db
 								else {
-									foreach (array_keys($available_languages) as $lang) {
-										$i18n[$lang][$db_column_name] = '';
+									foreach (array_keys($availableLanguages) as $lang) {
+										$i18n[$lang][$dbColumnName] = '';
 									}
 								}
 							}
@@ -428,23 +428,23 @@ class ParksImport
 							}
 
 							// Insert internal informations
-							$i18n_fields_intern = [
+							$i18nFieldsIntern = [
 								'Costs' => 'costs',
 								'Funding' => 'funding',
 								'Partner' => 'partner',
 								'Remarks' => 'remarks',
 							];
-							foreach ($i18n_fields_intern as $xml_node_name => $db_column_name) {
+							foreach ($i18nFieldsIntern as $xmlNodeName => $dbColumnName) {
 
 								// Clean data
-								$this->sdk->db->update('offer_i18n', [$db_column_name => null], ['offer_id' => $offer_id]);
+								$this->sdk->db->update('offer_i18n', [$dbColumnName => null], ['offer_id' => $offerId]);
 
 								// Node is set in xml
-								if (! empty($offer->InternalInformations->{$xml_node_name})) {
-									foreach ($offer->InternalInformations->{$xml_node_name} as $node) {
+								if (! empty($offer->InternalInformations->{$xmlNodeName})) {
+									foreach ($offer->InternalInformations->{$xmlNodeName} as $node) {
 										$lang = (string)$node->attributes()->language;
-										$available_languages[$lang] = null;
-										$i18n[$lang][$db_column_name] = (string)$node;
+										$availableLanguages[$lang] = null;
+										$i18n[$lang][$dbColumnName] = (string)$node;
 									}
 								}
 								
@@ -453,24 +453,24 @@ class ParksImport
 							// Insert or update i18n data for offer
 							foreach ($i18n as $language => $data) {
 								if (! empty($data)) {
-									$this->insertOrUpdate('offer_i18n', $data, ['offer_id' => $offer_id, 'language' => $language]);
+									$this->insertOrUpdate('offer_i18n', $data, ['offer_id' => $offerId, 'language' => $language]);
 								}
 							}
 
 							// Dates
-							$this->sdk->db->delete('offer_date', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('offer_date', ['offer_id' => $offerId]);
 							if (! empty($offer->Dates)) {
 								foreach ($offer->Dates->Date as $date) {
-									$date_from = $date->DateFrom . ($date->TimeFrom ? "T" . $date->TimeFrom : "");
-									$date_to = null;
+									$dateFrom = $date->DateFrom . ($date->TimeFrom ? "T" . $date->TimeFrom : "");
+									$dateTo = null;
 									if ($date->DateTo) {
-										$date_to = $date->DateTo . ($date->TimeTo ? "T" . $date->TimeTo : "");
+										$dateTo = $date->DateTo . ($date->TimeTo ? "T" . $date->TimeTo : "");
 									}
 
 									$fields = [
-										'offer_id' => $offer_id,
-										'date_from' => empty($date_from) ? null : $this->formatDatetime($date_from),
-										'date_to' => empty($date_to) ? null : $this->formatDatetime($date_to),
+										'offer_id' => $offerId,
+										'date_from' => empty($dateFrom) ? null : $this->formatDatetime($dateFrom),
+										'date_to' => empty($dateTo) ? null : $this->formatDatetime($dateTo),
 									];
 
 									$this->sdk->db->insert('offer_date', $fields);
@@ -478,30 +478,30 @@ class ParksImport
 							}
 
 							// TargetGroups
-							$this->sdk->db->delete('target_group_link', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('target_group_link', ['offer_id' => $offerId]);
 							if ($offer->TargetGroups) {
-								foreach ($offer->TargetGroups->TargetGroup as $target_group) {
-									$target_group_id = $target_group->attributes()->identifier;
-									$this->sdk->db->insert('target_group_link', ['offer_id' => $offer_id, 'target_group_id' => $target_group_id]);
+								foreach ($offer->TargetGroups->TargetGroup as $targetGroup) {
+									$targetGroupId = $targetGroup->attributes()->identifier;
+									$this->sdk->db->insert('target_group_link', ['offer_id' => $offerId, 'target_group_id' => $targetGroupId]);
 								}
 							}
 
 							// Fields of activity
-							$this->sdk->db->delete('field_of_activity_link', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('field_of_activity_link', ['offer_id' => $offerId]);
 							if (! empty($offer->FieldsOfActivity->FieldOfActivity)) {
-								foreach ($offer->FieldsOfActivity->FieldOfActivity as $field_of_activity) {
-									$field_of_activity_id = $field_of_activity->attributes()->identifier;
-									$this->sdk->db->insert('field_of_activity_link', ['offer_id' => $offer_id, 'field_of_activity_id' => $field_of_activity_id]);
+								foreach ($offer->FieldsOfActivity->FieldOfActivity as $fieldOfActivity) {
+									$fieldOfActivityId = $fieldOfActivity->attributes()->identifier;
+									$this->sdk->db->insert('field_of_activity_link', ['offer_id' => $offerId, 'field_of_activity_id' => $fieldOfActivityId]);
 								}
 							}
 
 							// Images
-							$this->sdk->db->delete('image', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('image', ['offer_id' => $offerId]);
 							if ($offer->Images) {
 								foreach ($offer->Images->Image as $image) {
 									$fields = [];
 
-									$fields['offer_id'] = $offer_id;
+									$fields['offer_id'] = $offerId;
 									$fields['small'] = (string)$image->Small;
 									$fields['medium'] = (string)$image->Medium;
 									$fields['large'] = (string)$image->Large;
@@ -513,12 +513,12 @@ class ParksImport
 							}
 
 							// Documents
-							$this->sdk->db->delete('document', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('document', ['offer_id' => $offerId]);
 							if ($offer->Documents) {
 								foreach ($offer->Documents->Document as $document) {
 									$fields = [];
 
-									$fields['offer_id'] = $offer_id;
+									$fields['offer_id'] = $offerId;
 									$fields['language'] = (string)$document->attributes()->language;
 									$fields['title'] = (string)$document->Title;
 									$fields['url'] = (string)$document->URL;
@@ -528,12 +528,12 @@ class ParksImport
 							}
 
 							// Documents intern
-							$this->sdk->db->delete('document_intern', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('document_intern', ['offer_id' => $offerId]);
 							if (! empty($offer->InternalInformations->DocumentsIntern->Document)) {
 								foreach ($offer->InternalInformations->DocumentsIntern->Document as $document) {
 									$fields = [];
 
-									$fields['offer_id'] = $offer_id;
+									$fields['offer_id'] = $offerId;
 									$fields['language'] = (string)$document->attributes()->language;
 									$fields['title'] = (string)$document->Title;
 									$fields['url'] = (string)$document->URL;
@@ -543,12 +543,12 @@ class ParksImport
 							}
 
 							// Hyperlinks
-							$this->sdk->db->delete('hyperlink', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('hyperlink', ['offer_id' => $offerId]);
 							if ($offer->Hyperlinks) {
 								foreach ($offer->Hyperlinks->Hyperlink as $hyperlink) {
 									$fields = [];
 
-									$fields['offer_id'] = $offer_id;
+									$fields['offer_id'] = $offerId;
 									$fields['language'] = (string)$hyperlink->attributes()->language;
 									$fields['title'] = (string)$hyperlink->Title;
 									$fields['url'] = (string)$hyperlink->URL;
@@ -558,12 +558,12 @@ class ParksImport
 							}
 
 							// Hyperlinks intern
-							$this->sdk->db->delete('hyperlink_intern', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('hyperlink_intern', ['offer_id' => $offerId]);
 							if ($offer->InternalInformations->HyperlinksIntern) {
 								foreach ($offer->InternalInformations->HyperlinksIntern->Hyperlink as $hyperlink) {
 									$fields = [];
 
-									$fields['offer_id'] = $offer_id;
+									$fields['offer_id'] = $offerId;
 									$fields['language'] = (string)$hyperlink->attributes()->language;
 									$fields['title'] = (string)$hyperlink->Title;
 									$fields['url'] = (string)$hyperlink->URL;
@@ -573,109 +573,109 @@ class ParksImport
 							}
 
 							// Accessibilities
-							$this->sdk->db->delete('accessibility', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('accessibility', ['offer_id' => $offerId]);
 							if ($offer->Accessibilities) {
 
 								// Import main accessiblity data
-								$accessibility_id = (string)$offer->Accessibilities->attributes()->identifier;
-								$ginto_id = (string)$offer->Accessibilities->attributes()->gintoId;
-								$ginto_icon = (string)$offer->Accessibilities->attributes()->gintoIcon;
-								$ginto_link = (string)$offer->Accessibilities->attributes()->gintoLink;
+								$accessibilityId = (string)$offer->Accessibilities->attributes()->identifier;
+								$gintoId = (string)$offer->Accessibilities->attributes()->gintoId;
+								$gintoIcon = (string)$offer->Accessibilities->attributes()->gintoIcon;
+								$gintoLink = (string)$offer->Accessibilities->attributes()->gintoLink;
 								$this->sdk->db->insert('accessibility', [
-									'accessibility_id' => $accessibility_id,
-									'offer_id' => $offer_id,
-									'ginto_id' => $ginto_id,
-									'ginto_icon' => $ginto_icon,
-									'ginto_link' => $ginto_link,
+									'accessibility_id' => $accessibilityId,
+									'offer_id' => $offerId,
+									'ginto_id' => $gintoId,
+									'ginto_icon' => $gintoIcon,
+									'ginto_link' => $gintoLink,
 								]);
 
 								// Import ratings
-								$this->sdk->db->delete('accessibility_rating', ['accessibility_id' => $accessibility_id]);
+								$this->sdk->db->delete('accessibility_rating', ['accessibility_id' => $accessibilityId]);
 								if ($offer->Accessibilities->Accessibility) {
 									foreach ($offer->Accessibilities->Accessibility as $accessibility) {
 
 										// Get rating ID
-										$rating_id = (string)$accessibility->attributes()->identifier;
+										$ratingId = (string)$accessibility->attributes()->identifier;
 
 										// Insert or update rating
 										$rating = [
-											'accessibility_rating_id' => $rating_id,
-											'accessibility_id' => $accessibility_id,
+											'accessibility_rating_id' => $ratingId,
+											'accessibility_id' => $accessibilityId,
 										];
 										foreach ($accessibility->Name as $name) {
 											$language = (string)$name->attributes()->language;
 											$rating['description_' . $language] = (string)$name;
 										}
 										$rating['icon_url'] = (string)$accessibility->RatingIcon;
-										$this->insertOrUpdate('accessibility_rating', $rating, ['accessibility_rating_id' => $rating_id]);
+										$this->insertOrUpdate('accessibility_rating', $rating, ['accessibility_rating_id' => $ratingId]);
 									}
 								}
 							}
 
 							// Municipalities
-							$this->sdk->db->delete('offer_municipality_link', ['offer_id' => $offer_id]);
+							$this->sdk->db->delete('offer_municipality_link', ['offer_id' => $offerId]);
 							if (! empty($offer->Municipalities)) {
 								foreach ($offer->Municipalities->Municipality as $municipality) {
 
 									// Get municipality  data
-									$municipality_id = intval($municipality->attributes()->identifier);
-									$municipality_name = (string)$municipality;
+									$municipalityId = intval($municipality->attributes()->identifier);
+									$municipalityName = (string)$municipality;
 									
 									// Build municipality
-									$municipality_data = [
-										'municipality_id' => $municipality_id,
+									$municipalityData = [
+										'municipality_id' => $municipalityId,
 										'park_id' => (int)$offer->ParkId,
-										'municipality' => $municipality_name,
+										'municipality' => $municipalityName,
 									];
-									$this->insertOrUpdate('municipality', $municipality_data, ['municipality_id' => $municipality_id, 'park_id' => $municipality_data['park_id']]);
+									$this->insertOrUpdate('municipality', $municipalityData, ['municipality_id' => $municipalityId, 'park_id' => $municipalityData['park_id']]);
 
 									// Create municipality link
-									$this->sdk->db->insert('offer_municipality_link', ['offer_id' => $offer_id, 'municipality_id' => $municipality_id]);
+									$this->sdk->db->insert('offer_municipality_link', ['offer_id' => $offerId, 'municipality_id' => $municipalityId]);
 								}
 							}
 
 							// Get root category id
-							$root_category_id = $this->getRootCategory(intval($offer->Categories->Category[0]->attributes()->identifier));
+							$rootCategoryId = $this->getRootCategory(intval($offer->Categories->Category[0]->attributes()->identifier));
 
 							// Subscription
-							if (($root_category_id == CATEGORY_EVENT) || ($root_category_id == CATEGORY_BOOKING)) {
+							if (($rootCategoryId == CATEGORY_EVENT) || ($rootCategoryId == CATEGORY_BOOKING)) {
 								$fields = [];
 
 								$fields['subscription_mandatory'] = (int)$offer->Subscription->SubscriptionMandatory;
 								$fields['online_subscription_enabled'] = (int)$offer->Subscription->OnlineSubscriptionEnabled;
 								$fields['subscription_contact'] = $this->formatContactAddress($offer->Subscription->SubscriptionContact);
 								$fields['subscription_link'] = (string)$offer->Subscription->SubscriptionLink;
-								$this->insertOrUpdate('subscription', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('subscription', $fields, ['offer_id' => $offerId]);
 
 								// Subscription i18n
 								if (isset($offer->Subscription->Details)) {
 									foreach ($offer->Subscription->Details as $detail) {
-										$subscription_detail = [];
-										$subscription_detail['offer_id'] = $offer_id;
-										$subscription_detail['language'] = (string)$detail->attributes()->language;
-										$subscription_detail_where = $subscription_detail;
-										$subscription_detail['subscription_details'] = (string)$detail;
-										$this->insertOrUpdate('subscription_i18n', $subscription_detail, $subscription_detail_where);
+										$subscriptionDetail = [];
+										$subscriptionDetail['offer_id'] = $offerId;
+										$subscriptionDetail['language'] = (string)$detail->attributes()->language;
+										$subscriptionDetailWhere = $subscriptionDetail;
+										$subscriptionDetail['subscription_details'] = (string)$detail;
+										$this->insertOrUpdate('subscription_i18n', $subscriptionDetail, $subscriptionDetailWhere);
 									}
 								} else {
-									$this->sdk->db->delete('subscription_i18n', ['offer_id' => $offer_id]);
+									$this->sdk->db->delete('subscription_i18n', ['offer_id' => $offerId]);
 								}
 							}
 
 							$fields = [];
 
 							// Events
-							if ($root_category_id == CATEGORY_EVENT) {
+							if ($rootCategoryId == CATEGORY_EVENT) {
 								$fields['is_park_event'] = (int)$offer->ParkEvent;
 								$fields['is_park_partner_event'] = (int)$offer->ParkPartnerEvent;
 								$fields['public_transport_stop'] = (string)$offer->PublicTransportStop;
 								$fields['kind_of_event'] = (string)$offer->Kind;
 
-								$this->insertOrUpdate('event', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('event', $fields, ['offer_id' => $offerId]);
 							}
 
 							// Products
-							else if ($root_category_id == CATEGORY_PRODUCT) {
+							else if ($rootCategoryId == CATEGORY_PRODUCT) {
 								$fields['public_transport_stop'] = (string)$offer->PublicTransportStop;
 								$fields['number_of_rooms'] = (int)$offer->NumberOfRooms;
 								$fields['has_conference_room'] = (int)$offer->HasConferenceRoom;
@@ -705,13 +705,13 @@ class ParksImport
 
 								}
 
-								$this->insertOrUpdate('product', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('product', $fields, ['offer_id' => $offerId]);
 
 								// Suppliers
-								$this->sdk->db->delete('supplier', ['offer_id' => $offer_id]);
+								$this->sdk->db->delete('supplier', ['offer_id' => $offerId]);
 								if ($offer->Suppliers) {
 									foreach ($offer->Suppliers->Supplier as $supplier) {
-										$this->sdk->db->insert('supplier', ['offer_id' => $offer_id, 'contact' => $this->formatContactAddress($supplier), 'is_park_partner' => (int)$supplier->ParkPartner]);
+										$this->sdk->db->insert('supplier', ['offer_id' => $offerId, 'contact' => $this->formatContactAddress($supplier), 'is_park_partner' => (int)$supplier->ParkPartner]);
 									}
 								}
 
@@ -720,150 +720,150 @@ class ParksImport
 
 									// PaymentTerms
 									if (isset($offer->OnlineShop->PaymentTerms)) {
-										foreach ($offer->OnlineShop->PaymentTerms as $payment_term) {
-											$offer_i18n = [];
-											$offer_i18n['offer_id'] = $offer_id;
-											$offer_i18n['language'] = (string)$payment_term->attributes()->language;
-											$offer_i18n_where = $offer_i18n;
-											$offer_i18n['online_shop_payment_terms'] = (string)$payment_term;
-											$this->insertOrUpdate('offer_i18n', $offer_i18n, $offer_i18n_where);
+										foreach ($offer->OnlineShop->PaymentTerms as $paymentTerm) {
+											$offerI18n = [];
+											$offerI18n['offer_id'] = $offerId;
+											$offerI18n['language'] = (string)$paymentTerm->attributes()->language;
+											$offerI18nWhere = $offerI18n;
+											$offerI18n['online_shop_payment_terms'] = (string)$paymentTerm;
+											$this->insertOrUpdate('offer_i18n', $offerI18n, $offerI18nWhere);
 										}
 									}
 
 									// DeliveryConditions
 									if (isset($offer->OnlineShop->DeliveryConditions)) {
-										foreach ($offer->OnlineShop->DeliveryConditions as $delivery_condition) {
-											$offer_i18n = [];
-											$offer_i18n['offer_id'] = $offer_id;
-											$offer_i18n['language'] = (string)$delivery_condition->attributes()->language;
-											$offer_i18n_where = $offer_i18n;
-											$offer_i18n['online_shop_delivery_conditions'] = (string)$delivery_condition;
-											$this->insertOrUpdate('offer_i18n', $offer_i18n, $offer_i18n_where);
+										foreach ($offer->OnlineShop->DeliveryConditions as $deliveryCondition) {
+											$offerI18n = [];
+											$offerI18n['offer_id'] = $offerId;
+											$offerI18n['language'] = (string)$deliveryCondition->attributes()->language;
+											$offerI18nWhere = $offerI18n;
+											$offerI18n['online_shop_delivery_conditions'] = (string)$deliveryCondition;
+											$this->insertOrUpdate('offer_i18n', $offerI18n, $offerI18nWhere);
 										}
 									}
 
 									// Online shop: Article
-									$this->sdk->db->delete('product_article', ['offer_id' => $offer_id]);
+									$this->sdk->db->delete('product_article', ['offer_id' => $offerId]);
 									if ($offer->OnlineShop->Articles->Article) {
 										foreach ($offer->OnlineShop->Articles->Article as $article) {
 
 											// Set attributes
-											$article_id = $article->attributes()->identifier;
-											$is_food = ($article->attributes()->is_food == 'true') ? 1 : 0;
+											$articleId = $article->attributes()->identifier;
+											$isFood = ($article->attributes()->is_food == 'true') ? 1 : 0;
 
 											// Insert article
 											$this->sdk->db->insert('product_article', [
-												'product_article_id' => $article_id,
-												'offer_id' => $offer_id,
+												'product_article_id' => $articleId,
+												'offer_id' => $offerId,
 												'supplier_contact' => $this->formatContactAddress($article->Supplier),
-												'is_food' => (int)$is_food,
+												'is_food' => (int)$isFood,
 											]);
 
 											// Article i18n: Title
 											if (isset($article->ArticleTitle)) {
 												foreach ($article->ArticleTitle as $title) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$title->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_title'] = (string)$title;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$title->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_title'] = (string)$title;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Article i18n: Description
 											if (isset($article->ArticleDescription)) {
 												foreach ($article->ArticleDescription as $description) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$description->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_description'] = (string)$description;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$description->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_description'] = (string)$description;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Article i18n: Ingredients
 											if (isset($article->ArticleIngredients)) {
 												foreach ($article->ArticleIngredients as $ingredients) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$ingredients->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_ingredients'] = (string)$ingredients;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$ingredients->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_ingredients'] = (string)$ingredients;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Article i18n: Allergens
 											if (isset($article->ArticleAllergens)) {
 												foreach ($article->ArticleAllergens as $allergens) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$allergens->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_allergens'] = (string)$allergens;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$allergens->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_allergens'] = (string)$allergens;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Article i18n: NutritionalValues
 											if (isset($article->ArticleNutritionalValues)) {
-												foreach ($article->ArticleNutritionalValues as $nutritional_values) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$nutritional_values->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_nutritional_values'] = (string)$nutritional_values;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+												foreach ($article->ArticleNutritionalValues as $nutritionalValues) {
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$nutritionalValues->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_nutritional_values'] = (string)$nutritionalValues;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Article i18n: IdentityLabel
 											if (isset($article->ArticleIdentityLabel)) {
-												foreach ($article->ArticleIdentityLabel as $identity_label) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$identity_label->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_identity_label'] = (string)$identity_label;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+												foreach ($article->ArticleIdentityLabel as $identityLabel) {
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$identityLabel->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_identity_label'] = (string)$identityLabel;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Article i18n: QuantityIndication
 											if (isset($article->ArticleQuantityIndication)) {
-												foreach ($article->ArticleQuantityIndication as $quantity_indication) {
-													$article_i18n = [];
-													$article_i18n['product_article_id'] = $article_id;
-													$article_i18n['language'] = (string)$quantity_indication->attributes()->language;
-													$article_i18n_where = $article_i18n;
-													$article_i18n['article_quantity_indication'] = (string)$quantity_indication;
-													$this->insertOrUpdate('product_article_i18n', $article_i18n, $article_i18n_where);
+												foreach ($article->ArticleQuantityIndication as $quantityIndication) {
+													$articleI18n = [];
+													$articleI18n['product_article_id'] = $articleId;
+													$articleI18n['language'] = (string)$quantityIndication->attributes()->language;
+													$articleI18nWhere = $articleI18n;
+													$articleI18n['article_quantity_indication'] = (string)$quantityIndication;
+													$this->insertOrUpdate('product_article_i18n', $articleI18n, $articleI18nWhere);
 												}
 											}
 
 											// Import article labels
-											$this->sdk->db->delete('product_article_label', ['product_article_id' => $article_id]);
+											$this->sdk->db->delete('product_article_label', ['product_article_id' => $articleId]);
 											if (isset($article->ArticleLabels->ArticleLabel)) {
 
 												// Iterate all article labels
 												foreach ($article->ArticleLabels->ArticleLabel as $label) {
 
 													// Set label id
-													$label_id = $label->attributes()->identifier;
+													$labelId = $label->attributes()->identifier;
 
 													// Iterate all labels
-													foreach ($label->Label as $single_label) {
+													foreach ($label->Label as $singleLabel) {
 
 														// Insert article label
 														$this->sdk->db->insert('product_article_label', [
-															'product_article_id' => $article_id,
-															'label_id' => $label_id,
-															'language' => $single_label->attributes()->language,
-															'label_title' => (string)$single_label,
-															'label_url' => $single_label->attributes()->url,
-															'label_icon' => $single_label->attributes()->icon,
+															'product_article_id' => $articleId,
+															'label_id' => $labelId,
+															'language' => $singleLabel->attributes()->language,
+															'label_title' => (string)$singleLabel,
+															'label_url' => $singleLabel->attributes()->url,
+															'label_icon' => $singleLabel->attributes()->icon,
 														]);
 													}
 												}
@@ -874,7 +874,7 @@ class ParksImport
 							}
 
 							// Bookings
-							else if ($root_category_id == CATEGORY_BOOKING) {
+							else if ($rootCategoryId == CATEGORY_BOOKING) {
 								$fields['is_park_partner'] = (int)$offer->IsParkPartner;
 								$fields['min_group_subscriber'] = (int)$offer->MinGroupSubscribers;
 								$fields['max_group_subscriber'] = (int)$offer->MaxGroupSubscribers;
@@ -892,19 +892,19 @@ class ParksImport
 									$fields['season_months'] = implode(',', $months);
 								}
 
-								$this->insertOrUpdate('booking', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('booking', $fields, ['offer_id' => $offerId]);
 
 								// Accommodations
-								$this->sdk->db->delete('accommodation', ['offer_id' => $offer_id]);
+								$this->sdk->db->delete('accommodation', ['offer_id' => $offerId]);
 								if ($offer->Accommodations) {
 									foreach ($offer->Accommodations->Accommodation as $accommodation) {
-										$this->sdk->db->insert('accommodation', ['offer_id' => $offer_id, 'contact' => $this->formatContactAddress($accommodation), 'is_park_partner' => (int)$accommodation->ParkPartner]);
+										$this->sdk->db->insert('accommodation', ['offer_id' => $offerId, 'contact' => $this->formatContactAddress($accommodation), 'is_park_partner' => (int)$accommodation->ParkPartner]);
 									}
 								}
 							}
 
 							// Activities
-							else if ($root_category_id == CATEGORY_ACTIVITY) {
+							else if ($rootCategoryId == CATEGORY_ACTIVITY) {
 								$fields['start_place_info'] = (string)$offer->StartPlaceInfo;
 								$fields['start_place_altitude'] = (int)$offer->StartPlaceAltitude;
 								$fields['goal_place_info'] = (string)$offer->GoalPlaceInfo;
@@ -950,12 +950,12 @@ class ParksImport
 									$fields['poi'] = implode(',', $fields['poi']) . ',';
 								}
 
-								$this->insertOrUpdate('activity', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('activity', $fields, ['offer_id' => $offerId]);
 								
 							}
 
 							// Projects and research
-							else if (in_array($root_category_id, [CATEGORY_PROJECT, CATEGORY_RESEARCH])) {
+							else if (in_array($rootCategoryId, [CATEGORY_PROJECT, CATEGORY_RESEARCH])) {
 								$fields['duration_from'] = (int)$offer->DurationFrom;
 								$fields['duration_from_month'] = (int)$offer->DurationFromMonth;
 								$fields['duration_to'] = (int)$offer->DurationTo;
@@ -971,19 +971,19 @@ class ParksImport
 									$fields['poi'] = implode(',', $fields['poi']);
 								}
 
-								$this->insertOrUpdate('project', $fields, ['offer_id' => $offer_id]);
+								$this->insertOrUpdate('project', $fields, ['offer_id' => $offerId]);
 							}
 
 							// Check off this offer
-							$offers_checklist[$offer_id] = true;
-							$chunk_imported_ids[] = $offer_id;
-							$ctr_imported++;
+							$offersChecklist[$offerId] = true;
+							$chunkImportedIds[] = $offerId;
+							$ctrImported++;
 
 						}
 
 						$this->sdk->logger->info(
-							"\tChunk " . $chunk_index . "/" . $chunk_total . ": imported " . count($chunk_imported_ids)
-							. " offers (ids: " . implode(',', $chunk_imported_ids) . ")"
+							"\tChunk " . $chunkIndex . "/" . $chunkTotal . ": imported " . count($chunkImportedIds)
+							. " offers (ids: " . implode(',', $chunkImportedIds) . ")"
 						);
 
 						// Persist this chunk: Keeps finished work if the import aborts mid-run.
@@ -993,27 +993,27 @@ class ParksImport
 				}
 			}
 
-			$this->sdk->logger->info("Successfully imported " . $ctr_imported . " offers.");
+			$this->sdk->logger->info("Successfully imported " . $ctrImported . " offers.");
 
 			// Delete offers which did not get updated
 			if ($force === true) {
 				$this->sdk->logger->info("Deleting offers which were not updated...");
 
 				// Iterate all existing offers
-				$all_offers = $this->sdk->db->get('offer', null, null, ['offer_id']);
-				while ($offer = $all_offers->fetchAssoc()) {
-					if (! isset($offers_checklist[$offer['offer_id']])) {
+				$allOffers = $this->sdk->db->get('offer', null, null, ['offer_id']);
+				while ($offer = $allOffers->fetchAssoc()) {
+					if (! isset($offersChecklist[$offer['offer_id']])) {
 						$this->sdk->db->delete('offer', ['offer_id' => $offer['offer_id']]);
 						$this->sdk->logger->info("\tDeleted offer with ID " . $offer['offer_id']);
-						$ctr_deleted++;
+						$ctrDeleted++;
 					}
 				}
 
-				if ($ctr_deleted == 0) {
+				if ($ctrDeleted == 0) {
 					$this->sdk->logger->info("\tNothing to delete");
 				}
 			} else {
-				$this->sdk->logger->info("Deleted " . $ctr_deleted . " offers.");
+				$this->sdk->logger->info("Deleted " . $ctrDeleted . " offers.");
 			}
 
 			$this->sdk->db->update('meta', ['last_import' => time()]);
@@ -1053,46 +1053,46 @@ class ParksImport
 		$this->xml = $this->sdk->loadExternalXml($url);
 
 		// Init
-		$active_offers = [];
-		$ctr_deleted = 0;
+		$activeOffers = [];
+		$ctrDeleted = 0;
 
 		// Check xml
 		if ($this->xml !== false) {
 
 			// Get active offers
 			if (! empty($this->xml)) {
-				foreach ($this->xml->Offer as $active_offer) {
-					$active_offers[] = intval($active_offer->attributes()->identifier);
+				foreach ($this->xml->Offer as $activeOffer) {
+					$activeOffers[] = intval($activeOffer->attributes()->identifier);
 				}
 			}
 
 			// Remove inactive offers
 			$this->sdk->logger->info("Clean up offers");
 			$this->sdk->db->begin();
-			$all_offers = $this->sdk->db->get('offer', null, null, ['offer_id']);
+			$allOffers = $this->sdk->db->get('offer', null, null, ['offer_id']);
 
 			// Iterate all existing offers
-			while ($offer = $all_offers->fetchAssoc()) {
+			while ($offer = $allOffers->fetchAssoc()) {
 
 				// Delete inactive offer
-				if (! in_array($offer['offer_id'], $active_offers)) {
+				if (! in_array($offer['offer_id'], $activeOffers)) {
 					$this->sdk->db->delete('offer', ['offer_id' => $offer['offer_id']]);
 					$this->sdk->logger->info("\tDeleted inactive offer with ID " . $offer['offer_id']);
-					$ctr_deleted++;
+					$ctrDeleted++;
 				}
 			}
 
 			$this->sdk->db->commit();
 
-			if ($ctr_deleted > 0) {
+			if ($ctrDeleted > 0) {
 				$this->sdk->db->rebuildOfferFts();
 			}
 
 			// Log result
-			if ($ctr_deleted == 0) {
+			if ($ctrDeleted == 0) {
 				$this->sdk->logger->info("\tNo inactive offers");
 			} else {
-				$this->sdk->logger->info("Deleted " . $ctr_deleted . " inactive offer(s).");
+				$this->sdk->logger->info("Deleted " . $ctrDeleted . " inactive offer(s).");
 			}
 
 			return true;
@@ -1184,20 +1184,20 @@ class ParksImport
 	/**
 	 * Private method for retrieving the root category
 	 */
-	private function getRootCategory(int $category_id): int|false
+	private function getRootCategory(int $categoryId): int|false
 	{
-		if (! empty($category_id)) {
+		if (! empty($categoryId)) {
 
-			while ($category_id > 0) {
-				$q_category = $this->sdk->db->get('category', ['category_id' => $category_id]);
-				if ($q_category->numRows > 0) {
-					$category = $q_category->fetchObject();
-					$category_id = $category->parent_id;
-					$last_category_id = $category->category_id;
+			while ($categoryId > 0) {
+				$qCategory = $this->sdk->db->get('category', ['category_id' => $categoryId]);
+				if ($qCategory->numRows > 0) {
+					$category = $qCategory->fetchObject();
+					$categoryId = $category->parent_id;
+					$lastCategoryId = $category->category_id;
 				}
 			}
 
-			return $last_category_id;
+			return $lastCategoryId;
 		}
 
 		return false;
@@ -1310,9 +1310,9 @@ class ParksImport
 	/**
 	 * Get last ID
 	 */
-	private function getLastId(string $name_id, string $table): int
+	private function getLastId(string $nameId, string $table): int
 	{
-		$query =  $this->sdk->db->query('SELECT MAX(' . $name_id . ') as id FROM ' . $table);
+		$query =  $this->sdk->db->query('SELECT MAX(' . $nameId . ') as id FROM ' . $table);
 		$result = $query->fetchObject();
 
 		return $result->id;

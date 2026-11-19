@@ -95,8 +95,8 @@ if (
 |--------------------------------------------------------------------------
 |
 */
-$class_files = glob(__DIR__ . '/classes/*.php') ?: [];
-usort($class_files, static function (string $a, string $b): int {
+$classFiles = glob(__DIR__ . '/classes/*.php') ?: [];
+usort($classFiles, static function (string $a, string $b): int {
 	$rank = static function (string $path): int {
 		$base = basename($path);
 		if ($base === 'ParksView.php') {
@@ -109,8 +109,8 @@ usort($class_files, static function (string $a, string $b): int {
 	};
 	return $rank($a) <=> $rank($b) ?: strcmp($a, $b);
 });
-foreach ($class_files as $file_path) {
-	require_once $file_path;
+foreach ($classFiles as $filePath) {
+	require_once $filePath;
 }
 
 
@@ -120,6 +120,6 @@ foreach ($class_files as $file_path) {
 |--------------------------------------------------------------------------
 |
 */
-foreach (glob(__DIR__ . '/custom/*.php') as $file_path) {
-	require_once $file_path;
+foreach (glob(__DIR__ . '/custom/*.php') as $filePath) {
+	require_once $filePath;
 }

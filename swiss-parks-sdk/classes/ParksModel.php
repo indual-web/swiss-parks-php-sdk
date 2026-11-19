@@ -81,7 +81,7 @@ class ParksModel
 
 		$this->fieldsOfActivity = [];
 
-		$q_fields = $this->sdk->db->get(
+		$qFields = $this->sdk->db->get(
 			'field_of_activity',
 			['language' => $this->sdk->lang->langId],
 			['field_of_activity_i18n' => 'field_of_activity.field_of_activity_id = field_of_activity_i18n.field_of_activity_id'],
@@ -92,8 +92,8 @@ class ParksModel
 			'field_of_activity.sort'
 		);
 
-		if ($q_fields && $q_fields->numRows > 0) {
-			while ($row = $q_fields->fetchObject()) {
+		if ($qFields && $qFields->numRows > 0) {
+			while ($row = $qFields->fetchObject()) {
 				$this->fieldsOfActivity[$row->field_of_activity_id] = $row->body;
 			}
 		}
@@ -110,9 +110,9 @@ class ParksModel
 
 		$this->targetGroups = [];
 
-		$q_target_group = $this->sdk->db->get('target_group', ['language' => $this->sdk->lang->langId], ['target_group_i18n' => 'target_group.target_group_id = target_group_i18n.target_group_id'], null, null, null, null, 'target_group.sort');
-		if ($q_target_group->numRows > 0) {
-			while ($row = $q_target_group->fetchObject()) {
+		$qTargetGroup = $this->sdk->db->get('target_group', ['language' => $this->sdk->lang->langId], ['target_group_i18n' => 'target_group.target_group_id = target_group_i18n.target_group_id'], null, null, null, null, 'target_group.sort');
+		if ($qTargetGroup->numRows > 0) {
+			while ($row = $qTargetGroup->fetchObject()) {
 				$this->targetGroups[$row->target_group_id] = $row->body;
 			}
 		}
@@ -129,9 +129,9 @@ class ParksModel
 
 		$this->categories = [];
 
-		$q_category = $this->sdk->db->get('category', ['language' => $this->sdk->lang->langId], ['category_i18n' => 'category.category_id = category_i18n.category_id']);
-		if ($q_category->numRows > 0) {
-			while ($row = $q_category->fetchObject()) {
+		$qCategory = $this->sdk->db->get('category', ['language' => $this->sdk->lang->langId], ['category_i18n' => 'category.category_id = category_i18n.category_id']);
+		if ($qCategory->numRows > 0) {
+			while ($row = $qCategory->fetchObject()) {
 				$this->categories[$row->category_id] = $row;
 			}
 		}
@@ -143,11 +143,11 @@ class ParksModel
 	/**
 	 * Checks if an offer with the given id exists
 	 */
-	public function offerExists(int $offer_id): bool
+	public function offerExists(int $offerId): bool
 	{
 
-		$q_offer = $this->sdk->db->query("SELECT offer_id FROM offer WHERE offer_id = " . $offer_id);
-		if ($q_offer->numRows > 0) {
+		$qOffer = $this->sdk->db->query("SELECT offer_id FROM offer WHERE offer_id = " . $offerId);
+		if ($qOffer->numRows > 0) {
 			return true;
 		}
 
@@ -163,61 +163,61 @@ class ParksModel
 	public function getCustomLayers(): array|false
 	{
 
-		$q_layers = $this->sdk->db->query("
+		$qLayers = $this->sdk->db->query("
 			SELECT * 
 			FROM map_layer 
 			WHERE languages LIKE '%" . $this->sdk->lang->langId . "%'
 		");
 
-		if ($q_layers->numRows > 0) {
+		if ($qLayers->numRows > 0) {
 			$layers = [];
 
-			while ($row = $q_layers->fetchObject()) {
+			while ($row = $qLayers->fetchObject()) {
 
 				if (empty($row->map_layer_id)) {
 					continue;
 				}
 
 				// Get i18n data
-				$q_layers_i18n = $this->sdk->db->query("
+				$qLayersI18n = $this->sdk->db->query("
 					SELECT * 
 					FROM map_layer_i18n 
 					WHERE map_layer_id = " . $row->map_layer_id . "
 				");
 
-				if ($q_layers_i18n->numRows > 0) {
+				if ($qLayersI18n->numRows > 0) {
 
-					$layer_i18n = [];
+					$layerI18n = [];
 
 					// Parse content for each language
-					while ($row_i18n = $q_layers_i18n->fetchObject()) {
-						if (! empty($row_i18n->language)) {
+					while ($rowI18n = $qLayersI18n->fetchObject()) {
+						if (! empty($rowI18n->language)) {
 
 							// Service URL
-							if (! empty($row_i18n->url)) {
-								$layer_i18n[$row_i18n->language]['url'] = $row_i18n->url;
+							if (! empty($rowI18n->url)) {
+								$layerI18n[$rowI18n->language]['url'] = $rowI18n->url;
 							}
 
 							// Popup title
-							if (! empty($row_i18n->popup_title)) {
-								$layer_i18n[$row_i18n->language]['popup_title'] = $row_i18n->popup_title;
+							if (! empty($rowI18n->popup_title)) {
+								$layerI18n[$rowI18n->language]['popup_title'] = $rowI18n->popup_title;
 							}
 
 							// Popup content
-							if (! empty($row_i18n->popup_content)) {
-								$layer_i18n[$row_i18n->language]['popup_content'] = $row_i18n->popup_content;
+							if (! empty($rowI18n->popup_content)) {
+								$layerI18n[$rowI18n->language]['popup_content'] = $rowI18n->popup_content;
 							}
 
 							// Layer title
-							if (! empty($row_i18n->layer_title)) {
-								$layer_i18n[$row_i18n->language]['layer_title'] = $row_i18n->layer_title;
+							if (! empty($rowI18n->layer_title)) {
+								$layerI18n[$rowI18n->language]['layer_title'] = $rowI18n->layer_title;
 							}
 
 						}
 					}
 
 					// Add i18n data to row
-					$row->i18n = $layer_i18n;
+					$row->i18n = $layerI18n;
 
 				}
 
@@ -247,13 +247,13 @@ class ParksModel
 		array $filter,
 		?int $limit = null,
 		?int $offset = null,
-		bool $return_minimal = false,
-		bool $map_mode = false,
-		bool $ignore_hint_order = false,
-		bool $order_by_rand = false
+		bool $returnMinimal = false,
+		bool $mapMode = false,
+		bool $ignoreHintOrder = false,
+		bool $orderByRand = false
 	): array|false {
 
-		$result = $this->queryOffers($filter, $limit, $offset, $return_minimal, $map_mode, $ignore_hint_order, $order_by_rand, 'list');
+		$result = $this->queryOffers($filter, $limit, $offset, $returnMinimal, $mapMode, $ignoreHintOrder, $orderByRand, 'list');
 
 		return is_array($result) ? $result : false;
 	}
@@ -294,8 +294,8 @@ class ParksModel
 		}
 
 		$rows = [];
-		foreach ($meta['category_ids'] as $category_id) {
-			$rows[] = ['category_id' => $category_id];
+		foreach ($meta['category_ids'] as $categoryId) {
+			$rows[] = ['category_id' => $categoryId];
 		}
 
 		return new ParksSQLiteResult($rows);
@@ -323,26 +323,26 @@ class ParksModel
 	{
 
 		// Reuse the last meta payload when the filter has not changed
-		$cache_key = md5(serialize($filter));
-		if ($this->filterMetaCacheKey === $cache_key) {
+		$cacheKey = md5(serialize($filter));
+		if ($this->filterMetaCacheKey === $cacheKey) {
 			return $this->filterMetaCache;
 		}
 
 		$result = $this->queryOffers($filter, null, null, false, false, false, false, 'filter_meta');
 		if (! ($result instanceof stdClass)) {
-			$this->filterMetaCacheKey = $cache_key;
+			$this->filterMetaCacheKey = $cacheKey;
 			$this->filterMetaCache = false;
 
 			return false;
 		}
 
 		// category_ids arrive as a comma-separated GROUP_CONCAT string
-		$category_ids = [];
+		$categoryIds = [];
 		if (! empty($result->category_ids)) {
-			foreach (explode(',', (string) $result->category_ids) as $category_id) {
-				$category_id = (int) $category_id;
-				if ($category_id > 0) {
-					$category_ids[$category_id] = $category_id;
+			foreach (explode(',', (string) $result->category_ids) as $categoryId) {
+				$categoryId = (int) $categoryId;
+				if ($categoryId > 0) {
+					$categoryIds[$categoryId] = $categoryId;
 				}
 			}
 		}
@@ -368,11 +368,11 @@ class ParksModel
 			'activity_count' => (int) ($result->activity_count ?? 0),
 			'product_count' => (int) ($result->product_count ?? 0),
 			'project_count' => (int) ($result->project_count ?? 0),
-			'category_ids' => $category_ids,
+			'category_ids' => $categoryIds,
 			'parks' => $parks,
 		];
 
-		$this->filterMetaCacheKey = $cache_key;
+		$this->filterMetaCacheKey = $cacheKey;
 		$this->filterMetaCache = $meta;
 
 		return $meta;
@@ -387,36 +387,36 @@ class ParksModel
 		array $filter,
 		?int $limit,
 		?int $offset,
-		bool $return_minimal,
-		bool $map_mode,
-		bool $ignore_hint_order,
-		bool $order_by_rand,
+		bool $returnMinimal,
+		bool $mapMode,
+		bool $ignoreHintOrder,
+		bool $orderByRand,
 		string $mode
 	): ParksSQLiteResult|stdClass|array|false {
 
 		// Populate date filter
-		$filter_date_from = ! empty($filter['date_from']) ? $this->formatDatetime($filter['date_from']) : '';
-		$filter_date_to = ! empty($filter['date_to']) ? $this->formatDatetime($filter['date_to']) : '';
+		$filterDateFrom = ! empty($filter['date_from']) ? $this->formatDatetime($filter['date_from']) : '';
+		$filterDateTo = ! empty($filter['date_to']) ? $this->formatDatetime($filter['date_to']) : '';
 
 		// Accessibility joins only when filtering by accessibility
-		$needs_accessibility_join = (
+		$needsAccessibilityJoin = (
 			(isset($filter['has_accessibility_informations']) && ($filter['has_accessibility_informations'] == true))
 			|| ! empty($filter['accessibilities'])
 		);
-		$needs_accessibility_rating_join = false;
+		$needsAccessibilityRatingJoin = false;
 		if (! empty($filter['accessibilities'])) {
-			foreach ($filter['accessibilities'] as $accessibility_id) {
-				if ($accessibility_id != GINTO_INFOS_AVAILABLE) {
-					$needs_accessibility_rating_join = true;
+			foreach ($filter['accessibilities'] as $accessibilityId) {
+				if ($accessibilityId != GINTO_INFOS_AVAILABLE) {
+					$needsAccessibilityRatingJoin = true;
 					break;
 				}
 			}
 		}
 
 		// Subscription columns only for full detail rows
-		$needs_subscription_join = (($mode === 'list') && ($return_minimal == false) && ($map_mode == false));
-		$subscription_select = $needs_subscription_join ? "subscription.*," : "";
-		$icon_urls_select = $needs_accessibility_rating_join
+		$needsSubscriptionJoin = (($mode === 'list') && ($returnMinimal == false) && ($mapMode == false));
+		$subscriptionSelect = $needsSubscriptionJoin ? "subscription.*," : "";
+		$iconUrlsSelect = $needsAccessibilityRatingJoin
 			? "GROUP_CONCAT(DISTINCT accessibility_rating.icon_url) AS icon_urls"
 			: "NULL AS icon_urls";
 
@@ -431,7 +431,7 @@ class ParksModel
 				event.*,
 				product.*,
 				project.*,
-				" . $subscription_select . "
+				" . $subscriptionSelect . "
 				MIN(offer_date.date_from) AS date_from,
 				MAX(offer_date.date_to) AS date_to,
 				main_offer.offer_id,
@@ -483,9 +483,9 @@ class ParksModel
 								ELSE NULL
 							END
 						) = " . CATEGORY_EVENT . "
-						AND MIN(offer_date.date_from) < " . (! empty($filter_date_from) ? "'" . $filter_date_from . "'" : "NOW()") . "
+						AND MIN(offer_date.date_from) < " . (! empty($filterDateFrom) ? "'" . $filterDateFrom . "'" : "NOW()") . "
 						AND MIN(offer_date.date_from) IS NOT NULL
-						THEN " . (! empty($filter_date_from) ? "'" . $filter_date_from . "'" : "CURDATE()") . "
+						THEN " . (! empty($filterDateFrom) ? "'" . $filterDateFrom . "'" : "CURDATE()") . "
 					WHEN 
 						MIN(
 							CASE
@@ -536,7 +536,7 @@ class ParksModel
 					WHEN " . CATEGORY_PROJECT . " THEN project.poi
 				END AS poi,
 
-				" . $icon_urls_select . "
+				" . $iconUrlsSelect . "
 
 			FROM offer main_offer
 		";
@@ -583,19 +583,19 @@ class ParksModel
 			LEFT OUTER JOIN offer_date ON main_offer.offer_id = offer_date.offer_id
 		";
 
-		if ($needs_subscription_join) {
+		if ($needsSubscriptionJoin) {
 			$join .= "
 				LEFT OUTER JOIN subscription ON subscription.offer_id = main_offer.offer_id
 				LEFT OUTER JOIN subscription_i18n ON subscription_i18n.offer_id = main_offer.offer_id AND subscription_i18n.language = '" . $this->sdk->lang->langId . "'
 			";
 		}
 
-		if ($needs_accessibility_join) {
+		if ($needsAccessibilityJoin) {
 			$join .= "
 				LEFT OUTER JOIN accessibility ON accessibility.offer_id = main_offer.offer_id
 			";
 		}
-		if ($needs_accessibility_rating_join) {
+		if ($needsAccessibilityRatingJoin) {
 			$join .= "
 				LEFT OUTER JOIN accessibility_rating ON accessibility_rating.accessibility_id = accessibility.accessibility_id
 			";
@@ -609,17 +609,17 @@ class ParksModel
 		$categories = (array)($filter['categories'] ?? []);
 		$categories = array_filter($categories, fn($id) => $id !== '');
 		if (! empty($categories)) {
-			$category_conditions = [];
-			foreach ($categories as $category_id) {
-				$category_conditions[] = "
+			$categoryConditions = [];
+			foreach ($categories as $categoryId) {
+				$categoryConditions[] = "
 					(
-						c1.category_id = " . $category_id . "
-						OR c2.category_id = " . $category_id . "
-						OR c3.category_id = " . $category_id . "
+						c1.category_id = " . $categoryId . "
+						OR c2.category_id = " . $categoryId . "
+						OR c3.category_id = " . $categoryId . "
 					)
 				";
 			}
-			$where[] = '(' . implode(' OR ', $category_conditions) . ')';
+			$where[] = '(' . implode(' OR ', $categoryConditions) . ')';
 		}
 
 		// Filter: is hint
@@ -671,11 +671,11 @@ class ParksModel
 
 		// Filter: accessilibity ratiing
 		if (! empty($filter['accessibilities'])) {
-			foreach ($filter['accessibilities'] as $accessibility_id) {
-				if ($accessibility_id == GINTO_INFOS_AVAILABLE) {
+			foreach ($filter['accessibilities'] as $accessibilityId) {
+				if ($accessibilityId == GINTO_INFOS_AVAILABLE) {
 					$where[] = "accessibility.accessibility_id IS NOT NULL";
 				} else {
-					$having[] = "icon_urls LIKE '%" . $accessibility_id . "%'";
+					$having[] = "icon_urls LIKE '%" . $accessibilityId . "%'";
 				}
 			}
 		}
@@ -684,8 +684,8 @@ class ParksModel
 		if (empty($filter['force_language']) && isset($this->sdk->config['language_independence']) && ($this->sdk->config['language_independence'] == true) && isset($this->sdk->config['language_priority'])) {
 
 			// Get language priorities
-			$language_priority = $this->sdk->config['language_priority'][$this->sdk->lang->langId];
-			if (! empty($language_priority) && is_array($language_priority)) {
+			$languagePriority = $this->sdk->config['language_priority'][$this->sdk->lang->langId];
+			if (! empty($languagePriority) && is_array($languagePriority)) {
 
 				$where[] = "
 					offer_i18n.language = (
@@ -695,15 +695,15 @@ class ParksModel
 											CASE WHEN sub_offer_i18n.language IS NOT NULL THEN sub_offer_i18n.language ELSE ((
 												SELECT CASE WHEN sub_offer_i18n.language IS NOT NULL THEN sub_offer_i18n.language ELSE 'de' END
 												FROM offer sub_offer
-												LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $language_priority[2] . "'
+												LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $languagePriority[2] . "'
 												WHERE main_offer.offer_id = sub_offer.offer_id)
 											) END
 										FROM offer sub_offer
-										LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $language_priority[1] . "'
+										LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $languagePriority[1] . "'
 										WHERE main_offer.offer_id = sub_offer.offer_id
 									) END
 								FROM offer sub_offer
-								LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $language_priority[0] . "'
+								LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $languagePriority[0] . "'
 								WHERE main_offer.offer_id = sub_offer.offer_id
 							) END
 						FROM offer sub_offer
@@ -770,8 +770,8 @@ class ParksModel
 			if (! is_array($filter['park_id'])) {
 				$where[] = "main_offer.park_id = " . intval($filter['park_id']);
 			} else {
-				$where_in_park_ids = implode(",", $filter['park_id']);
-				$where[] = "main_offer.park_id IN (" . $where_in_park_ids . ")";
+				$whereInParkIds = implode(",", $filter['park_id']);
+				$where[] = "main_offer.park_id IN (" . $whereInParkIds . ")";
 			}
 		}
 		if (! empty($filter['user'])) {
@@ -797,36 +797,36 @@ class ParksModel
 			$having[] = " (main_category_id = " . CATEGORY_EVENT . ") ";
 
 			// Check time span
-			if (! empty($filter_date_from) && ! empty($filter_date_to)) {
+			if (! empty($filterDateFrom) && ! empty($filterDateTo)) {
 
 				// First, check if this offer date is between the filter dates
 				// Second, check if this date is in the filter time span
 				$where[] = "
 					(
 						(
-							'" . $filter_date_from . "' BETWEEN date_from AND date_to
+							'" . $filterDateFrom . "' BETWEEN date_from AND date_to
 							OR
-							'" . $filter_date_to . "' BETWEEN date_from AND date_to
+							'" . $filterDateTo . "' BETWEEN date_from AND date_to
 						)
 
 						OR
 
 						(
-							date_from >= DATE('" . $filter_date_from . "') AND date_from < datetime('" . $filter_date_to . "', '+1 day')
+							date_from >= DATE('" . $filterDateFrom . "') AND date_from < datetime('" . $filterDateTo . "', '+1 day')
 							OR
-							date_to >= DATE('" . $filter_date_from . "') AND date_to < datetime('" . $filter_date_to . "', '+1 day')
+							date_to >= DATE('" . $filterDateFrom . "') AND date_to < datetime('" . $filterDateTo . "', '+1 day')
 						)
 					)
 				";
 			}
 
 			// Check only date from
-			else if (! empty($filter_date_from)) {
-				$where[] = " ( offer_date.date_from >= '" . $filter_date_from . "' OR offer_date.date_to >= '" . $filter_date_from . "' ) ";
+			else if (! empty($filterDateFrom)) {
+				$where[] = " ( offer_date.date_from >= '" . $filterDateFrom . "' OR offer_date.date_to >= '" . $filterDateFrom . "' ) ";
 			}
 
 			// Check only date to
-			else if (! empty($filter_date_to)) {
+			else if (! empty($filterDateTo)) {
 				$where[] = "
 					(
 
@@ -837,7 +837,7 @@ class ParksModel
 							AND
 							date_to != '0000-00-00 00:00:00'
 							AND
-							date_to < '" . $filter_date_to . " 23:59:59'
+							date_to < '" . $filterDateTo . " 23:59:59'
 							AND
 							date_to >= NOW()
 						)
@@ -853,7 +853,7 @@ class ParksModel
 								date_to = '0000-00-00 00:00:00'
 							)
 							AND
-							date_from < '" . $filter_date_to . " 00:00:00'
+							date_from < '" . $filterDateTo . " 00:00:00'
 							AND
 							date_from >= NOW()
 						)
@@ -879,34 +879,34 @@ class ParksModel
 
 		// Filter: search words (FTS5 when available, LIKE fallback otherwise)
 		if (isset($filter['search']) && ($filter['search'] != '')) {
-			$search_words = array_values(array_filter(explode(' ', $filter['search']), fn($word) => $word !== ''));
-			if (! empty($search_words)) {
-				$fts_match = $this->buildFtsMatchQuery($search_words);
-				if ($fts_match !== '' && $this->sdk->db->isOfferFtsAvailable()) {
+			$searchWords = array_values(array_filter(explode(' ', $filter['search']), fn($word) => $word !== ''));
+			if (! empty($searchWords)) {
+				$ftsMatch = $this->buildFtsMatchQuery($searchWords);
+				if ($ftsMatch !== '' && $this->sdk->db->isOfferFtsAvailable()) {
 
 					// Numeric tokens also match offer_id directly (handy for support lookups)
-					$id_matches = [];
-					foreach ($search_words as $word) {
+					$idMatches = [];
+					foreach ($searchWords as $word) {
 						if (ctype_digit($word)) {
-							$id_matches[] = "main_offer.offer_id = " . intval($word);
+							$idMatches[] = "main_offer.offer_id = " . intval($word);
 						}
 					}
-					$fts_clause = "main_offer.offer_id IN (
+					$ftsClause = "main_offer.offer_id IN (
 						SELECT offer_fts.offer_id
 						FROM offer_fts
-						WHERE offer_fts MATCH '" . $this->sdk->db->escape($fts_match) . "'
+						WHERE offer_fts MATCH '" . $this->sdk->db->escape($ftsMatch) . "'
 							AND offer_fts.language = offer_i18n.language
 					)";
-					$where[] = ! empty($id_matches)
-						? '(' . implode(' OR ', $id_matches) . ' OR ' . $fts_clause . ')'
-						: $fts_clause;
+					$where[] = ! empty($idMatches)
+						? '(' . implode(' OR ', $idMatches) . ' OR ' . $ftsClause . ')'
+						: $ftsClause;
 				} else {
 
 					// No FTS table: AND across words, OR across many i18n/keyword columns
-					$search_query = "(";
-					foreach ($search_words as $word) {
+					$searchQuery = "(";
+					foreach ($searchWords as $word) {
 						$word = $this->sdk->db->escape($word);
-						$search_query .= "(
+						$searchQuery .= "(
 									(main_offer.offer_id = '" . $word . "')
 									OR main_offer.keywords LIKE '%" . $word . "%'
 									OR (offer_i18n.title LIKE '%" . $word . "%')
@@ -932,8 +932,8 @@ class ParksModel
 									OR (offer_i18n.project_partner LIKE '%" . $word . "%')
 								) AND ";
 					}
-					$search_query = substr($search_query, 0, -4) . ")";
-					$where[] = $search_query;
+					$searchQuery = substr($searchQuery, 0, -4) . ")";
+					$where[] = $searchQuery;
 				}
 			}
 		}
@@ -946,12 +946,12 @@ class ParksModel
 				if ($this->sdk->config['filter_keywords_with_and'] == true) {
 					$restriction = 'AND';
 				}
-				$keywords_query = "(";
+				$keywordsQuery = "(";
 				foreach ($keywords as $word) {
-					$keywords_query .= " main_offer.keywords LIKE '%" . $word . "%' " . $restriction . " ";
+					$keywordsQuery .= " main_offer.keywords LIKE '%" . $word . "%' " . $restriction . " ";
 				}
-				$keywords_query = substr($keywords_query, 0, -4) . ")";
-				$where[] = $keywords_query;
+				$keywordsQuery = substr($keywordsQuery, 0, -4) . ")";
+				$where[] = $keywordsQuery;
 			}
 		}
 
@@ -970,8 +970,8 @@ class ParksModel
 			if (is_array($filter['time_required'])) {
 
 				// Time minutes
-				$where_time_required = [];
-				$time_category_minutes = [
+				$whereTimeRequired = [];
+				$timeCategoryMinutes = [
 					'< 2h' => '(activity.time_required_minutes <= 120)',
 					'2 - 4h' => '((activity.time_required_minutes > 120) AND (activity.time_required_minutes <= 240))',
 					'4 - 6h' => '((activity.time_required_minutes > 240) AND (activity.time_required_minutes <= 360))',
@@ -985,8 +985,8 @@ class ParksModel
 					$filter['time_required'][$key] = html_entity_decode($value);
 
 					// Set time condition
-					if (! empty($time_category_minutes[$value])) {
-						$where_time_required[] = "
+					if (! empty($timeCategoryMinutes[$value])) {
+						$whereTimeRequired[] = "
 							(
 								(
 									activity.time_required_minutes IS NULL
@@ -999,15 +999,15 @@ class ParksModel
 									AND
 									activity.time_required_minutes <> 0
 									AND
-									" . $time_category_minutes[$value] . "
+									" . $timeCategoryMinutes[$value] . "
 								)
 							)
 						";
 					}
 				}
 
-				if (! empty($where_time_required)) {
-					$where[] = '(' . implode(' OR ', $where_time_required) . ')';
+				if (! empty($whereTimeRequired)) {
+					$where[] = '(' . implode(' OR ', $whereTimeRequired) . ')';
 				}
 			}
 		}
@@ -1015,8 +1015,8 @@ class ParksModel
 		// Filter: level_technics
 		if (! empty($filter['level_technics'])) {
 			if (is_array($filter['level_technics'])) {
-				$where_in_level_technics = implode(",", $filter['level_technics']);
-				$where[] = " (activity.level_technics IN (" . $where_in_level_technics . "))";
+				$whereInLevelTechnics = implode(",", $filter['level_technics']);
+				$where[] = " (activity.level_technics IN (" . $whereInLevelTechnics . "))";
 			} else {
 				$where[] = " (activity.level_technics = " . $filter['level_technics'] . ")";
 			}
@@ -1025,8 +1025,8 @@ class ParksModel
 		// Filter: time_required
 		if (! empty($filter['level_condition'])) {
 			if (is_array($filter['level_condition'])) {
-				$where_in_level_condition = implode(",", $filter['level_condition']);
-				$where[] = " (activity.level_condition IN (" . $where_in_level_condition . "))";
+				$whereInLevelCondition = implode(",", $filter['level_condition']);
+				$where[] = " (activity.level_condition IN (" . $whereInLevelCondition . "))";
 			} else {
 				$where[] = " (activity.level_condition = " . $filter['level_condition'] . "L)";
 			}
@@ -1035,29 +1035,29 @@ class ParksModel
 		// Filter: project status
 		if (! empty($filter['project_status'])) {
 			if (is_array($filter['project_status'])) {
-				$where_in_level_condition = implode(",", $filter['project_status']);
-				$where[] = " (project.status IN (" . $where_in_level_condition . "))";
+				$whereInLevelCondition = implode(",", $filter['project_status']);
+				$where[] = " (project.status IN (" . $whereInLevelCondition . "))";
 			} else {
 				$where[] = " (project.status = " . $filter['project_status'] . "L)";
 			}
 		}
 
 		// Filter: additional infos
-		$where_additional = [];
+		$whereAdditional = [];
 		if (isset($filter['online_shop_enabled']) && ($filter['online_shop_enabled'] == true)) {
-			$where_additional[] = "product.online_shop_enabled = 1";
+			$whereAdditional[] = "product.online_shop_enabled = 1";
 		}
 		if (isset($filter['barrier_free']) && ($filter['barrier_free'] == true)) {
-			$where_additional[] = "main_offer.barrier_free = 1";
+			$whereAdditional[] = "main_offer.barrier_free = 1";
 		}
 		if (isset($filter['learning_opportunity']) && ($filter['learning_opportunity'] == true)) {
-			$where_additional[] = "main_offer.learning_opportunity = 1";
+			$whereAdditional[] = "main_offer.learning_opportunity = 1";
 		}
 		if (isset($filter['child_friendly']) && ($filter['child_friendly'] == true)) {
-			$where_additional[] = "main_offer.child_friendly = 1";
+			$whereAdditional[] = "main_offer.child_friendly = 1";
 		}
-		if (! empty($where_additional)) {
-			$where[] = implode(' OR ', $where_additional);
+		if (! empty($whereAdditional)) {
+			$where[] = implode(' OR ', $whereAdditional);
 		}
 
 		// Filter: offers
@@ -1066,12 +1066,12 @@ class ParksModel
 				$filter['offers'] = [$filter['offers']];
 			}
 			if (! empty($filter['offers'])) {
-				$where_offer = "";
+				$whereOffer = "";
 				foreach ($filter['offers'] as $offer) {
-					$where_offer .= " main_offer.offer_id = " . $offer . " OR ";
+					$whereOffer .= " main_offer.offer_id = " . $offer . " OR ";
 				}
-				$where_offer = substr($where_offer, 0, -4);
-				$where[] = "(" . $where_offer . ")";
+				$whereOffer = substr($whereOffer, 0, -4);
+				$where[] = "(" . $whereOffer . ")";
 			}
 		}
 
@@ -1090,15 +1090,15 @@ class ParksModel
 		}
 
 		// Group and order by
-		$group_by = $order_by = "";
+		$groupBy = $orderBy = "";
 		if ($mode === 'parks') {
-			$group_by = " GROUP BY main_offer.park_id ";
-			$order_by = " ORDER BY park ASC ";
+			$groupBy = " GROUP BY main_offer.park_id ";
+			$orderBy = " ORDER BY park ASC ";
 		}
 		else if ($mode === 'list') {
 
 			// Group by
-			$group_by = "
+			$groupBy = "
 				GROUP BY 
 					CASE 
 						WHEN (
@@ -1118,10 +1118,10 @@ class ParksModel
 			";
 
 			// Order by
-			if ($order_by_rand === true) {
-				$order_by = " ORDER BY RAND() ";
-			} elseif ($ignore_hint_order === true) {
-				$order_by = "
+			if ($orderByRand === true) {
+				$orderBy = " ORDER BY RAND() ";
+			} elseif ($ignoreHintOrder === true) {
+				$orderBy = "
 					ORDER BY 
 						start_date, 
 						date_difference ASC, 
@@ -1131,7 +1131,7 @@ class ParksModel
 						MIN(offer_i18n.title) ASC
 				";
 			} else {
-				$order_by = "
+				$orderBy = "
 					ORDER BY
 						is_hint DESC, 
 						CASE
@@ -1169,34 +1169,34 @@ class ParksModel
 		}
 
 		// Limit query
-		$limit_sql = "";
+		$limitSql = "";
 		if (!is_null($limit) && is_numeric($limit) && ($limit > 0)) {
-			$limit_sql = " LIMIT " . (isset($offset) && is_numeric($offset) ? intval($offset) . ', ' : '') . intval($limit);
+			$limitSql = " LIMIT " . (isset($offset) && is_numeric($offset) ? intval($offset) . ', ' : '') . intval($limit);
 		}
 
 		// Run query
-		$q_offers = $this->sdk->db->query($select . $join . $where . $group_by . $having . $order_by . $limit_sql);
+		$qOffers = $this->sdk->db->query($select . $join . $where . $groupBy . $having . $orderBy . $limitSql);
 
 		if ($mode === 'filter_meta') {
-			if ($q_offers && $q_offers->numRows > 0) {
-				return $q_offers->fetchObject();
+			if ($qOffers && $qOffers->numRows > 0) {
+				return $qOffers->fetchObject();
 			}
 
 			return false;
 		}
 
 		if ($mode === 'parks') {
-			return $q_offers;
+			return $qOffers;
 		}
 
-		if ($q_offers->numRows > 0) {
+		if ($qOffers->numRows > 0) {
 
 			$offers = [
 				'data' => [],
 				'total' => 0
 			];
 
-			while ($offer = $q_offers->fetchObject()) {
+			while ($offer = $qOffers->fetchObject()) {
 				if (! empty($offer) && ($offer->offer_id > 0)) {
 					$offers['data'][] = $offer;
 				}
@@ -1208,7 +1208,7 @@ class ParksModel
 
 			// Paginated lists use a dedicated count (same grouping as the list query)
 			if (! is_null($limit) && is_numeric($limit) && ($limit > 0)) {
-				$count_select = "
+				$countSelect = "
 					SELECT
 						main_offer.offer_id,
 						MIN(
@@ -1220,18 +1220,18 @@ class ParksModel
 							END
 						) AS main_category_id,
 						MIN(offer_date.date_from) AS date_from,
-						" . $icon_urls_select . "
+						" . $iconUrlsSelect . "
 					FROM offer main_offer
 				";
-				$q_count = $this->sdk->db->query(
-					"SELECT COUNT(*) AS total FROM (" . $count_select . $join . $where . $group_by . $having . ") AS counted"
+				$qCount = $this->sdk->db->query(
+					"SELECT COUNT(*) AS total FROM (" . $countSelect . $join . $where . $groupBy . $having . ") AS counted"
 				);
-				$offers['total'] = ($q_count && $q_count->numRows > 0) ? (int) $q_count->fetchObject()->total : count($offers['data']);
+				$offers['total'] = ($qCount && $qCount->numRows > 0) ? (int) $qCount->fetchObject()->total : count($offers['data']);
 			} else {
 				$offers['total'] = count($offers['data']);
 			}
 
-			$offers['data'] = $this->enrichOffersBatch($offers['data'], $return_minimal, $map_mode);
+			$offers['data'] = $this->enrichOffersBatch($offers['data'], $returnMinimal, $mapMode);
 
 			return $offers;
 		}
@@ -1244,12 +1244,12 @@ class ParksModel
 	/**
 	 * Get offer with additional infos
 	 */
-	public function getOffer(int|object $offer, bool $return_minimal = false, bool $map_mode = false): object|false
+	public function getOffer(int|object $offer, bool $returnMinimal = false, bool $mapMode = false): object|false
 	{
 
 		// Load by id through the shared list path (already batch-enriched)
 		if (is_numeric($offer) && ! is_object($offer)) {
-			$result = $this->filterOffers(['offers' => $offer], 1, 0, $return_minimal, $map_mode);
+			$result = $this->filterOffers(['offers' => $offer], 1, 0, $returnMinimal, $mapMode);
 			if (isset($result['data']) && is_array($result['data']) && ! empty($result['data'])) {
 				return array_shift($result['data']);
 			}
@@ -1258,7 +1258,7 @@ class ParksModel
 		}
 
 		if (is_object($offer) && ! empty($offer) && ($offer->offer_id > 0)) {
-			$enriched = $this->enrichOffersBatch([$offer], $return_minimal, $map_mode);
+			$enriched = $this->enrichOffersBatch([$offer], $returnMinimal, $mapMode);
 
 			return $enriched[0] ?? false;
 		}
@@ -1271,52 +1271,52 @@ class ParksModel
 	/**
 	 * Batch-hydrate related offer data (replaces per-offer N+1 queries)
 	 */
-	private function enrichOffersBatch(array $offers, bool $return_minimal = false, bool $map_mode = false): array
+	private function enrichOffersBatch(array $offers, bool $returnMinimal = false, bool $mapMode = false): array
 	{
 
 		if (empty($offers)) {
 			return [];
 		}
 
-		$offer_ids = [];
+		$offerIds = [];
 		foreach ($offers as $offer) {
-			$offer_id = (int) ($offer->offer_id ?? 0);
-			if ($offer_id > 0) {
-				$offer_ids[] = $offer_id;
+			$offerId = (int) ($offer->offer_id ?? 0);
+			if ($offerId > 0) {
+				$offerIds[] = $offerId;
 			}
 		}
-		$offer_ids = array_values(array_unique($offer_ids));
-		if (empty($offer_ids)) {
+		$offerIds = array_values(array_unique($offerIds));
+		if (empty($offerIds)) {
 			return $offers;
 		}
 
-		$ids_sql = implode(',', $offer_ids);
+		$idsSql = implode(',', $offerIds);
 
 		// Categories (always needed, including map mode)
-		$categories_by_offer = [];
-		$q_categories = $this->sdk->db->query("
+		$categoriesByOffer = [];
+		$qCategories = $this->sdk->db->query("
 			SELECT offer_id, category_id
 			FROM category_link
-			WHERE offer_id IN (" . $ids_sql . ")
+			WHERE offer_id IN (" . $idsSql . ")
 		");
-		if ($q_categories && $q_categories->numRows > 0) {
-			while ($row = $q_categories->fetchObject()) {
-				$categories_by_offer[(int) $row->offer_id][] = (int) $row->category_id;
+		if ($qCategories && $qCategories->numRows > 0) {
+			while ($row = $qCategories->fetchObject()) {
+				$categoriesByOffer[(int) $row->offer_id][] = (int) $row->category_id;
 			}
 		}
 
 		// Map overview only needs offer_id + categories for the map config
-		if ($map_mode == true) {
+		if ($mapMode == true) {
 			foreach ($offers as $offer) {
 				$offer->root_category = null;
 				$offer->categories = [];
-				foreach ($categories_by_offer[(int) $offer->offer_id] ?? [] as $category_id) {
-					$category = $this->getCategory($category_id);
+				foreach ($categoriesByOffer[(int) $offer->offer_id] ?? [] as $categoryId) {
+					$category = $this->getCategory($categoryId);
 					if ($category !== false) {
-						$offer->categories[$category_id] = $category;
+						$offer->categories[$categoryId] = $category;
 					}
 					if (! $offer->root_category) {
-						$offer->root_category = $this->getRootCategory($category_id);
+						$offer->root_category = $this->getRootCategory($categoryId);
 					}
 				}
 				if (in_array($offer->root_category, [CATEGORY_PROJECT, CATEGORY_RESEARCH])) {
@@ -1328,86 +1328,86 @@ class ParksModel
 		}
 
 		// Target groups
-		$target_group_ids_by_offer = [];
-		$q_target_groups = $this->sdk->db->query("
+		$targetGroupIdsByOffer = [];
+		$qTargetGroups = $this->sdk->db->query("
 			SELECT offer_id, target_group_id
 			FROM target_group_link
-			WHERE offer_id IN (" . $ids_sql . ")
+			WHERE offer_id IN (" . $idsSql . ")
 		");
-		if ($q_target_groups && $q_target_groups->numRows > 0) {
-			while ($row = $q_target_groups->fetchObject()) {
+		if ($qTargetGroups && $qTargetGroups->numRows > 0) {
+			while ($row = $qTargetGroups->fetchObject()) {
 				if (! empty($row->target_group_id) && array_key_exists($row->target_group_id, $this->targetGroups)) {
-					$target_group_ids_by_offer[(int) $row->offer_id][] = (int) $row->target_group_id;
+					$targetGroupIdsByOffer[(int) $row->offer_id][] = (int) $row->target_group_id;
 				}
 			}
 		}
 
 		// Dates
-		$dates_by_offer = [];
-		$date_format = $this->sdk->config['db_date_format'];
-		$q_dates = $this->sdk->db->query("
+		$datesByOffer = [];
+		$dateFormat = $this->sdk->config['db_date_format'];
+		$qDates = $this->sdk->db->query("
 			SELECT
 				offer_id,
-				DATE_FORMAT(date_from, '" . $date_format . "') AS date_from,
-				DATE_FORMAT(date_to, '" . $date_format . "') AS date_to
+				DATE_FORMAT(date_from, '" . $dateFormat . "') AS date_from,
+				DATE_FORMAT(date_to, '" . $dateFormat . "') AS date_to
 			FROM offer_date
-			WHERE offer_id IN (" . $ids_sql . ")
+			WHERE offer_id IN (" . $idsSql . ")
 			ORDER BY DATE_FORMAT(date_from, '%Y-%m-%d %H:%i')
 		");
-		if ($q_dates && $q_dates->numRows > 0) {
-			while ($row = $q_dates->fetchObject()) {
-				$dates_by_offer[(int) $row->offer_id][] = $row;
+		if ($qDates && $qDates->numRows > 0) {
+			while ($row = $qDates->fetchObject()) {
+				$datesByOffer[(int) $row->offer_id][] = $row;
 			}
 		}
 
 		// Images
-		$images_by_offer = [];
-		$q_images = $this->sdk->db->query("
+		$imagesByOffer = [];
+		$qImages = $this->sdk->db->query("
 			SELECT *
 			FROM image
-			WHERE offer_id IN (" . $ids_sql . ")
+			WHERE offer_id IN (" . $idsSql . ")
 		");
-		if ($q_images && $q_images->numRows > 0) {
-			while ($row = $q_images->fetchObject()) {
-				$images_by_offer[(int) $row->offer_id][] = $row;
+		if ($qImages && $qImages->numRows > 0) {
+			while ($row = $qImages->fetchObject()) {
+				$imagesByOffer[(int) $row->offer_id][] = $row;
 			}
 		}
 
 		// Attach batch-loaded relations; keep target groups in catalogue sort order
 		foreach ($offers as $offer) {
-			$offer_id = (int) $offer->offer_id;
+			$offerId = (int) $offer->offer_id;
 
 			$offer->root_category = null;
 			$offer->categories = [];
-			foreach ($categories_by_offer[$offer_id] ?? [] as $category_id) {
-				$category = $this->getCategory($category_id);
+			foreach ($categoriesByOffer[$offerId] ?? [] as $categoryId) {
+				$category = $this->getCategory($categoryId);
 				if ($category !== false) {
-					$offer->categories[$category_id] = $category;
+					$offer->categories[$categoryId] = $category;
 				}
 				if (! $offer->root_category) {
-					$offer->root_category = $this->getRootCategory($category_id);
+					$offer->root_category = $this->getRootCategory($categoryId);
 				}
 			}
 
 			$offer->targetGroups = [];
-			$target_group_links = $target_group_ids_by_offer[$offer_id] ?? [];
-			if (! empty($this->targetGroups) && ! empty($target_group_links)) {
-				foreach ($this->targetGroups as $target_group_id => $target_group) {
-					if (in_array($target_group_id, $target_group_links)) {
-						$offer->targetGroups[$target_group_id] = $target_group;
+			$targetGroupLinks = $targetGroupIdsByOffer[$offerId] ?? [];
+			if (! empty($this->targetGroups) && ! empty($targetGroupLinks)) {
+				foreach ($this->targetGroups as $targetGroupId => $targetGroup) {
+					if (in_array($targetGroupId, $targetGroupLinks)) {
+						$offer->targetGroups[$targetGroupId] = $targetGroup;
 					}
 				}
 			}
 
-			$offer->dates = $dates_by_offer[$offer_id] ?? [];
-			$offer->images = $images_by_offer[$offer_id] ?? [];
+			$offer->dates = $datesByOffer[$offerId] ?? [];
+			$offer->images = $imagesByOffer[$offerId] ?? [];
 
 			// Status is only meaningful for project/research root categories
 			if (in_array($offer->root_category, [CATEGORY_PROJECT, CATEGORY_RESEARCH])) {
 				$offer->project_status = $offer->status ?? null;
 			}
 
-			if ($return_minimal == false) {
+			if ($returnMinimal == false) {
 				$this->enrichOfferExtended($offer);
 			}
 		}
@@ -1424,57 +1424,57 @@ class ParksModel
 	{
 
 		// Documents
-		$q_documents = $this->sdk->db->get('document', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
-		if ($q_documents->numRows > 0) {
+		$qDocuments = $this->sdk->db->get('document', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
+		if ($qDocuments->numRows > 0) {
 			$offer->documents = [];
-			while ($row = $q_documents->fetchObject()) {
+			while ($row = $qDocuments->fetchObject()) {
 				$offer->documents[] = $row;
 			}
 		}
 
 		// Documents intern
-		$q_documents = $this->sdk->db->get('document_intern', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
-		if ($q_documents->numRows > 0) {
+		$qDocuments = $this->sdk->db->get('document_intern', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
+		if ($qDocuments->numRows > 0) {
 			$offer->documents_intern = [];
-			while ($row = $q_documents->fetchObject()) {
+			while ($row = $qDocuments->fetchObject()) {
 				$offer->documents_intern[] = $row;
 			}
 		}
 
 		// Hyperlinks
-		$q_hyperlinks = $this->sdk->db->get('hyperlink', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
-		if ($q_hyperlinks->numRows > 0) {
+		$qHyperlinks = $this->sdk->db->get('hyperlink', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
+		if ($qHyperlinks->numRows > 0) {
 			$offer->hyperlinks = [];
-			while ($row = $q_hyperlinks->fetchObject()) {
+			while ($row = $qHyperlinks->fetchObject()) {
 				$offer->hyperlinks[] = $row;
 			}
 		}
 
 		// Hyperlinks intern
-		$q_hyperlinks = $this->sdk->db->get('hyperlink_intern', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
-		if ($q_hyperlinks->numRows > 0) {
+		$qHyperlinks = $this->sdk->db->get('hyperlink_intern', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
+		if ($qHyperlinks->numRows > 0) {
 			$offer->hyperlinks_intern = [];
-			while ($row = $q_hyperlinks->fetchObject()) {
+			while ($row = $qHyperlinks->fetchObject()) {
 				$offer->hyperlinks_intern[] = $row;
 			}
 		}
 
 		// Accessibilities
-		$q_accessibilities = $this->sdk->db->query("
+		$qAccessibilities = $this->sdk->db->query("
 			SELECT *
 			FROM accessibility
 			WHERE accessibility.offer_id = " . $offer->offer_id . "
 			LIMIT 1
 		");
-		if ($q_accessibilities->numRows > 0) {
-			$offer->accessibilities = $q_accessibilities->fetchObject();
-			$q_ratings = $this->sdk->db->query("
+		if ($qAccessibilities->numRows > 0) {
+			$offer->accessibilities = $qAccessibilities->fetchObject();
+			$qRatings = $this->sdk->db->query("
 				SELECT *
 				FROM accessibility_rating
 				WHERE accessibility_rating.accessibility_id = " . $offer->accessibilities->accessibility_id . "
 			");
-			if ($q_ratings->numRows > 0) {
-				while ($rating = $q_ratings->fetchObject()) {
+			if ($qRatings->numRows > 0) {
+				while ($rating = $qRatings->fetchObject()) {
 					$offer->accessibilities->ratings[] = $rating;
 				}
 			}
@@ -1483,20 +1483,20 @@ class ParksModel
 		// Product
 		if ($offer->root_category == CATEGORY_PRODUCT) {
 
-			$q_suppliers = $this->sdk->db->get('supplier', ['offer_id' => $offer->offer_id]);
-			if ($q_suppliers->numRows > 0) {
+			$qSuppliers = $this->sdk->db->get('supplier', ['offer_id' => $offer->offer_id]);
+			if ($qSuppliers->numRows > 0) {
 				$offer->suppliers = [];
-				while ($row = $q_suppliers->fetchObject()) {
+				while ($row = $qSuppliers->fetchObject()) {
 					$offer->suppliers[] = ['contact' => $row->contact, 'is_park_partner' => $row->is_park_partner];
 				}
 			}
 
 			if ($offer->online_shop_enabled == true) {
-				$language_priority = $this->sdk->config['language_priority'][$this->sdk->lang->langId];
-				if (! empty($language_priority) && is_array($language_priority)) {
+				$languagePriority = $this->sdk->config['language_priority'][$this->sdk->lang->langId];
+				if (! empty($languagePriority) && is_array($languagePriority)) {
 
 					// Nested CASE picks the best available article language for the current UI lang
-					$q_articles = $this->sdk->db->query("
+					$qArticles = $this->sdk->db->query("
 
 						SELECT *
 						FROM product_article AS main_article
@@ -1511,15 +1511,15 @@ class ParksModel
 											CASE WHEN sub_article_i18n.language IS NOT NULL THEN sub_article_i18n.language ELSE ((
 												SELECT CASE WHEN sub_article_i18n.language IS NOT NULL THEN sub_article_i18n.language ELSE 'de' END
 												FROM product_article AS sub_article
-												LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $language_priority[2] . "'
+												LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $languagePriority[2] . "'
 												WHERE main_article.product_article_id = sub_article.product_article_id)
 											) END
 										FROM product_article AS sub_article
-										LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $language_priority[1] . "'
+										LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $languagePriority[1] . "'
 										WHERE main_article.product_article_id = sub_article.product_article_id
 									) END
 									FROM product_article AS sub_article
-									LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $language_priority[0] . "'
+									LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $languagePriority[0] . "'
 									WHERE main_article.product_article_id = sub_article.product_article_id
 								) END
 								FROM product_article AS sub_article
@@ -1530,20 +1530,20 @@ class ParksModel
 
 					");
 
-					if ($q_articles->numRows > 0) {
+					if ($qArticles->numRows > 0) {
 						$offer->articles = [];
-						while ($article = $q_articles->fetchObject()) {
-							$q_article_labels = $this->sdk->db->query("
+						while ($article = $qArticles->fetchObject()) {
+							$qArticleLabels = $this->sdk->db->query("
 								SELECT *
 								FROM product_article_label
 								WHERE 
 									product_article_id = " . $article->product_article_id . "
 									AND language = '" . $this->sdk->lang->langId . "'
 							");
-							if ($q_article_labels->numRows > 0) {
+							if ($qArticleLabels->numRows > 0) {
 								$article->labels = [];
-								while ($article_label = $q_article_labels->fetchObject()) {
-									$article->labels[] = $article_label;
+								while ($articleLabel = $qArticleLabels->fetchObject()) {
+									$article->labels[] = $articleLabel;
 								}
 							}
 							$offer->articles[] = $article;
@@ -1555,10 +1555,10 @@ class ParksModel
 
 		// Booking
 		else if ($offer->root_category == CATEGORY_BOOKING) {
-			$q_accommodations = $this->sdk->db->get('accommodation', ['offer_id' => $offer->offer_id]);
-			if ($q_accommodations->numRows > 0) {
+			$qAccommodations = $this->sdk->db->get('accommodation', ['offer_id' => $offer->offer_id]);
+			if ($qAccommodations->numRows > 0) {
 				$offer->accommodations = [];
-				while ($row = $q_accommodations->fetchObject()) {
+				while ($row = $qAccommodations->fetchObject()) {
 					$offer->accommodations[] = ['contact' => $row->contact, 'is_park_partner' => $row->is_park_partner];
 				}
 			}
@@ -1567,28 +1567,28 @@ class ParksModel
 		// POI CSV may reference deleted offers; keep only IDs that still exist
 		if (! empty($offer->poi) && ($offer->poi != '') && ! is_array($offer->poi)) {
 			$poi = explode(',', $offer->poi);
-			$existing_poi = [];
+			$existingPoi = [];
 			if (! empty($poi) && is_array($poi)) {
-				$poi_ids = array_values(array_filter(array_map('intval', $poi)));
-				if (! empty($poi_ids)) {
-					$q_poi = $this->sdk->db->query("
+				$poiIds = array_values(array_filter(array_map('intval', $poi)));
+				if (! empty($poiIds)) {
+					$qPoi = $this->sdk->db->query("
 						SELECT offer_id
 						FROM offer
-						WHERE offer_id IN (" . implode(',', $poi_ids) . ")
+						WHERE offer_id IN (" . implode(',', $poiIds) . ")
 					");
-					if ($q_poi && $q_poi->numRows > 0) {
-						while ($row = $q_poi->fetchObject()) {
-							$existing_poi[] = (string) $row->offer_id;
+					if ($qPoi && $qPoi->numRows > 0) {
+						while ($row = $qPoi->fetchObject()) {
+							$existingPoi[] = (string) $row->offer_id;
 						}
 					}
 				}
 			}
-			$offer->poi = $existing_poi;
+			$offer->poi = $existingPoi;
 		}
 
 		// Activities that list this offer in their poi CSV are reverse-linked routes
-		$linked_routes = [];
-		$q_linked_routes = $this->sdk->db->query("
+		$linkedRoutes = [];
+		$qLinkedRoutes = $this->sdk->db->query("
 			SELECT offer_id
 			FROM activity
 			WHERE 
@@ -1597,30 +1597,30 @@ class ParksModel
 				OR poi LIKE '%," . $offer->offer_id . "'
 				OR poi = '" . $offer->offer_id . "'
 		");
-		if ($q_linked_routes->numRows > 0) {
-			$candidate_ids = [];
-			while ($linked_route = $q_linked_routes->fetchAssoc()) {
-				if (! empty($linked_route['offer_id'])) {
-					$candidate_ids[] = (int) $linked_route['offer_id'];
+		if ($qLinkedRoutes->numRows > 0) {
+			$candidateIds = [];
+			while ($linkedRoute = $qLinkedRoutes->fetchAssoc()) {
+				if (! empty($linkedRoute['offer_id'])) {
+					$candidateIds[] = (int) $linkedRoute['offer_id'];
 				}
 			}
-			$candidate_ids = array_values(array_unique($candidate_ids));
+			$candidateIds = array_values(array_unique($candidateIds));
 
 			// Drop candidates whose offer row was removed after the activity link was stored
-			if (! empty($candidate_ids)) {
-				$q_poi = $this->sdk->db->query("
+			if (! empty($candidateIds)) {
+				$qPoi = $this->sdk->db->query("
 					SELECT offer_id
 					FROM offer
-					WHERE offer_id IN (" . implode(',', $candidate_ids) . ")
+					WHERE offer_id IN (" . implode(',', $candidateIds) . ")
 				");
-				if ($q_poi && $q_poi->numRows > 0) {
-					while ($row = $q_poi->fetchObject()) {
-						$linked_routes[] = (string) $row->offer_id;
+				if ($qPoi && $qPoi->numRows > 0) {
+					while ($row = $qPoi->fetchObject()) {
+						$linkedRoutes[] = (string) $row->offer_id;
 					}
 				}
 			}
 		}
-		$offer->linked_routes = $linked_routes;
+		$offer->linked_routes = $linkedRoutes;
 	}
 
 
@@ -1628,11 +1628,11 @@ class ParksModel
 	/**
 	 * Get category by ID
 	 */
-	public function getCategory(int $category_id): object|false
+	public function getCategory(int $categoryId): object|false
 	{
 
-		if (array_key_exists($category_id, $this->categories)) {
-			return $this->categories[$category_id];
+		if (array_key_exists($categoryId, $this->categories)) {
+			return $this->categories[$categoryId];
 		}
 		
 		return false;
@@ -1643,19 +1643,19 @@ class ParksModel
 	/**
 	 * Get path for a category
 	 */
-	public function getCategoryPath(int $category_id): array
+	public function getCategoryPath(int $categoryId): array
 	{
 
-		if (! empty($category_id)) {
+		if (! empty($categoryId)) {
 			$path = [];
 
-			while ($category_id > 0) {
-				$category = $this->getCategoryRecord($category_id);
+			while ($categoryId > 0) {
+				$category = $this->getCategoryRecord($categoryId);
 				if ($category === false) {
 					break;
 				}
 
-				$category_id = (int) $category->parent_id;
+				$categoryId = (int) $category->parent_id;
 				$path[] = (int) $category->category_id;
 			}
 
@@ -1673,7 +1673,7 @@ class ParksModel
 	public function getAllCategories(array $filter = []): array
 	{
 
-		$q_categories_string = "
+		$qCategoriesString = "
 			SELECT
 				c1.category_id as category_id,
 				c1.parent_id,
@@ -1691,30 +1691,30 @@ class ParksModel
 		// Additional information
 		if (! empty($filter) && count($filter) > 0) {
 
-			$q_categories_string .= "
+			$qCategoriesString .= "
 				LEFT JOIN category_link ON category_link.category_id = c1.category_id
 				LEFT JOIN offer ON category_link.offer_id = offer.offer_id
 				LEFT JOIN event ON event.offer_id = offer.offer_id
 				WHERE 1
 			";
 
-			$q_additional = $this->buildAdditionalInfosSql($filter);
-			if (! empty($q_additional)) {
+			$qAdditional = $this->buildAdditionalInfosSql($filter);
+			if (! empty($qAdditional)) {
 
 				// Keep root categories visible even when no child matches the filter
-				$q_categories_string .= "AND (1 " . $q_additional . ") OR (c1.parent_id = 0)";
+				$qCategoriesString .= "AND (1 " . $qAdditional . ") OR (c1.parent_id = 0)";
 			}
 		}
 
-		$q_categories_string .= "GROUP BY c1.category_id ";
-		$q_categories_string .= "ORDER BY c1.sort ";
+		$qCategoriesString .= "GROUP BY c1.category_id ";
+		$qCategoriesString .= "ORDER BY c1.sort ";
 
-		$q_categories = $this->sdk->db->query($q_categories_string);
+		$qCategories = $this->sdk->db->query($qCategoriesString);
 
-		if ($q_categories->numRows > 0) {
+		if ($qCategories->numRows > 0) {
 			$categories = [];
 
-			while ($row = $q_categories->fetchObject()) {
+			while ($row = $qCategories->fetchObject()) {
 				$categories[$row->category_id] = (object) [
 					'category_id' => $row->category_id,
 					'parent_id' => $row->parent_id,
@@ -1740,12 +1740,12 @@ class ParksModel
 	public function getAllCategoryLinks(): array|false
 	{
 
-		$q_category_links = $this->sdk->db->query("SELECT category_id FROM category_link GROUP BY category_link.category_id");
+		$qCategoryLinks = $this->sdk->db->query("SELECT category_id FROM category_link GROUP BY category_link.category_id");
 
-		if ($q_category_links->numRows > 0) {
+		if ($qCategoryLinks->numRows > 0) {
 			
 			// Add main categories
-			$category_links = [
+			$categoryLinks = [
 				CATEGORY_EVENT,
 				CATEGORY_PRODUCT,
 				CATEGORY_BOOKING,
@@ -1754,11 +1754,11 @@ class ParksModel
 				CATEGORY_RESEARCH
 			];
 
-			while ($row = $q_category_links->fetchObject()) {
-				$category_links[] = $row->category_id;
+			while ($row = $qCategoryLinks->fetchObject()) {
+				$categoryLinks[] = $row->category_id;
 			}
 
-			return $category_links;
+			return $categoryLinks;
 		}
 
 		return false;
@@ -1780,12 +1780,12 @@ class ParksModel
 			$filter['categories'] = $categories;
 		}
 
-		$q_users = $this->getFilterParks($filter);
+		$qUsers = $this->getFilterParks($filter);
 
-		if ($q_users && ($q_users->numRows > 0)) {
+		if ($qUsers && ($qUsers->numRows > 0)) {
 			$users = [];
 
-			while ($row = $q_users->fetchObject()) {
+			while ($row = $qUsers->fetchObject()) {
 				$users[$row->park_id] = $row->park;
 			}
 
@@ -1804,7 +1804,7 @@ class ParksModel
 	{
 
 		$categories = [];
-		$q_categories = $this->sdk->db->query("
+		$qCategories = $this->sdk->db->query("
 
 			SELECT
 				category.category_id,
@@ -1827,8 +1827,8 @@ class ParksModel
 
 		");
 
-		if ($q_categories->numRows > 0) {
-			while ($category = $q_categories->fetchObject()) {
+		if ($qCategories->numRows > 0) {
+			while ($category = $qCategories->fetchObject()) {
 				$categories[$category->category_id] = $category->body;
 			}
 		}
@@ -1853,22 +1853,22 @@ class ParksModel
 			// Insert target groups
 			foreach ($targetGroups as $lang => $items) {
 				$sort = 0;
-				foreach ($items as $target_group_id => $target_group) {
+				foreach ($items as $targetGroupId => $targetGroup) {
 					$sort++;
 
 					// Table target_group – only once
 					if ($lang == 'de') {
 						$this->sdk->db->insert('target_group', [
-							'target_group_id' => $target_group_id,
+							'target_group_id' => $targetGroupId,
 							'sort' => $sort,
 						]);
 					}
 
 					// Table target_group_i18n
 					$this->sdk->db->insert('target_group_i18n', [
-						'target_group_id' => $target_group_id,
+						'target_group_id' => $targetGroupId,
 						'language' => $lang,
-						'body' => $target_group,
+						'body' => $targetGroup,
 					]);
 				}
 			}
@@ -1895,12 +1895,12 @@ class ParksModel
 
 			// Insert categories
 			foreach ($categories as $lang => $items) {
-				foreach ($items as $category_id => $category) {
+				foreach ($items as $categoryId => $category) {
 
 					// Table category – only once
 					if ($lang == 'de') {
 						$this->sdk->db->insert('category', [
-							'category_id' => $category_id,
+							'category_id' => $categoryId,
 							'parent_id' => $category['parent_id'],
 							'stnet_id' => $category['stnet_id'],
 							'alpstein_id' => $category['alpstein_id'],
@@ -1912,7 +1912,7 @@ class ParksModel
 
 					// Table category_i18n
 					$this->sdk->db->insert('category_i18n', [
-						'category_id' => $category_id,
+						'category_id' => $categoryId,
 						'language' => $lang,
 						'body' => $category['body'],
 					]);
@@ -1942,22 +1942,22 @@ class ParksModel
 			// Insert fields of activity
 			foreach ($fieldsOfActivity as $lang => $items) {
 				$sort = 0;
-				foreach ($items as $field_of_activity_id => $field_of_activity) {
+				foreach ($items as $fieldOfActivityId => $fieldOfActivity) {
 					$sort++;
 
 					// Table field_of_activity – only once
 					if ($lang == 'de') {
 						$this->sdk->db->insert('field_of_activity', [
-							'field_of_activity_id' => $field_of_activity_id,
+							'field_of_activity_id' => $fieldOfActivityId,
 							'sort' => $sort,
 						]);
 					}
 
 					// Table field_of_activity_i18n
 					$this->sdk->db->insert('field_of_activity_i18n', [
-						'field_of_activity_id' => $field_of_activity_id,
+						'field_of_activity_id' => $fieldOfActivityId,
 						'language' => $lang,
-						'body' => $field_of_activity,
+						'body' => $fieldOfActivity,
 					]);
 				}
 			}
@@ -1977,16 +1977,16 @@ class ParksModel
 	{
 
 		// Get the municipalities
-		$q_municipalities = $this->sdk->db->get('municipality', $filter);
+		$qMunicipalities = $this->sdk->db->get('municipality', $filter);
 
 		// Return empty array if there are no municipalities
-		if ($q_municipalities->numRows <= 0) {
+		if ($qMunicipalities->numRows <= 0) {
 			return [];
 		}
 		
 		// Format municipalities
 		$municipalities = [];
-		while ($row = $q_municipalities->fetchArray()) {
+		while ($row = $qMunicipalities->fetchArray()) {
 			$municipalities[$row['municipality_id']] = $row['municipality'];
 		}
 
@@ -2002,26 +2002,26 @@ class ParksModel
 	/**
 	 * Private method for retrieving the root category
 	 */
-	private function getRootCategory(int $category_id): int|false
+	private function getRootCategory(int $categoryId): int|false
 	{
 
-		if (empty($category_id)) {
+		if (empty($categoryId)) {
 			return false;
 		}
 
-		$last_category_id = false;
+		$lastCategoryId = false;
 
-		while ($category_id > 0) {
-			$category = $this->getCategoryRecord($category_id);
+		while ($categoryId > 0) {
+			$category = $this->getCategoryRecord($categoryId);
 			if ($category === false) {
 				break;
 			}
 
-			$category_id = (int) $category->parent_id;
-			$last_category_id = (int) $category->category_id;
+			$categoryId = (int) $category->parent_id;
+			$lastCategoryId = (int) $category->category_id;
 		}
 
-		return $last_category_id;
+		return $lastCategoryId;
 	}
 
 
@@ -2029,20 +2029,20 @@ class ParksModel
 	/**
 	 * Get category record from cache or database
 	 */
-	private function getCategoryRecord(int $category_id): object|false
+	private function getCategoryRecord(int $categoryId): object|false
 	{
 
-		if (array_key_exists($category_id, $this->categories)) {
-			return $this->categories[$category_id];
+		if (array_key_exists($categoryId, $this->categories)) {
+			return $this->categories[$categoryId];
 		}
 
-		$q_category = $this->sdk->db->get('category', ['category_id' => $category_id]);
-		if ($q_category->numRows <= 0) {
+		$qCategory = $this->sdk->db->get('category', ['category_id' => $categoryId]);
+		if ($qCategory->numRows <= 0) {
 			return false;
 		}
 
-		$category = $q_category->fetchObject();
-		$this->categories[$category_id] = $category;
+		$category = $qCategory->fetchObject();
+		$this->categories[$categoryId] = $category;
 
 		return $category;
 	}
@@ -2095,7 +2095,7 @@ class ParksModel
 	private function buildAdditionalInfosSql(array $filter): string
 	{
 
-		$additional_query = '';
+		$additionalQuery = '';
 		if (! empty($filter) && is_array($filter)) {
 			foreach ($filter as $key => $value) {
 
@@ -2105,16 +2105,16 @@ class ParksModel
 						switch ($key) {
 
 							case 'keywords':
-								$additional_query .= " AND offer.keywords LIKE '%" . $value . "%'";
+								$additionalQuery .= " AND offer.keywords LIKE '%" . $value . "%'";
 								break;
 
 							case 'filter_hints':
 							case 'offers_filter_hints':
-								$additional_query .= " AND offer.is_hint = '" . $value . "'";
+								$additionalQuery .= " AND offer.is_hint = '" . $value . "'";
 								break;
 
 							case 'contact_is_park_partner':
-								$additional_query .= " AND offer.contact_is_park_partner = '" . $value . "'";
+								$additionalQuery .= " AND offer.contact_is_park_partner = '" . $value . "'";
 								break;
 
 							// Handled elsewhere or not expressible as a simple offer column
@@ -2125,14 +2125,14 @@ class ParksModel
 								break;
 
 							case 'is_park_event':
-								$additional_query .= " AND event.is_park_event = '" . $value . "'";
+								$additionalQuery .= " AND event.is_park_event = '" . $value . "'";
 								break;
 
 							default:
 
 								// Remaining keys map 1:1 to offer columns (callers must pass known fields only)
 								if (! empty($key) && is_string($key) && (strlen($key) > 2)) {
-									$additional_query .= " AND offer." . $key . " = '" . $value . "'";
+									$additionalQuery .= " AND offer." . $key . " = '" . $value . "'";
 								}
 								break;
 						}
@@ -2141,7 +2141,7 @@ class ParksModel
 			}
 		}
 
-		return $additional_query;
+		return $additionalQuery;
 	}
 
 
@@ -2154,7 +2154,7 @@ class ParksModel
 
 		// Init
 		$accessibilites = [];
-		$filter_options = [];
+		$filterOptions = [];
 
 		// Get all possible dropdown options
 		$options = $this->sdk->db->query("
@@ -2163,12 +2163,12 @@ class ParksModel
 		");
 		if ($options->numRows > 0) {
 			while ($option = $options->fetchArray()) {
-				$filter_options[] = $option['icon_url'];
+				$filterOptions[] = $option['icon_url'];
 			}
 		}
 
 		// Get accessiblity options
-		$select_result = $this->sdk->db->query("
+		$selectResult = $this->sdk->db->query("
 			SELECT 
 				icon_url, 
 				MIN(description_" . $this->sdk->lang->langId . ") AS description
@@ -2178,10 +2178,10 @@ class ParksModel
 		");
 
 		// Populate accessibilities
-		if ($select_result->numRows > 0) {
+		if ($selectResult->numRows > 0) {
 			$accessibilites[GINTO_INFOS_AVAILABLE] = $this->sdk->lang->get('offer_accessibility_available');
-			while ($row = $select_result->fetchArray()) {
-				if (in_array($row['icon_url'], $filter_options)) {
+			while ($row = $selectResult->fetchArray()) {
+				if (in_array($row['icon_url'], $filterOptions)) {
 					$accessibilites[$row['icon_url']] = $row['description'];
 				}
 			}

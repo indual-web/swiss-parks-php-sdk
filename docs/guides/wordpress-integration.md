@@ -115,18 +115,18 @@ add_shortcode('swiss_parks_offers', function () {
 	require_once SWISS_PARKS_SDK_DIR . 'autoload.php';
 
 	$language = 'de'; // map from WPML/Polylang if needed — see output-and-language.md
-	$page_url = get_permalink() ?: '/';
+	$pageUrl = get_permalink() ?: '/';
 
 	try {
-		// $page_url scopes the PHP session to this offers page (use_sessions)
-		$sdk = new ParksSDK($language, '', $page_url);
+		// $pageUrl scopes the PHP session to this offers page (use_sessions)
+		$sdk = new ParksSDK($language, '', $pageUrl);
 
 		// Pin forms/links to the page path when not using SEO URLs.
 		// Call this after construct: it affects HTML rendered below.
 		// Filter POST redirects during bootstrap still use REQUEST_URI
 		// (with pretty permalinks that is usually the same page path).
 		if (empty($sdk->config['seo_urls'])) {
-			$path = parse_url($page_url, PHP_URL_PATH);
+			$path = parse_url($pageUrl, PHP_URL_PATH);
 			$sdk->setScriptUrl(is_string($path) && $path !== '' ? $path : '/');
 		}
 
@@ -241,7 +241,7 @@ WordPress rewrites are internal; `$_SERVER['REQUEST_URI']` normally still contai
 ### Filter or session state lost
 
 - Set `use_sessions = true` and start the session on `init` (see sketch), before any HTML output.
-- Pass a stable `$page_url` into `ParksSDK` for session scope.
+- Pass a stable `$pageUrl` into `ParksSDK` for session scope.
 - Use unique `url_param_prefix` / `form_prefix`.
 
 ### Detail page never opens (SEO mode)

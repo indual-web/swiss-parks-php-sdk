@@ -33,7 +33,7 @@ This feature is optional. If enabled, each offer can show an add/remove favorite
   - Toggle favorite: `favorites.php?offer_id=<id>`
   - Clear all: `favorites.php?action=clean`
 - API methods:
-  - `toggleFavorite($offer_id)`
+  - `toggleFavorite($offerId)`
   - `showFavorites()`
   - `cleanFavorites()`
 
