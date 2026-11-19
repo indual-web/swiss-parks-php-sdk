@@ -6,7 +6,7 @@ This guide documents sync, forced full import, SDK upgrades, and migration.
 
 ## Directory layout
 
-- `swiss-parks-sdk/bin/` — CLI only (`sync`, `migrate`, `upgrade-sdk`)
+- `swiss-parks-sdk/bin/` — CLI only (`sync`, `sync-smoke`, `migrate`, `upgrade-sdk`); full reference: [CLI scripts (`bin/`)](./bin-scripts.md)
 - `swiss-parks-sdk/public/` — HTTP endpoints (`favorites.php`)
 - `swiss-parks-sdk/config/` — `config.dist.php` + `config.php` (+ optional `config.local.php` for local overrides)
 - `swiss-parks-sdk/writable/` — SQLite DB and logs
@@ -45,18 +45,23 @@ Use `--force` when the local DB is incomplete or after a bad incremental run.
 | Script | Purpose |
 | --- | --- |
 | `bin/sync.sh` | Incremental cron import (`--force` for full re-import) |
+| `bin/sync-smoke.sh` | Smoke check after sync (or `--quick` without sync) |
 | `bin/migrate.sh` | Rebuild SQLite schema + full import after a manual core update |
 | `bin/upgrade-sdk.sh` | Download release, update core files, run migrate |
+
+Flags, exit codes, and environment variables: [CLI scripts (`bin/`)](./bin-scripts.md).
 
 ## Recommended usage
 
 - Cron: `bin/sync.sh` (incremental).
 - Incomplete data: `bin/sync.sh --force`.
+- Health check: `bin/sync-smoke.sh` (or `--quick` if sync already ran).
 - Schema / SDK upgrade: `bin/upgrade-sdk.sh` or `bin/migrate.sh` when core files are already updated.
 - Favorites HTTP endpoint (optional): `public/favorites.php`.
 
 ## Related docs
 
+- [CLI scripts (`bin/`)](./bin-scripts.md)
 - [Guide index](./index.md)
 - [New installation](./new-installation.md)
 - [Upgrade](./upgrading.md)

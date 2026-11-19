@@ -49,6 +49,7 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 ## Operations
 
 - [Import and update lifecycle](./guides/import-update-lifecycle.md) (`bin/sync.sh`, migrate, cron)
+- [CLI scripts (`bin/`)](./guides/bin-scripts.md) (all `bin/` tools, including `sync-smoke.sh`)
 - [Performance](./guides/performance-and-upgrade-strategy.md)
 
 ## All guides
