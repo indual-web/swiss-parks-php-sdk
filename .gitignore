@@ -22,6 +22,9 @@ tmp_*.php
 tmp_migrate_structure.py
 tmp_build_helpers.py
 
+# Local DDEV overrides (machine-specific volume mounts)
+.ddev/docker-compose.map.yaml
+
 # APM (local-only; this repository is public)
 apm.yml
 apm.lock.yaml
