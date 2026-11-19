@@ -19,6 +19,7 @@ For developers integrating the SDK into a park website. Full documentation: [`do
 | PHP integration | [`docs/guides/quick-start-integration.md`](docs/guides/quick-start-integration.md) |
 | WordPress | [`docs/guides/wordpress-integration.md`](docs/guides/wordpress-integration.md) |
 | Upgrade | [`docs/guides/upgrading.md`](docs/guides/upgrading.md) |
+| Contributing (PRs) | [`CONTRIBUTING.md`](CONTRIBUTING.md) |
 
 First install: [`docs/guides/new-installation.md`](docs/guides/new-installation.md) · Config: [`docs/guides/configuration.md`](docs/guides/configuration.md) · Reference: [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md)
 
