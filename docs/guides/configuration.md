@@ -2,7 +2,7 @@
 
 # Core configuration
 
-Full reference for runtime settings in `swiss-parks-sdk/config/config.php`. Keys use snake_case. Keep `config.php` across SDK updates; override secrets locally with `config.local.php` when developing from git.
+Full reference for runtime settings in `swiss-parks-sdk/config/config.php`. Keys use snake_case. Keep `config.php` across SDK updates on the park server.
 
 ## Required settings
 
@@ -15,16 +15,16 @@ Set these on the server:
 - `db_path` (default: `writable/data/park-offers.sqlite`)
   - Path to the SQLite database file. Relative paths resolve from `swiss-parks-sdk/`. The file and directory are created automatically; the web server needs write access. Replaces former MySQL credentials.
 
-Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash`, `park_id`, and `base_url` without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
+Optional: create `config.local.php` next to `config.php` to override keys such as `api_hash`, `park_id`, or `base_url` without editing the main config (for example on a staging copy of the site). `autoload.php` loads this file after `config.php` when it exists.
 
 ## Network settings
 
 - `base_url` (optional override; runtime default `https://angebote.paerke.ch/`)
-  - Base URL of the offer database for XML/JSON exports and asset links. Not set in shipped `config.php`; `ParksAPI` applies the default. Override in `config.local.php` for staging (for example `https://staging-map.angebote.paerke.ch/`).
+  - Base URL of the offer database for XML/JSON exports and related asset links. Not set in shipped `config.php`; `ParksAPI` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
 - `curl_verify_ssl` (default: `true`)
   - Verifies SSL certificates for export requests to `angebote.paerke.ch`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
 - `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_api_migration`)
-  - Endpoint for `logMigration()` after a successful `migrate.php` run. Uses `curl_verify_ssl`. Requests are HMAC-SHA256 signed with `api_hash` (`X-Api-Migration-Signature`).
+  - Endpoint contacted after a successful `migrate.php` run so the offer platform can record the SDK version in use. Uses `curl_verify_ssl` and your `api_hash`. Leave the default unless you were told otherwise.
 
 ## SEO URLs
 

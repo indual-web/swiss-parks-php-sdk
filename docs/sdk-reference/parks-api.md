@@ -211,7 +211,7 @@ Parameters:
 
 - `$message` (`string`)
 
-## Import and maintenance methods
+## Import methods
 
 ### `update($force = false)`
 
@@ -234,19 +234,15 @@ Static factories for CLI scripts (no page rendering bootstrap):
 ### `migrate()`
 
 - Rebuilds the SQLite database: deletes the database file, recreates it with the current schema, and runs a full import.
-- On success, reports the migration to the central log via `logMigration()` (failure to log does not fail the migration).
+- On success, reports the migration via `logMigration()` (failure to log does not fail the migration).
 - Returns `true` when the SDK is initialized after import, `false` otherwise.
 
 ### `logMigration(int $version_to = 0)`
 
-- Sends a JSON payload to `migration_log_url` matching the `log_api_migration` endpoint contract.
-- Required fields: `api_version`, `url`, `hash` (`api_hash`). Skips the request when `api_hash` is empty.
-- Optional fields: `php_version`, `ip`, `park_id`, `file_path`.
-- Signs the exact JSON body with HMAC-SHA256 using `api_hash` and sends the digest in the `X-Api-Migration-Signature` header. The central server accepts the log only when the hash matches a known export configuration and the signature is valid.
-- Called automatically by `migrate()` after a successful rebuild/import.
-- `$version_to`: target SDK version; defaults to `SDK_VERSION` when `0`.
-- For CLI runs, `url` is sent as `{hostname} (CLI)`.
-- Returns `true` when the log server responds with HTTP 2xx; otherwise logs locally and returns `false`.
+- Called automatically after a successful `migrate()`.
+- Reports the upgrade to `migration_log_url` using your `api_hash` (skipped when `api_hash` is empty).
+- Returns `true` on HTTP 2xx from the log endpoint; otherwise writes a local log entry and returns `false`.
+- `$version_to`: target SDK version; defaults to the shipped SDK version when `0`.
 
 ## Output behavior note
 

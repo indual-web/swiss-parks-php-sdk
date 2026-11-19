@@ -2,7 +2,7 @@
 
 PHP SDK that imports Swiss Parks offer XML into a local SQLite database and renders filter, list, map, and detail views. No database server is required.
 
-Full documentation: [`docs/index.md`](docs/index.md)
+For developers integrating the SDK into a park website. Full documentation: [`docs/index.md`](docs/index.md)
 
 ## Requirements
 

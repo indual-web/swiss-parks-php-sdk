@@ -2,22 +2,9 @@
 
 # Upgrade
 
-Generic upgrade workflow for any Swiss Parks PHP SDK release.
+How to upgrade an existing SDK installation on a park website.
 
-For breaking changes between specific versions, use a [version-specific migration guide](./migrations/index.md).
-
-## Publishing a release (maintainers)
-
-1. Ensure `main` contains the intended commit and `SDK_VERSION` matches the release line when the schema changes.
-2. Create and push a version tag (`22`, `22.1`; optional `v` prefix):
-   ```bash
-   git tag 22
-   git push origin 22
-   ```
-3. GitHub Actions (`.github/workflows/release.yml`) runs `deploy.sh`, creates the GitHub Release, and uploads `swiss-parks-php-sdk-<version>.zip`.
-4. Integrators install/upgrade with `upgrade-sdk.sh` against that release.
-
-Local ZIP only (no GitHub Release): `bash ./deploy.sh 22`.
+For breaking changes between specific versions, use a [version-specific migration guide](./migrations/index.md). Download release ZIPs from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
 
 ## Recommended upgrade flow
 

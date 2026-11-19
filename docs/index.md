@@ -1,5 +1,7 @@
 # Swiss Parks PHP SDK
 
+Documentation for developers who integrate the SDK into a park website. It covers install, configuration, rendering, sync, and upgrades on your server — not SDK release or maintenance workflows.
+
 The PHP SDK imports offer data from the Swiss Parks XML export into a local SQLite database file and renders filter, list, map, and detail views for server-side PHP integrations. No database server is required.
 
 ## Start
@@ -8,6 +10,7 @@ Shared for every integration:
 
 - [New installation](./guides/new-installation.md)
 - [Core configuration](./guides/configuration.md)
+- [Upgrade](./guides/upgrading.md)
 
 Then choose a path below.
 
@@ -46,12 +49,6 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 
 - [Import and update lifecycle](./guides/import-update-lifecycle.md) (`bin/sync.sh`, migrate, cron)
 - [Performance](./guides/performance-and-upgrade-strategy.md)
-
-## Maintainers
-
-- Publish a release: push a version tag (`22`, `22.1`) — see [import and update lifecycle](./guides/import-update-lifecycle.md#publish-a-github-release)
-- PHPUnit (Git checkout only, not in the release ZIP): `composer install` then `vendor/bin/phpunit` / `composer test`
-- Sync smoke: `bash swiss-parks-sdk/bin/sync-smoke.sh` or `--quick`
 
 ## All guides
 
