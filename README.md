@@ -34,7 +34,7 @@ v22 is not a drop-in replace. Plan for:
 
 Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
-Older packages (v14–v21.1) are archived at [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy).
+Older packages (v14–v21.1) are archived at <a href="https://github.com/indual-web/swiss-parks-php-sdk-legacy" target="_blank" rel="noopener noreferrer">swiss-parks-php-sdk-legacy</a>.
 
 ## Contact
 

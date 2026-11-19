@@ -33,7 +33,7 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 - [v21 → v22 (MySQL to SQLite)](./guides/migrations/21-to-22.md)
 - [Version migrations](./guides/migrations/index.md) (includes v14–v21.1 archive link)
 - [Import and update lifecycle](./guides/import-update-lifecycle.md)
-- Older packages (v14–v21.1): [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
+- Older packages (v14–v21.1): <a href="https://github.com/indual-web/swiss-parks-php-sdk-legacy" target="_blank" rel="noopener noreferrer">swiss-parks-php-sdk-legacy</a>
 
 ## Reference
 
