@@ -2,47 +2,29 @@
 
 # Performance
 
-## Performance recommendations
+Practical tips for running the SDK on a park website.
 
-### PHP/server
+## PHP and server
 
-- Use sufficient `memory_limit` and `max_execution_time` for import jobs.
-- Run imports via CLI (cron), not via browser. CLI imports call `set_time_limit(0)` and raise `memory_limit` to `512M` automatically.
-- XML is downloaded to a temp file, then parsed with SimpleXML; the in-memory DOM still scales with export size (raise `memory_limit` further for very large hashes if needed).
+- Give import jobs enough `memory_limit` and `max_execution_time`.
+- Run imports via CLI cron, not via the browser. CLI imports disable the time limit and raise `memory_limit` to `512M` automatically.
+- Very large exports may still need a higher `memory_limit` if sync runs out of memory.
 
-### Import chunking
+## Import and database
 
-- Offers are processed in chunks of **300**.
-- Each chunk is committed as its own SQLite transaction (after shared meta-sync: categories, target groups, accessibilities, fields of activity).
-- Import logs one summary line per chunk (including offer IDs); per-offer lines are kept for errors and deletions.
-- Incremental syncs use `?since=` when not forcing a full update.
+- Prefer incremental cron (`bin/sync.sh`). Use `--force` only when the local database is incomplete or after a failed sync.
+- Place `db_path` on fast local storage (avoid network filesystems for SQLite).
+- While an import runs, the site can still read the database (WAL mode).
+- After an SDK update, prefer `upgrade-sdk.sh` / `migrate.sh` over editing core files. Indexes and schema come with the shipped SDK.
 
-### Database
+## Operations
 
-- The SDK uses a local SQLite file (WAL mode), so reads during a running import are non-blocking.
-- The shipped schema (`swiss-parks-sdk/database/schema.sql`) contains indexes on common join/filter fields (for example `offer_id`, `park_id`, `offer_date.date_from`, link-table filter columns).
-- Existing databases pick up new indexes automatically on connect (`CREATE INDEX IF NOT EXISTS`); a full `migrate.php` rebuild is not required for index-only updates.
-- Event offers with multiple dates appear once per date in list views (`filter_offers()` groups events by `offer_date.date_from`).
-- Use `EXPLAIN QUERY PLAN` for slow queries and optimize indexes based on real workloads.
-- Place the `db_path` directory on fast local storage (avoid network filesystems for SQLite files).
-
-### Read path (list, filter, map)
-
-- Paginated lists use a dedicated count query instead of `COUNT(*) OVER ()` on the full projection.
-- Related list data (categories, target groups, dates, images) is batch-loaded with `WHERE IN (...)` instead of per-offer queries.
-- Map overview enrichment loads only category links (the map client resolves geometry via the API key).
-- Accessibility and subscription joins are added only when the current request needs them.
-- Filter UI loads type counts, category IDs and parks in one `filter_meta` query (request-cached).
-- Text search uses SQLite FTS5 (`offer_fts`) when available; otherwise falls back to multi-column `LIKE`. The FTS index is created on connect and rebuilt at the end of each import.
-
-### Operations
-
-- Choose a cron interval matching your business needs.
-- Monitor logs in `log_directory`.
+- Choose a cron interval that matches how often offers change on your site.
+- Watch `log_directory` for import errors.
 
 ## Keep upgrades safe
 
-Avoid changing core files whenever possible. Prefer:
+Avoid changing core SDK files. Prefer:
 
 - `config/config.php`
 - `custom/*.php`

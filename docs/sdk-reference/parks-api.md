@@ -91,8 +91,7 @@ Parameters:
 
 ### `showOfferPoiList($poi = null)`
 
-- Utility method to resolve POI offer IDs into offer objects.
-- Mainly used by map/detail rendering internals and custom extensions.
+- Resolves POI offer IDs into offer objects (for custom map/detail extensions).
 
 Parameters:
 
@@ -125,7 +124,6 @@ Relevant for custom views; see [Templating and custom view](../guides/templating
 ### `countOffersByCategory($parkId = null, $categories = [], $filter = [])`
 
 - Returns category counts as `stdClass|false` (`event_count`, `booking_count`, `activity_count`, `product_count`, `project_count`).
-- Used internally to decide which filter UI elements to show.
 
 ### `getFilterCategories($parkId = null, $categories = [], $filter = [])`
 
@@ -159,8 +157,7 @@ Parameters:
 
 ### `loadExternalXml($url)`
 
-- Downloads an XML URL via cURL into a temp file and returns `SimpleXMLElement` or `false`.
-- Used by import; available for custom tooling. CLI raises the memory limit for large exports.
+- Downloads an XML URL via cURL and returns `SimpleXMLElement` or `false`. Normally used by the import pipeline, not by page templates.
 
 ## Runtime and state methods
 
@@ -234,15 +231,9 @@ Static factories for CLI scripts (no page rendering bootstrap):
 ### `migrate()`
 
 - Rebuilds the SQLite database: deletes the database file, recreates it with the current schema, and runs a full import.
-- On success, reports the migration via `logMigration()` (failure to log does not fail the migration).
+- On success, may notify `migration_log_url` (see [configuration](../guides/configuration.md)); a failed notify does not fail the migration.
 - Returns `true` when the SDK is initialized after import, `false` otherwise.
-
-### `logMigration(int $version_to = 0)`
-
-- Called automatically after a successful `migrate()`.
-- Reports the upgrade to `migration_log_url` using your `api_hash` (skipped when `api_hash` is empty).
-- Returns `true` on HTTP 2xx from the log endpoint; otherwise writes a local log entry and returns `false`.
-- `$version_to`: target SDK version; defaults to the shipped SDK version when `0`.
+- Prefer `bin/migrate.sh` / `bin/upgrade-sdk.sh` over calling this from your page code.
 
 ## Output behavior note
 

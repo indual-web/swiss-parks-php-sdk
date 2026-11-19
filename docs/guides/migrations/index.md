@@ -2,9 +2,9 @@
 
 # Version migrations
 
-This folder contains **version-specific migration guides** for upgrades that need more than replacing core files and running `migrate.php`.
+Version-specific steps when an upgrade needs more than replacing core files and running `migrate.php`.
 
-Use the generic [upgrade guide](../upgrading.md) for the standard workflow. Open a guide here when your current version is listed below.
+Use the generic [Upgrade](../upgrading.md) workflow for a normal update. Open a guide below when your current version is listed.
 
 ## Available migrations
 
@@ -16,52 +16,6 @@ Use the generic [upgrade guide](../upgrading.md) for the standard workflow. Open
 
 Packages **before v22** (folder `parks_api/`) are frozen and live in a separate archive repository:
 
-- [indual-web/swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
+- [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 
 ZIPs for v14–v21.1 are under `releases/` there, with per-version notes under `docs/migrations/`. Prefer **v21.1**, then follow [21 to 22](./21-to-22.md).
-
-## When to add a new guide
-
-Create a new file `{from}-to-{to}.md` when a release includes at least one of:
-
-- Config key changes (removed/renamed keys, new required values)
-- Database or storage changes
-- Changed script behavior integrators must know about
-- Manual steps beyond «replace core files + run `migrate.php`»
-
-For minor releases without breaking changes, a short note in [upgrading.md](../upgrading.md) is enough.
-
-## Guide template
-
-Copy this structure for new migration guides:
-
-```markdown
-# Migration: vX to vY
-
-## Overview
-- What changed and who is affected
-
-## Before you start
-- Prerequisites, backups, downtime expectations
-
-## Step-by-step migration
-1. Backup
-2. Config changes (before/after)
-3. Replace SDK files (keep vs replace)
-4. Run migration command
-5. Validate
-6. Cleanup (optional)
-7. Rollback
-
-## Troubleshooting
-- Common errors and fixes
-
-## Related docs
-- Links to configuration, upgrade guide, import lifecycle
-```
-
-After adding a guide:
-
-1. Add a row to the table in this file.
-2. Link it from [upgrading.md](../upgrading.md) under «Version-specific migrations».
-3. Update [guides index](../index.md) if needed.
