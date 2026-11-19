@@ -4,15 +4,11 @@
 
 How to upgrade an existing SDK installation on a park website.
 
-## Coming from v21?
+## From v21
 
-Most park sites still on **v21** (`parks_api/`, MySQL) must follow the dedicated guide — not the short flow below:
+Use [v21 → v22](./migrations/21-to-22.md).
 
-**[Migration: v21 to v22](./migrations/21-to-22.md)**
-
-That guide covers folder rename, config, camelCase API, frontend, cron, migrate, test, and MySQL cleanup.
-
-## Already on v22?
+## Already on v22
 
 Download releases from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases). Prefer the CLI script on the server (SSH), from inside `swiss-parks-sdk/`:
 

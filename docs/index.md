@@ -12,7 +12,7 @@ Shared for every integration:
 - [Core configuration](./guides/configuration.md)
 - [Upgrade](./guides/upgrading.md)
 
-**Coming from v21 (MySQL / `parks_api/`)?** Most existing park sites follow this path — use the full guide, not only the generic upgrade: [v21 → v22](./guides/migrations/21-to-22.md).
+Coming from v21: [v21 → v22](./guides/migrations/21-to-22.md)
 
 Then choose a path below.
 
@@ -34,8 +34,8 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 
 ## Upgrade
 
-- **From v21:** [v21 → v22](./guides/migrations/21-to-22.md) (MySQL → SQLite — usual path for existing park sites)
-- **Already on v22:** [Upgrade](./guides/upgrading.md)
+- From v21: [v21 → v22](./guides/migrations/21-to-22.md)
+- Already on v22: [Upgrade](./guides/upgrading.md)
 - Older packages (v14–v21.1): [migrations index](./guides/migrations/index.md) · [legacy archive](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 - Sync/cron: [import and update lifecycle](./guides/import-update-lifecycle.md)
 

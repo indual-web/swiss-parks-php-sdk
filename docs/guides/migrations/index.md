@@ -4,9 +4,7 @@
 
 Version-specific steps when an upgrade needs more than replacing core files and running `migrate.php`.
 
-Most park websites currently on **v21** should start here: [21 to 22](./21-to-22.md) (MySQL → SQLite, including MySQL cleanup after validation).
-
-Use the generic [Upgrade](../upgrading.md) workflow only for updates within the v22 line, or after you have completed a version-specific guide below.
+From v21: [21 to 22](./21-to-22.md). Later updates within v22: [Upgrade](../upgrading.md).
 
 ## Available migrations
 
