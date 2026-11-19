@@ -73,7 +73,6 @@ add_action('init', function () {
 
 /**
  * Enqueue v22 frontend assets on pages that contain the shortcode.
- * Swap the staging host for production before go-live (see index.php).
  */
 add_action('wp_enqueue_scripts', function () {
 
@@ -86,8 +85,8 @@ add_action('wp_enqueue_scripts', function () {
 		return;
 	}
 
-	$css = 'https://staging-map.angebote.paerke.ch/dist/frontend/v22/css/parks.min.css';
-	$js = 'https://staging-map.angebote.paerke.ch/dist/frontend/v22/parks.min.js';
+	$css = 'https://angebote.paerke.ch/dist/frontend/v22/css/parks.min.css';
+	$js = 'https://angebote.paerke.ch/dist/frontend/v22/parks.min.js';
 
 	wp_enqueue_style('swiss-parks-sdk', $css, [], null);
 	wp_enqueue_script('swiss-parks-sdk', $js, [], null, true);

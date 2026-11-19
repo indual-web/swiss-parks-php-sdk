@@ -32,7 +32,7 @@ No database server is required: the SDK stores all data in a local SQLite file t
 6. Integrate SDK rendering into your project pages based on `index.php`.
    - Add the SDK bootstrap and rendering calls (`showOffersFilter`, `showOffersList`, `showOffersMap`, `showOfferDetail`) in your own template/page code.
    - Include the required frontend assets in your template (`parks.min.css` and `parks.min.js` from the `v22` frontend path), as shown in `index.php`.
-   - Until the public release, the example uses the staging host `https://staging-map.angebote.paerke.ch/dist/frontend/v22/…`. Switch to the production CDN host before going live.
+   - Load assets from `https://angebote.paerke.ch/dist/frontend/v22/…` (see `index.php`).
    - Use a `parks.min.js` build that looks for map container id `swiss-parks-map` (older builds expect `mapContainer` and leave the map tab empty).
 7. Configure a recurring cronjob (for example every 4 hours). Prefer CLI. See [import and update lifecycle](./import-update-lifecycle.md).
 
@@ -57,7 +57,7 @@ Without SSH, set `sync_secret` and schedule a URL cron against `public/sync.php?
 | Sync fails with SSL/cURL HTTPS errors | Set `curl_verify_ssl = false` only as a hosting fallback; confirm outbound HTTPS to `angebote.paerke.ch`. |
 | Cannot create DB or write logs | Fix write permissions on `db_path` and `log_directory` (web server and cron user). |
 | Map tab empty | Use the v22 `parks.min.js` as `type="module"` and container id `swiss-parks-map` (not `mapContainer`). |
-| Assets/CDN wrong on production | Replace the staging frontend host with the production CDN before go-live (see `index.php`). |
+| Assets/CDN 404 or wrong host | Use `https://angebote.paerke.ch/dist/frontend/v22/…` as in `index.php`. |
 
 WordPress-specific issues: [WordPress integration](./wordpress-integration.md#troubleshooting).
 

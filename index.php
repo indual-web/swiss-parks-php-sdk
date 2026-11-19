@@ -46,12 +46,11 @@ $sdk->mapOptions = [];
 	<!--
 		Required SDK frontend assets (CSS + JS) for SDK line v22:
 		- parks.min.css / parks.min.js under …/dist/frontend/v22/
-		- Currently staging (swap to the production host before a public release)
 		- parks.min.js must target container id "swiss-parks-map"
 		  Older builds still look for "mapContainer" and the map tab stays empty
 	-->
-	<link href="https://staging-map.angebote.paerke.ch/dist/frontend/v22/css/parks.min.css" rel="stylesheet">
-	<script type="module" src="https://staging-map.angebote.paerke.ch/dist/frontend/v22/parks.min.js"></script>
+	<link href="https://angebote.paerke.ch/dist/frontend/v22/css/parks.min.css" rel="stylesheet">
+	<script type="module" src="https://angebote.paerke.ch/dist/frontend/v22/parks.min.js"></script>
 
 </head>
 <body>
