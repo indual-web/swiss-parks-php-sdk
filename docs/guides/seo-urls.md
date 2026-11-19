@@ -31,50 +31,21 @@ Examples with defaults:
 - `/offers/offer-detail/bergwanderung-123/poi/456`
 - `/offers/page/2`
 
-Without SEO URLs, detail and page use query parameters such as `?offer=123` or `?page=2` (with optional `url_param_prefix`).
+Without SEO URLs, detail and page use query parameters such as `?offer=123` or `?page=2` (with optional `url_param_prefix`). That mode is simpler for many CMS embeds.
 
 ## Routing requirements
 
-Your CMS or web server must forward these slug paths to the same PHP endpoint that bootstraps `ParksAPI`. The SDK parses `REQUEST_URI` / `scriptUrl` for the configured slugs and offer IDs.
+Your CMS or web server must forward these slug paths to the same PHP endpoint that bootstraps `ParksAPI`. The SDK detects detail/pagination from `scriptUrl` (usually `REQUEST_URI`).
 
-Also set a stable page URL for CMS embeds: pass `$page_url` into `new ParksAPI(...)` and call `setScriptUrl()` with the offers permalink path. See [ParksAPI methods](../sdk-reference/parks-api.md).
+For CMS embeds, pass `$page_url` into `new ParksAPI(...)` so the session is scoped to the offers page. Do **not** replace `scriptUrl` with only the clean page path when `seo_urls` is true — that breaks `isOfferDetail()` and SEO pagination. See [WordPress integration](./wordpress-integration.md).
 
-## WordPress rewrite sketch
+## WordPress
 
-Register rules that map SEO paths onto a dedicated offers page (adjust page slug and query vars to your setup). Flush rewrites after changing rules.
+Default recommendation: keep `seo_urls = false` unless you need pretty paths.
 
-```php
-add_action('init', function () {
+If SEO mode is on, register rewrite rules so the SEO paths still load the page that contains the shortcode (adjust the `offers` slug to your page). Leave `REQUEST_URI` unchanged. Full sketch: [WordPress integration](./wordpress-integration.md#seo-urls).
 
-	// Detail: /offers/offer-detail/{slug}-{id}
-	add_rewrite_rule(
-		'^offers/offer-detail/([^/]+)/?',
-		'index.php?pagename=offers&sp_seo_detail=$matches[1]',
-		'top'
-	);
-
-	// Pagination: /offers/page/{n}
-	add_rewrite_rule(
-		'^offers/page/([0-9]+)/?',
-		'index.php?pagename=offers&sp_seo_page=$matches[1]',
-		'top'
-	);
-});
-
-add_filter('query_vars', function ($vars) {
-
-	$vars[] = 'sp_seo_detail';
-	$vars[] = 'sp_seo_page';
-
-	return $vars;
-});
-```
-
-The shortcode or template still bootstraps `ParksAPI` on that page; the SDK reads the path from `REQUEST_URI` / `setScriptUrl()`. You do not need to map `sp_seo_*` into SDK APIs unless you build a custom router. Prefer letting WordPress serve the same page for `/offers/...` so `REQUEST_URI` keeps the SEO path.
-
-After adding rules: visit **Settings → Permalinks** and save (or `flush_rewrite_rules()` once).
-
-More WordPress context: [WordPress integration](./wordpress-integration.md).
+After adding rules: **Settings → Permalinks → Save**.
 
 ## Related docs
 

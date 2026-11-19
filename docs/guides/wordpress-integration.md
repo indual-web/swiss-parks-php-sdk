@@ -8,19 +8,28 @@ Complete shared setup first: [new installation](./new-installation.md) and [conf
 
 Upgrading from v21: follow [v21 → v22](./migrations/21-to-22.md) (includes a short WordPress checklist).
 
+The host must run **PHP 8.2–8.5** with `pdo_sqlite` (same as the rest of the SDK).
+
 ## Recommended configuration
 
 Set these in `swiss-parks-sdk/config/config.php` (or `config.local.php`):
 
 | Key | Recommendation |
 | --- | --- |
-| `return_output` | `true` — rendering methods return HTML for shortcodes/templates |
-| `soft_errors` | `true` — missing offers return `''`; bootstrap/language failures throw `RuntimeException` instead of `exit()` |
-| `prevent_css_js_include` | `true` — enqueue CSS/JS from WordPress instead of SDK auto-includes |
-| `use_sessions` | `true` when using favorites (`toggleFavorite` requires it) or filter session persistence |
+| `return_output` | `true` — shortcodes must **return** HTML, not echo |
+| `soft_errors` | `true` — missing offers return `''`; bootstrap failures throw `RuntimeException` instead of `exit()` |
+| `prevent_css_js_include` | `true` — load CSS/JS via `wp_enqueue_*` instead of SDK auto-includes |
+| `use_sessions` | `true` if you need filter persistence or favorites (`toggleFavorite` requires it) |
 | `url_param_prefix` / `form_prefix` | Unique prefixes (for example `sp_`) to avoid clashes with WordPress query vars |
-| `db_path` / `log_directory` | Absolute paths under a writable location (uploads or a private plugin data dir) |
+| `db_path` / `log_directory` | Absolute paths under a writable location (for example under `wp-content/uploads/…`) |
 | `favorites_script_path` | URL/path to your favorites endpoint folder (or CMS wrapper) when favorites are enabled |
+
+Example paths (adjust to your server):
+
+```php
+$config['db_path'] = '/var/www/html/wp-content/uploads/swiss-parks-sdk/park-offers.sqlite';
+$config['log_directory'] = '/var/www/html/wp-content/uploads/swiss-parks-sdk/log/';
+```
 
 ## Mini plugin sketch
 
@@ -42,8 +51,20 @@ define('SPO_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('SPO_SDK_DIR', SPO_PLUGIN_DIR . 'swiss-parks-sdk/');
 
 /**
- * Enqueue SDK frontend assets (v22). Swap staging host for production before go-live.
- * See index.php in the SDK release for the current URLs.
+ * Start the PHP session before WordPress prints HTML.
+ * Autoload only starts a session if headers are still writable; a shortcode
+ * runs too late for that. Required when use_sessions is true.
+ */
+add_action('init', function () {
+
+	if (session_status() === PHP_SESSION_NONE && ! headers_sent()) {
+		session_start();
+	}
+}, 1);
+
+/**
+ * Enqueue v22 assets only on pages that contain the shortcode.
+ * Swap the staging host for production before go-live (see index.php).
  */
 add_action('wp_enqueue_scripts', function () {
 
@@ -51,26 +72,33 @@ add_action('wp_enqueue_scripts', function () {
 		return;
 	}
 
+	$post = get_post();
+	if (! $post instanceof WP_Post || ! has_shortcode($post->post_content, 'swiss_parks_offers')) {
+		return;
+	}
+
 	$css = 'https://staging-map.angebote.paerke.ch/dist/frontend/v22/css/parks.min.css';
 	$js = 'https://staging-map.angebote.paerke.ch/dist/frontend/v22/parks.min.js';
 
 	wp_enqueue_style('swiss-parks-sdk', $css, [], null);
+
+	// Classic enqueue + type=module (works on current WordPress versions).
+	// On WordPress 6.5+ you may use wp_enqueue_script_module() instead.
 	wp_enqueue_script('swiss-parks-sdk', $js, [], null, true);
-
-	// parks.min.js is an ES module
-	add_filter('script_loader_tag', function ($tag, $handle, $src) {
-
-		if ($handle === 'swiss-parks-sdk') {
-			return '<script type="module" src="' . esc_url($src) . '"></script>';
-		}
-
-		return $tag;
-	}, 10, 3);
 });
+
+add_filter('script_loader_tag', function ($tag, $handle, $src) {
+
+	if ($handle === 'swiss-parks-sdk') {
+		return '<script type="module" src="' . esc_url($src) . '"></script>';
+	}
+
+	return $tag;
+}, 10, 3);
 
 /**
  * Shortcode: [swiss_parks_offers]
- * Use on a dedicated offers page so filter POST → redirect (PRG) works.
+ * Put it on a dedicated offers page so filter POST → redirect (PRG) works.
  */
 add_shortcode('swiss_parks_offers', function () {
 
@@ -80,8 +108,17 @@ add_shortcode('swiss_parks_offers', function () {
 	$page_url = get_permalink() ?: '/';
 
 	try {
+		// $page_url scopes the PHP session to this offers page
 		$api = new ParksAPI($language, '', $page_url);
-		$api->setScriptUrl(parse_url($page_url, PHP_URL_PATH) ?: '/');
+
+		// Do not call setScriptUrl() with only the page path when seo_urls is true:
+		// isOfferDetail() and SEO pagination read the detail/page segments from
+		// scriptUrl (normally REQUEST_URI). Overwriting with /offers/ breaks that.
+		// Without SEO URLs, pin forms/links to the page permalink path:
+		if (empty($api->config['seo_urls'])) {
+			$path = parse_url($page_url, PHP_URL_PATH);
+			$api->setScriptUrl(is_string($path) && $path !== '' ? $path : '/');
+		}
 
 		if ($api->isOfferDetail()) {
 			return $api->showOfferDetail();
@@ -105,8 +142,9 @@ add_shortcode('swiss_parks_offers', function () {
 
 Notes:
 
-- Keep `return_output = true` so shortcodes can return HTML.
+- Keep `return_output = true` so the shortcode can return HTML.
 - Overview markup for list/map tabs must match what `parks.min.js` expects (see SDK `index.php`). Map container id is `swiss-parks-map`.
+- `has_shortcode()` does not see shortcodes inside some blocks/builders; enqueue on a known page ID if needed.
 - For multilingual sites, set `$language` from WPML/Polylang; details in [output and language](./output-and-language.md).
 
 ## Sync and cron
@@ -132,13 +170,15 @@ See [import and update lifecycle](./import-update-lifecycle.md).
 
 ### SEO URLs
 
-If `seo_urls` is enabled, register rewrite rules so `/offers/offer-detail/…` and `/offers/page/…` still load the offers page. Full patterns and a rewrite sketch: [SEO URLs](./seo-urls.md).
+Default is `seo_urls = false` (query params `?offer=` / `?page=`). That is the simplest WordPress setup.
+
+If you enable `seo_urls`, WordPress must route paths like `/offers/offer-detail/…` and `/offers/page/…` to the same page that contains the shortcode, while leaving `REQUEST_URI` as the SEO path. Example (page slug `offers` — change to match your page):
 
 ```php
 add_action('init', function () {
 
 	add_rewrite_rule(
-		'^offers/offer-detail/([^/]+)/?',
+		'^offers/offer-detail/(.+)/?',
 		'index.php?pagename=offers',
 		'top'
 	);
@@ -147,16 +187,22 @@ add_action('init', function () {
 		'index.php?pagename=offers',
 		'top'
 	);
+	add_rewrite_rule(
+		'^offers/reset/?',
+		'index.php?pagename=offers',
+		'top'
+	);
 });
 ```
 
-Flush permalinks once after adding rules. Pass `get_permalink()` into `ParksAPI` and `setScriptUrl()` as in the sketch above so forms and links stay on the offers page.
+After adding or changing rules: **Settings → Permalinks → Save** (flushes rewrites). Do not call `setScriptUrl()` with only `/offers` when SEO mode is on (see sketch above). Patterns: [SEO URLs](./seo-urls.md).
 
 ## Checklist
 
 - [ ] `api_hash` / `park_id` set; first `bin/sync.sh` succeeded
 - [ ] Absolute writable `db_path` and `log_directory`
 - [ ] CMS config flags above applied
+- [ ] Session started on `init` when `use_sessions` is true
 - [ ] Shortcode on a dedicated offers page; filter submit works (PRG)
 - [ ] `v22` CSS/JS enqueued with `type="module"`; map id `swiss-parks-map` if map is used
 - [ ] Cron/WP-CLI sync scheduled; not reachable anonymously
@@ -178,14 +224,19 @@ Flush permalinks once after adding rules. Pass `get_permalink()` into `ParksAPI`
 
 ### Filter or session state lost
 
-- Enable `use_sessions` only when needed; ensure headers are not sent before autoload.
-- Pass a stable `$page_url` into `ParksAPI` and call `setScriptUrl()` for the offers permalink path.
+- Set `use_sessions = true` and start the session on `init` (see sketch), before any HTML output.
+- Pass a stable `$page_url` into `ParksAPI` for session scope.
 - Use unique `url_param_prefix` / `form_prefix`.
+
+### Detail page never opens (SEO mode)
+
+- Do not overwrite `scriptUrl` with only the page permalink when `seo_urls` is true.
+- Confirm rewrite rules load the offers page and `REQUEST_URI` still contains `offer-detail`.
 
 ### Permission / SQLite errors
 
 - Web server user must write the directory of `db_path` (and create the `.sqlite` file).
-- Prefer a path outside the public web root when possible.
+- Prefer a path outside the public web root when possible; `uploads` is a common writable compromise.
 
 ### Fatal `exit` / white screen on missing offer
 
