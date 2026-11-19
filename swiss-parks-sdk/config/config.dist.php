@@ -218,11 +218,12 @@ $config['soft_errors'] = false;
 
 /*
 |--------------------------------------------------------------------------
-| CSS and JS include mode
+| Map library include mode
 |--------------------------------------------------------------------------
 |
-| Set if view should not include SDK CSS and JS files automatically.
-| If true, you have to include these files manually in your system.
+| When false, map/detail output prepends interactive map CSS/JS from
+| interactive_map_url. When true, load those assets yourself.
+| parks.min.css / parks.min.js are never auto-included.
 |
 */
 $config['prevent_css_js_include'] = false;

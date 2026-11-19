@@ -110,7 +110,7 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 - `soft_errors` (default: `false`)
   - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
 - `prevent_css_js_include` (default: `false`)
-  - When `true`, the SDK does not auto-include CSS/JS; load assets from the host system.
+  - When `false`, map/detail rendering prepends the interactive map library tags from `interactive_map_url` (`style.css`, `swiss-parks-map.umd.js`). When `true`, those tags are omitted and you must load the map library yourself. This does **not** affect `parks.min.css` / `parks.min.js` — those are never auto-included; always load them in your page or CMS enqueue.
 
 ## Interactive map
 

@@ -12,17 +12,23 @@ The host must run **PHP 8.2–8.5** with `pdo_sqlite` (same as the rest of the S
 
 ## Recommended configuration
 
-Set these in `swiss-parks-sdk/config/config.php` (or `config.local.php`):
+Set these in `swiss-parks-sdk/config/config.php`:
 
 | Key | Recommendation |
 | --- | --- |
 | `return_output` | `true` — shortcodes must **return** HTML, not echo |
 | `soft_errors` | `true` — missing offers return `''`; bootstrap failures throw `RuntimeException` instead of `exit()` |
-| `prevent_css_js_include` | `true` — load CSS/JS via `wp_enqueue_*` instead of SDK auto-includes |
+| `prevent_css_js_include` | `true` if you enqueue the **map** library yourself (see below). `false` injects `map.parks.swiss` CSS/JS into the HTML when a map/detail is rendered |
 | `use_sessions` | `true` if you need filter persistence or favorites (`toggleFavorite` requires it) |
+| `seo_urls` | Prefer `false` on WordPress (query params `?offer=` / `?page=`). Pretty SEO paths need rewrite rules |
 | `url_param_prefix` / `form_prefix` | Unique prefixes (for example `sp_`) to avoid clashes with WordPress query vars |
 | `db_path` / `log_directory` | Absolute paths under a writable location (for example under `wp-content/uploads/…`) |
-| `favorites_script_path` | URL/path to your favorites endpoint folder (or CMS wrapper) when favorites are enabled |
+| `favorites_script_path` | Public URL path to the folder that contains `favorites.php` (no trailing slash), when favorites are enabled |
+
+Important:
+
+- The SDK **never** auto-includes `parks.min.css` / `parks.min.js`. You always load those yourself (enqueue in the sketch below).
+- `prevent_css_js_include` only controls the **interactive map** assets (`interactive_map_url` → `style.css` / `swiss-parks-map.umd.js`), not the v22 frontend bundle.
 
 Example paths (adjust to your server):
 
@@ -34,6 +40,8 @@ $config['log_directory'] = '/var/www/html/wp-content/uploads/swiss-parks-sdk/log
 ## Mini plugin sketch
 
 Example layout: `wp-content/plugins/swiss-parks-offers/` containing `swiss-parks-offers.php` and the `swiss-parks-sdk/` folder. Adapt names and paths to your project.
+
+This sketch assumes `seo_urls = false` (simplest). Pretty SEO URLs are covered later.
 
 ```php
 <?php
@@ -47,13 +55,14 @@ if (! defined('ABSPATH')) {
 	exit;
 }
 
-define('SPO_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('SPO_SDK_DIR', SPO_PLUGIN_DIR . 'swiss-parks-sdk/');
+define('SWISS_PARKS_PLUGIN_DIR', plugin_dir_path(__FILE__));
+define('SWISS_PARKS_SDK_DIR', SWISS_PARKS_PLUGIN_DIR . 'swiss-parks-sdk/');
 
 /**
  * Start the PHP session before WordPress prints HTML.
- * Autoload only starts a session if headers are still writable; a shortcode
- * runs too late for that. Required when use_sessions is true.
+ * Add this only when use_sessions is true in config.php.
+ * SDK autoload also calls session_start(), but only if headers are still
+ * writable — a shortcode usually runs too late.
  */
 add_action('init', function () {
 
@@ -63,7 +72,7 @@ add_action('init', function () {
 }, 1);
 
 /**
- * Enqueue v22 assets only on pages that contain the shortcode.
+ * Enqueue v22 frontend assets on pages that contain the shortcode.
  * Swap the staging host for production before go-live (see index.php).
  */
 add_action('wp_enqueue_scripts', function () {
@@ -81,15 +90,16 @@ add_action('wp_enqueue_scripts', function () {
 	$js = 'https://staging-map.angebote.paerke.ch/dist/frontend/v22/parks.min.js';
 
 	wp_enqueue_style('swiss-parks-sdk', $css, [], null);
-
-	// Classic enqueue + type=module (works on current WordPress versions).
-	// On WordPress 6.5+ you may use wp_enqueue_script_module() instead.
 	wp_enqueue_script('swiss-parks-sdk', $js, [], null, true);
+
+	// Only if you use the map AND set prevent_css_js_include = true:
+	// wp_enqueue_style('swiss-parks-map', 'https://map.parks.swiss/dist/css/style.css', [], null);
+	// wp_enqueue_script('swiss-parks-map', 'https://map.parks.swiss/dist/js/swiss-parks-map.umd.js', [], null, true);
 });
 
 add_filter('script_loader_tag', function ($tag, $handle, $src) {
 
-	if ($handle === 'swiss-parks-sdk') {
+	if ($handle === 'swiss-parks-sdk' || $handle === 'swiss-parks-map') {
 		return '<script type="module" src="' . esc_url($src) . '"></script>';
 	}
 
@@ -102,19 +112,19 @@ add_filter('script_loader_tag', function ($tag, $handle, $src) {
  */
 add_shortcode('swiss_parks_offers', function () {
 
-	require_once SPO_SDK_DIR . 'autoload.php';
+	require_once SWISS_PARKS_SDK_DIR . 'autoload.php';
 
 	$language = 'de'; // map from WPML/Polylang if needed — see output-and-language.md
 	$page_url = get_permalink() ?: '/';
 
 	try {
-		// $page_url scopes the PHP session to this offers page
+		// $page_url scopes the PHP session to this offers page (use_sessions)
 		$api = new ParksAPI($language, '', $page_url);
 
-		// Do not call setScriptUrl() with only the page path when seo_urls is true:
-		// isOfferDetail() and SEO pagination read the detail/page segments from
-		// scriptUrl (normally REQUEST_URI). Overwriting with /offers/ breaks that.
-		// Without SEO URLs, pin forms/links to the page permalink path:
+		// Pin forms/links to the page path when not using SEO URLs.
+		// Call this after construct: it affects HTML rendered below.
+		// Filter POST redirects during bootstrap still use REQUEST_URI
+		// (with pretty permalinks that is usually the same page path).
 		if (empty($api->config['seo_urls'])) {
 			$path = parse_url($page_url, PHP_URL_PATH);
 			$api->setScriptUrl(is_string($path) && $path !== '' ? $path : '/');
@@ -124,10 +134,11 @@ add_shortcode('swiss_parks_offers', function () {
 			return $api->showOfferDetail();
 		}
 
+		// List only (no map). For list+map tabs, copy the markup from index.php
+		// (ul.tab_list with tab_1 / tab_2) — parks.min.js expects that structure.
 		$html = $api->showOffersFilter();
 		$html .= $api->showOffersList();
 		$html .= $api->showOffersPagination();
-		// Optional map: $html .= $api->showOffersMap();
 
 		return $html;
 	} catch (RuntimeException $e) {
@@ -143,7 +154,7 @@ add_shortcode('swiss_parks_offers', function () {
 Notes:
 
 - Keep `return_output = true` so the shortcode can return HTML.
-- Overview markup for list/map tabs must match what `parks.min.js` expects (see SDK `index.php`). Map container id is `swiss-parks-map`.
+- Map container id is `swiss-parks-map` when you render a map.
 - `has_shortcode()` does not see shortcodes inside some blocks/builders; enqueue on a known page ID if needed.
 - For multilingual sites, set `$language` from WPML/Polylang; details in [output and language](./output-and-language.md).
 
@@ -165,14 +176,18 @@ See [import and update lifecycle](./import-update-lifecycle.md).
 
 ### Favorites
 
-- Set `favorites_extension_available = true`, `favorites_script_path`, and `use_sessions = true` (`toggleFavorite` does nothing without sessions).
-- Wire `public/favorites.php` or a WordPress AJAX/REST wrapper that calls `ParksAPI::toggleFavorite()`. Custom endpoints should use a WordPress nonce; the drop-in `favorites.php` has no CSRF token. See [favorites](./favorites.md).
+- Set `favorites_extension_available = true`, `use_sessions = true`, and `favorites_script_path` to the **public URL** of the folder that contains `favorites.php` (for example `/wp-content/plugins/swiss-parks-offers/swiss-parks-sdk/public`).
+- The drop-in endpoint has no CSRF token. A custom WordPress AJAX/REST wrapper should use a nonce. See [favorites](./favorites.md).
 
 ### SEO URLs
 
-Default is `seo_urls = false` (query params `?offer=` / `?page=`). That is the simplest WordPress setup.
+Keep `seo_urls = false` unless you need pretty paths. With `false`, detail links look like `/offers/?offer=123` (plus optional `url_param_prefix`).
 
-If you enable `seo_urls`, WordPress must route paths like `/offers/offer-detail/…` and `/offers/page/…` to the same page that contains the shortcode, while leaving `REQUEST_URI` as the SEO path. Example (page slug `offers` — change to match your page):
+If you set `seo_urls = true`:
+
+1. Register rewrite rules so paths like `/offers/offer-detail/…` still load the page that contains the shortcode (change `offers` to your page slug).
+2. Do **not** call `setScriptUrl()` with only `/offers` — `isOfferDetail()` reads the detail segment from `scriptUrl` (normally `REQUEST_URI`).
+3. Flush permalinks after adding rules: **Settings → Permalinks → Save**.
 
 ```php
 add_action('init', function () {
@@ -195,18 +210,18 @@ add_action('init', function () {
 });
 ```
 
-After adding or changing rules: **Settings → Permalinks → Save** (flushes rewrites). Do not call `setScriptUrl()` with only `/offers` when SEO mode is on (see sketch above). Patterns: [SEO URLs](./seo-urls.md).
+WordPress rewrites are internal; `$_SERVER['REQUEST_URI']` normally still contains the SEO path, which the SDK needs. Patterns: [SEO URLs](./seo-urls.md).
 
 ## Checklist
 
 - [ ] `api_hash` / `park_id` set; first `bin/sync.sh` succeeded
 - [ ] Absolute writable `db_path` and `log_directory`
-- [ ] CMS config flags above applied
+- [ ] `return_output` / `soft_errors` set as above
+- [ ] `parks.min.css` / `parks.min.js` enqueued as `type="module"`
 - [ ] Session started on `init` when `use_sessions` is true
 - [ ] Shortcode on a dedicated offers page; filter submit works (PRG)
-- [ ] `v22` CSS/JS enqueued with `type="module"`; map id `swiss-parks-map` if map is used
-- [ ] Cron/WP-CLI sync scheduled; not reachable anonymously
-- [ ] Detail, list, and (if used) favorites work end-to-end
+- [ ] Cron/WP-CLI sync scheduled; `bin/sync.php` not public
+- [ ] Detail, list, and (if used) map/favorites work end-to-end
 
 ## Troubleshooting
 
@@ -220,7 +235,8 @@ After adding or changing rules: **Settings → Permalinks → Save** (flushes re
 
 - Ensure `parks.min.js` is the v22 build and loaded as `type="module"`.
 - Container id must be `swiss-parks-map` (not `mapContainer`).
-- Overview tab markup should match `index.php`.
+- Overview tab markup should match `index.php` if you use list/map tabs.
+- If `prevent_css_js_include = true`, enqueue the map library assets yourself.
 
 ### Filter or session state lost
 
