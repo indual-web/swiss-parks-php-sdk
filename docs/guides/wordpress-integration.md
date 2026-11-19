@@ -6,6 +6,8 @@ This SDK is CMS-agnostic. There is **no official WordPress plugin** in this repo
 
 Complete shared setup first: [new installation](./new-installation.md) and [configuration](./configuration.md). Place `swiss-parks-sdk/` inside your plugin directory (or another path your plugin can `require`).
 
+Upgrading from v21: follow [v21 → v22](./migrations/21-to-22.md) (includes a short WordPress checklist).
+
 ## Recommended configuration
 
 Set these in `swiss-parks-sdk/config/config.php` (or `config.local.php`):
