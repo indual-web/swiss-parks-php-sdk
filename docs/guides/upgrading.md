@@ -83,7 +83,7 @@ New guides are added to [migrations/index.md](./migrations/index.md) when a rele
 
 ### Older packages (v14–v21.1)
 
-ZIPs for versions before v22 are not published from this repository. Download them from <a href="https://github.com/indual-web/swiss-parks-php-sdk-legacy" target="_blank" rel="noopener noreferrer">swiss-parks-php-sdk-legacy</a> (`releases/`). That archive is frozen; supported upgrade path into the current line is **v21 → v22**.
+ZIPs for versions before v22 are not published from this repository. Download them from [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy) (`releases/`). That archive is frozen; supported upgrade path into the current line is **v21 → v22**.
 
 ## Upgrade notes
 

@@ -11,7 +11,7 @@ This page lists every guide file.
 - [Version migrations](./migrations/index.md) (incl. v14–v21.1 archive)
 - [Migration: v21 to v22](./migrations/21-to-22.md)
 - [Import and update lifecycle](./import-update-lifecycle.md)
-- Older packages (v14–v21.1): <a href="https://github.com/indual-web/swiss-parks-php-sdk-legacy" target="_blank" rel="noopener noreferrer">swiss-parks-php-sdk-legacy</a>
+- Older packages (v14–v21.1): [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 
 ## Integration
 

@@ -16,7 +16,7 @@ Use the generic [upgrade guide](../upgrading.md) for the standard workflow. Open
 
 Packages **before v22** (folder `parks_api/`) are frozen and live in a separate archive repository:
 
-- <a href="https://github.com/indual-web/swiss-parks-php-sdk-legacy" target="_blank" rel="noopener noreferrer">indual-web/swiss-parks-php-sdk-legacy</a>
+- [indual-web/swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 
 ZIPs for v14–v21.1 are under `releases/` there, with per-version notes under `docs/migrations/`. Prefer **v21.1**, then follow [21 to 22](./21-to-22.md).
 
