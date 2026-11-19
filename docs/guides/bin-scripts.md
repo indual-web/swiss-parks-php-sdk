@@ -29,6 +29,7 @@ Imports offer data into the local SQLite database.
 | `php swiss-parks-sdk/bin/sync.php --force` | Same as `sync.sh --force` |
 
 - Exit code: `0` on success, `1` on import failure or exception (suitable for cron monitoring).
+- Stdout: one plain-text line, e.g. `sync: ok (mode=incremental, imported=5, deleted=1, offers=120, map_layers=3, cleanup=0)` or `sync: fail (...)`.
 - Typical use: scheduled cron for incremental updates; `--force` when the local DB is incomplete or after a bad incremental run.
 - Requires a configured `api_hash` (and usually `park_id`) in `config/config.php`.
 

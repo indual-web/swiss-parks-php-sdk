@@ -214,8 +214,10 @@ Parameters:
 
 - Runs synchronization from XML export endpoints.
 - Returns `true` on successful offer import, `false` on failure.
-- Outputs JSON status (`status`, `message`) to stdout. The legacy key `messsage` is still included for backward compatibility.
-- Sets `Content-Type: application/json` only for non-CLI requests (browser cron).
+- Writes a plain-text status line to stdout, for example:
+  - `sync: ok (mode=incremental, imported=5, deleted=1, offers=120, map_layers=3, cleanup=0)`
+  - `sync: fail (Offer import failed. Check logs and api_hash configuration.)`
+- On success, `map_layers` / `cleanup` are counts; on step failure they are `fail` (offer import may still succeed).
 
 Parameters:
 

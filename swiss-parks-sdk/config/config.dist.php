@@ -83,7 +83,7 @@ $config['curl_verify_ssl'] = true;
 | URL for reporting successful SDK migrations to the central log server.
 |
 */
-$config['migration_log_url'] = 'https://angebote.paerke.ch/migrate/log_api_migration';
+$config['migration_log_url'] = 'https://angebote.paerke.ch/migrate/log_sdk_migration';
 
 
 /*

@@ -305,10 +305,6 @@ class ParksSDK
 	public function update($force = false): bool
 	{
 
-		if (PHP_SAPI !== 'cli') {
-			header('Content-Type: application/json');
-		}
-
 		try {
 
 			// Get import urls
@@ -324,27 +320,35 @@ class ParksSDK
 			if ($importOk) {
 				$this->updateMetaVersion();
 
-				$message = 'The offers were successfully synchronised.';
-				if (! $mapLayersOk) {
-					$message .= ' Map layer import failed.';
-				}
-				if (! $cleanupOk) {
-					$message .= ' Inactive offer cleanup failed.';
+				// Offer total for the summary line (not the per-run imported count)
+				$offerTotal = 0;
+				$offerCountResult = $this->db->query('SELECT COUNT(*) AS total FROM offer');
+				if ($offerCountResult !== false) {
+					$offerCountRow = $offerCountResult->fetchAssoc();
+					$offerTotal = (int) ($offerCountRow['total'] ?? 0);
 				}
 
-				$this->outputUpdateJson(true, $message);
+				$details = [
+					'mode=' . ($this->import->lastImportForced ? 'full' : 'incremental'),
+					'imported=' . $this->import->lastImportedOffers,
+					'deleted=' . $this->import->lastDeletedOffers,
+					'offers=' . $offerTotal,
+					'map_layers=' . ($mapLayersOk ? (string) $this->import->lastImportedMapLayers : 'fail'),
+					'cleanup=' . ($cleanupOk ? (string) $this->import->lastCleanupDeletedOffers : 'fail'),
+				];
+				$this->outputUpdateStatus(true, implode(', ', $details));
 
 				return true;
 			}
 
-			$this->outputUpdateJson(false, 'Offer import failed. Check logs and api_hash configuration.');
+			$this->outputUpdateStatus(false, 'Offer import failed. Check logs and api_hash configuration.');
 
 			return false;
 
 
 		} catch (Exception $e) {
 
-			$this->outputUpdateJson(false, 'ADB sync exception: ' . $e->getMessage());
+			$this->outputUpdateStatus(false, 'ADB sync exception: ' . $e->getMessage());
 
 			return false;
 
@@ -2025,16 +2029,12 @@ class ParksSDK
 
 
 	/**
-	 * Output JSON status for update scripts
+	 * Plain-text status line for sync CLI scripts
 	 */
-	private function outputUpdateJson(bool $status, string $message): void
+	private function outputUpdateStatus(bool $ok, string $details): void
 	{
 
-		echo json_encode([
-			'status' => $status,
-			'message' => $message,
-			'messsage' => $message,
-		]);
+		echo ($ok ? 'sync: ok' : 'sync: fail') . ' (' . $details . ')' . PHP_EOL;
 
 	}
 
@@ -2043,7 +2043,7 @@ class ParksSDK
 	/**
 	 * Report successful migration to central log server
 	 *
-	 * Payload must match log_api_migration() on angebote.paerke.ch
+	 * Payload must match log_sdk_migration() on angebote.paerke.ch
 	 * (required: sdk_version, url, hash). Body is signed with HMAC-SHA256
 	 * using api_hash (header X-Api-Migration-Signature).
 	 */
@@ -2068,7 +2068,7 @@ class ParksSDK
 			return false;
 		}
 
-		// Payload contract must stay in sync with log_api_migration() on angebote.paerke.ch
+		// Payload contract must stay in sync with log_sdk_migration() on angebote.paerke.ch
 		$payload = [
 			'sdk_version' => $sdkVersion,
 			'php_version' => PHP_VERSION,
@@ -2086,7 +2086,7 @@ class ParksSDK
 		}
 
 		$signature = hash_hmac('sha256', $body, $apiHash);
-		$url = $this->config['migration_log_url'] ?? 'https://angebote.paerke.ch/migrate/log_api_migration';
+		$url = $this->config['migration_log_url'] ?? 'https://angebote.paerke.ch/migrate/log_sdk_migration';
 		$verifySsl = $this->config['curl_verify_ssl'] ?? true;
 
 		$ch = curl_init();

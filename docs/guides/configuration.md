@@ -23,7 +23,7 @@ Optional: create `config.local.php` next to `config.php` to override keys such a
   - Base URL of the offer database for XML/JSON exports and related asset links. Not set in shipped `config.php`; `ParksSDK` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
 - `curl_verify_ssl` (default: `true`)
   - Verifies SSL certificates for export requests to `angebote.paerke.ch`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
-- `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_api_migration`)
+- `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_sdk_migration`)
   - Endpoint contacted after a successful `migrate.php` run so the offer platform can record the SDK version in use. Uses `curl_verify_ssl` and your `api_hash`. Leave the default unless you were told otherwise.
 
 ## SEO URLs

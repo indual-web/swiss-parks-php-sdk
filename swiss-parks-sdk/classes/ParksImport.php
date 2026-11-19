@@ -31,6 +31,16 @@ class ParksImport
 
 
 	/**
+	 * Stats from the last import / map-layer / cleanup run (for CLI output)
+	 */
+	public int $lastImportedOffers = 0;
+	public int $lastDeletedOffers = 0;
+	public bool $lastImportForced = false;
+	public int $lastImportedMapLayers = 0;
+	public int $lastCleanupDeletedOffers = 0;
+
+
+	/**
 	 * Constructor
 	 */
 	public function __construct(ParksSDK $sdk)
@@ -62,6 +72,8 @@ class ParksImport
 	 */
 	public function importMapLayers(string $url): bool
 	{
+
+		$this->lastImportedMapLayers = 0;
 
 		// Load xml
 		$this->xml = $this->sdk->loadExternalXml($url);
@@ -119,6 +131,8 @@ class ParksImport
 						continue;
 					}
 					else {
+
+						$this->lastImportedMapLayers++;
 
 						// Get last inserted map layer id
 						$mapLayerId = $this->getLastId('map_layer_id', 'map_layer');
@@ -222,6 +236,10 @@ class ParksImport
 	public function import(string $url, bool $force = false): bool
 	{
 
+		$this->lastImportedOffers = 0;
+		$this->lastDeletedOffers = 0;
+		$this->lastImportForced = false;
+
 		if (PHP_SAPI === 'cli') {
 			@set_time_limit(0);
 		}
@@ -259,6 +277,8 @@ class ParksImport
 		} else {
 			$this->sdk->logger->info("FORCE mode is enabled");
 		}
+
+		$this->lastImportForced = ($force === true);
 
 		// Load external data
 		$this->xml = $this->sdk->loadExternalXml($url);
@@ -1023,6 +1043,9 @@ class ParksImport
 				$this->sdk->logger->info('Rebuilt offer full-text search index.');
 			}
 
+			$this->lastImportedOffers = $ctrImported;
+			$this->lastDeletedOffers = $ctrDeleted;
+
 			// Log message
 			$message = 'Import finished successfully.';
 			$this->sdk->logger->info($message);
@@ -1048,6 +1071,8 @@ class ParksImport
 	 */
 	public function cleanUpOffers(string $url): bool
 	{
+
+		$this->lastCleanupDeletedOffers = 0;
 
 		// Load xml
 		$this->xml = $this->sdk->loadExternalXml($url);
@@ -1087,6 +1112,8 @@ class ParksImport
 			if ($ctrDeleted > 0) {
 				$this->sdk->db->rebuildOfferFts();
 			}
+
+			$this->lastCleanupDeletedOffers = $ctrDeleted;
 
 			// Log result
 			if ($ctrDeleted == 0) {
