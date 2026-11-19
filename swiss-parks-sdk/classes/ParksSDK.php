@@ -336,19 +336,19 @@ class ParksSDK
 					'map_layers=' . ($mapLayersOk ? (string) $this->import->lastImportedMapLayers : 'fail'),
 					'cleanup=' . ($cleanupOk ? (string) $this->import->lastCleanupDeletedOffers : 'fail'),
 				];
-				$this->outputUpdateStatus(true, implode(', ', $details));
+				$this->outputCliStatus('sync', true, implode(', ', $details));
 
 				return true;
 			}
 
-			$this->outputUpdateStatus(false, 'Offer import failed. Check logs and api_hash configuration.');
+			$this->outputCliStatus('sync', false, 'Offer import failed. Check logs and api_hash configuration.');
 
 			return false;
 
 
 		} catch (Exception $e) {
 
-			$this->outputUpdateStatus(false, 'ADB sync exception: ' . $e->getMessage());
+			$this->outputCliStatus('sync', false, 'ADB sync exception: ' . $e->getMessage());
 
 			return false;
 
@@ -376,6 +376,28 @@ class ParksSDK
 
 		if ($success && ! $this->logMigration(SDK_VERSION)) {
 			$this->logger->info('Migration log could not be sent to the central server.');
+		}
+
+		if ($success) {
+
+			// Offer total for the summary line (same pattern as update())
+			$offerTotal = 0;
+			$offerCountResult = $this->db->query('SELECT COUNT(*) AS total FROM offer');
+			if ($offerCountResult !== false) {
+				$offerCountRow = $offerCountResult->fetchAssoc();
+				$offerTotal = (int) ($offerCountRow['total'] ?? 0);
+			}
+
+			$details = [
+				'sdk_version=' . SDK_VERSION,
+				'imported=' . $this->import->lastImportedOffers,
+				'offers=' . $offerTotal,
+				'map_layers=' . $this->import->lastImportedMapLayers,
+			];
+			$this->outputCliStatus('migrate', true, implode(', ', $details));
+
+		} else {
+			$this->outputCliStatus('migrate', false, 'Import failed. Check logs and api_hash configuration.');
 		}
 
 		return $success;
@@ -2029,12 +2051,12 @@ class ParksSDK
 
 
 	/**
-	 * Plain-text status line for sync CLI scripts
+	 * Plain-text status line for CLI scripts (sync, migrate)
 	 */
-	private function outputUpdateStatus(bool $ok, string $details): void
+	private function outputCliStatus(string $command, bool $ok, string $details): void
 	{
 
-		echo ($ok ? 'sync: ok' : 'sync: fail') . ' (' . $details . ')' . PHP_EOL;
+		echo ($ok ? $command . ': ok' : $command . ': fail') . ' (' . $details . ')' . PHP_EOL;
 
 	}
 

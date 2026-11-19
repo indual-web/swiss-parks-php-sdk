@@ -61,6 +61,7 @@ Rebuilds the local database from the current schema and runs a full import.
 
 - There are no per-version migration SQL files; the schema source is `swiss-parks-sdk/database/schema.sql` for the current `SDK_VERSION`.
 - Exit code: `0` when import completes and the SDK is initialized, `1` otherwise.
+- Stdout: one plain-text line, e.g. `migrate: ok (sdk_version=22, imported=120, offers=120, map_layers=3)` or `migrate: fail (...)`.
 - Use after a manual core-file update, or when `upgrade-sdk.sh` is not used. Prefer `upgrade-sdk.sh` when you also need to fetch and replace SDK files.
 
 ## `upgrade-sdk.sh`

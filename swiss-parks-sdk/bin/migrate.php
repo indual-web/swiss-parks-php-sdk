@@ -23,7 +23,7 @@ try {
 
 } catch (Throwable $e) {
 
-	fwrite(STDERR, $e->getMessage() . PHP_EOL);
+	fwrite(STDERR, 'migrate: fail (' . $e->getMessage() . ')' . PHP_EOL);
 	exit(1);
 
 }
