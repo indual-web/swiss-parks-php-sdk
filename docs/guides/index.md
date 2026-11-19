@@ -7,7 +7,7 @@ This page lists every guide file.
 ## Setup and upgrade
 
 - [New installation](./new-installation.md)
-- [Upgrade guide](./upgrading.md)
+- [Upgrade](./upgrading.md)
 - [Version migrations](./migrations/index.md) (incl. v14–v21.1 archive)
 - [Migration: v21 to v22](./migrations/21-to-22.md)
 - [Import and update lifecycle](./import-update-lifecycle.md)

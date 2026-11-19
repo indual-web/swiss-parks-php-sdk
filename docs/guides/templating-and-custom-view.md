@@ -17,6 +17,7 @@ Important:
 
 - Do not edit core templates directly.
 - Create your own template folder based on `standard`.
+- `ParksAPI::loadTemplate()` loads `detail.tpl` / `filter.tpl`; `compileTemplate($section, $template_data, $conditions)` fills placeholders and condition blocks (see [ParksAPI methods](../sdk-reference/parks-api.md#template-helpers)).
 
 ## Overriding methods (custom view)
 

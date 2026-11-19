@@ -48,11 +48,11 @@ Avoid changing core files whenever possible. Prefer:
 - `custom/*.php`
 - `templates/<your-folder>/`
 
-Upgrade workflow: [Upgrade guide](./upgrading.md). Version-specific steps: [migrations](./migrations/index.md).
+Upgrade workflow: [Upgrade](./upgrading.md). Version-specific steps: [migrations](./migrations/index.md).
 
 ## Related docs
 
 - [Guide index](./index.md)
 - [Documentation hub](../index.md)
-- [Upgrade guide](./upgrading.md)
+- [Upgrade](./upgrading.md)
 - [Import and update lifecycle](./import-update-lifecycle.md)

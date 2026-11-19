@@ -1,8 +1,8 @@
-[Docs](../index.md) › [Guides](./index.md) › Upgrade guide
+[Docs](../index.md) › [Guides](./index.md) › Upgrade
 
-# Upgrade guide
+# Upgrade
 
-This guide describes the **generic** upgrade workflow for any Swiss Parks PHP SDK release.
+Generic upgrade workflow for any Swiss Parks PHP SDK release.
 
 For breaking changes between specific versions, use a [version-specific migration guide](./migrations/index.md).
 

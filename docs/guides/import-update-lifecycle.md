@@ -53,6 +53,15 @@ git push origin 22
 - Deletes the SQLite database file, recreates it with the current schema, and runs a full import. There are no incremental schema migrations anymore.
 - Exit code: `0` when import completes and the SDK is initialized, `1` otherwise.
 
+## Who runs which script
+
+| Audience | Script | Purpose |
+| --- | --- | --- |
+| Integrator | `bin/sync.sh` | Incremental cron import (`--force` for full re-import) |
+| Integrator | `bin/migrate.sh` | Rebuild SQLite schema + full import after a manual core update |
+| Integrator | `bin/upgrade-sdk.sh` | Download release, update core files, run migrate |
+| Maintainer / Git checkout | `bin/sync-smoke.sh` | Local smoke test (`--quick` for a shorter run); not shipped for production cron |
+
 ## Recommended usage
 
 - Cron: `bin/sync.sh` (incremental).
@@ -65,5 +74,5 @@ git push origin 22
 
 - [Guide index](./index.md)
 - [New installation](./new-installation.md)
-- [Upgrade guide](./upgrading.md)
+- [Upgrade](./upgrading.md)
 - [Version migrations](./migrations/index.md)

@@ -12,10 +12,10 @@ Set these in `swiss-parks-sdk/config/config.php` (or `config.local.php`):
 
 | Key | Recommendation |
 | --- | --- |
-| `returnOutput` | `true` — rendering methods return HTML for shortcodes/templates |
+| `return_output` | `true` — rendering methods return HTML for shortcodes/templates |
 | `soft_errors` | `true` — missing offers return `''`; bootstrap/language failures throw `RuntimeException` instead of `exit()` |
 | `prevent_css_js_include` | `true` — enqueue CSS/JS from WordPress instead of SDK auto-includes |
-| `use_sessions` | Enable only if you need SDK filter session persistence |
+| `use_sessions` | `true` when using favorites (`toggleFavorite` requires it) or filter session persistence |
 | `url_param_prefix` / `form_prefix` | Unique prefixes (for example `sp_`) to avoid clashes with WordPress query vars |
 | `db_path` / `log_directory` | Absolute paths under a writable location (uploads or a private plugin data dir) |
 | `favorites_script_path` | URL/path to your favorites endpoint folder (or CMS wrapper) when favorites are enabled |
@@ -103,7 +103,7 @@ add_shortcode('swiss_parks_offers', function () {
 
 Notes:
 
-- Keep `returnOutput = true` so shortcodes can return HTML.
+- Keep `return_output = true` so shortcodes can return HTML.
 - Overview markup for list/map tabs must match what `parks.min.js` expects (see SDK `index.php`). Map container id is `swiss-parks-map`.
 - For multilingual sites, set `$language` from WPML/Polylang; details in [output and language](./output-and-language.md).
 
@@ -123,8 +123,32 @@ See [import and update lifecycle](./import-update-lifecycle.md).
 
 ## Favorites and SEO
 
-- Favorites: set `favorites_script_path` and wire `public/favorites.php` (or a WordPress AJAX/REST wrapper). See [favorites](./favorites.md).
-- SEO URLs: if `seo_urls` is enabled, register rewrite rules / query vars in WordPress. See [SEO URLs](./seo-urls.md).
+### Favorites
+
+- Set `favorites_extension_available = true`, `favorites_script_path`, and `use_sessions = true` (`toggleFavorite` does nothing without sessions).
+- Wire `public/favorites.php` or a WordPress AJAX/REST wrapper that calls `ParksAPI::toggleFavorite()`. Custom endpoints should use a WordPress nonce; the drop-in `favorites.php` has no CSRF token. See [favorites](./favorites.md).
+
+### SEO URLs
+
+If `seo_urls` is enabled, register rewrite rules so `/offers/offer-detail/…` and `/offers/page/…` still load the offers page. Full patterns and a rewrite sketch: [SEO URLs](./seo-urls.md).
+
+```php
+add_action('init', function () {
+
+	add_rewrite_rule(
+		'^offers/offer-detail/([^/]+)/?',
+		'index.php?pagename=offers',
+		'top'
+	);
+	add_rewrite_rule(
+		'^offers/page/([0-9]+)/?',
+		'index.php?pagename=offers',
+		'top'
+	);
+});
+```
+
+Flush permalinks once after adding rules. Pass `get_permalink()` into `ParksAPI` and `setScriptUrl()` as in the sketch above so forms and links stay on the offers page.
 
 ## Checklist
 

@@ -29,10 +29,10 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 
 ## Upgrade
 
-- [Upgrade guide](./guides/upgrading.md)
+- [Upgrade](./guides/upgrading.md)
 - [v21 → v22 (MySQL to SQLite)](./guides/migrations/21-to-22.md)
 - [Version migrations](./guides/migrations/index.md) (includes v14–v21.1 archive link)
-- [Import and update lifecycle](./guides/import-update-lifecycle.md)
+- Sync/cron after upgrade: [import and update lifecycle](./guides/import-update-lifecycle.md)
 - Older packages (v14–v21.1): [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 
 ## Reference

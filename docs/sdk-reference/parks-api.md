@@ -2,11 +2,32 @@
 
 # ParksAPI methods
 
-Integrator-facing methods from `ParksAPI`, grouped by purpose.
+Integrator-facing methods from `ParksAPI`, grouped by purpose. Parameter names match the PHP signatures.
+
+## Constructor
+
+### `__construct($language = '', $hash = '', $page_url = '', $bootstrap_rendering = true, $bootstrap_setup = true)`
+
+Creates the API instance, loads config, and optionally bootstraps sessions/filters and view rendering.
+
+Parameters:
+
+- `$language` (`string`): active UI/content language (`de`, `fr`, `it`, `en`). Invalid values fall back to `de`.
+- `$hash` (`string`): optional API hash override; empty uses `config['api_hash']`.
+- `$page_url` (`string`): stable page URL for session scoping in CMS embeds (for example the offers permalink). Empty uses the current request URL.
+- `$bootstrap_rendering` (`bool`): when `true`, loads templates and prepares the view for HTML output.
+- `$bootstrap_setup` (`bool`): when `true`, runs page setup (sessions, filter state, request parsing).
+
+CMS tip: pass `$page_url` for session scope and call `setScriptUrl()` with the offers path so forms and links stay on the correct page. See [WordPress integration](../guides/wordpress-integration.md).
+
+Static factories without page rendering:
+
+- `ParksAPI::forScript()` — CLI sync (`bin/sync.php`)
+- `ParksAPI::forMigration()` — CLI migrate (`bin/migrate.php`)
 
 ## Rendering methods
 
-### `showOffersFilter($categories = [], $filter = [], $park_id = NULL)`
+### `showOffersFilter($categories = [], $filter = [], $parkId = null)`
 
 - Renders the filter UI for an overview page.
 - Applies `system_filter` hard constraints and selected UI toggles from `$filter`.
@@ -15,10 +36,10 @@ Integrator-facing methods from `ParksAPI`, grouped by purpose.
 Parameters:
 
 - `$categories` (`array`): category IDs to scope filter/list/map context.
-- `$filter` (`array`): filter values and UI flags (see `filter-options.md`).
-- `$park_id` (`int|null`): explicit park override; falls back to configured/default park.
+- `$filter` (`array`): filter values and UI flags (see [filter options](./filter-options.md)).
+- `$parkId` (`int|null`): explicit park override; falls back to configured/default park.
 
-### `showOffersList($categories = [], $filter = [], $park_id = NULL)`
+### `showOffersList($categories = [], $filter = [], $parkId = null)`
 
 - Renders the offer overview list.
 - Reads pagination from request (`?page=` or SEO page slug mode).
@@ -28,9 +49,9 @@ Parameters:
 
 - `$categories` (`array`)
 - `$filter` (`array`)
-- `$park_id` (`int|null`)
+- `$parkId` (`int|null`)
 
-### `showOffersMap($categories = [], $filter = [], $park_id = NULL)`
+### `showOffersMap($categories = [], $filter = [], $parkId = null)`
 
 - Renders the overview map for the current result set.
 - Uses `$api->mapOptions` for map runtime configuration.
@@ -39,14 +60,14 @@ Parameters:
 
 - `$categories` (`array`)
 - `$filter` (`array`)
-- `$park_id` (`int|null`)
+- `$parkId` (`int|null`)
 
 ### `showOffersPagination()`
 
 - Renders pagination for the most recent list query context.
 - Returns an empty string on detail pages.
 
-### `showOfferDetail($single_offer_id = NULL)`
+### `showOfferDetail($single_offer_id = null)`
 
 - Renders one offer detail page.
 - Supports routed detail mode and explicit single-offer mode (`$single_offer_id`).
@@ -65,10 +86,10 @@ Parameters:
 
 ### `showTotal()`
 
-- Returns/prints total pages label text (localized `offer/offers` label).
-- Useful after list rendering where total pages are known.
+- Returns/prints the total **offer count** for the current list context, with a localized `offer` / `offers` label (for example `12 Offers`).
+- Useful after list rendering when `$api->total` is set. Returns `null` when the total is `0`.
 
-### `showOfferPoiList($poi = NULL)`
+### `showOfferPoiList($poi = null)`
 
 - Utility method to resolve POI offer IDs into offer objects.
 - Mainly used by map/detail rendering internals and custom extensions.
@@ -77,29 +98,47 @@ Parameters:
 
 - `$poi` (`array|null`): array of offer IDs used as POIs.
 
+## Template helpers
+
+Relevant for custom views; see [Templating and custom view](../guides/templating-and-custom-view.md).
+
+### `loadTemplate()`
+
+- Loads `detail.tpl` and `filter.tpl` from the configured `template_folder` into `$api->template`.
+
+### `compileTemplate($section, $template_data = [], $conditions = [])`
+
+- Compiles a loaded template section (`detail`, `filter`, …) with placeholders and condition blocks.
+- Returns the rendered HTML string.
+
 ## Data access methods
 
-### `getOffersList($park_id = NULL, $categories = [], $page = NULL, $limit = NULL, $filter = [], $ignore_filter = false, $return_minimal = false, $map_mode = false)`
+### `getOffersList($parkId = null, $categories = [], $page = null, $limit = null, $filter = [], $ignore_filter = false, $return_minimal = false, $map_mode = false)`
 
 - Returns offers as `array` with keys `data` and `total` (empty when no matches).
 - Wraps the internal query pipeline used by overview rendering.
 
-### `countOffersByCategory($park_id = NULL, $categories = [], $filter = [])`
+### `getOffers($parkId = null, $categories = [])`
+
+- Thin alias of `getOffersList()` with only park and category scope (default paging/filter behaviour).
+
+### `countOffersByCategory($parkId = null, $categories = [], $filter = [])`
 
 - Returns category counts as `stdClass|false` (`event_count`, `booking_count`, `activity_count`, `product_count`, `project_count`).
 - Used internally to decide which filter UI elements to show.
 
-### `getFilterCategories($park_id = NULL, $categories = [], $filter = [])`
+### `getFilterCategories($parkId = null, $categories = [], $filter = [])`
 
 - Returns `ParksSQLiteResult|false` with `category_id` rows for categories that have matching offers.
 
 Common parameters:
 
-- `$park_id` (`int|null`): park scope.
+- `$parkId` (`int|null`): park scope.
 - `$categories` (`array`): category scope.
 - `$page`, `$limit` (`int|null`): paging controls.
 - `$filter` (`array`): same filter structure as rendering methods.
 - `$ignore_filter` (`bool`): bypass active visitor filter state when needed.
+- `$return_minimal` (`bool`): lighter offer payload when full detail fields are not needed.
 - `$map_mode` (`bool`): optimize payload for map scenarios.
 
 ### `getOfferDetail($offer_id)`
@@ -117,6 +156,11 @@ Parameters:
 ### `getCategoriesListForSelect()`
 
 - Returns category tree data formatted for select/dropdown use cases.
+
+### `loadExternalXml($url)`
+
+- Downloads an XML URL via cURL into a temp file and returns `SimpleXMLElement` or `false`.
+- Used by import; available for custom tooling. CLI raises the memory limit for large exports.
 
 ## Runtime and state methods
 
@@ -136,6 +180,7 @@ Parameters:
 ### `toggleFavorite($offer_id)`
 
 - Adds/removes one offer ID from favorites.
+- Requires `use_sessions = true`; otherwise returns `false` without changing state.
 - Persists state in the favorites cookie as JSON (`SameSite=Lax`, `Secure` on HTTPS).
 - Returns `true` when added, `false` when removed or not possible.
 
@@ -205,12 +250,12 @@ Static factories for CLI scripts (no page rendering bootstrap):
 
 ## Output behavior note
 
-Rendering methods call view methods that honor `config['returnOutput']`:
+Rendering methods honor `config['return_output']` (runtime `$api->returnOutput`):
 
 - `false` (default): HTML is printed directly.
 - `true`: HTML is returned as string (useful for CMS composition/output buffering).
 
-`soft_errors` is independent of `returnOutput`. See [WordPress integration](../guides/wordpress-integration.md).
+`soft_errors` is independent of `return_output`. See [WordPress integration](../guides/wordpress-integration.md).
 
 ## Minimal integration example
 
@@ -233,4 +278,3 @@ if ($api->isOfferDetail()) {
 - [SDK reference index](./index.md)
 - [Filter options](./filter-options.md)
 - [Map options](./map-options.md)
-

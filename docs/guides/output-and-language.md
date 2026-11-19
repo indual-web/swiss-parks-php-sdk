@@ -4,9 +4,11 @@
 
 ## Output mode
 
-- `returnOutput = false` (default)
+Config key: `return_output` (runtime property: `$api->returnOutput`).
+
+- `return_output = false` (default)
   - Methods print output directly (`echo`).
-- `returnOutput = true`
+- `return_output = true`
   - Methods return HTML as string.
 
 Useful for:
@@ -14,7 +16,7 @@ Useful for:
 - CMS integrations with output buffering.
 - Composed layouts where HTML is injected manually.
 
-For WordPress embeds, combine `returnOutput = true` with `soft_errors = true`. See [WordPress integration](./wordpress-integration.md).
+For WordPress embeds, combine `return_output = true` with `soft_errors = true`. See [WordPress integration](./wordpress-integration.md).
 
 ## Multilingual support
 

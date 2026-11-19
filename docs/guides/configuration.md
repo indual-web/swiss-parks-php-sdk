@@ -1,108 +1,171 @@
 [Docs](../index.md) › [Guides](./index.md) › Core configuration
 
-# Core configuration (`swiss-parks-sdk/config/config.php`)
+# Core configuration
 
-This guide documents the most important runtime settings in `swiss-parks-sdk/config/config.php`.
+Full reference for runtime settings in `swiss-parks-sdk/config/config.php`. Keys use snake_case. Keep `config.php` across SDK updates; override secrets locally with `config.local.php` when developing from git.
 
 ## Required settings
 
-Set these in `swiss-parks-sdk/config/config.php` on your server (keep this file across SDK updates):
+Set these on the server:
 
 - `api_hash`
   - Hash from your export configuration on `angebote.paerke.ch`.
 - `park_id`
-  - Enter the park ID; you can obtain it by contacting the respective park.
-- `db_path`
-  - Path to the SQLite database file (default: `writable/data/park-offers.sqlite`). Relative paths are resolved relative to the `swiss-parks-sdk/` folder. The file and its directory are created automatically; the web server needs write permissions. Replaces the former MySQL credentials (`db_hostname`, `db_port`, `db_username`, `db_password`, `db_database`).
+  - Park ID from the park or export settings. `> 0` scopes one park; `0` or empty is network-wide (all parks).
+- `db_path` (default: `writable/data/park-offers.sqlite`)
+  - Path to the SQLite database file. Relative paths resolve from `swiss-parks-sdk/`. The file and directory are created automatically; the web server needs write access. Replaces former MySQL credentials.
 
-Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash`, `park_id`, and `base_url` locally without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
+Optional for SDK development in git: create `config.local.php` next to `config.php` and override keys such as `api_hash`, `park_id`, and `base_url` without committing secrets. `autoload.php` loads this file after `config.php` when it exists; the file is listed in `.gitignore`.
 
 ## Network settings
 
-- `base_url` (default: `https://angebote.paerke.ch/`)
-  - Base URL of the offer database used for XML/JSON exports and asset links. Override in `config.local.php` for staging (for example `https://staging-map.angebote.paerke.ch/`).
+- `base_url` (optional override; runtime default `https://angebote.paerke.ch/`)
+  - Base URL of the offer database for XML/JSON exports and asset links. Not set in shipped `config.php`; `ParksAPI` applies the default. Override in `config.local.php` for staging (for example `https://staging-map.angebote.paerke.ch/`).
 - `curl_verify_ssl` (default: `true`)
-  - Verifies SSL certificates for export requests to `angebote.paerke.ch`.
-  - If import/update fails with SSL or cURL HTTPS errors on shared hosting, set to `false` in `config.php` as a fallback.
+  - Verifies SSL certificates for export requests to `angebote.paerke.ch`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
 - `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_api_migration`)
-  - Endpoint for `logMigration()` after a successful `migrate.php` run. Also uses `curl_verify_ssl`. Requests are HMAC-SHA256 signed with `api_hash` (`X-Api-Migration-Signature`); the server verifies the hash against a known export configuration.
+  - Endpoint for `logMigration()` after a successful `migrate.php` run. Uses `curl_verify_ssl`. Requests are HMAC-SHA256 signed with `api_hash` (`X-Api-Migration-Signature`).
 
-## Runtime mode: single park vs network-wide
+## SEO URLs
 
-- `park_id`
-  - `> 0`: integration for one specific park.
-  - `0` or empty: network-wide integration (all available parks).
+See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 
-## Common display/runtime options
+- `seo_urls` (default: `false`)
+  - Enables SEO path routing for detail, pagination, and reset.
+- `seo_url_detail_slug` (default: `offer-detail`)
+  - Path segment for offer detail URLs.
+- `seo_url_poi_slug` (default: `poi`)
+  - Path segment for POI detail URLs.
+- `seo_url_page_slug` (default: `page`)
+  - Path segment for pagination.
+- `seo_url_reset_slug` (default: `reset`)
+  - Path segment that clears the active filter.
 
-- `class_view` (for example `MyView`)
-  - Defines which view class renders output.
-- `template_folder` (for example `standard`)
-  - Selects the template set inside `swiss-parks-sdk/templates/`.
-- `prevent_css_js_include`
-  - Prevents automatic inclusion of SDK CSS/JS assets.
-- `interactive_map_url` (default: `https://map.parks.swiss`)
-  - Base URL for the interactive map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`).
-  - Runtime map behaviour (full height, layers to hide/show, …) is configured via `$api->mapOptions`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
-- `returnOutput`
-  - Return generated HTML (`true`) or print directly (`false`).
-- `soft_errors`
-  - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Default `false`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
-- `use_sessions`, `session_name`
-  - Enables SDK session-based state and sets namespace/cookie prefix. Autoload starts a PHP session only when `use_sessions` is enabled and headers are not sent yet.
-- `language_independence`, `language_priority`
-  - Controls multilingual fallback behavior.
+## View and template
 
-## Practical starter configuration
+- `class_view` (default: `ParksView`)
+  - View class that renders output (optional subclass, for example `MyView` or `ParksSwissView`).
+- `template_folder` (default: `standard`)
+  - Template set under `swiss-parks-sdk/templates/`.
 
-Frequently tuned options:
+## Display and filter UI
 
-- `returnOutput`
-  - Controls whether SDK methods return HTML (`true`) or print directly (`false`).
-- `soft_errors`
-  - Soft failure mode for CMS embeds (`RuntimeException` / empty detail instead of `exit()`).
-- `prevent_css_js_include`
-  - Disables automatic SDK CSS/JS includes when your project loads assets manually.
-- `use_sessions`
-  - Enables SDK session state for filter persistence and favorites behavior.
-- `session_name`
-  - Defines the session/cookie prefix used by SDK state and favorites.
-- `offers_per_page`
-  - Sets how many offers are rendered per overview page.
-- `show_route_filter`
-  - Shows or hides the route filter in the filter UI.
-- `show_target_group_filter`
-  - Shows or hides the target group filter.
-  - Automatically hidden when the export contains **only** projects (`projects_only`); shown alongside the project status filter when mixed offer types exist.
+- `always_show_filter` (default: `false`)
+  - Shows the filter UI on detail pages as well as overviews.
+- `show_route_filter` (default: `true`)
+  - Shows or hides the route filter.
+- `show_target_group_filter` (default: `true`)
+  - Shows or hides the target group filter. Hidden automatically when the export contains only projects (`projects_only`); shown with the project status filter when mixed types exist.
 - `show_fields_of_activity_filter` (default: `true`)
-  - Shows or hides the fields of activity filter.
-  - Automatically hidden when the export contains **only** projects (`projects_only`).
-- `show_accessibility_filter`
-  - Shows or hides accessibility filter controls.
-  - Automatically hidden when the export contains **only** projects (`projects_only`).
+  - Shows or hides the fields of activity filter. Hidden automatically for `projects_only` exports.
+- `show_route_filter_min_count` (default: `5`)
+  - Minimum activity count before the route filter is shown.
+- `offers_per_page` (default: `10`)
+  - Offers rendered per overview page.
+- `n_th_point` (default: `2`)
+  - Keep every n-th route point on the overview map (speeds up large maps).
+- `n_th_point_min_count` (default: `100`)
+  - Routes with fewer points than this are not shortened.
+- `pagination_max_numbers` (default: `5`)
+  - How many page numbers the overview pagination shows.
+- `overview_thumbnail_size` (default: `medium`)
+  - Image size for overview cards.
+- `detail_thumbnail_size` (default: `large`)
+  - Image size for detail pages.
+- `placeholder_image` (default: `https://angebote.paerke.ch/img/placeholder.png`)
+  - Fallback image when an offer has no image.
+- `image_enlargement` (default: `true`)
+  - Enables enlarged image links (lightbox/fancybox-style integrations).
+- `detail_limit_dates` (default: `5`)
+  - How many dates are shown on the detail page before a “show more” control.
+- `filter_keywords_with_and` (default: `false`)
+  - When `true`, keyword filters combine with AND; default is OR.
+- `show_park_name` (default: `false`)
+  - Shows the park name on overview and detail.
+- `show_event_location_in_overview` (default: `true`)
+  - Shows event location on overview cards.
+- `show_short_description_in_overview` (default: `false`)
+  - Shows short descriptions on overview cards.
+- `show_keywords_in_overview` (default: `false`)
+  - Shows offer keywords on overview cards.
+- `show_button_in_overview` (default: `false`)
+  - Shows the detail/action button on overview cards.
+- `poi_listing_link_target` (default: `''`)
+  - `target` attribute for POI listing links (for example `_blank`).
+- `heading_offer_title_in_overview` (default: `h3`)
+  - HTML heading tag for offer titles in overview templates.
+- `show_accessibility_filter` (default: `true`)
+  - Shows or hides accessibility filter controls. Hidden automatically for `projects_only` exports.
 - `hide_accessibility_filter` (per-request filter option, not config)
   - Hides accessibility controls for a single page render when passed in the `$filter` array to `showOffersFilter()`.
-- `show_municipality_filter`
+- `show_municipality_filter` (default: `true`)
   - Shows or hides the municipality filter.
-- `show_event_location_in_overview`
-  - Displays event location in overview cards.
-- `show_short_description_in_overview`
-  - Displays short descriptions in overview cards.
-- `show_keywords_in_overview`
-  - Displays offer keywords in overview cards.
-- `show_button_in_overview`
-  - Displays the detail/action button in overview cards.
-- `overview_thumbnail_size`, `detail_thumbnail_size`
-  - Sets image sizes for overview and detail templates.
-- `heading_offer_title_in_overview`
-  - Defines the HTML heading tag used for offer titles in overview templates.
-- `image_enlargement`
-  - Enables enlarged image links (for lightbox/fancybox-like integrations).
+- `keyword_filter` (default: empty arrays per language)
+  - Optional keyword filter labels per language. First entry is the filter title, second is the “show all” label, then keyword values. Example shape: `'de' => ['Kategorien', 'Alle', 'Kinder', …]`.
+
+## Output and CMS embeds
+
+- `return_output` (default: `false`)
+  - When `true`, rendering methods return HTML as a string (maps to runtime property `$api->returnOutput`). When `false`, methods print directly.
+- `soft_errors` (default: `false`)
+  - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
+- `prevent_css_js_include` (default: `false`)
+  - When `true`, the SDK does not auto-include CSS/JS; load assets from the host system.
+
+## Interactive map
+
+- `interactive_map_url` (default: `https://map.parks.swiss`)
+  - Base URL for map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`). Runtime map behaviour (full height, layers, …) uses `$api->mapOptions`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
+
+## Favorites
+
+See [Favorites](./favorites.md).
+
+- `favorites_extension_available` (default: `false`)
+  - Enables favorite toggle links and the favorites overview.
+- `favorites_script_path` (default: `''`)
+  - URL or path to the folder that contains `favorites.php` (no trailing slash), or a CMS endpoint that calls `ParksAPI::toggleFavorite()`.
+
+## API prefixes
+
+- `form_prefix` (default: `''`)
+  - Prefix for form field names to avoid clashes with the host CMS.
+- `url_param_prefix` (default: `''`)
+  - Prefix for query parameters (`offer`, `page`, …) to avoid clashes with the host CMS.
+
+## Languages
+
+- `default_language` (default: `de`)
+  - Project convention for the default language; runtime language is still set via `new ParksAPI('<lang>')`.
+- `available_languages` (default: `['de', 'fr', 'it', 'en']`)
+  - Language files the SDK may load.
+- `language_independence` (default: `true`)
+  - Controls whether offers without the selected language are still shown via fallback.
+- `language_priority` (default: per-language fallback lists)
+  - Ordered fallback languages when content is missing in the active language.
+
+## Sessions
+
+- `use_sessions` (default: `true`)
+  - Enables SDK session state for filter persistence and favorites (`toggleFavorite` requires this). Autoload starts a PHP session only when enabled and headers are not sent yet.
+- `session_name` (default: `parks_api`)
+  - Session/cookie namespace prefix (also used for the favorites cookie).
+
+## Logs and date formats
+
+- `log_directory` (default: `writable/log/`)
+  - Directory for log files; must be writable by the web server / CLI user.
+- `db_date_format` (default: `%d.%m.%Y %H:%i`)
+  - Date format used in database-related formatting.
+- `php_date_format` (default: `d.m.Y H:i`)
+  - Date format used in PHP display helpers.
 - `display_weekday_short` (default: `true`)
-  - Prefixes offer dates in list and detail output with a translated short weekday (for example `Do, 19.11.2026`). Set to `false` to show dates without the weekday.
+  - Prefixes offer dates in list and detail output with a translated short weekday (for example `Do, 19.11.2026`). Set to `false` to omit the weekday.
 
 ## Related docs
 
 - [Guide index](./index.md)
 - [Quick start integration](./quick-start-integration.md)
 - [Output mode and multilingual support](./output-and-language.md)
+- [SEO URLs](./seo-urls.md)
+- [Favorites](./favorites.md)
