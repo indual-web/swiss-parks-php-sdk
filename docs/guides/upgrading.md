@@ -4,93 +4,43 @@
 
 How to upgrade an existing SDK installation on a park website.
 
-For breaking changes between specific versions, use a [version-specific migration guide](./migrations/index.md). Download release ZIPs from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases).
+## Coming from v21?
 
-## Recommended upgrade flow
+Most park sites still on **v21** (`parks_api/`, MySQL) must follow the dedicated guide — not the short flow below:
 
-### Option A: CLI upgrade script (preferred)
+**[Migration: v21 to v22](./migrations/21-to-22.md)**
 
-From the `swiss-parks-sdk/` directory on the server (SSH):
+That guide covers folder rename, config, camelCase API, frontend, cron, migrate, test, and MySQL cleanup.
+
+## Already on v22?
+
+Download releases from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases). Prefer the CLI script on the server (SSH), from inside `swiss-parks-sdk/`:
 
 ```bash
 bash bin/upgrade-sdk.sh latest
 # or a specific version:
-bash bin/upgrade-sdk.sh 22
+bash bin/upgrade-sdk.sh 22.1
 ```
 
-The script:
+The script downloads the ZIP, backs up the current SDK folder, updates core files (keeps `config/config.php`, `custom/`, `writable/`), and runs `migrate.php`.
 
-1. Downloads the release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases)
-2. Creates a backup next to `swiss-parks-sdk/` (`swiss-parks-sdk-backup-<timestamp>/`)
-3. Replaces SDK core files (`autoload.php`, `classes/`, `database/`, `lang/`, `templates/` core, `bin/`, `public/`, `config/config.dist.php`)
-4. Preserves `config/config.php`, `custom/`, `writable/`, and custom templates
-5. Runs `php bin/migrate.php` (rebuilds SQLite DB + full import)
+Manual alternative: replace core files from the ZIP yourself, then:
 
-Exit code: `0` on success, `1` on failure. Set `PARKS_API_SKIP_MIGRATE=1` to update files only.
+```bash
+bash bin/migrate.sh
+```
 
-Apply version-specific config steps from a [migration guide](./migrations/index.md) **before** running the script when a guide requires manual `config.php` changes.
+Then check filter, list, map, detail, console, and logs.
 
-### Option B: Manual ZIP upgrade
+Do not edit core SDK files. Keep customizations in `config/config.php`, `custom/`, and your own template folder.
 
-1. Download the target SDK release.
-2. Create a full backup of your current SDK files.
-3. Replace SDK core files in your project folder:
-   - `autoload.php`
-   - `classes/`
-   - `database/`
-   - `lang/`
-   - `templates/` (core themes)
-   - `bin/`
-   - `public/`
-   - `config/config.dist.php`
-4. Apply version-specific steps from a [migration guide](./migrations/index.md) if one exists for your upgrade path.
-5. Run migration:
-   - `php /{PATH-TO-YOUR-SDK-FOLDER}/bin/migrate.php`
-   - Deletes the SQLite database file, recreates it with the current schema, and runs a full import.
+## Older than v21
 
-### Validation (both options)
-
-6. Validate functionality end-to-end:
-   - filter
-   - list
-   - map
-   - detail
-   - browser console
-   - logs
-
-## Version-specific migrations
-
-| From | To | Guide |
-| --- | --- | --- |
-| v21 (MySQL) | v22 (SQLite) | [21 to 22](./migrations/21-to-22.md) |
-
-For **v21 → v22**, follow that guide before relying on `upgrade-sdk.sh`: config must move to `config/config.php` with `db_path`, and your PHP / frontend / cron still need manual updates (camelCase API, `v22` assets, `bin/sync.sh`).
-
-### Older packages (v14–v21.1)
-
-ZIPs for versions before v22 are not published from this repository. Download them from [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy) (`releases/`). That archive is frozen; supported upgrade path into the current line is **v21 → v22**.
-
-## Upgrade notes
-
-- Keep customizations outside replaced core paths:
-  - `custom/`
-  - custom templates
-  - `config.php`
-- Since the database is only a mirror of the XML export, no data backup is needed for SQLite upgrades; `migrate.php` rebuilds it completely.
-- Re-test multilingual behavior and SEO routes when enabled.
-
-## Rollback strategy
-
-If issues appear after upgrade:
-
-1. Restore file backup.
-2. Re-run the previous version's cron/import workflow.
-
-For v21 rollback after a failed v22 attempt, see [21 to 22 — Rollback](./migrations/21-to-22.md#7-rollback).
+ZIPs for v14–v21.1: [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy). Upgrade to **v21.1**, then follow [v21 → v22](./migrations/21-to-22.md).
 
 ## Related docs
 
+- [v21 → v22](./migrations/21-to-22.md)
 - [Migrations index](./migrations/index.md)
-- [Guide index](./index.md)
-- [Documentation overview](../index.md)
-- [SDK reference index](../sdk-reference/index.md)
+- [Import and update lifecycle](./import-update-lifecycle.md)
+- [Configuration](./configuration.md)

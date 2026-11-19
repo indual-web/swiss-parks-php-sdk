@@ -8,9 +8,11 @@ The PHP SDK imports offer data from the Swiss Parks XML export into a local SQLi
 
 Shared for every integration:
 
-- [New installation](./guides/new-installation.md)
+- [New installation](./guides/new-installation.md) (first v22 install)
 - [Core configuration](./guides/configuration.md)
 - [Upgrade](./guides/upgrading.md)
+
+**Coming from v21 (MySQL / `parks_api/`)?** Most existing park sites follow this path — use the full guide, not only the generic upgrade: [v21 → v22](./guides/migrations/21-to-22.md).
 
 Then choose a path below.
 
@@ -32,11 +34,10 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 
 ## Upgrade
 
-- [Upgrade](./guides/upgrading.md)
-- [v21 → v22 (MySQL to SQLite)](./guides/migrations/21-to-22.md)
-- [Version migrations](./guides/migrations/index.md) (includes v14–v21.1 archive link)
-- Sync/cron after upgrade: [import and update lifecycle](./guides/import-update-lifecycle.md)
-- Older packages (v14–v21.1): [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
+- **From v21:** [v21 → v22](./guides/migrations/21-to-22.md) (MySQL → SQLite — usual path for existing park sites)
+- **Already on v22:** [Upgrade](./guides/upgrading.md)
+- Older packages (v14–v21.1): [migrations index](./guides/migrations/index.md) · [legacy archive](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
+- Sync/cron: [import and update lifecycle](./guides/import-update-lifecycle.md)
 
 ## Reference
 
