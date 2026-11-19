@@ -14,8 +14,10 @@ Set these on the server:
   - Park ID from the park or export settings. `> 0` scopes one park; `0` or empty is network-wide (all parks).
 - `db_path` (default: `writable/data/park-offers.sqlite`)
   - Path to the SQLite database file. Relative paths resolve from `swiss-parks-sdk/`. The file and directory are created automatically; the web server needs write access. Replaces former MySQL credentials.
+- `sync_secret` (default: empty)
+  - Shared secret for `public/sync.php` (HTTP/URL cron on shared hosting without SSH). Leave empty to disable HTTP sync. Use a long random value when enabled; prefer storing it in `config.local.php` so upgrades do not overwrite it.
 
-Optional: create `config.local.php` next to `config.php` to override keys such as `api_hash`, `park_id`, or `base_url` without editing the main config (for example on a staging copy of the site). `autoload.php` loads this file after `config.php` when it exists.
+Optional: create `config.local.php` next to `config.php` to override keys such as `api_hash`, `park_id`, `sync_secret`, or `base_url` without editing the main config (for example on a staging copy of the site). `autoload.php` loads this file after `config.php` when it exists.
 
 ## Network settings
 

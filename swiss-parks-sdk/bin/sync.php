@@ -14,6 +14,13 @@
 */
 require __DIR__ . '/../autoload.php';
 
+if (PHP_SAPI !== 'cli') {
+	http_response_code(403);
+	header('Content-Type: text/plain; charset=UTF-8');
+	echo 'Forbidden: use CLI (bin/sync.sh) or public/sync.php with sync_secret.' . PHP_EOL;
+	exit(1);
+}
+
 try {
 
 	$force = in_array('--force', $argv ?? [], true) || in_array('force', $argv ?? [], true);

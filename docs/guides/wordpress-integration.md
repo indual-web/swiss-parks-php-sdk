@@ -160,7 +160,7 @@ Notes:
 
 ## Sync and cron
 
-Do **not** expose `bin/sync.php` over the public web.
+Do **not** expose `bin/sync.php` over the public web (`bin/` is CLI only and returns 403 over HTTP).
 
 Prefer system cron or WP-CLI calling the SDK CLI:
 
@@ -169,6 +169,8 @@ bash /path/to/wp-content/plugins/swiss-parks-offers/swiss-parks-sdk/bin/sync.sh
 # full re-import:
 bash /path/to/.../swiss-parks-sdk/bin/sync.sh --force
 ```
+
+On shared hosting without SSH, use `public/sync.php` with `sync_secret` (URL cron). See [HTTP sync](./import-update-lifecycle.md#http-sync-shared-hosting).
 
 See [import and update lifecycle](./import-update-lifecycle.md).
 
@@ -220,7 +222,7 @@ WordPress rewrites are internal; `$_SERVER['REQUEST_URI']` normally still contai
 - [ ] `parks.min.css` / `parks.min.js` enqueued as `type="module"`
 - [ ] Session started on `init` when `use_sessions` is true
 - [ ] Shortcode on a dedicated offers page; filter submit works (PRG)
-- [ ] Cron/WP-CLI sync scheduled; `bin/sync.php` not public
+- [ ] Cron/WP-CLI sync scheduled, or `public/sync.php` with `sync_secret`; `bin/` not public
 - [ ] Detail, list, and (if used) map/favorites work end-to-end
 
 ## Troubleshooting

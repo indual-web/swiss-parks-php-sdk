@@ -2,9 +2,11 @@
 
 # CLI scripts (`bin/`)
 
-All runnable tools under `swiss-parks-sdk/bin/`. Run them from the shell only — do not expose this directory over HTTP (`.htaccess` denies access; `index.html` is a 403 fallback).
+All runnable tools under `swiss-parks-sdk/bin/`. Run them from the shell only — do not expose this directory over HTTP (`.htaccess` denies access; `index.html` is a 403 fallback). `sync.php` and `migrate.php` also refuse non-CLI requests with HTTP 403.
 
 Prefer the `.sh` wrappers. The `.php` files are the actual entry points when you call PHP directly.
+
+For shared hosting without SSH, use the HTTP endpoint `public/sync.php` instead (see [Import and update lifecycle](./import-update-lifecycle.md#http-sync-shared-hosting)).
 
 Workflow context: [Import and update lifecycle](./import-update-lifecycle.md).
 
@@ -12,9 +14,9 @@ Workflow context: [Import and update lifecycle](./import-update-lifecycle.md).
 
 | Script | Purpose |
 | --- | --- |
-| `sync.sh` / `sync.php` | Import offers from the XML export (incremental or full) |
+| `sync.sh` / `sync.php` | Import offers from the XML export (incremental or full); CLI only |
 | `sync-smoke.sh` | Smoke check: optional sync, then assert the `offer` table is non-empty |
-| `migrate.sh` / `migrate.php` | Delete SQLite DB, recreate schema, full import |
+| `migrate.sh` / `migrate.php` | Delete SQLite DB, recreate schema, full import; CLI only |
 | `upgrade-sdk.sh` | Download a release ZIP, update core files, run migrate |
 
 ## `sync.sh` / `sync.php`

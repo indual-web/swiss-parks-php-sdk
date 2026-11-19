@@ -7,7 +7,7 @@ Practical tips for running the SDK on a park website.
 ## PHP and server
 
 - Give import jobs enough `memory_limit` and `max_execution_time`.
-- Run imports via CLI cron, not via the browser. CLI imports disable the time limit and raise `memory_limit` to `512M` automatically.
+- Prefer CLI cron (`bin/sync.sh`). CLI imports disable the time limit and raise `memory_limit` to `512M` automatically. On shared hosting without SSH, use token-protected `public/sync.php` (same limits are applied there); do not call `bin/sync.php` over HTTP.
 - Very large exports may still need a higher `memory_limit` if sync runs out of memory.
 
 ## Import and database

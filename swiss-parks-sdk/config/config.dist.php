@@ -25,6 +25,19 @@ $config['api_hash'] = "insert-your-hash-here";
 
 /*
 |--------------------------------------------------------------------------
+| HTTP sync secret
+|--------------------------------------------------------------------------
+|
+| Protects public/sync.php for shared-hosting URL cron (no SSH).
+| Leave empty to disable HTTP sync. Use a long random string when enabled.
+| Prefer config.local.php so the secret is not overwritten on upgrades.
+|
+*/
+$config['sync_secret'] = '';
+
+
+/*
+|--------------------------------------------------------------------------
 | Your park
 |--------------------------------------------------------------------------
 |

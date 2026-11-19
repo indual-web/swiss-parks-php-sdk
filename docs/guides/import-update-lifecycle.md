@@ -7,7 +7,7 @@ This guide documents sync, forced full import, SDK upgrades, and migration.
 ## Directory layout
 
 - `swiss-parks-sdk/bin/` — CLI only (`sync`, `sync-smoke`, `migrate`, `upgrade-sdk`); full reference: [CLI scripts (`bin/`)](./bin-scripts.md)
-- `swiss-parks-sdk/public/` — HTTP endpoints (`favorites.php`)
+- `swiss-parks-sdk/public/` — HTTP endpoints (`favorites.php`, optional `sync.php`)
 - `swiss-parks-sdk/config/` — `config.dist.php` + `config.php` (+ optional `config.local.php` for local overrides)
 - `swiss-parks-sdk/writable/` — SQLite DB and logs
 
@@ -19,8 +19,34 @@ This guide documents sync, forced full import, SDK upgrades, and migration.
   - `php swiss-parks-sdk/bin/sync.php`
   - `php swiss-parks-sdk/bin/sync.php --force`
 - Exit code: `0` on success, `1` on import failure or exception (for cron monitoring).
+- Stdout: one plain-text line such as `sync: ok (mode=incremental, imported=5, deleted=1, offers=120, map_layers=3, cleanup=0)`.
 
 Use `--force` when the local DB is incomplete or after a bad incremental run.
+
+Prefer CLI cron. On shared hosting without SSH, use [HTTP sync](#http-sync-shared-hosting).
+
+## HTTP sync (shared hosting)
+
+Use this only when the host cannot run `bin/sync.sh` (no SSH / no PHP CLI cron). `bin/sync.php` is not callable over HTTP.
+
+1. Set a long random `sync_secret` in `config/config.php` or preferably `config.local.php` (see [configuration](./configuration.md)).
+2. Point the host’s URL cron at `public/sync.php` with the secret:
+
+```text
+https://example.com/path/to/swiss-parks-sdk/public/sync.php?token=YOUR_SYNC_SECRET
+https://example.com/path/to/swiss-parks-sdk/public/sync.php?token=YOUR_SYNC_SECRET&force=1
+```
+
+Optional header instead of the query parameter: `X-Sync-Token: YOUR_SYNC_SECRET`.
+
+Behaviour:
+
+- Empty or missing `sync_secret`: HTTP 403, endpoint disabled.
+- Wrong token: HTTP 403.
+- Success: HTTP 200 and the same plain-text `sync: ok (...)` line as CLI.
+- Failure: HTTP 500 and `sync: fail (...)`.
+
+Leave `sync_secret` empty on servers that use CLI cron so the URL stays closed.
 
 ## SDK version upgrade
 
@@ -45,6 +71,7 @@ Use `--force` when the local DB is incomplete or after a bad incremental run.
 | Script | Purpose |
 | --- | --- |
 | `bin/sync.sh` | Incremental cron import (`--force` for full re-import) |
+| `public/sync.php` | Token-protected HTTP sync when CLI cron is unavailable |
 | `bin/sync-smoke.sh` | Smoke check after sync (or `--quick` without sync) |
 | `bin/migrate.sh` | Rebuild SQLite schema + full import after a manual core update |
 | `bin/upgrade-sdk.sh` | Download release, update core files, run migrate |
@@ -54,9 +81,10 @@ Flags, exit codes, and environment variables: [CLI scripts (`bin/`)](./bin-scrip
 ## Recommended usage
 
 - Cron: `bin/sync.sh` (incremental).
-- Incomplete data: `bin/sync.sh --force`.
+- No SSH / URL cron only: `public/sync.php` with `sync_secret`.
+- Incomplete data: `bin/sync.sh --force` (or `public/sync.php?…&force=1`).
 - Health check: `bin/sync-smoke.sh` (or `--quick` if sync already ran).
-- Schema / SDK upgrade: `bin/upgrade-sdk.sh` or `bin/migrate.sh` when core files are already updated.
+- Schema / SDK upgrade: `bin/upgrade-sdk.sh` or `bin/migrate.sh` when core files are already updated (CLI only).
 - Favorites HTTP endpoint (optional): `public/favorites.php`.
 
 ## Related docs

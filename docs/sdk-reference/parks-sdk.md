@@ -227,8 +227,8 @@ Parameters:
 
 Static factories for CLI scripts (no page rendering bootstrap):
 
-- `ParksSDK::forScript()` — used by `sync.php` (`--force` for full import)
-- `ParksSDK::forMigration()` — used by `migrate.php` (also skips page setup)
+- `ParksSDK::forScript()` — used by `bin/sync.php` and `public/sync.php` (`--force` / `force=1` for full import)
+- `ParksSDK::forMigration()` — used by `bin/migrate.php` (also skips page setup; CLI only)
 
 ### `migrate()`
 

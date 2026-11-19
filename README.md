@@ -30,7 +30,7 @@ v22 is not a drop-in replace. Plan for:
 - MySQL → SQLite (`db_path`); data is re-imported from XML, not migrated
 - Public API camelCase (`show_offers_filter` → `showOffersFilter`)
 - Frontend `…/dist/frontend/v22/` as `type="module"`; map container `swiss-parks-map`
-- Cron `bin/sync.sh`; favorites `public/favorites.php`
+- Cron `bin/sync.sh` (shared hosting without SSH: `public/sync.php` + `sync_secret`); favorites `public/favorites.php`
 
 Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
