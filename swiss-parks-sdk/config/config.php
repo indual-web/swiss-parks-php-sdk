@@ -315,7 +315,9 @@ $config['log_directory'] = "writable/log/";
 |--------------------------------------------------------------------------
 |
 | Specify date format for PHP & database queries
+| 'display_weekday_short' => Prefix offer dates with a short weekday (e.g. Do, 19.11.2026)
 |
 */
 $config['db_date_format'] = "%d.%m.%Y %H:%i";
 $config['php_date_format'] = "d.m.Y H:i";
+$config['display_weekday_short'] = true;

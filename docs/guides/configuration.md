@@ -98,6 +98,8 @@ Frequently tuned options:
   - Defines the HTML heading tag used for offer titles in overview templates.
 - `image_enlargement`
   - Enables enlarged image links (for lightbox/fancybox-like integrations).
+- `display_weekday_short` (default: `true`)
+  - Prefixes offer dates in list and detail output with a translated short weekday (for example `Do, 19.11.2026`). Set to `false` to show dates without the weekday.
 
 ## Related docs
 

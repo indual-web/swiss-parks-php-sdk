@@ -41,7 +41,7 @@ class ParksDate
 		}
 
 		// Date from
-		$return .= '<strong>'.$date['date_from']['date'].'</strong> ';
+		$return .= '<strong>'.self::formatOfferDateLabel($date['date_from']['date'], $lang).'</strong> ';
 
 		// Show all times
 		if (! empty($date['times'])) {
@@ -64,7 +64,7 @@ class ParksDate
 				}
 
 				if ($date['date_from']['date'] != $date['date_to']['date']) {
-					$return .= '<strong>'.$date['date_to']['date'].'</strong> ';
+					$return .= '<strong>'.self::formatOfferDateLabel($date['date_to']['date'], $lang).'</strong> ';
 				}
 
 				if (! empty($date['date_to']['hour']) && ($date['date_to']['hour'] != '00')) {
@@ -76,6 +76,62 @@ class ParksDate
 		}
 
 		return $return;
+	}
+
+
+
+	/**
+	 * Format a date label for offer output, optionally with a short weekday
+	 */
+	public static function formatOfferDateLabel(string $date, ParksLanguage $lang): string {
+
+		if (($lang->api->config['display_weekday_short'] ?? true) === true) {
+			return self::formatDateWithWeekdayShort($date, $lang);
+		}
+
+		$datetime = self::parseOfferDate($date);
+		if ($datetime === false) {
+			return $date;
+		}
+
+		return $datetime->format('d.m.Y');
+	}
+
+
+
+	/**
+	 * Prepend a translated short weekday to a d.m.Y or Y-m-d date string
+	 */
+	public static function formatDateWithWeekdayShort(string $date, ParksLanguage $lang): string {
+
+		$datetime = self::parseOfferDate($date);
+		if ($datetime === false) {
+			return $date;
+		}
+
+		// French short weekdays use a space; other languages use a comma
+		$separator = ($lang->lang === 'fr') ? ' ' : $lang->get('cal_weekday_separator');
+
+		return $lang->get('weekday_short_' . $datetime->format('N')) . $separator . $datetime->format('d.m.Y');
+	}
+
+
+
+	/**
+	 * Parse a d.m.Y or Y-m-d date string
+	 */
+	private static function parseOfferDate(string $date): DateTime|false {
+
+		if ($date === '') {
+			return false;
+		}
+
+		$datetime = DateTime::createFromFormat('d.m.Y', $date);
+		if ($datetime === false) {
+			$datetime = DateTime::createFromFormat('Y-m-d', $date);
+		}
+
+		return $datetime;
 	}
 
 
