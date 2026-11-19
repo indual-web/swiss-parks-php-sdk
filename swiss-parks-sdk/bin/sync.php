@@ -18,8 +18,8 @@ try {
 
 	$force = in_array('--force', $argv ?? [], true) || in_array('force', $argv ?? [], true);
 
-	$api = ParksAPI::forScript();
-	exit($api->update($force) ? 0 : 1);
+	$sdk = ParksSDK::forScript();
+	exit($sdk->update($force) ? 0 : 1);
 
 } catch (Throwable $e) {
 

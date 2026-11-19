@@ -8,14 +8,14 @@
 */
 
 
-class ParksAPI
+class ParksSDK
 {
 
 
 	/**
-	 * API info
+	 * Row from the meta table
 	 */
-	public ?object $api = null;
+	public ?object $meta = null;
 
 
 	/**
@@ -322,7 +322,7 @@ class ParksAPI
 			$cleanup_ok = $this->import->cleanUpOffers($xml_active_offers);
 
 			if ($import_ok) {
-				$this->updateApiVersion();
+				$this->updateMetaVersion();
 
 				$message = 'The offers were successfully synchronised.';
 				if (! $map_layers_ok) {
@@ -365,10 +365,10 @@ class ParksAPI
 		$this->db->recreate();
 
 		// Re-run setup (triggers a full import)
-		$this->api = null;
+		$this->meta = null;
 		$this->setup();
 
-		$success = ! empty($this->api->initialized);
+		$success = ! empty($this->meta->initialized);
 
 		if ($success && ! $this->logMigration(SDK_VERSION)) {
 			$this->logger->info('Migration log could not be sent to the central server.');
@@ -752,7 +752,7 @@ class ParksAPI
 
 			// Get offers and total
 			$offers = $this->getOffersList($parkId, $categories, null, null, $filter, false, false, true);
-			return $this->loadMapsApi() . $this->view->getOverviewMap($offers['data'] ?? []);
+			return $this->loadMapAssets() . $this->view->getOverviewMap($offers['data'] ?? []);
 		}
 
 		return '';
@@ -878,7 +878,7 @@ class ParksAPI
 					$this->setSelectedPark($offer->park_id);
 
 					// Load view
-					$return = $this->loadMapsApi();
+					$return = $this->loadMapAssets();
 					$return .= $this->view->detail($offer, $original_offer_id);
 
 					return $return;
@@ -1132,28 +1132,28 @@ class ParksAPI
 
 		$this->securityChecks();
 
-		$q_api = $this->db->get('api');
+		$q_meta = $this->db->get('meta');
 
-		if ($q_api) {
-			if ($q_api->numRows > 0) {
-				$this->api = $q_api->fetchObject();
+		if ($q_meta) {
+			if ($q_meta->numRows > 0) {
+				$this->meta = $q_meta->fetchObject();
 			} else {
 
-				// First boot: create the api row so later requests can detect init state
-				$this->api = (object) [
+				// First boot: create the meta row so later requests can detect init state
+				$this->meta = (object) [
 					'initialized' => 0,
 					'version' => SDK_VERSION,
 				];
 
-				$this->db->insert('api', (array)$this->api);
+				$this->db->insert('meta', (array)$this->meta);
 			}
 
 			// Schema may already be newer than the stored version; migrate is a separate step
-			if (version_compare((string) SDK_VERSION, (string) $this->api->version, '>')) {
+			if (version_compare((string) SDK_VERSION, (string) $this->meta->version, '>')) {
 				$this->logger->info('The current SDK version is out of date. Please run: bash bin/migrate.sh');
 			}
 
-			if (! $this->api->initialized) {
+			if (! $this->meta->initialized) {
 
 				// First successful import marks the SDK as initialized
 				$xml = $this->config['xml_export_offer_url'] . $this->hash;
@@ -1167,12 +1167,12 @@ class ParksAPI
 					$this->model->reloadFieldsOfActivity();
 					$this->model->reloadCategories();
 
-					$this->api->initialized = 1;
-					$this->db->update('api', [
+					$this->meta->initialized = 1;
+					$this->db->update('meta', [
 						'initialized' => 1,
 						'version' => SDK_VERSION,
 					]);
-					$this->api->version = SDK_VERSION;
+					$this->meta->version = SDK_VERSION;
 				} else {
 					$this->logger->error('Initial import failed. SDK is not initialized. Check api_hash and run: bash bin/sync.sh --force (or php bin/sync.php --force)');
 				}
@@ -1497,9 +1497,9 @@ class ParksAPI
 
 
 	/**
-	 * Load map api
+	 * Load map CSS/JS assets
 	 */
-	private function loadMapsApi(): ?string
+	private function loadMapAssets(): ?string
 	{
 		if ($this->config['prevent_css_js_include'] == false) {
 
@@ -2011,13 +2011,13 @@ class ParksAPI
 	/**
 	 * Update stored SDK version after a successful import or migration
 	 */
-	private function updateApiVersion(): void
+	private function updateMetaVersion(): void
 	{
 
-		$this->db->update('api', ['version' => SDK_VERSION]);
+		$this->db->update('meta', ['version' => SDK_VERSION]);
 
-		if (! empty($this->api)) {
-			$this->api->version = SDK_VERSION;
+		if (! empty($this->meta)) {
+			$this->meta->version = SDK_VERSION;
 		}
 
 	}
@@ -2044,7 +2044,7 @@ class ParksAPI
 	 * Report successful migration to central log server
 	 *
 	 * Payload must match log_api_migration() on angebote.paerke.ch
-	 * (required: api_version, url, hash). Body is signed with HMAC-SHA256
+	 * (required: sdk_version, url, hash). Body is signed with HMAC-SHA256
 	 * using api_hash (header X-Api-Migration-Signature).
 	 */
 	public function logMigration(int $version_to = 0): bool
@@ -2057,20 +2057,20 @@ class ParksAPI
 
 		// api_hash is required: used as HMAC key and verified server-side against export configs
 		$api_hash = (string) ($this->config['api_hash'] ?? '');
-		$api_version = (string) ($version_to > 0 ? $version_to : SDK_VERSION);
+		$sdk_version = (string) ($version_to > 0 ? $version_to : SDK_VERSION);
 
 		// Prefer the current request URL; fall back to hostname when run from CLI
 		$site_url = (! empty($_SERVER['HTTP_HOST']) && ! empty($_SERVER['REQUEST_URI']))
 			? $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI']
 			: ((gethostname() ?: 'CLI') . ' (CLI)');
 
-		if ($api_hash === '' || $api_version === '' || $site_url === '') {
+		if ($api_hash === '' || $sdk_version === '' || $site_url === '') {
 			return false;
 		}
 
 		// Payload contract must stay in sync with log_api_migration() on angebote.paerke.ch
 		$payload = [
-			'api_version' => $api_version,
+			'sdk_version' => $sdk_version,
 			'php_version' => PHP_VERSION,
 			'url' => $site_url,
 			'ip' => $_SERVER['REMOTE_ADDR'] ?? '',
@@ -2126,3 +2126,6 @@ class ParksAPI
 
 
 }
+
+
+class_alias(ParksSDK::class, 'ParksAPI');

@@ -100,5 +100,5 @@ Additional structured filters supported by the model/query layer:
 ## Related docs
 
 - [SDK reference index](./index.md)
-- [ParksAPI methods](./parks-api.md)
+- [ParksSDK methods](./parks-sdk.md)
 

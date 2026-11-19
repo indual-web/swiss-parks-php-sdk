@@ -4,7 +4,7 @@
 
 ## Output mode
 
-Config key: `return_output` (runtime property: `$api->returnOutput`).
+Config key: `return_output` (runtime property: `$sdk->returnOutput`).
 
 - `return_output = false` (default)
   - Methods print output directly (`echo`).
@@ -29,7 +29,7 @@ Language files:
 
 Runtime behavior:
 
-- The active SDK language is passed via `new ParksAPI('<lang>')` (for example `de`, `fr`, `it`, `en`).
+- The active SDK language is passed via `new ParksSDK('<lang>')` (for example `de`, `fr`, `it`, `en`).
 - If the language is missing/invalid, the SDK falls back to `de`.
 - `available_languages` defines which language files can be loaded.
 - `language_independence` and `language_priority` control data fallback behavior across languages.

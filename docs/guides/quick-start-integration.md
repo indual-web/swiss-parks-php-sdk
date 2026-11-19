@@ -8,17 +8,17 @@ Minimal page integration:
 <?php
 $language = 'en';
 require_once('swiss-parks-sdk/autoload.php');
-$api = new ParksAPI($language);
+$sdk = new ParksSDK($language);
 
 $categories = [];
 $filter = [];
 
-if ($api->isOfferDetail()) {
-    $api->showOfferDetail();
+if ($sdk->isOfferDetail()) {
+    $sdk->showOfferDetail();
 } else {
-    $api->showOffersFilter($categories, $filter);
-    $api->showOffersList($categories, $filter);
-    $api->showOffersPagination();
+    $sdk->showOffersFilter($categories, $filter);
+    $sdk->showOffersList($categories, $filter);
+    $sdk->showOffersPagination();
 }
 ```
 
@@ -48,4 +48,4 @@ The detail back link points to the overview URL. `parks.min.js` appends `#tab_1`
 
 - [Guide index](./index.md)
 - [Core configuration](./configuration.md)
-- [ParksAPI methods](../sdk-reference/parks-api.md)
+- [ParksSDK methods](../sdk-reference/parks-sdk.md)

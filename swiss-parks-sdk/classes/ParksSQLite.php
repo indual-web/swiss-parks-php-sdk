@@ -13,9 +13,9 @@ class ParksSQLite
 
 
 	/**
-	 * API
+	 * SDK instance
 	 */
-	public ParksAPI $api;
+	public ParksSDK $sdk;
 
 
 	/**
@@ -46,16 +46,15 @@ class ParksSQLite
 	/**
 	 * Constructor
 	 */
-	public function __construct(ParksAPI $api)
+	public function __construct(ParksSDK $sdk)
 	{
 
-		// Api instance
-		$this->api = $api;
+		$this->sdk = $sdk;
 
 		// Resolve database file path (relative paths are relative to swiss-parks-sdk/)
-		$path = ! empty($api->config['db_path']) ? $api->config['db_path'] : 'writable/data/park-offers.sqlite';
+		$path = ! empty($sdk->config['db_path']) ? $sdk->config['db_path'] : 'writable/data/park-offers.sqlite';
 		if (substr($path, 0, 1) !== '/') {
-			$path = $api->config['absolute_path'] . '/' . $path;
+			$path = $sdk->config['absolute_path'] . '/' . $path;
 		}
 		$this->path = $path;
 
@@ -111,8 +110,13 @@ class ParksSQLite
 		// Register MySQL compatible SQL functions
 		$this->registerFunctions();
 
-		// Create schema on first run
-		$has_schema = $this->connection->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'api'");
+		// Legacy v22 DBs used table name api; rename in place so createSchema is not triggered
+		$this->ensureMetaTable();
+
+		// Create schema on first run (offer marks an existing DB even if meta is missing)
+		$has_schema = $this->connection->query(
+			"SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('meta', 'offer')"
+		);
 		if (($has_schema === false) || (count($has_schema->fetchAll()) === 0)) {
 			$this->createSchema();
 			$this->ensureOfferFts(true);
@@ -122,6 +126,48 @@ class ParksSQLite
 		}
 
 		return true;
+	}
+
+
+
+	/**
+	 * Ensure meta table exists on legacy or partial databases
+	 */
+	private function ensureMetaTable(): void
+	{
+
+		$tables = $this->connection->query(
+			"SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('api', 'meta', 'offer')"
+		);
+		if ($tables === false) {
+			return;
+		}
+
+		$names = [];
+		foreach ($tables->fetchAll(PDO::FETCH_COLUMN) as $name) {
+			$names[(string) $name] = true;
+		}
+
+		if (isset($names['meta'])) {
+			return;
+		}
+
+		// Legacy v22 marker table
+		if (isset($names['api'])) {
+			$this->connection->exec('ALTER TABLE `api` RENAME TO `meta`');
+			return;
+		}
+
+		// Partial DB: offers exist but meta row table is missing
+		if (isset($names['offer'])) {
+			$this->connection->exec(
+				'CREATE TABLE `meta` (
+					`initialized` INTEGER DEFAULT 0,
+					`version` TEXT DEFAULT \'1.0\',
+					`last_import` INTEGER DEFAULT NULL
+				)'
+			);
+		}
 	}
 
 
@@ -268,7 +314,10 @@ class ParksSQLite
 		}
 
 		if ($this->connection->exec($schema) === false) {
-			throw new RuntimeException('The database schema could not be created: ' . $this->getLastError());
+			throw new RuntimeException(
+				'The database schema could not be created: ' . $this->getLastError()
+				. ' If the SQLite file already contains tables, run: bash bin/migrate.sh'
+			);
 		}
 
 	}
@@ -468,7 +517,7 @@ class ParksSQLite
 		$status = (bool) $this->query("INSERT INTO `" . $table . "` (" . $db_fields . ") VALUES (" . $db_values . ");");
 
 		if (! $status) {
-			$this->api->logger->error("INSERT INTO `" . $table . "` (" . $db_fields . ") VALUES (" . $db_values . ");");
+			$this->sdk->logger->error("INSERT INTO `" . $table . "` (" . $db_fields . ") VALUES (" . $db_values . ");");
 		}
 
 		return $status;
@@ -510,7 +559,7 @@ class ParksSQLite
 		$status = (bool) $this->query("UPDATE `" . $table . "` SET " . $db_fields . $db_where . ";");
 
 		if (! $status) {
-			$this->api->logger->error("UPDATE `" . $table . "` SET " . $db_fields . $db_where . ";");
+			$this->sdk->logger->error("UPDATE `" . $table . "` SET " . $db_fields . $db_where . ";");
 		}
 
 		return $status;
@@ -536,7 +585,7 @@ class ParksSQLite
 		$status = (bool) $this->query("DELETE FROM `" . $table . "`" . $db_where . ";");
 
 		if (! $status) {
-			$this->api->logger->error("DELETE FROM `" . $table . "`" . $db_where . ";");
+			$this->sdk->logger->error("DELETE FROM `" . $table . "`" . $db_where . ";");
 		}
 
 		return $status;

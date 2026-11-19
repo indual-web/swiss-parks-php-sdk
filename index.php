@@ -19,7 +19,7 @@ $language = 'de';
 require_once('swiss-parks-sdk/autoload.php');
 
 // Optional 2nd argument: alternative api_hash (otherwise config.php is used)
-$api = new ParksAPI($language);
+$sdk = new ParksSDK($language);
 
 
 // Limit the overview to category IDs, or leave empty for all categories
@@ -32,7 +32,7 @@ $filter = [];
 
 // Optional map behaviour:
 // https://github.com/indual-web/swiss-parks-php-sdk/blob/main/docs/sdk-reference/map-options.md
-$api->mapOptions = [];
+$sdk->mapOptions = [];
 
 ?>
 <!DOCTYPE html>
@@ -57,16 +57,16 @@ $api->mapOptions = [];
 <body>
 
 	<!-- Example: use isOfferDetail() to switch layout/CSS for the detail page -->
-	<div id="parks_offer_wrap" class="<?= $api->isOfferDetail() ? 'detail' : '' ?>">
+	<div id="parks_offer_wrap" class="<?= $sdk->isOfferDetail() ? 'detail' : '' ?>">
 
-		<?php if ($api->isOfferDetail()) { ?>
+		<?php if ($sdk->isOfferDetail()) { ?>
 
-			<?= $api->showOfferDetail() ?>
+			<?= $sdk->showOfferDetail() ?>
 
 		<?php } else { ?>
 
 			<?php // Filter form (categories, search, …) ?>
-			<?= $api->showOffersFilter($categories, $filter) ?>
+			<?= $sdk->showOffersFilter($categories, $filter) ?>
 
 
 			<!--
@@ -75,20 +75,20 @@ $api->mapOptions = [];
 			-->
 			<div id="content_top">
 				<ul class="tab_list move_offer_total" role="tablist" aria-hidden="true">
-					<li data="tab_1" role="tab" class="current" aria-controls="tab_1"><?= $api->lang->get('offer_list') ?></li>
-					<li data="tab_2" role="tab" aria-controls="tab_2"><?= $api->lang->get('offer_map') ?></li>
+					<li data="tab_1" role="tab" class="current" aria-controls="tab_1"><?= $sdk->lang->get('offer_list') ?></li>
+					<li data="tab_2" role="tab" aria-controls="tab_2"><?= $sdk->lang->get('offer_map') ?></li>
 				</ul>
 			</div>
 
 			<div id="content">
 
 				<div class="tab_content tab_content_1 show">
-					<?= $api->showOffersList($categories, $filter) ?>
-					<?= $api->showOffersPagination() ?>
+					<?= $sdk->showOffersList($categories, $filter) ?>
+					<?= $sdk->showOffersPagination() ?>
 				</div>
 
 				<div class="tab_content tab_content_2" aria-hidden="true">
-					<?= $api->showOffersMap($categories, $filter) ?>
+					<?= $sdk->showOffersMap($categories, $filter) ?>
 				</div>
 
 			</div>

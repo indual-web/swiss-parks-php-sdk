@@ -35,9 +35,9 @@ Without SEO URLs, detail and page use query parameters such as `?offer=123` or `
 
 ## Routing requirements
 
-Your CMS or web server must forward these slug paths to the same PHP endpoint that bootstraps `ParksAPI`. The SDK detects detail/pagination from `scriptUrl` (usually `REQUEST_URI`).
+Your CMS or web server must forward these slug paths to the same PHP endpoint that bootstraps `ParksSDK`. The SDK detects detail/pagination from `scriptUrl` (usually `REQUEST_URI`).
 
-For CMS embeds, pass `$page_url` into `new ParksAPI(...)` so the session is scoped to the offers page. Do **not** replace `scriptUrl` with only the clean page path when `seo_urls` is true — that breaks `isOfferDetail()` and SEO pagination. See [WordPress integration](./wordpress-integration.md).
+For CMS embeds, pass `$page_url` into `new ParksSDK(...)` so the session is scoped to the offers page. Do **not** replace `scriptUrl` with only the clean page path when `seo_urls` is true — that breaks `isOfferDetail()` and SEO pagination. See [WordPress integration](./wordpress-integration.md).
 
 ## WordPress
 

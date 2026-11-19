@@ -20,7 +20,7 @@ Optional: create `config.local.php` next to `config.php` to override keys such a
 ## Network settings
 
 - `base_url` (optional override; runtime default `https://angebote.paerke.ch/`)
-  - Base URL of the offer database for XML/JSON exports and related asset links. Not set in shipped `config.php`; `ParksAPI` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
+  - Base URL of the offer database for XML/JSON exports and related asset links. Not set in shipped `config.php`; `ParksSDK` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
 - `curl_verify_ssl` (default: `true`)
   - Verifies SSL certificates for export requests to `angebote.paerke.ch`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
 - `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_api_migration`)
@@ -106,7 +106,7 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 ## Output and CMS embeds
 
 - `return_output` (default: `false`)
-  - When `true`, rendering methods return HTML as a string (maps to runtime property `$api->returnOutput`). When `false`, methods print directly.
+  - When `true`, rendering methods return HTML as a string (maps to runtime property `$sdk->returnOutput`). When `false`, methods print directly.
 - `soft_errors` (default: `false`)
   - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
 - `prevent_css_js_include` (default: `false`)
@@ -115,7 +115,7 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 ## Interactive map
 
 - `interactive_map_url` (default: `https://map.parks.swiss`)
-  - Base URL for map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`). Runtime map behaviour (full height, layers, …) uses `$api->mapOptions`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
+  - Base URL for map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`). Runtime map behaviour (full height, layers, …) uses `$sdk->mapOptions`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
 
 ## Favorites
 
@@ -124,7 +124,7 @@ See [Favorites](./favorites.md).
 - `favorites_extension_available` (default: `false`)
   - Enables favorite toggle links and the favorites overview.
 - `favorites_script_path` (default: `''`)
-  - URL or path to the folder that contains `favorites.php` (no trailing slash), or a CMS endpoint that calls `ParksAPI::toggleFavorite()`.
+  - URL or path to the folder that contains `favorites.php` (no trailing slash), or a CMS endpoint that calls `ParksSDK::toggleFavorite()`.
 
 ## API prefixes
 
@@ -136,7 +136,7 @@ See [Favorites](./favorites.md).
 ## Languages
 
 - `default_language` (default: `de`)
-  - Project convention for the default language; runtime language is still set via `new ParksAPI('<lang>')`.
+  - Project convention for the default language; runtime language is still set via `new ParksSDK('<lang>')`.
 - `available_languages` (default: `['de', 'fr', 'it', 'en']`)
   - Language files the SDK may load.
 - `language_independence` (default: `true`)

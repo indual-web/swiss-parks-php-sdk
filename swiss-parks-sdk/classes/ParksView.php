@@ -13,9 +13,9 @@ class ParksView
 
 
 	/**
-	 * API
+	 * SDK instance
 	 */
-	public ParksAPI $api;
+	public ParksSDK $sdk;
 
 
 	/**
@@ -62,14 +62,13 @@ class ParksView
 	/**
 	 * Constructor
 	 */
-	public function __construct(ParksAPI $api)
+	public function __construct(ParksSDK $sdk)
 	{
 
-		// Api instance
-		$this->api = $api;
+		$this->sdk = $sdk;
 
-		// Get api informations
-		$this->config = $api->config;
+		// Load SDK config
+		$this->config = $sdk->config;
 
 		// Set return output method
 		$this->returnOutput = isset($this->config['return_output']) ? $this->config['return_output'] : false;
@@ -84,7 +83,7 @@ class ParksView
 			'it' => 'https://www.sbb.ch/it/acquistare/pages/fahrplan/fahrplan.xhtml',
 			'en' => 'https://www.sbb.ch/en/buying/pages/fahrplan/fahrplan.xhtml',
 		];
-		$this->sbbLink = $sbb_i18n[$this->api->langId];
+		$this->sbbLink = $sbb_i18n[$this->sdk->langId];
 
 		// Set script url with all params
 		if (! empty($_SERVER['REQUEST_URL'])) {
@@ -169,7 +168,7 @@ class ParksView
 		}
 
 		// Show filter
-		$template_data['FILTER_SHOW_LINK'] = '<a class="show_filter"><i aria-hidden="true">a</i>' . $this->api->lang->get('offer_filter_show') . '</a>';
+		$template_data['FILTER_SHOW_LINK'] = '<a class="show_filter"><i aria-hidden="true">a</i>' . $this->sdk->lang->get('offer_filter_show') . '</a>';
 		$template_data['FILTER_FORM_START'] = '<form action="' . $action . '" method="post" autocomplete="off">';
 		$template_data['FILTER_FORM_STOP'] = '</form>';
 		$search_val = (isset($params['selected']['search']) ? ' value="' . (isset($params['selected']['search']) ? $params['selected']['search'] : '') . '"' : '');
@@ -178,8 +177,8 @@ class ParksView
 		$template_data['FILTER_TEXT_SEARCH'] = '
 			<p class="form_element search">
 				<span class="element_wrap">
-					<label for="offer_filter_search">' . $this->api->lang->get('offer_search') . '</label>
-					<input type="text" name="' . $fieldname . '[search]" id="offer_filter_search"' . $search_val . ' placeholder="' . $this->api->lang->get('offer_search') . '" />
+					<label for="offer_filter_search">' . $this->sdk->lang->get('offer_search') . '</label>
+					<input type="text" name="' . $fieldname . '[search]" id="offer_filter_search"' . $search_val . ' placeholder="' . $this->sdk->lang->get('offer_search') . '" />
 					<span class="search_icon" aria-hidden="true">k</span>
 				</span>
 			</p>
@@ -245,16 +244,16 @@ class ParksView
 				$template_data['FILTER_CATEGORIES'] = '
 					<div class="form_element mega_dropdown">
 						<div class="form_group">
-							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . (! empty($params['projects_only']) ? $this->api->lang->get('projects_all') : $this->api->lang->get('offer_all')) . '">
+							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . (! empty($params['projects_only']) ? $this->sdk->lang->get('projects_all') : $this->sdk->lang->get('offer_all')) . '">
 								<i class="deselect_icon" aria-hidden="true">m</i>
 								<span class="selected_option" aria-hidden="true"></span>
-								<span class="all">' . (! empty($params['projects_only']) ? $this->api->lang->get('projects_all') : $this->api->lang->get('offer_all')) . '</span>
+								<span class="all">' . (! empty($params['projects_only']) ? $this->sdk->lang->get('projects_all') : $this->sdk->lang->get('offer_all')) . '</span>
 								<i class="arrow_icon" aria-hidden="true">b</i>
 							</h4>
 							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 								<span class="dropdown_filter" role="toolbar">
-									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 								</span>' . $category_options . '
 							</div>
 						</div>
@@ -270,14 +269,14 @@ class ParksView
 			$template_data['FILTER_DATES'] = '
 				<div class="form_element date_wrap">
 					<span class="element_wrap">
-						<label for="date_start">' . $this->api->lang->get('general_date') . ' ' . $this->api->lang->get('general_from') . '</label>
+						<label for="date_start">' . $this->sdk->lang->get('general_date') . ' ' . $this->sdk->lang->get('general_from') . '</label>
 						<i class="icon" aria-hidden="true">e</i>
-						<input id="date_start" name="' . $fieldname . '[date_from]"' . $date_from_val . ' class="flatpickr" type="text" placeholder="' . $this->api->lang->get('general_date') . ' ' . $this->api->lang->get('general_from') . '">
+						<input id="date_start" name="' . $fieldname . '[date_from]"' . $date_from_val . ' class="flatpickr" type="text" placeholder="' . $this->sdk->lang->get('general_date') . ' ' . $this->sdk->lang->get('general_from') . '">
 					</span>
 					<span class="element_wrap">
-						<label for="date_end">' . $this->api->lang->get('general_date') . ' ' . $this->api->lang->get('general_to') . '</label>
+						<label for="date_end">' . $this->sdk->lang->get('general_date') . ' ' . $this->sdk->lang->get('general_to') . '</label>
 						<i class="icon" aria-hidden="true">e</i>
-						<input id="date_end" name="' . $fieldname . '[date_to]"' . $date_to_val . ' class="flatpickr" type="text" placeholder="' . $this->api->lang->get('general_date') . ' ' . $this->api->lang->get('general_to') . '">
+						<input id="date_end" name="' . $fieldname . '[date_to]"' . $date_to_val . ' class="flatpickr" type="text" placeholder="' . $this->sdk->lang->get('general_date') . ' ' . $this->sdk->lang->get('general_to') . '">
 					</span>
 					<div class="cf"></div>
 				</div>
@@ -288,24 +287,24 @@ class ParksView
 		if (isset($params['show_target_group_filter']) && ($params['show_target_group_filter'] == true) && empty($params['projects_only'])) {
 			$template_data['FILTER_TARGET_GROUPS'] = '';
 
-			if (! empty($this->api->model->targetGroups)) {
+			if (! empty($this->sdk->model->targetGroups)) {
 
 				$target_group_groups = [
-					$this->api->lang->get('offer_target_group_general_info'),
-					$this->api->lang->get('offer_target_group_specific_info')
+					$this->sdk->lang->get('offer_target_group_general_info'),
+					$this->sdk->lang->get('offer_target_group_specific_info')
 				];
 
 				$target_group_options = '';
 				foreach ($target_group_groups as $target_group_index => $target_group_label) {
 
 					$group_items = '';
-					foreach ($this->api->model->targetGroups as $target_group_id => $target_label) {
+					foreach ($this->sdk->model->targetGroups as $target_group_id => $target_label) {
 
 						// Check specific target group
 						if (in_array($target_group_id, $this->specificTargetGroups) == (bool)$target_group_index) {
 
 							// Check main target group restriction
-							if (empty($this->api->systemFilter['target_groups']) || in_array($target_group_id, $this->api->systemFilter['target_groups'])) {
+							if (empty($this->sdk->systemFilter['target_groups']) || in_array($target_group_id, $this->sdk->systemFilter['target_groups'])) {
 								$target_val = isset($params['selected']['target_groups']) && in_array($target_group_id, $params['selected']['target_groups']) ? 'checked="checked"' : '';
 								$group_items .= '
 													<label for="' . $fieldname . '_target_groups_' . $target_group_id . '" role="option" aria-selected="false" tabindex="0">
@@ -335,16 +334,16 @@ class ParksView
 					$template_data['FILTER_TARGET_GROUPS'] = '
 						<div class="form_element mega_dropdown filter_target_groups">
 							<div class="form_group">
-								<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_target_group_general_info') . '">
+								<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_target_group_general_info') . '">
 									<i class="deselect_icon" aria-hidden="true">m</i>
 									<span class="selected_option"></span>
-									<span class="all">' . $this->api->lang->get('offer_target_group_general_info') . '</span>
+									<span class="all">' . $this->sdk->lang->get('offer_target_group_general_info') . '</span>
 									<i class="arrow_icon" aria-hidden="true">b</i>
 								</h4>
 								<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 									<span class="dropdown_filter" role="toolbar">
-										<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-										<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+										<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+										<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 									</span>
 									' . $target_group_options . '
 								</div>
@@ -359,10 +358,10 @@ class ParksView
 		if (isset($params['show_fields_of_activity_filter']) && ($params['show_fields_of_activity_filter'] == true) && empty($params['projects_only'])) {
 			$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '';
 
-			if (! empty($this->api->model->fieldsOfActivity)) {
+			if (! empty($this->sdk->model->fieldsOfActivity)) {
 				$field_options = '';
-				foreach ($this->api->model->fieldsOfActivity as $field_id => $field_label) {
-					if (empty($this->api->systemFilter['fields_of_activity']) || in_array($field_id, $this->api->systemFilter['fields_of_activity'])) {
+				foreach ($this->sdk->model->fieldsOfActivity as $field_id => $field_label) {
+					if (empty($this->sdk->systemFilter['fields_of_activity']) || in_array($field_id, $this->sdk->systemFilter['fields_of_activity'])) {
 						$checked = isset($params['selected']['fields_of_activity']) && in_array($field_id, $params['selected']['fields_of_activity']) ? 'checked="checked"' : '';
 						$field_options .= '
 									<label for="' . $fieldname . '_fields_of_activity_' . $field_id . '" role="option" aria-selected="false" tabindex="0">
@@ -378,18 +377,18 @@ class ParksView
 					$template_data['FILTER_FIELDS_OF_ACTIVITY'] = '
 						<div class="form_element mega_dropdown filter_fields_of_activity">
 							<div class="form_group">
-								<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_fields_of_activity') . '">
+								<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_fields_of_activity') . '">
 									<i class="deselect_icon" aria-hidden="true">m</i>
 									<span class="selected_option"></span>
-									<span class="all">' . $this->api->lang->get('offer_fields_of_activity') . '</span>
+									<span class="all">' . $this->sdk->lang->get('offer_fields_of_activity') . '</span>
 									<i class="arrow_icon" aria-hidden="true">b</i>
 								</h4>
 								<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 									<span class="dropdown_filter" role="toolbar">
-										<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-										<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+										<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+										<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 									</span>
-									<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_fields_of_activity') . '">' . $field_options . '</span>
+									<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_fields_of_activity') . '">' . $field_options . '</span>
 								</div>
 							</div>
 						</div>
@@ -403,9 +402,9 @@ class ParksView
 
 			// Get park municipalities
 			if (! empty($params['park_id']) && ($params['park_id'] > 0)) {
-				$municipalities = $this->api->model->getMunicipalities(['park_id' => $params['park_id']]);
+				$municipalities = $this->sdk->model->getMunicipalities(['park_id' => $params['park_id']]);
 			} else {
-				$municipalities = $this->api->model->getMunicipalities();
+				$municipalities = $this->sdk->model->getMunicipalities();
 			}
 
 			if (! empty($municipalities) && (count($municipalities) > 1)) {
@@ -426,18 +425,18 @@ class ParksView
 				$template_data['FILTER_MUNICIPALITIES'] = '
 					<div class="form_element mega_dropdown filter_municipalities">
 						<div class="form_group">
-							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_municipalities_all') . '">
+							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_municipalities_all') . '">
 								<i class="deselect_icon" aria-hidden="true">m</i>
 								<span class="selected_option"></span>
-								<span class="all">' . $this->api->lang->get('offer_municipalities_all') . '</span>
+								<span class="all">' . $this->sdk->lang->get('offer_municipalities_all') . '</span>
 								<i class="arrow_icon" aria-hidden="true">b</i>
 							</h4>
 							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 								<span class="dropdown_filter" role="toolbar">
-									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+									<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+									<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 								</span>
-								<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_municipalities_all') . '">' . $municipality_options . '</span>
+								<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_municipalities_all') . '">' . $municipality_options . '</span>
 							</div>
 						</div>
 					</div>
@@ -450,15 +449,15 @@ class ParksView
 			$template_data['FILTER_ACCESSIBILITIES'] = '';
 
 			// Get accessibility list
-			$accessibilities = $this->api->model->getAccessibilityList();
+			$accessibilities = $this->sdk->model->getAccessibilityList();
 			if (! empty($accessibilities)) {
 				$template_data['FILTER_ACCESSIBILITIES'] = '
 					<div class="form_element mega_dropdown filter_accessibilities">
 						<div class="form_group">
-							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_accessibility') . '">
+							<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_accessibility') . '">
 								<i class="deselect_icon" aria-hidden="true">m</i>
 								<span class="selected_option"></span>
-								<span class="all">' . $this->api->lang->get('offer_accessibility') . '</span>
+								<span class="all">' . $this->sdk->lang->get('offer_accessibility') . '</span>
 								<i class="arrow_icon" aria-hidden="true">b</i>
 							</h4>
 							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">';
@@ -485,18 +484,18 @@ class ParksView
 			$template_data['FILTER_PARKS'] = '
 				<div class="form_element mega_dropdown">
 					<div class="form_group">
-						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_parks_all') . '">
+						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_parks_all') . '">
 							<i class="deselect_icon" aria-hidden="true">m</i>
 							<span class="selected_option"></span>
-							<span class="all">' . $this->api->lang->get('offer_parks_all') . '</span>
+							<span class="all">' . $this->sdk->lang->get('offer_parks_all') . '</span>
 							<i class="arrow_icon" aria-hidden="true">b</i>
 						</h4>
 						<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 							<span class="dropdown_filter" role="toolbar">
-								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 							</span>
-							<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_parks_all') . '">';
+							<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_parks_all') . '">';
 			foreach ($params['users'] as $parkId => $park) {
 				$park_val = isset($params['selected']['park_id']) && in_array($parkId, $params['selected']['park_id']) ? 'checked="checked"' : '';
 				$template_data['FILTER_PARKS'] .= '
@@ -517,22 +516,22 @@ class ParksView
 
 		// Filter: project status
 		if (! empty($params['show_project_filter'])) {
-			$all_project_status = $this->config['project_status_' . $this->api->langId];
+			$all_project_status = $this->config['project_status_' . $this->sdk->langId];
 			$template_data['FILTER_PROJECT'] = '
 				<div class="form_element mega_dropdown">
 					<div class="form_group">
-						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_project_status') . '">
+						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_project_status') . '">
 							<i class="deselect_icon" aria-hidden="true">m</i>
 							<span class="selected_option"></span>
-							<span class="all">' . $this->api->lang->get('offer_project_status') . '</span>
+							<span class="all">' . $this->sdk->lang->get('offer_project_status') . '</span>
 							<i class="arrow_icon" aria-hidden="true">b</i>
 						</h4>
 						<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 							<span class="dropdown_filter" role="toolbar">
-								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 							</span>
-							<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_project_status') . '">';
+							<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_project_status') . '">';
 			foreach ($all_project_status as $status_id => $status_label) {
 				$project_val = isset($params['selected']['project_status']) && in_array($status_id, $params['selected']['project_status']) ? 'checked="checked"' : '';
 				$template_data['FILTER_PROJECT'] .= '
@@ -561,7 +560,7 @@ class ParksView
 					<input id="route_max" name="' . $fieldname . '[route_length_max]" type="hidden" value="' . (isset($params['selected']['route_length_max']) ? $params['selected']['route_length_max'] : '50') . '">
 					<div class="range"></div>
 					<span class="range_text" aria-live="polite">
-						<span class="minimum" aria-hidden="true" data-label="' . $this->api->lang->get('offer_routes_length') . '"></span>
+						<span class="minimum" aria-hidden="true" data-label="' . $this->sdk->lang->get('offer_routes_length') . '"></span>
 						<span class="maximum" aria-hidden="true"></span>
 						<span class="sr-only" id="range_sr_only"></span>
 					</span>
@@ -573,18 +572,18 @@ class ParksView
 			$template_data['FILTER_ROUTE_TIME'] = '
 				<div class="form_element mega_dropdown">
 					<div class="form_group">
-						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('offer_routes_time_required') . '">
+						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('offer_routes_time_required') . '">
 							<i class="deselect_icon" aria-hidden="true">m</i>
 							<span class="selected_option"></span>
-							<span class="all">' . $this->api->lang->get('offer_routes_time_required') . '</span>
+							<span class="all">' . $this->sdk->lang->get('offer_routes_time_required') . '</span>
 							<i class="arrow_icon" aria-hidden="true">b</i>
 						</h4>
 						<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 							<span class="dropdown_filter" role="toolbar">
-								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 							</span>
-							<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_routes_time_required') . '">';
+							<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_routes_time_required') . '">';
 			foreach ($this->config['route_times'] as $time) {
 				$time = html_entity_decode($time);
 				$time_checked = ! empty($params['selected']['time_required']) && in_array($time, $params['selected']['time_required']) ? 'checked="checked"' : '';
@@ -604,23 +603,23 @@ class ParksView
 			';
 
 			// Route condition and technic
-			$title_condition = $this->api->lang->get('offer_routes_condition');
-			$title_technic = $this->api->lang->get('offer_routes_technic');
+			$title_condition = $this->sdk->lang->get('offer_routes_condition');
+			$title_technic = $this->sdk->lang->get('offer_routes_technic');
 			$template_data['FILTER_ROUTE_CONDITION'] = '
 				<div class="form_element mega_dropdown">
 					<div class="form_group">
-						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->api->lang->get('general_select_field') . ': ' . $this->api->lang->get('offer_routes_requirements') . '">
+						<h4 aria-haspopup="listbox" aria-expanded="false" role="button" tabindex="0" title="' . $this->sdk->lang->get('general_select_field') . ': ' . $this->sdk->lang->get('offer_routes_requirements') . '">
 							<i class="deselect_icon" aria-hidden="true">m</i>
 							<span class="selected_option selected_conditions_technics"></span>
-							<span class="all">' . $this->api->lang->get('offer_routes_requirements') . '</span>
+							<span class="all">' . $this->sdk->lang->get('offer_routes_requirements') . '</span>
 							<i class="arrow_icon" aria-hidden="true">b</i>
 						</h4>
 						<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
 							<span class="dropdown_filter" role="toolbar">
-								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->api->lang->get('offer_filter_all') . '</label>
-								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_filter_none') . '</label>
+								<label class="select_all" role="button" tabindex="0"><i aria-hidden="true">f</i>' . $this->sdk->lang->get('offer_filter_all') . '</label>
+								<label class="deselect_all" role="button" tabindex="0"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_filter_none') . '</label>
 							</span>
-							<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_routes_requirements') . '">
+							<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_routes_requirements') . '">
 								<label class="category_title" role="button" aria-pressed="false" tabindex="0">
 									<span aria-hidden="true"></span>
 									' . $title_condition . '
@@ -637,7 +636,7 @@ class ParksView
 			}
 			$template_data['FILTER_ROUTE_CONDITION'] .= '
 							</span>
-							<span class="label_wrapper" role="group" aria-label="' . $this->api->lang->get('offer_routes_requirements') . '">
+							<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_routes_requirements') . '">
 								<label class="category_title" role="button" aria-pressed="false" tabindex="0">
 									<span aria-hidden="true"></span>
 									' . $title_technic . '
@@ -663,8 +662,8 @@ class ParksView
 
 		// Filter: keywords
 		$filter_keywords = '';
-		if (! empty($this->api->config['keyword_filter'][$this->api->langId]) && ($this->api->filterDisplayKeywords === true)) {
-			$all_keywords = $this->api->config['keyword_filter'][$this->api->langId];
+		if (! empty($this->sdk->config['keyword_filter'][$this->sdk->langId]) && ($this->sdk->filterDisplayKeywords === true)) {
+			$all_keywords = $this->sdk->config['keyword_filter'][$this->sdk->langId];
 			if (is_array($all_keywords) && (count($all_keywords) > 2)) {
 
 				// Get keyword title and link label to show all entries
@@ -681,8 +680,8 @@ class ParksView
 				}
 
 				// Get selected keyword from session
-				else if (! empty($_SESSION[$this->api->sessionName]['keyword'])) {
-					$get_keyword = $_SESSION[$this->api->sessionName]['keyword'];
+				else if (! empty($_SESSION[$this->sdk->sessionName]['keyword'])) {
+					$get_keyword = $_SESSION[$this->sdk->sessionName]['keyword'];
 				}
 
 				// Prepare keyword link url
@@ -763,12 +762,12 @@ class ParksView
 
 		// Filter buttons
 		if ($params['filter'] == true) {
-			$template_data['FILTER_RESET_BUTTON'] = '<a href="' . $reset_link . '" class="reset_link" title="' . $this->api->lang->get('offer_link_filter_reset') . '"><i aria-hidden="true">m</i>' . $this->api->lang->get('offer_reset') . '</a>';
+			$template_data['FILTER_RESET_BUTTON'] = '<a href="' . $reset_link . '" class="reset_link" title="' . $this->sdk->lang->get('offer_link_filter_reset') . '"><i aria-hidden="true">m</i>' . $this->sdk->lang->get('offer_reset') . '</a>';
 		}
-		$template_data['FILTER_SUBMIT_BUTTON'] = '<input type="submit" name="' . $fieldname . '[submit]" value="' . $this->api->lang->get('general_search') . '" class="button" />';
+		$template_data['FILTER_SUBMIT_BUTTON'] = '<input type="submit" name="' . $fieldname . '[submit]" value="' . $this->sdk->lang->get('general_search') . '" class="button" />';
 
 		// Compile filter template
-		$output = $this->api->compileTemplate('filter', $template_data);
+		$output = $this->sdk->compileTemplate('filter', $template_data);
 
 		// Show output
 		return $this->output($output);
@@ -792,8 +791,8 @@ class ParksView
 			if ($in_tab == false) {
 				$total_rows_label = (! empty($this->projectsOnly) ? 'project' : 'offer');
 				$total_label = ($offers['total'] == 1)
-					? $this->api->lang->get($total_rows_label)
-					: $this->api->lang->get($total_rows_label . 's');
+					? $this->sdk->lang->get($total_rows_label)
+					: $this->sdk->lang->get($total_rows_label . 's');
 				$output .= '
 					<div id="offer_total">
 						<span class="offer_count">' . number_format((int) $offers['total'], 0, '.', "'") . ' ' . $total_label . '</span>
@@ -839,7 +838,7 @@ class ParksView
 					}
 
 					// Prepare link pre-tag
-					$link_start_tag = '<a href="' . $offer_detail_url . '" class="entry_link"' . $link_target . ' title="' . $this->api->lang->get('offer_link_to_offer') . ' ' . $offer->title . '">';
+					$link_start_tag = '<a href="' . $offer_detail_url . '" class="entry_link"' . $link_target . ' title="' . $this->sdk->lang->get('offer_link_to_offer') . ' ' . $offer->title . '">';
 					$link_end_tag = '</a>';
 
 					// Prepare dates
@@ -869,26 +868,26 @@ class ParksView
 					if ($has_image == true) {
 						$output .= '<div class="pictures" aria-hidden="true">';
 						if ($offer->is_hint == true) {
-							$output .= '<div class="tipp">' . $this->api->lang->get('offer_hint') . '</div>';
+							$output .= '<div class="tipp">' . $this->sdk->lang->get('offer_hint') . '</div>';
 						}
 						if (($offer->is_park_partner_event == true) || ($offer->is_park_partner == true)) {
-							$output .= '<div class="tipp parkpartner">' . $this->api->lang->get('offer_park_partner_label') . '</div>';
+							$output .= '<div class="tipp parkpartner">' . $this->sdk->lang->get('offer_park_partner_label') . '</div>';
 						}
-						if (! empty($this->api->config['show_button_in_overview'])) {
+						if (! empty($this->sdk->config['show_button_in_overview'])) {
 							$output .= $link_start_tag;
 						}
 						$output .= '<img class="attachment offer_images" src="' . $offer->images[0]->{$config_thumbnail_size} . '" alt="" />';
-						if (! empty($this->api->config['show_button_in_overview'])) {
+						if (! empty($this->sdk->config['show_button_in_overview'])) {
 							$output .= $link_end_tag;
 						}
 						$output .= '</div>';
 					} else {
 						$output .= '<div class="pictures empty_image">';
 						if ($offer->is_hint == true) {
-							$output .= '<div class="tipp">' . $this->api->lang->get('offer_hint') . '</div>';
+							$output .= '<div class="tipp">' . $this->sdk->lang->get('offer_hint') . '</div>';
 						}
 						if (($offer->is_park_partner_event == true) || ($offer->is_park_partner == true)) {
-							$output .= '<div class="tipp parkpartner">' . $this->api->lang->get('offer_park_partner_label') . '</div>';
+							$output .= '<div class="tipp parkpartner">' . $this->sdk->lang->get('offer_park_partner_label') . '</div>';
 						}
 						if ($offer->root_category == CATEGORY_EVENT) {
 							$output .= '<div class="date_wrap">';
@@ -908,7 +907,7 @@ class ParksView
 								$output .= '
 									<div class="date">
 										<span>' . $date_from->format('d') . '</span>
-										<span>' . $this->api->lang->get('month' . $date_from->format('m')) . '</span>
+										<span>' . $this->sdk->lang->get('month' . $date_from->format('m')) . '</span>
 									</div>
 								';
 							}
@@ -918,7 +917,7 @@ class ParksView
 								$output .= '
 									<div class="date">
 										<span>' . $date_to->format('d') . '</span>
-										<span>' . $this->api->lang->get('month' . $date_to->format('m')) . '</span>
+										<span>' . $this->sdk->lang->get('month' . $date_to->format('m')) . '</span>
 									</div>
 								';
 							}
@@ -945,7 +944,7 @@ class ParksView
 
 					// Lang attribute
 					$lang_attr = '';
-					if ($offer->language != $this->api->langId) {
+					if ($offer->language != $this->sdk->langId) {
 						$lang_attr = ' lang="' . $offer->language . '"';
 					}
 
@@ -957,11 +956,11 @@ class ParksView
 
 					// Offer title
 					$output .= '<' . $heading_tag . $lang_attr . '>';
-					if (! empty($this->api->config['show_button_in_overview'])) {
+					if (! empty($this->sdk->config['show_button_in_overview'])) {
 						$output .= $link_start_tag;
 					}
 					$output .= $offer->title;
-					if (! empty($this->api->config['show_button_in_overview'])) {
+					if (! empty($this->sdk->config['show_button_in_overview'])) {
 						$output .= $link_end_tag;
 					}
 					$output .= '</' . $heading_tag . '>';
@@ -988,11 +987,11 @@ class ParksView
 					if (isset($offer->date_from) && ($offer->root_category == CATEGORY_EVENT)) {
 
 						// Adjust start date if filter date from is set
-						$filterData = $this->api->getFilterData();
+						$filterData = $this->sdk->getFilterData();
 						$offer->date_from = ParksDate::parksAdjustDateFrom($offer->date_from ?? '', $offer->date_to ?? '', $filterData['date_from'] ?? '');
 
 						// Date from
-						$output .= '<span class="date">' . ParksDate::formatOfferDate(['date_from' => $offer->date_from, 'date_to' => $offer->date_to, 'times' => $offer->times], $this->api->lang) . '</span>';
+						$output .= '<span class="date">' . ParksDate::formatOfferDate(['date_from' => $offer->date_from, 'date_to' => $offer->date_to, 'times' => $offer->times], $this->sdk->lang) . '</span>';
 					}
 
 					// Show project and research duration
@@ -1008,7 +1007,7 @@ class ParksView
 					// Offer description
 					if (! empty($this->config['show_short_description_in_overview'])) {
 						$output .= '<p class="offer_description offer_description_short"' . $lang_attr . '>';
-						if (! empty($this->api->config['show_button_in_overview'])) {
+						if (! empty($this->sdk->config['show_button_in_overview'])) {
 							$output .= $link_start_tag;
 						}
 
@@ -1017,13 +1016,13 @@ class ParksView
 						}
 						$output .= ParksFormat::autoTextFormat($offer->abstract);
 
-						if (! empty($this->api->config['show_button_in_overview'])) {
+						if (! empty($this->sdk->config['show_button_in_overview'])) {
 							$output .= $link_end_tag;
 						}
 						$output .= '</p>';
 					} else {
 						$output .= '<p class="offer_description offer_description_medium"' . $lang_attr . '>';
-						if (! empty($this->api->config['show_button_in_overview'])) {
+						if (! empty($this->sdk->config['show_button_in_overview'])) {
 							$output .= $link_start_tag;
 						}
 
@@ -1034,12 +1033,12 @@ class ParksView
 						}
 						$output .= ParksFormat::autoTextFormat($description_medium);
 						
-						if (! empty($this->api->config['show_button_in_overview'])) {
+						if (! empty($this->sdk->config['show_button_in_overview'])) {
 							$output .= $link_end_tag;
 						}
 						$output .= '</p>';
 					}
-					if (! empty($this->api->config['show_button_in_overview'])) {
+					if (! empty($this->sdk->config['show_button_in_overview'])) {
 						$output .= $link_end_tag;
 					}
 
@@ -1069,10 +1068,10 @@ class ParksView
 						if (! empty($offer->time_required) || (! empty($offer->route_length) && (intval($offer->route_length) > 0))) {
 							$output .= '<div class="route_info">';
 							if (! empty($offer->time_required) || ! empty($offer->time_required_minutes)) {
-								$output .= '<span>' . $this->api->lang->get('offer_time_required') . ': ' . ParksDate::activityGetTimeRequired($offer, $this->api->lang) . '</span>';
+								$output .= '<span>' . $this->sdk->lang->get('offer_time_required') . ': ' . ParksDate::activityGetTimeRequired($offer, $this->sdk->lang) . '</span>';
 							}
 							if (! empty($offer->route_length) && (intval($offer->route_length) > 0)) {
-								$output .= '<span>' . $this->api->lang->get('offer_route_length') . ': ' . number_format((float) $offer->route_length, 1) . $this->api->lang->get('offer_route_length_km') . '</span>';
+								$output .= '<span>' . $this->sdk->lang->get('offer_route_length') . ': ' . number_format((float) $offer->route_length, 1) . $this->sdk->lang->get('offer_route_length_km') . '</span>';
 							}
 							$output .= '</div>';
 						}
@@ -1103,8 +1102,8 @@ class ParksView
 
 					// Set link target and link
 					$output .= $link_start_tag;
-					if (! empty($this->api->config['show_button_in_overview'])) {
-						$output .= $this->api->lang->get('more_informations');
+					if (! empty($this->sdk->config['show_button_in_overview'])) {
+						$output .= $this->sdk->lang->get('more_informations');
 					}
 					$output .= $link_end_tag;
 
@@ -1115,7 +1114,7 @@ class ParksView
 			$output .= '</div>';
 		} else {
 
-			$output .= '<p class="no_results">' . $this->api->lang->get('offer_not_found') . '</p>';
+			$output .= '<p class="no_results">' . $this->sdk->lang->get('offer_not_found') . '</p>';
 		}
 
 		if ($in_tab === true) {
@@ -1159,7 +1158,7 @@ class ParksView
 		}
 
 		// Output
-		$output = '<div class="offer_pagination" role="navigation" aria-label="' . $this->api->lang->get('pagination_label') . '">';
+		$output = '<div class="offer_pagination" role="navigation" aria-label="' . $this->sdk->lang->get('pagination_label') . '">';
 
 		// Previous link
 		if ($page > 1) {
@@ -1193,8 +1192,8 @@ class ParksView
 			}
 
 			$output .= '
-				<a href="' . $first_link . '" aria-label="' . $this->api->lang->get('offer_link_to_first_page') . '">' . $this->api->lang->get('offer_first') . '</a>
-				<a href="' . $prev_link . '" class="icon" aria-label="' . $this->api->lang->get('offer_link_to_previous_page') . '" >o</a>
+				<a href="' . $first_link . '" aria-label="' . $this->sdk->lang->get('offer_link_to_first_page') . '">' . $this->sdk->lang->get('offer_first') . '</a>
+				<a href="' . $prev_link . '" class="icon" aria-label="' . $this->sdk->lang->get('offer_link_to_previous_page') . '" >o</a>
 			';
 
 			$output .= '</div>';
@@ -1233,8 +1232,8 @@ class ParksView
 
 			// View
 			$output .= '
-				<a href="' . $next_link . '" class="icon" aria-label="' . $this->api->lang->get('offer_link_to_next_page') . '">p</a>
-				<a href="' . $last_link . '" aria-label="' . $this->api->lang->get('offer_link_to_last_page') . '">' . $this->api->lang->get('offer_last') . '</a>
+				<a href="' . $next_link . '" class="icon" aria-label="' . $this->sdk->lang->get('offer_link_to_next_page') . '">p</a>
+				<a href="' . $last_link . '" aria-label="' . $this->sdk->lang->get('offer_link_to_last_page') . '">' . $this->sdk->lang->get('offer_last') . '</a>
 			';
 
 			$output .= '</div>';
@@ -1243,7 +1242,7 @@ class ParksView
 		// Page numbers
 		if ($total > 1) {
 			$param_name = $this->config['url_param_prefix'] . 'page';
-			$pagination_max_numbers = $this->api->config['pagination_max_numbers'] ? intval($this->api->config['pagination_max_numbers']) : 5;
+			$pagination_max_numbers = $this->sdk->config['pagination_max_numbers'] ? intval($this->sdk->config['pagination_max_numbers']) : 5;
 			$half_pages_start = floor($pagination_max_numbers / 2);
 			$half_pages_end = ceil($pagination_max_numbers / 2) - 1;
 			$end = 0;
@@ -1291,7 +1290,7 @@ class ParksView
 				}
 
 				// View
-				$output .= '<a href="' . $link . '"' . (($page == $i) ? ' class="current" aria-current="page"' : '') . ' aria-label="' . $this->api->lang->get('offer_link_to_page') . ': ' . $i . ' ' . $this->api->lang->get('general_from') . ' ' . $total . '">' . $i . '</a> ';
+				$output .= '<a href="' . $link . '"' . (($page == $i) ? ' class="current" aria-current="page"' : '') . ' aria-label="' . $this->sdk->lang->get('offer_link_to_page') . ': ' . $i . ' ' . $this->sdk->lang->get('general_from') . ' ' . $total . '">' . $i . '</a> ';
 			}
 			$output .= '</div>';
 		}
@@ -1324,7 +1323,7 @@ class ParksView
 
 		// Lang attribute
 		$lang_attr = '';
-		if ($offer->language != $this->api->langId) {
+		if ($offer->language != $this->sdk->langId) {
 			$lang_attr = ' lang="' . $offer->language . '"';
 		}
 
@@ -1381,11 +1380,11 @@ class ParksView
 
 		// Project and research fields
 		if (in_array($offer->root_category, [CATEGORY_PROJECT, CATEGORY_RESEARCH]) && empty($long_description)) {
-			$description .= ! empty($offer->project_initial_situation) ? '<h2 class="project_title">' . $this->api->lang->get('offer_project_initial_situation') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_initial_situation) . '</p>' : '';
-			$description .= ! empty($offer->project_goal) ? '<h2 class="project_title">' . $this->api->lang->get('offer_project_goal') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_goal) . '</p>' : '';
-			$description .= ! empty($offer->project_further_information) ? '<h2 class="project_title">' . $this->api->lang->get('offer_project_further_information') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_further_information) . '</p>' : '';
-			$description .= ! empty($offer->project_results) ? '<h2 class="project_title">' . $this->api->lang->get('offer_project_results') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_results) . '</p>' : '';
-			$description .= ! empty($offer->project_partner) ? '<h2>' . $this->api->lang->get('offer_partner') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_partner) . '</p>' : '';
+			$description .= ! empty($offer->project_initial_situation) ? '<h2 class="project_title">' . $this->sdk->lang->get('offer_project_initial_situation') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_initial_situation) . '</p>' : '';
+			$description .= ! empty($offer->project_goal) ? '<h2 class="project_title">' . $this->sdk->lang->get('offer_project_goal') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_goal) . '</p>' : '';
+			$description .= ! empty($offer->project_further_information) ? '<h2 class="project_title">' . $this->sdk->lang->get('offer_project_further_information') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_further_information) . '</p>' : '';
+			$description .= ! empty($offer->project_results) ? '<h2 class="project_title">' . $this->sdk->lang->get('offer_project_results') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_results) . '</p>' : '';
+			$description .= ! empty($offer->project_partner) ? '<h2>' . $this->sdk->lang->get('offer_partner') . '</h2><p class="description">' . ParksFormat::outputText($offer->project_partner) . '</p>' : '';
 		}
 
 		// Add online shop articles to the description
@@ -1395,7 +1394,7 @@ class ParksView
 			if (! empty($offer->articles)) {
 				$description .= '
 					<div class="products_overview">
-						<h2 class="overview_title">' . $this->api->lang->get('offer_included_products') . '</h2>
+						<h2 class="overview_title">' . $this->sdk->lang->get('offer_included_products') . '</h2>
 				';
 
 				// Iterate all articles
@@ -1415,7 +1414,7 @@ class ParksView
 					if (! empty($article->supplier_contact)) {
 
 						// Set supplier introduction
-						$supplier_intro = '<span class="supplier"><span class="from">' . $this->api->lang->get('offer_from') . '</span>';
+						$supplier_intro = '<span class="supplier"><span class="from">' . $this->sdk->lang->get('offer_from') . '</span>';
 
 						// Set supplier name (first line)
 						if (! empty($article->supplier_contact)) {
@@ -1474,7 +1473,7 @@ class ParksView
 									</div>
 									<div class="honoured_by">
 										' . $label_link_prefix . '
-											' . $this->api->lang->get('offer_product_honoured_by') . ' ' . $label->label_title . '
+											' . $this->sdk->lang->get('offer_product_honoured_by') . ' ' . $label->label_title . '
 										' . $label_link_suffix . '
 									</div>
 									<div class="cf"></div>
@@ -1491,7 +1490,7 @@ class ParksView
 							$article_addons .= '
 								<div class="addon accordion_entry">
 									<div class="accordion_title">
-										<span class="text">' . $this->api->lang->get('offer_product_article_' . $field) . '</span><i class="icon">+</i>
+										<span class="text">' . $this->sdk->lang->get('offer_product_article_' . $field) . '</span><i class="icon">+</i>
 									</div>
 									<div class="accordion_content" style="display: none;">' . nl2br($article->{'article_' . $field}) . '</div>
 								</div>
@@ -1525,7 +1524,7 @@ class ParksView
 			// Set checkout button
 			$template_data['OFFER_ONLINE_SHOP_CHECKOUT_BUTTON'] = '
 				<div class="button_wrap">
-					<a href="https://angebote.paerke.ch/' . $this->api->langId . '/online_shop/checkout/' . $offer->offer_id . '" class="button buy_button" target="_blank">' . $this->api->lang->get('offer_product_shop_now') . '</a>
+					<a href="https://angebote.paerke.ch/' . $this->sdk->langId . '/online_shop/checkout/' . $offer->offer_id . '" class="button buy_button" target="_blank">' . $this->sdk->lang->get('offer_product_shop_now') . '</a>
 				</div>
 			';
 			$description .= $template_data['OFFER_ONLINE_SHOP_CHECKOUT_BUTTON'];
@@ -1560,9 +1559,9 @@ class ParksView
 					}
 
 					// Show label with next date
-					$label = $this->api->lang->get('offer_next_date');
+					$label = $this->sdk->lang->get('offer_next_date');
 					if (! empty($next_date)) {
-						$next_date = ParksDate::formatOfferDate(['date_from' => ParksDate::parksMysql2form($next_date->date_from), 'date_to' => ParksDate::parksMysql2form($next_date->date_to)], $this->api->lang);
+						$next_date = ParksDate::formatOfferDate(['date_from' => ParksDate::parksMysql2form($next_date->date_from), 'date_to' => ParksDate::parksMysql2form($next_date->date_to)], $this->sdk->lang);
 						$short_info .= '<span>' . $label . ':</span> ' . $next_date;
 					}
 				}
@@ -1570,39 +1569,39 @@ class ParksView
 			case CATEGORY_PRODUCT:
 				if (! empty($offer->dates)) {
 					$first_date = $offer->dates[0];
-					$label = $this->api->lang->get('offer_saison');
-					$next_date = ParksDate::formatOfferDate(['date_from' => ParksDate::parksMysql2form($first_date->date_from), 'date_to' => ParksDate::parksMysql2form($first_date->date_to)], $this->api->lang);
+					$label = $this->sdk->lang->get('offer_saison');
+					$next_date = ParksDate::formatOfferDate(['date_from' => ParksDate::parksMysql2form($first_date->date_from), 'date_to' => ParksDate::parksMysql2form($first_date->date_to)], $this->sdk->lang);
 					$short_info .= '<span>' . $label . ':</span> ' . $next_date;
 				} else if (! empty($offer->season_months)) {
 					$season_months = explode(',', $offer->season_months);
 					$season_month_labels = [];
 					if (is_array($season_months) && ! empty($season_months)) {
 						if (count($season_months) == 12) {
-							$short_info .= '<span>' . $this->api->lang->get('offer_saison') . ':</span> ' . $this->api->lang->get('offer_all_season');
+							$short_info .= '<span>' . $this->sdk->lang->get('offer_saison') . ':</span> ' . $this->sdk->lang->get('offer_all_season');
 						}
 						else {
 							foreach ($season_months as $month) {
-								$season_month_labels[] = $this->api->lang->get('month_long_' . $month);
+								$season_month_labels[] = $this->sdk->lang->get('month_long_' . $month);
 							}
 							$short_info .= implode(', ', $season_month_labels);
 						}
 					}
 				} else {
-					$short_info .= '<span>' . $this->api->lang->get('offer_saison') . ':</span> ' . $this->api->lang->get('offer_all_season');
+					$short_info .= '<span>' . $this->sdk->lang->get('offer_saison') . ':</span> ' . $this->sdk->lang->get('offer_all_season');
 				}
 				break;
 			case CATEGORY_ACTIVITY:
 				if (! empty($offer->time_required) || ! empty($offer->time_required_minutes)) {
-					$short_info .= '<span>' . $this->api->lang->get('offer_time_required') . ': </span> ' . ParksDate::activityGetTimeRequired($offer, $this->api->lang);
+					$short_info .= '<span>' . $this->sdk->lang->get('offer_time_required') . ': </span> ' . ParksDate::activityGetTimeRequired($offer, $this->sdk->lang);
 				}
 				if (isset($offer->route_length) && (intval($offer->route_length) > 0)) {
-					$short_info .= '<span>' . $this->api->lang->get('offer_route_length') . ':</span> ' . number_format((float) $offer->route_length, 1) . ' km ';
+					$short_info .= '<span>' . $this->sdk->lang->get('offer_route_length') . ':</span> ' . number_format((float) $offer->route_length, 1) . ' km ';
 				}
 				break;
 			case CATEGORY_PROJECT:
 			case CATEGORY_RESEARCH:
 				if (isset($offer->duration_from) && (intval($offer->duration_from) > 0)) {
-					$short_info .= '<span>' . $this->api->lang->get('offer_project_duration') . ':</span> ' . $offer->duration_from;
+					$short_info .= '<span>' . $this->sdk->lang->get('offer_project_duration') . ':</span> ' . $offer->duration_from;
 				}
 				if (isset($offer->duration_to) && (intval($offer->duration_to) > 0)) {
 					$short_info .= ' - ' . $offer->duration_to;
@@ -1637,13 +1636,13 @@ class ParksView
 		if (! empty($offer->hyperlinks) && count($offer->hyperlinks) > 0) {
 			$links = '';
 			foreach ($offer->hyperlinks as $hyperlink) {
-				if (in_array($this->api->langId, explode(',', $hyperlink->language))) {
+				if (in_array($this->sdk->langId, explode(',', $hyperlink->language))) {
 					$link_label = ! empty($hyperlink->title) ? html_entity_decode($hyperlink->title) : $hyperlink->url;
-					$links .= '<a href="' . $hyperlink->url . '" class="external_link" target="_blank" title="' . $this->api->lang->get('offer_link_more_infos') . ' ' . $link_label . '">' . $link_label . '</a><br>';
+					$links .= '<a href="' . $hyperlink->url . '" class="external_link" target="_blank" title="' . $this->sdk->lang->get('offer_link_more_infos') . ' ' . $link_label . '">' . $link_label . '</a><br>';
 				}
 			}
 			if (! empty($links)) {
-				$template_data['OFFER_LINKS'] = $this->renderDetailBlock($this->api->lang->get('offer_links'), '<p>' . $links . '</p>', 'block offer_links');
+				$template_data['OFFER_LINKS'] = $this->renderDetailBlock($this->sdk->lang->get('offer_links'), '<p>' . $links . '</p>', 'block offer_links');
 			}
 		}
 
@@ -1692,7 +1691,7 @@ class ParksView
 			// Show ratings
 			if (! empty($accessibility->ratings)) {
 				foreach ($accessibility->ratings as $rating) {
-					$label = $rating->{'description_' . $this->api->langId};
+					$label = $rating->{'description_' . $this->sdk->langId};
 					$accessibilities .= '
 						<a href="' . $accessiblity_link . '" target="_blank">
 							<img src="' . $rating->icon_url . '" class="pictogram tooltip" alt="' . $label . '" title="' . $label . '">
@@ -1711,11 +1710,11 @@ class ParksView
 			}
 
 			// More info link
-			$accessibilities .= '<br><a href="' . $accessiblity_link . '" target="_blank">' . $this->api->lang->get('offer_more_informations_accessibility') . '</a>';
+			$accessibilities .= '<br><a href="' . $accessiblity_link . '" target="_blank">' . $this->sdk->lang->get('offer_more_informations_accessibility') . '</a>';
 
 			// Set template tag
 			if (! empty($accessibilities)) {
-				$template_data['OFFER_ACCESSIBILITIES'] = $this->renderDetailBlock($this->api->lang->get('offer_accessibility'), '<p>' . $accessibilities . '</p>', 'block offer_accessibilities');
+				$template_data['OFFER_ACCESSIBILITIES'] = $this->renderDetailBlock($this->sdk->lang->get('offer_accessibility'), '<p>' . $accessibilities . '</p>', 'block offer_accessibilities');
 			}
 		}
 
@@ -1756,8 +1755,8 @@ class ParksView
 
 			if (empty($offer->online_shop_enabled)) {
 				$template_data['OFFER_TARGET_GROUPS'] =
-					$this->renderDetailBlock($this->api->lang->get('offer_target_group_general_info'), $tg_main, 'block main_target_groups')
-					. $this->renderDetailBlock($this->api->lang->get('offer_target_group_specific_info'), $tg_special, 'block specific_target_groups');
+					$this->renderDetailBlock($this->sdk->lang->get('offer_target_group_general_info'), $tg_main, 'block main_target_groups')
+					. $this->renderDetailBlock($this->sdk->lang->get('offer_target_group_specific_info'), $tg_special, 'block specific_target_groups');
 			} else {
 				$template_data['OFFER_TARGET_GROUPS'] = '';
 			}
@@ -1776,21 +1775,21 @@ class ParksView
 			$suppliers = '';
 			foreach ($offer->suppliers as $supplier) {
 				if ($supplier['is_park_partner'] == 1) {
-					$suppliers .= '<div class="partner"><i>' . $this->api->lang->get('offer_park_partner') . '</i></div>';
+					$suppliers .= '<div class="partner"><i>' . $this->sdk->lang->get('offer_park_partner') . '</i></div>';
 				}
 				$suppliers .= '<p>' . ParksFormat::autoTextFormat($supplier['contact']) . '</p>';
 			}
-			$template_data['OFFER_SUPPLIERS'] = $this->renderDetailBlock($this->api->lang->get('offer_supplier'), $suppliers, 'block offer_suppliers');
+			$template_data['OFFER_SUPPLIERS'] = $this->renderDetailBlock($this->sdk->lang->get('offer_supplier'), $suppliers, 'block offer_suppliers');
 		}
 
 		// Institution
 		if (isset($offer->institution) && ! empty($offer->institution) && ! in_array($offer->root_category, [CATEGORY_EVENT])) {
 			if ($offer->institution_is_park_partner == 1) {
-				$offer->institution = '<div class="partner"><i>' . $this->api->lang->get('offer_park_partner') . '</i></div>' . ParksFormat::autoTextFormat($offer->institution);
+				$offer->institution = '<div class="partner"><i>' . $this->sdk->lang->get('offer_park_partner') . '</i></div>' . ParksFormat::autoTextFormat($offer->institution);
 			}
 
 			// Set title
-			$title = $this->api->lang->get('offer_organizer');
+			$title = $this->sdk->lang->get('offer_organizer');
 
 			// Set placeholder
 			$template_data['OFFER_INSTITUTION'] = $this->renderDetailBlock($title, $offer->institution, 'block offer_institution');
@@ -1798,9 +1797,9 @@ class ParksView
 
 		// Park
 		if ($offer->contact_is_park_partner == 1) {
-			$offer->contact = '<div class="partner"><i>' . $this->api->lang->get('offer_park_partner') . '</i></div>' . ParksFormat::autoTextFormat($offer->contact);
+			$offer->contact = '<div class="partner"><i>' . $this->sdk->lang->get('offer_park_partner') . '</i></div>' . ParksFormat::autoTextFormat($offer->contact);
 		}
-		$template_data['OFFER_CONTACT'] = $this->renderDetailBlock($this->api->lang->get('offer_contact'), $offer->contact, 'block offer_contact');
+		$template_data['OFFER_CONTACT'] = $this->renderDetailBlock($this->sdk->lang->get('offer_contact'), $offer->contact, 'block offer_contact');
 
 
 		/*
@@ -1923,9 +1922,9 @@ class ParksView
 			$documents = '';
 			foreach ($offer->documents as $document) {
 				$document_label = ($document->title ? $document->title : $document->url);
-				$documents .= '<a href="' . $document->url . '" class="download_link" target="_blank" title="' . $this->api->lang->get('offer_link_download') . ' ' . $document_label . '">' . $document_label . '</a><br>';
+				$documents .= '<a href="' . $document->url . '" class="download_link" target="_blank" title="' . $this->sdk->lang->get('offer_link_download') . ' ' . $document_label . '">' . $document_label . '</a><br>';
 			}
-			$template_data['OFFER_DOCUMENTS'] = $this->renderDetailBlock($this->api->lang->get('offer_documents_public'), $documents, 'block offer_documents');
+			$template_data['OFFER_DOCUMENTS'] = $this->renderDetailBlock($this->sdk->lang->get('offer_documents_public'), $documents, 'block offer_documents');
 		}
 
 
@@ -1942,7 +1941,7 @@ class ParksView
 			// I18n fields
 			foreach (['costs', 'funding', 'partner', 'remarks'] as $key) {
 				if (! empty($offer->{$key})) {
-					$internal_infos .= trim($this->renderDetailBlock($this->api->lang->get('offer_' . $key), $offer->{$key}, 'block ' . $key));
+					$internal_infos .= trim($this->renderDetailBlock($this->sdk->lang->get('offer_' . $key), $offer->{$key}, 'block ' . $key));
 				}
 			}
 
@@ -1950,13 +1949,13 @@ class ParksView
 			if (! empty($offer->hyperlinks_intern)) {
 				$links = '';
 				foreach ($offer->hyperlinks_intern as $hyperlink) {
-					if (in_array($this->api->langId, explode(',', $hyperlink->language))) {
+					if (in_array($this->sdk->langId, explode(',', $hyperlink->language))) {
 						$link_label = ! empty($hyperlink->title) ? html_entity_decode($hyperlink->title) : $hyperlink->url;
-						$links .= '<a href="' . $hyperlink->url . '" class="external_link" target="_blank" title="' . $this->api->lang->get('offer_link_more_infos') . ' ' . $link_label . '">' . $link_label . '</a><br>';
+						$links .= '<a href="' . $hyperlink->url . '" class="external_link" target="_blank" title="' . $this->sdk->lang->get('offer_link_more_infos') . ' ' . $link_label . '">' . $link_label . '</a><br>';
 					}
 				}
 				if (! empty($links)) {
-					$internal_infos .= $this->renderDetailBlock($this->api->lang->get('offer_internal_hyperlinks'), '<p>' . $links . '</p>', 'block offer_links_intern');
+					$internal_infos .= $this->renderDetailBlock($this->sdk->lang->get('offer_internal_hyperlinks'), '<p>' . $links . '</p>', 'block offer_links_intern');
 				}
 			}
 
@@ -1965,9 +1964,9 @@ class ParksView
 				$documents = '';
 				foreach ($offer->documents_intern as $document) {
 					$document_label = ($document->title ? $document->title : $document->url);
-					$documents .= '<a href="' . $document->url . '" class="download_link" target="_blank" title="' . $this->api->lang->get('offer_link_download') . ' ' . $document_label . '">' . $document_label . '</a><br>';
+					$documents .= '<a href="' . $document->url . '" class="download_link" target="_blank" title="' . $this->sdk->lang->get('offer_link_download') . ' ' . $document_label . '">' . $document_label . '</a><br>';
 				}
-				$internal_infos .= $this->renderDetailBlock($this->api->lang->get('offer_internal_documents'), $documents, 'block offer_documents_intern');
+				$internal_infos .= $this->renderDetailBlock($this->sdk->lang->get('offer_internal_documents'), $documents, 'block offer_documents_intern');
 			}
 
 			$template_data['OFFER_INTERNAL_INFOS'] = $internal_infos;
@@ -1992,8 +1991,8 @@ class ParksView
 		$template_data['OFFER_BACK_LINK'] = '';
 
 		// Javascript close window button
-		if (! empty($this->api->mapOptions['link_target']) && ($this->api->mapOptions['link_target'] == '_blank') && empty($this->api->mapOptions['ignore_close_window'])) {
-			$template_data['OFFER_BACK_LINK'] = '<a class="close_window back_to_overview" href="javascript:void(0);" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->api->lang->get('back_to_overview') . '</span></a>';
+		if (! empty($this->sdk->mapOptions['link_target']) && ($this->sdk->mapOptions['link_target'] == '_blank') && empty($this->sdk->mapOptions['ignore_close_window'])) {
+			$template_data['OFFER_BACK_LINK'] = '<a class="close_window back_to_overview" href="javascript:void(0);" title="' . $this->sdk->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->sdk->lang->get('back_to_overview') . '</span></a>';
 		}
 
 		// Default back links
@@ -2006,17 +2005,17 @@ class ParksView
 				$original_offer_id = ! empty($_GET['poi']) ? intval($_GET['poi']) : intval($original_offer_id);
 
 				// Get original offer (title)
-				$original_offer = $this->api->model->getOffer($original_offer_id, true);
+				$original_offer = $this->sdk->model->getOffer($original_offer_id, true);
 
 				// Get original offer category
 				$original_category_id = ! empty($_GET['original_category']) ? intval($_GET['original_category']) : $original_offer->root_category;
 
 				// Set back button label
-				$back_button_label = ($original_category_id != CATEGORY_PROJECT) ? $this->api->lang->get('back_to_route') : $this->api->lang->get('back_to_project');
+				$back_button_label = ($original_category_id != CATEGORY_PROJECT) ? $this->sdk->lang->get('back_to_route') : $this->sdk->lang->get('back_to_project');
 
 				// Javascript close window button
 				if (! empty($this->config['poi_listing_link_target']) && ($this->config['poi_listing_link_target'] == '_blank')) {
-					$template_data['OFFER_BACK_LINK'] = '<a class="close_window back_to_overview" href="javascript:void(0);" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $back_button_label . '</span></a>';
+					$template_data['OFFER_BACK_LINK'] = '<a class="close_window back_to_overview" href="javascript:void(0);" title="' . $this->sdk->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $back_button_label . '</span></a>';
 				}
 
 				// Back to overview button
@@ -2035,24 +2034,24 @@ class ParksView
 					}
 
 					// Set placeholder
-					$template_data['OFFER_BACK_LINK'] = '<a class="back_to_overview" href="' . $back_link . '" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $back_button_label . '</span></a>';
+					$template_data['OFFER_BACK_LINK'] = '<a class="back_to_overview" href="' . $back_link . '" title="' . $this->sdk->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $back_button_label . '</span></a>';
 				}
 			}
 
 			// Optional: force browser history back (e.g. external referer)
 			elseif (! empty($_GET['force_back_to_referer']) && ! empty($_SERVER['HTTP_REFERER'])) {
-				$template_data['OFFER_BACK_LINK'] = '<a class="go_back back_to_overview" href="javascript:void(0);" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->api->lang->get('back_to_overview') . '</span></a>';
+				$template_data['OFFER_BACK_LINK'] = '<a class="go_back back_to_overview" href="javascript:void(0);" title="' . $this->sdk->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->sdk->lang->get('back_to_overview') . '</span></a>';
 			}
 
 			// Default: overview URL (list/map tab restored by parks.min.js)
 			else {
 				$back_link = $this->getOverviewBackUrl();
-				$template_data['OFFER_BACK_LINK'] = '<a class="back_to_overview" href="' . $back_link . '" title="' . $this->api->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->api->lang->get('back_to_overview') . '</span></a>';
+				$template_data['OFFER_BACK_LINK'] = '<a class="back_to_overview" href="' . $back_link . '" title="' . $this->sdk->lang->get('offer_link_back_to_offers') . '"><i aria-hidden="true">c</i><span>' . $this->sdk->lang->get('back_to_overview') . '</span></a>';
 			}
 		}
 
 		// Single offer mode
-		if ($this->api->singleMode === true) {
+		if ($this->sdk->singleMode === true) {
 			$template_data['OFFER_BACK_LINK'] = '';
 		}
 
@@ -2092,7 +2091,7 @@ class ParksView
 		|--------------------------------------------------------------------------
 		|
 		*/
-		$output = $this->api->compileTemplate('detail', $template_data, $template_conditions);
+		$output = $this->sdk->compileTemplate('detail', $template_data, $template_conditions);
 
 		return $this->output($output);
 	}
@@ -2115,13 +2114,13 @@ class ParksView
 			}
 
 			// Set link attributes
-			$favorite_link_title = in_array($offer_id, $this->api->favorites) ? $this->api->lang->get('favorites_remove') : $this->api->lang->get('favorites_add');
-			$favorite_class = in_array($offer_id, $this->api->favorites) ? 'active' : '';
+			$favorite_link_title = in_array($offer_id, $this->sdk->favorites) ? $this->sdk->lang->get('favorites_remove') : $this->sdk->lang->get('favorites_add');
+			$favorite_class = in_array($offer_id, $this->sdk->favorites) ? 'active' : '';
 			
 			// Output toggle favorite link
 			$output = '
 				<div class="favorite ' . $favorite_class . '">
-					<a href="' . $this->config['favorites_script_path'] . '/favorites.php?offer_id=' . $offer_id . '" data-offer-id="' . $offer_id . '" data-title="' . $favorite_link_title . '" data-label-add="' . $this->api->lang->get('favorites_add') . '" data-label-remove="' . $this->api->lang->get('favorites_remove') . '" class="tooltip" title="' . $favorite_link_title . '" role="button"><span aria-hidden="true">i</span></a>
+					<a href="' . $this->config['favorites_script_path'] . '/favorites.php?offer_id=' . $offer_id . '" data-offer-id="' . $offer_id . '" data-title="' . $favorite_link_title . '" data-label-add="' . $this->sdk->lang->get('favorites_add') . '" data-label-remove="' . $this->sdk->lang->get('favorites_remove') . '" class="tooltip" title="' . $favorite_link_title . '" role="button"><span aria-hidden="true">i</span></a>
 				</div>
 			';
 
@@ -2176,7 +2175,7 @@ class ParksView
 					}
 
 					// Prepare display limit
-					$detail_date_display = (! empty($this->api->config['detail_limit_dates']) && ($this->api->config['detail_limit_dates'] > 0)) ? intval($this->api->config['detail_limit_dates']) : 4;
+					$detail_date_display = (! empty($this->sdk->config['detail_limit_dates']) && ($this->sdk->config['detail_limit_dates'] > 0)) ? intval($this->sdk->config['detail_limit_dates']) : 4;
 
 					// Show only future events (exception: category product)
 					if (($now < $date_from) || (! empty($date_to) && ($now < $date_to)) || ($offer->root_category == CATEGORY_PRODUCT)) {
@@ -2185,7 +2184,7 @@ class ParksView
 						$date_counter++;
 
 						// Add date
-						$dates .= ParksDate::formatOfferDate(['date_from' => ParksDate::parksMysql2form($date->date_from), 'date_to' => ParksDate::parksMysql2form($date->date_to)], $this->api->lang) . '<br>';
+						$dates .= ParksDate::formatOfferDate(['date_from' => ParksDate::parksMysql2form($date->date_from), 'date_to' => ParksDate::parksMysql2form($date->date_to)], $this->sdk->lang) . '<br>';
 
 						// Start hidden layer
 						if ($total_dates > $detail_date_display) {
@@ -2205,8 +2204,8 @@ class ParksView
 				if ($total_dates > $detail_date_display) {
 					$dates .= '
 						<div class="more_less_buttons" aria-hidden="true">
-							<a class="show_more" href="javascript:void(0);">' . $this->api->lang->get('show_more') . '</a>
-							<a class="show_less" href="javascript:void(0);" style="display: none;">' . $this->api->lang->get('show_less') . '</a>
+							<a class="show_more" href="javascript:void(0);">' . $this->sdk->lang->get('show_more') . '</a>
+							<a class="show_less" href="javascript:void(0);" style="display: none;">' . $this->sdk->lang->get('show_less') . '</a>
 						</div>
 					';
 				} else {
@@ -2217,29 +2216,29 @@ class ParksView
 				$season_month_labels = [];
 				if (is_array($season_months) && ! empty($season_months)) {
 					if (count($season_months) == 12) {
-						$dates .= '<p>' . $this->api->lang->get('offer_all_season') . '</p>';
+						$dates .= '<p>' . $this->sdk->lang->get('offer_all_season') . '</p>';
 					}
 					else {
 						foreach ($season_months as $month) {
-							$season_month_labels[] = $this->api->lang->get('month_long_' . $month);
+							$season_month_labels[] = $this->sdk->lang->get('month_long_' . $month);
 						}
 						$dates .= implode(', ', $season_month_labels);
 					}
 				}
 			} else {
-				$dates .= '<p>' . $this->api->lang->get('offer_all_season') . '</p>';
+				$dates .= '<p>' . $this->sdk->lang->get('offer_all_season') . '</p>';
 			}
 
 			// Date condition
 			if (empty($offer->dates) || ($total_dates > 0)) {
 
 				// Set title
-				$dates_title = $this->api->lang->get('offer_dates');
+				$dates_title = $this->sdk->lang->get('offer_dates');
 				if ($offer->root_category == CATEGORY_BOOKING) {
-					$dates_title = $this->api->lang->get('offer_execution_times');
+					$dates_title = $this->sdk->lang->get('offer_execution_times');
 				}
 				if (in_array($offer->root_category, [CATEGORY_PRODUCT, CATEGORY_ACTIVITY])) {
-					$dates_title = $this->api->lang->get('offer_saison');
+					$dates_title = $this->sdk->lang->get('offer_saison');
 				}
 
 				// Output
@@ -2269,7 +2268,7 @@ class ParksView
 	protected function getPoiContent(array $pois, int $offer_id, ?int $original_category): ?string
 	{
 
-		$offers = $this->api->showOfferPoiList($pois);
+		$offers = $this->sdk->showOfferPoiList($pois);
 		$offers = ['data' => $offers, 'total' => count($offers)];
 		$output = $this->listOffers($offers, true, $offer_id, $original_category);
 		return $output;
@@ -2286,14 +2285,14 @@ class ParksView
 		// Load template data		
 		$template_data['OFFER_ADDITIONAL_INFO'] = $this->renderAdditionalInfos($offer);
 		$template_data['OFFER_DATES'] = $this->getOfferDates($offer);
-		$template_data['OFFER_EVENT_LOCATION'] = trim($this->renderDetailBlock($this->api->lang->get('offer_event_location'), $offer->institution, 'block event_location'));
+		$template_data['OFFER_EVENT_LOCATION'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_event_location'), $offer->institution, 'block event_location'));
 		$template_data['OFFER_EVENT_LOCATION_SHORT'] = ! empty($offer->institution_location) ? $offer->institution_location : '';
-		$template_data['OFFER_EVENT_DATE_DETAILS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_date_details'), $offer->details, 'block date_details'));
-		$template_data['OFFER_EVENT_LOCATION_DETAILS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_location_details'), $offer->location_details, 'block location_details'));
+		$template_data['OFFER_EVENT_DATE_DETAILS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_date_details'), $offer->details, 'block date_details'));
+		$template_data['OFFER_EVENT_LOCATION_DETAILS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_location_details'), $offer->location_details, 'block location_details'));
 		if (! empty($offer->public_transport_stop) && (strlen($offer->public_transport_stop) >= $this->config['min_chars_sbb_link'])) {
-			$template_data['OFFER_EVENT_TRANSPORT'] = trim($this->renderDetailBlock($this->api->lang->get('offer_public_transport_stop'), $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->api->lang->get('offer_link_sbb') . '">' . $this->api->lang->get('offer_timetable_sbb') . '</a>', 'block public_transport_stop'));
+			$template_data['OFFER_EVENT_TRANSPORT'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_public_transport_stop'), $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->sdk->lang->get('offer_link_sbb') . '">' . $this->sdk->lang->get('offer_timetable_sbb') . '</a>', 'block public_transport_stop'));
 		}
-		$template_data['OFFER_EVENT_PRICE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_price'), $offer->price, 'block price'));
+		$template_data['OFFER_EVENT_PRICE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_price'), $offer->price, 'block price'));
 
 		// Compile template data
 		return $this->compileOutput($template_data);
@@ -2312,11 +2311,11 @@ class ParksView
 		if (empty($offer->online_shop_enabled)) {
 			$template_data['OFFER_DATES'] = $this->getOfferDates($offer);
 		}
-		$template_data['OFFER_PRODUCT_OPENING_HOURS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_opening_hours'), $offer->opening_hours, 'block opening_hours'));
+		$template_data['OFFER_PRODUCT_OPENING_HOURS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_opening_hours'), $offer->opening_hours, 'block opening_hours'));
 		if (! empty($offer->public_transport_stop) && (strlen($offer->public_transport_stop) >= $this->config['min_chars_sbb_link'])) {
-			$template_data['OFFER_PRODUCT_PUBLIC_TRANSPORT'] = trim($this->renderDetailBlock($this->api->lang->get('offer_public_transport_stop'), $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->api->lang->get('offer_link_sbb') . '">' . $this->api->lang->get('offer_timetable_sbb') . '</a>', 'block public_transport_stop'));
+			$template_data['OFFER_PRODUCT_PUBLIC_TRANSPORT'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_public_transport_stop'), $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->sdk->lang->get('offer_link_sbb') . '">' . $this->sdk->lang->get('offer_timetable_sbb') . '</a>', 'block public_transport_stop'));
 		}
-		$template_data['OFFER_PRODUCT_INFRASTRUCTURE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_infrastructure'), $this->getDetailInfrastructure($offer), 'block infrastructure'));
+		$template_data['OFFER_PRODUCT_INFRASTRUCTURE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_infrastructure'), $this->getDetailInfrastructure($offer), 'block infrastructure'));
 
 		// Load template data
 		if (! empty($offer->online_shop_enabled)) {
@@ -2325,18 +2324,18 @@ class ParksView
 			$template_data['OFFER_PRODUCT_PRICE'] = '
 				<div class="block product_price">
 					<div class="description">
-						<h2>' . $this->api->lang->get('offer_product_price') . '</h2>
+						<h2>' . $this->sdk->lang->get('offer_product_price') . '</h2>
 						<div class="price">
 							<span class="currency">CHF</span>
 							<span class="value">' . $offer->online_shop_price . '</span>
 						</div>
 						<div class="order_information_wrap">
 							<div class="order_information payment_info">
-								<span class="title">' . $this->api->lang->get('offer_product_payment_modalities') . ':</span>
+								<span class="title">' . $this->sdk->lang->get('offer_product_payment_modalities') . ':</span>
 								<span class="description">' . $offer->online_shop_payment_terms . '</span>
 							</div>
 							<div class="order_information delivery_info">
-								<span class="title">' . $this->api->lang->get('offer_product_delivery_conditions') . ':</span>
+								<span class="title">' . $this->sdk->lang->get('offer_product_delivery_conditions') . ':</span>
 								<span class="description">' . $offer->online_shop_delivery_conditions . '</span>
 							</div>
 						</div>
@@ -2344,7 +2343,7 @@ class ParksView
 				</div>
 			';
 		} else {
-			$template_data['OFFER_PRODUCT_PRICE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_price'), $offer->price, 'block price'));
+			$template_data['OFFER_PRODUCT_PRICE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_price'), $offer->price, 'block price'));
 		}
 
 		// Compile template data
@@ -2363,13 +2362,13 @@ class ParksView
 		$template_data['OFFER_ADDITIONAL_INFO'] = $this->renderAdditionalInfos($offer);
 		$template_data['OFFER_DATES'] = $this->getOfferDates($offer);
 		$template_data['OFFER_BOOKING_GROUPS'] = $this->getDetailGroups($offer);
-		$template_data['OFFER_BOOKING_BENEFITS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_benefits'), $offer->benefits, 'block benefits'));
-		$template_data['OFFER_BOOKING_REQUIREMENTS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_requirements'), $offer->requirements, 'block requirements'));
-		$template_data['OFFER_BOOKING_ACCOMMODATIONS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_accommodation'), $this->getAccommodations($offer), 'block accommodations'));
+		$template_data['OFFER_BOOKING_BENEFITS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_benefits'), $offer->benefits, 'block benefits'));
+		$template_data['OFFER_BOOKING_REQUIREMENTS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_requirements'), $offer->requirements, 'block requirements'));
+		$template_data['OFFER_BOOKING_ACCOMMODATIONS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_accommodation'), $this->getAccommodations($offer), 'block accommodations'));
 		if (! empty($offer->public_transport_stop) && (strlen($offer->public_transport_stop) >= $this->config['min_chars_sbb_link'])) {
-			$template_data['OFFER_BOOKING_TRANSPORT'] = trim($this->renderDetailBlock($this->api->lang->get('offer_public_transport_stop'), $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->api->lang->get('offer_link_sbb') . '">' . $this->api->lang->get('offer_timetable_sbb') . '</a>', 'block public_transport_stop'));
+			$template_data['OFFER_BOOKING_TRANSPORT'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_public_transport_stop'), $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->sdk->lang->get('offer_link_sbb') . '">' . $this->sdk->lang->get('offer_timetable_sbb') . '</a>', 'block public_transport_stop'));
 		}
-		$template_data['OFFER_BOOKING_PRICE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_price'), $offer->price, 'block price'));
+		$template_data['OFFER_BOOKING_PRICE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_price'), $offer->price, 'block price'));
 
 		// Compile template data
 		return $this->compileOutput($template_data);
@@ -2386,14 +2385,14 @@ class ParksView
 		// Load template data
 		$template_data['OFFER_ADDITIONAL_INFO'] = $this->renderAdditionalInfos($offer);
 		$template_data['OFFER_DATES'] = $this->getOfferDates($offer);
-		$template_data['OFFER_ACTIVITY_ROUTE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_route_info'), $this->getRouteDetails($offer), 'block route_info rwd-info-block'));
-		$template_data['OFFER_ACTIVITY_ARRIVAL'] = trim($this->renderDetailBlock($this->api->lang->get('offer_arrival'), $this->getRouteStartStop($offer), 'block arrival rwd-info-block'));
-		$template_data['OFFER_ACTIVITY_SIGNALIZATION'] = trim($this->renderDetailBlock($this->api->lang->get('offer_signalization'), $offer->signalization, 'block signalization'));
-		$template_data['OFFER_ACTIVITY_SAFETY_INSTRUCTIONS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_safety_instructions'), $offer->safety_instructions, 'block safety_instructions'));
-		$template_data['OFFER_ACTIVITY_MATERIAL_RENT'] = trim($this->renderDetailBlock($this->api->lang->get('offer_material_rent'), $offer->material_rent, 'block material_rent'));
-		$template_data['OFFER_ACTIVITY_INFRASTRUCTURE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_infrastructure'), $this->getDetailInfrastructure($offer), 'block infrastructure'));
-		$template_data['OFFER_ACTIVITY_PRICE'] = trim($this->renderDetailBlock($this->api->lang->get('offer_price'), $offer->price, 'block price'));
-		$template_data['OFFER_ACTIVITY_CATERING'] = trim($this->renderDetailBlock($this->api->lang->get('offer_catering_informations'), $offer->catering_informations, 'block catering_informations'));
+		$template_data['OFFER_ACTIVITY_ROUTE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_route_info'), $this->getRouteDetails($offer), 'block route_info rwd-info-block'));
+		$template_data['OFFER_ACTIVITY_ARRIVAL'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_arrival'), $this->getRouteStartStop($offer), 'block arrival rwd-info-block'));
+		$template_data['OFFER_ACTIVITY_SIGNALIZATION'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_signalization'), $offer->signalization, 'block signalization'));
+		$template_data['OFFER_ACTIVITY_SAFETY_INSTRUCTIONS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_safety_instructions'), $offer->safety_instructions, 'block safety_instructions'));
+		$template_data['OFFER_ACTIVITY_MATERIAL_RENT'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_material_rent'), $offer->material_rent, 'block material_rent'));
+		$template_data['OFFER_ACTIVITY_INFRASTRUCTURE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_infrastructure'), $this->getDetailInfrastructure($offer), 'block infrastructure'));
+		$template_data['OFFER_ACTIVITY_PRICE'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_price'), $offer->price, 'block price'));
+		$template_data['OFFER_ACTIVITY_CATERING'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_catering_informations'), $offer->catering_informations, 'block catering_informations'));
 
 		// Compile template data
 		return $this->compileOutput($template_data);
@@ -2410,7 +2409,7 @@ class ParksView
 		// Load template data
 		$template_data['OFFER_ADDITIONAL_INFO'] = $this->renderAdditionalInfos($offer);
 		$template_data['OFFER_PROJECT_DURATION'] = $this->formatProjectDuration($offer->duration_from, $offer->duration_to, $offer->duration_from_month, $offer->duration_to_month);
-		$template_data['OFFER_PROJECT_STATUS'] = trim($this->renderDetailBlock($this->api->lang->get('offer_project_status'), $this->config['project_status_' . $this->api->langId][$offer->project_status], 'block project_status'));
+		$template_data['OFFER_PROJECT_STATUS'] = trim($this->renderDetailBlock($this->sdk->lang->get('offer_project_status'), $this->config['project_status_' . $this->sdk->langId][$offer->project_status], 'block project_status'));
 
 		// Compile template data
 		return $this->compileOutput($template_data);
@@ -2439,14 +2438,14 @@ class ParksView
 			<script>
 				window.swissParksMapConfig = {
 					containerId: 				\'swiss-parks-map\',
-					initializeOnLoad: 			' . (! empty($this->api->mapOptions['map_initialize_on_load']) ? 'true' : 'false') . ',
-					showLayersAtStart: 			' . (! isset($this->api->mapOptions['show_layers_at_start']) || ! empty($this->api->mapOptions['show_layers_at_start']) ? 'true' : 'false') . ',
-					parkPerimeterVisibility: 	' . (! empty($this->api->mapOptions['parkperimeter_visibility']) ? 'true' : 'false') . ',
-					linkTarget: 				\'' . (! empty($this->api->mapOptions['link_target']) ? $this->api->mapOptions['link_target'] : '_self') . '\',
-					fullHeight: 				' . (! empty($this->api->mapOptions['full_height']) ? 'true' : 'false') . ',
-					enableScrollProtection: 	' . (! empty($this->api->mapOptions['full_height']) ? 'false' : 'true') . ',
-					offerLayersNoGrouping: 		' . (! empty($this->api->mapOptions['do_not_group_categories_in_legend']) ? 'true' : 'false') . ',
-					language: 					\'' . $this->api->langId . '\',
+					initializeOnLoad: 			' . (! empty($this->sdk->mapOptions['map_initialize_on_load']) ? 'true' : 'false') . ',
+					showLayersAtStart: 			' . (! isset($this->sdk->mapOptions['show_layers_at_start']) || ! empty($this->sdk->mapOptions['show_layers_at_start']) ? 'true' : 'false') . ',
+					parkPerimeterVisibility: 	' . (! empty($this->sdk->mapOptions['parkperimeter_visibility']) ? 'true' : 'false') . ',
+					linkTarget: 				\'' . (! empty($this->sdk->mapOptions['link_target']) ? $this->sdk->mapOptions['link_target'] : '_self') . '\',
+					fullHeight: 				' . (! empty($this->sdk->mapOptions['full_height']) ? 'true' : 'false') . ',
+					enableScrollProtection: 	' . (! empty($this->sdk->mapOptions['full_height']) ? 'false' : 'true') . ',
+					offerLayersNoGrouping: 		' . (! empty($this->sdk->mapOptions['do_not_group_categories_in_legend']) ? 'true' : 'false') . ',
+					language: 					\'' . $this->sdk->langId . '\',
 					mode: 						\'filter\',
 					detailOfferId: 				null,
 					statePersistence: 			{ shareableUrl: true, rememberSession: true },
@@ -2503,7 +2502,7 @@ class ParksView
 		// Get POIs of this offer
 		$pois = [];
 		if (! empty($offer->poi) && (in_array($offer->root_category, [CATEGORY_ACTIVITY, CATEGORY_PROJECT, CATEGORY_RESEARCH]))) {
-			$pois = $this->api->showOfferPoiList($offer->poi);
+			$pois = $this->sdk->showOfferPoiList($offer->poi);
 		}
 
 		// Collect offers by categories
@@ -2519,13 +2518,13 @@ class ParksView
 			<script>
 				window.swissParksMapConfig = {
 					containerId: 				\'swiss-parks-map\',
-					initializeOnLoad: 			' . (! empty($this->api->mapOptions['map_initialize_on_load']) ? 'true' : 'false') . ',
+					initializeOnLoad: 			' . (! empty($this->sdk->mapOptions['map_initialize_on_load']) ? 'true' : 'false') . ',
 					showLayersAtStart: 			false,
-					parkPerimeterVisibility: 	' . (! empty($this->api->mapOptions['parkperimeter_visibility']) ? 'true' : 'false') . ',
-					linkTarget: 				\'' . (! empty($this->api->mapOptions['link_target']) ? $this->api->mapOptions['link_target'] : '_self') . '\',
-					fullHeight: 				' . (! empty($this->api->mapOptions['full_height']) ? 'true' : 'false') . ',
-					enableScrollProtection: 	' . (! empty($this->api->mapOptions['full_height']) ? 'false' : 'true') . ',
-					language: 					\'' . $this->api->langId . '\',
+					parkPerimeterVisibility: 	' . (! empty($this->sdk->mapOptions['parkperimeter_visibility']) ? 'true' : 'false') . ',
+					linkTarget: 				\'' . (! empty($this->sdk->mapOptions['link_target']) ? $this->sdk->mapOptions['link_target'] : '_self') . '\',
+					fullHeight: 				' . (! empty($this->sdk->mapOptions['full_height']) ? 'true' : 'false') . ',
+					enableScrollProtection: 	' . (! empty($this->sdk->mapOptions['full_height']) ? 'false' : 'true') . ',
+					language: 					\'' . $this->sdk->langId . '\',
 					mode: 						\'detailmap\',
 					detailOfferId: 				\'' . $offer->offer_id . '\',
 					offersData: 				{ categories: { ' . $categories_offers_view . ' }},
@@ -2553,12 +2552,12 @@ class ParksView
 
 		$out = '';
 
-		$remove = ParksMap::mapLayerEntries($this->api->mapOptions['layers_to_remove'] ?? []);
+		$remove = ParksMap::mapLayerEntries($this->sdk->mapOptions['layers_to_remove'] ?? []);
 		if (! empty($remove)) {
 			$out .= 'layersToRemove: ' . json_encode($remove, JSON_UNESCAPED_SLASHES) . ',' . "\n\t\t\t\t\t";
 		}
 
-		$add = ParksMap::mapLayerEntries($this->api->mapOptions['layers_to_add'] ?? []);
+		$add = ParksMap::mapLayerEntries($this->sdk->mapOptions['layers_to_add'] ?? []);
 		if (! empty($add)) {
 			$out .= 'layersToAdd: ' . json_encode($add, JSON_UNESCAPED_SLASHES) . ',' . "\n\t\t\t\t\t";
 		}
@@ -2594,7 +2593,7 @@ class ParksView
 	protected function getMapLayers(): string
 	{
 
-		$map_layers = $this->api->model->getCustomLayers();
+		$map_layers = $this->sdk->model->getCustomLayers();
 
 		if (empty($map_layers)) {
 			return '';
@@ -2605,7 +2604,7 @@ class ParksView
 		foreach ($map_layers as $layer) {
 
 			// Popup title: prefer language-specific free-text template, then language-less fallback
-			$popup_title = $layer->i18n[$this->api->langId]['popup_title']
+			$popup_title = $layer->i18n[$this->sdk->langId]['popup_title']
 				?? (! empty($layer->popup_title) ? $layer->popup_title : null)
 				?? ('Layer ' . $layer->layer_position);
 
@@ -2624,7 +2623,7 @@ class ParksView
 					layer: {
 						id: \'custom-layer-' . md5($layer->map_layer_id) . '\',
 						url: \'' . $layer->url . '\',
-						title: \'' . ($layer->i18n[$this->api->langId]['layer_title'] ?? 'Layer ' . $layer->layer_position) . '\',
+						title: \'' . ($layer->i18n[$this->sdk->langId]['layer_title'] ?? 'Layer ' . $layer->layer_position) . '\',
 						options: { outFields: [\'*\'] }
 					},
 					target: {
@@ -2635,7 +2634,7 @@ class ParksView
 						titleTemplate: \'' . $popup_title_escaped . '\',
 						titleField: \'' . $title_field_escaped . '\',
 						imageUrl: \'' . (! empty($layer->popup_logo) ? $this->config['base_url'] . $layer->popup_logo : '') . '\',
-						contentTemplate: \'' . str_replace(["'", "\r\n", "\n"], ["\'", "<br>", "<br>"], trim($layer->i18n[$this->api->langId]['popup_content'] ?? '')) . '\',
+						contentTemplate: \'' . str_replace(["'", "\r\n", "\n"], ["\'", "<br>", "<br>"], trim($layer->i18n[$this->sdk->langId]['popup_content'] ?? '')) . '\',
 					},
 					visible: ' . ($layer->visible_by_default ? 'true' : 'false') . '
 				}' . ($layer->map_layer_id != end($map_layers)->map_layer_id ? ',' : '') . '
@@ -2656,7 +2655,7 @@ class ParksView
 		$return = '
 			<div class="detail_text">
 				<p>
-					' . (($offer->subscription_mandatory == 2) ? $this->api->lang->get('offer_subscription_info_recommended') : $this->api->lang->get('offer_subscription_info_mandatory')) . '
+					' . (($offer->subscription_mandatory == 2) ? $this->sdk->lang->get('offer_subscription_info_recommended') : $this->sdk->lang->get('offer_subscription_info_mandatory')) . '
 				</p>
 		';
 
@@ -2672,7 +2671,7 @@ class ParksView
 		// Subscription contact
 		if (! empty($offer->subscription_contact)) {
 			$return .= '
-				<h2>' . $this->api->lang->get('offer_subscription_contact') . '</h2>
+				<h2>' . $this->sdk->lang->get('offer_subscription_contact') . '</h2>
 				<p>
 					' . ParksFormat::autoTextFormat($offer->subscription_contact) . '
 				</p>
@@ -2683,13 +2682,13 @@ class ParksView
 		if ($offer->online_subscription_enabled == true) {
 			$return .= '
 				<div class="text_right">
-					<a class="sign_in button" target="_blank" href="' . $this->config['base_url'] . $this->api->langId . '/subscription/subscriber/' . $offer->offer_id . '">' . $this->api->lang->get('offer_subscription_subscribe_now') . '</a>
+					<a class="sign_in button" target="_blank" href="' . $this->config['base_url'] . $this->sdk->langId . '/subscription/subscriber/' . $offer->offer_id . '">' . $this->sdk->lang->get('offer_subscription_subscribe_now') . '</a>
 				</div>
 			';
 		} else if (! empty($offer->subscription_link)) {
 			$return .= '
 				<div class="text_right">
-					<a class="sign_in button" target="_blank" href="' . $offer->subscription_link . '">' . $this->api->lang->get('offer_subscription_subscribe_now') . '</a>
+					<a class="sign_in button" target="_blank" href="' . $offer->subscription_link . '">' . $this->sdk->lang->get('offer_subscription_subscribe_now') . '</a>
 				</div>
 			';
 		}
@@ -2716,22 +2715,22 @@ class ParksView
 		// Infrastructure
 		$infrastructure = [];
 		if (! empty($offer->number_of_rooms)) {
-			$infrastructure[] = sprintf($this->api->lang->get('offer_rooms'), $offer->number_of_rooms);
+			$infrastructure[] = sprintf($this->sdk->lang->get('offer_rooms'), $offer->number_of_rooms);
 		}
 		if (! empty($offer->has_conference_room)) {
-			$infrastructure[] = $this->api->lang->get('offer_conference_room');
+			$infrastructure[] = $this->sdk->lang->get('offer_conference_room');
 		}
 		if (! empty($offer->has_playground)) {
-			$infrastructure[] = $this->api->lang->get('offer_playground');
+			$infrastructure[] = $this->sdk->lang->get('offer_playground');
 		}
 		if (! empty($offer->has_picnic_place)) {
-			$infrastructure[] = $this->api->lang->get('offer_picnic_place');
+			$infrastructure[] = $this->sdk->lang->get('offer_picnic_place');
 		}
 		if (! empty($offer->has_fireplace)) {
-			$infrastructure[] = $this->api->lang->get('offer_fireplace');
+			$infrastructure[] = $this->sdk->lang->get('offer_fireplace');
 		}
 		if (! empty($offer->has_washrooms)) {
-			$infrastructure[] = $this->api->lang->get('offer_washroom');
+			$infrastructure[] = $this->sdk->lang->get('offer_washroom');
 		}
 		$infrastructure = (count($infrastructure) > 0) ? '<ul><li>' . implode('</li><li>', $infrastructure) . '</li></ul>' : '';
 
@@ -2752,7 +2751,7 @@ class ParksView
 		if (isset($offer->accommodations) && ! empty($offer->accommodations)) {
 			foreach ($offer->accommodations as $accommodation) {
 				if (! empty($accommodation['is_park_partner'])) {
-					$accommodations .= '<div class="partner"><i aria-hidden="true">' . $this->api->lang->get('offer_park_partner') . '</i></div>';
+					$accommodations .= '<div class="partner"><i aria-hidden="true">' . $this->sdk->lang->get('offer_park_partner') . '</i></div>';
 				}
 				$accommodations .= '<p>' . ParksFormat::autoTextFormat($accommodation['contact']) . '</p>';
 			}
@@ -2773,28 +2772,28 @@ class ParksView
 
 		if (! empty($offer)) {
 			if (! empty($offer->route_length) && ($offer->route_length > 0)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_route_length') . '</dt><dd>' . ((intval($offer->route_length) > 0) ? number_format((float) $offer->route_length, 1) : '') . ' ' . $this->api->lang->get('offer_route_length_km') . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_route_length') . '</dt><dd>' . ((intval($offer->route_length) > 0) ? number_format((float) $offer->route_length, 1) : '') . ' ' . $this->sdk->lang->get('offer_route_length_km') . '</dd>';
 			}
 			if (! empty($offer->untarred_route_length) && ($offer->untarred_route_length > 0)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_untarred_route_length') . '</dt><dd>' . ((intval($offer->untarred_route_length) > 0) ? $offer->untarred_route_length : '') . ' ' . $this->api->lang->get('offer_route_length_km') . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_untarred_route_length') . '</dt><dd>' . ((intval($offer->untarred_route_length) > 0) ? $offer->untarred_route_length : '') . ' ' . $this->sdk->lang->get('offer_route_length_km') . '</dd>';
 			}
 			if (! empty($offer->altitude_differential) && ($offer->altitude_differential > 0)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_altitude_differential') . '</dt><dd>' . $offer->altitude_differential . ' ' . $this->api->lang->get('offer_altitude_meter') . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_altitude_differential') . '</dt><dd>' . $offer->altitude_differential . ' ' . $this->sdk->lang->get('offer_altitude_meter') . '</dd>';
 			}
 			if (! empty($offer->altitude_ascent) && ($offer->altitude_ascent > 0)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_altitude_ascent') . '</dt><dd>' . $offer->altitude_ascent . ' ' . $this->api->lang->get('offer_altitude_meter') . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_altitude_ascent') . '</dt><dd>' . $offer->altitude_ascent . ' ' . $this->sdk->lang->get('offer_altitude_meter') . '</dd>';
 			}
 			if (! empty($offer->altitude_descent) && ($offer->altitude_descent > 0)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_altitude_descent') . '</dt><dd>' . $offer->altitude_descent . ' ' . $this->api->lang->get('offer_altitude_meter') . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_altitude_descent') . '</dt><dd>' . $offer->altitude_descent . ' ' . $this->sdk->lang->get('offer_altitude_meter') . '</dd>';
 			}
 			if (! empty($offer->time_required) || ! empty($offer->time_required_minutes)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_time_required') . '</dt><dd>' . ParksDate::activityGetTimeRequired($offer, $this->api->lang) . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_time_required') . '</dt><dd>' . ParksDate::activityGetTimeRequired($offer, $this->sdk->lang) . '</dd>';
 			}
 			if (! empty($offer->level_technics)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_level_technics') . '</dt><dd>' . $this->api->model->levels[$offer->level_technics] . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_level_technics') . '</dt><dd>' . $this->sdk->model->levels[$offer->level_technics] . '</dd>';
 			}
 			if (! empty($offer->level_condition)) {
-				$route_details .= '<dt>' . $this->api->lang->get('offer_level_condition') . '</dt><dd>' . $this->api->model->levels[$offer->level_condition] . '</dd>';
+				$route_details .= '<dt>' . $this->sdk->lang->get('offer_level_condition') . '</dt><dd>' . $this->sdk->model->levels[$offer->level_condition] . '</dd>';
 			}
 			if (! empty($route_details)) {
 				$route_details = '<dl>' . $route_details . '</dl>';
@@ -2822,25 +2821,25 @@ class ParksView
 
 			// Start
 			if (! empty($offer->start_place_info)) {
-				$start_stop_place .= '<dt>' . $this->api->lang->get('offer_start_place') . '</dt><dd>' . nl2br($offer->start_place_info);
+				$start_stop_place .= '<dt>' . $this->sdk->lang->get('offer_start_place') . '</dt><dd>' . nl2br($offer->start_place_info);
 				if (! empty($offer->start_place_altitude)) {
-					$start_stop_place .= ' (' . $this->api->lang->get('offer_altitude') . ': ' . $offer->start_place_altitude . ' ' . $this->api->lang->get('offer_altitude_meter') . ')';
+					$start_stop_place .= ' (' . $this->sdk->lang->get('offer_altitude') . ': ' . $offer->start_place_altitude . ' ' . $this->sdk->lang->get('offer_altitude_meter') . ')';
 				}
 				$start_stop_place .= '</dd>';
 				if (! empty($offer->public_transport_start) && (strlen($offer->public_transport_start) >= $this->config['min_chars_sbb_link'])) {
-					$start_stop_place .= '<dt>' . $this->api->lang->get('offer_public_transport_stop') . '</dt><dd>' . $offer->public_transport_start . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_start) . '" target="_blank" class="sbb" title="' . $this->api->lang->get('offer_link_sbb') . '">' . $this->api->lang->get('offer_timetable_sbb') . '</a></dd>';
+					$start_stop_place .= '<dt>' . $this->sdk->lang->get('offer_public_transport_stop') . '</dt><dd>' . $offer->public_transport_start . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_start) . '" target="_blank" class="sbb" title="' . $this->sdk->lang->get('offer_link_sbb') . '">' . $this->sdk->lang->get('offer_timetable_sbb') . '</a></dd>';
 				}
 			}
 
 			// Stop / goal
 			if (! empty($offer->goal_place_info)) {
-				$start_stop_place .= '<div class="content-margin-cf"></div><dt>' . $this->api->lang->get('offer_goal_place') . '</dt><dd>' . nl2br($offer->goal_place_info);
+				$start_stop_place .= '<div class="content-margin-cf"></div><dt>' . $this->sdk->lang->get('offer_goal_place') . '</dt><dd>' . nl2br($offer->goal_place_info);
 				if (! empty($offer->goal_place_altitude)) {
-					$start_stop_place .= ' (' . $this->api->lang->get('offer_altitude') . ': ' . $offer->goal_place_altitude . ' ' . $this->api->lang->get('offer_altitude_meter') . ')';
+					$start_stop_place .= ' (' . $this->sdk->lang->get('offer_altitude') . ': ' . $offer->goal_place_altitude . ' ' . $this->sdk->lang->get('offer_altitude_meter') . ')';
 				}
 				$start_stop_place .= '</dd>';
 				if (! empty($offer->public_transport_stop) && (strlen($offer->public_transport_stop) >= $this->config['min_chars_sbb_link'])) {
-					$start_stop_place .= '<dt>' . $this->api->lang->get('offer_public_transport_stop') . '</dt><dd>' . $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->api->lang->get('offer_link_sbb') . '">' . $this->api->lang->get('offer_timetable_sbb') . '</a></dd>';
+					$start_stop_place .= '<dt>' . $this->sdk->lang->get('offer_public_transport_stop') . '</dt><dd>' . $offer->public_transport_stop . ' <a href="' . $this->sbbLink . '?nach=' . urlencode($offer->public_transport_stop) . '" target="_blank" class="sbb" title="' . $this->sdk->lang->get('offer_link_sbb') . '">' . $this->sdk->lang->get('offer_timetable_sbb') . '</a></dd>';
 				}
 			}
 
@@ -2866,14 +2865,14 @@ class ParksView
 
 			// Min/max subscribers
 			if (! empty($offer->min_group_subscriber)) {
-				$group_subscriber .= $this->api->lang->get('offer_min_subscriber') . ' ' . $offer->min_group_subscriber . '<br>';
+				$group_subscriber .= $this->sdk->lang->get('offer_min_subscriber') . ' ' . $offer->min_group_subscriber . '<br>';
 			}
 			if (! empty($offer->max_group_subscriber)) {
-				$group_subscriber .= $this->api->lang->get('offer_max_subscriber') . ' ' . $offer->max_group_subscriber;
+				$group_subscriber .= $this->sdk->lang->get('offer_max_subscriber') . ' ' . $offer->max_group_subscriber;
 			}
 
 			// Prepare view
-			$group_subscriber = $this->renderDetailBlock($this->api->lang->get('offer_number_of_people_groups'), $group_subscriber, 'block number_of_people_groups');
+			$group_subscriber = $this->renderDetailBlock($this->sdk->lang->get('offer_number_of_people_groups'), $group_subscriber, 'block number_of_people_groups');
 		}
 
 		// Individual subscriber
@@ -2882,14 +2881,14 @@ class ParksView
 
 			// Min/max subscribers
 			if (! empty($offer->min_individual_subscriber)) {
-				$individual_subscriber .= $this->api->lang->get('offer_min_subscriber') . ' ' . $offer->min_individual_subscriber . '<br>';
+				$individual_subscriber .= $this->sdk->lang->get('offer_min_subscriber') . ' ' . $offer->min_individual_subscriber . '<br>';
 			}
 			if (! empty($offer->max_individual_subscriber)) {
-				$individual_subscriber .= $this->api->lang->get('offer_max_subscriber') . ' ' . $offer->max_individual_subscriber;
+				$individual_subscriber .= $this->sdk->lang->get('offer_max_subscriber') . ' ' . $offer->max_individual_subscriber;
 			}
 
 			// Prepare view
-			$individual_subscriber = $this->renderDetailBlock($this->api->lang->get('offer_number_of_people_individual'), $individual_subscriber, 'block number_of_people_individual');
+			$individual_subscriber = $this->renderDetailBlock($this->sdk->lang->get('offer_number_of_people_individual'), $individual_subscriber, 'block number_of_people_individual');
 		}
 
 		return $group_subscriber . $individual_subscriber;
@@ -2907,13 +2906,13 @@ class ParksView
 
 		// Prepare options
 		if (! empty($offer->barrier_free)) {
-			$additional_info[] = $this->api->lang->get('offer_barrier_free');
+			$additional_info[] = $this->sdk->lang->get('offer_barrier_free');
 		}
 		if (! empty($offer->learning_opportunity)) {
-			$additional_info[] = $this->api->lang->get('offer_learning_opportunity');
+			$additional_info[] = $this->sdk->lang->get('offer_learning_opportunity');
 		}
 		if (! empty($offer->child_friendly)) {
-			$additional_info[] = $this->api->lang->get('offer_child_friendly');
+			$additional_info[] = $this->sdk->lang->get('offer_child_friendly');
 		}
 
 		// Prepare output
@@ -2953,23 +2952,23 @@ class ParksView
 			if ($from_year != $to_year) {
 
 				if (! $is_overview) {
-					$output .= $this->api->lang->get('offer_from') . ' ';
+					$output .= $this->sdk->lang->get('offer_from') . ' ';
 				}
 
 				$output .= '<strong>';
 
 				if ($from_month > 0) {
-					$output .= $this->api->lang->get('month_long_' . $from_month) . ' ';
+					$output .= $this->sdk->lang->get('month_long_' . $from_month) . ' ';
 				}
 
 				if ($is_overview) {
 					$output .= $from_year . ' – ';
 				} else {
-					$output .= $from_year . '</strong> ' . $this->api->lang->get('offer_to') . ' <strong>';
+					$output .= $from_year . '</strong> ' . $this->sdk->lang->get('offer_to') . ' <strong>';
 				}
 
 				if ($to_month > 0) {
-					$output .= $this->api->lang->get('month_long_' . $to_month) . ' ';
+					$output .= $this->sdk->lang->get('month_long_' . $to_month) . ' ';
 				}
 				$output .=  $to_year . '</strong>';
 			}
@@ -2979,25 +2978,25 @@ class ParksView
 			else {
 				if (($from_month > 0) && ($to_month > 0) && ($from_month != $to_month)) {
 					if (! $is_overview) {
-						$output .= $this->api->lang->get('offer_from') . ' ';
+						$output .= $this->sdk->lang->get('offer_from') . ' ';
 					}
-					$output .= '<strong>' . $this->api->lang->get('month_long_' . $from_month) . ' ' . $this->api->lang->get('offer_to') . ' ' . $this->api->lang->get('month_long_' . $to_month) . ' ' . $from_year . '</strong>';
+					$output .= '<strong>' . $this->sdk->lang->get('month_long_' . $from_month) . ' ' . $this->sdk->lang->get('offer_to') . ' ' . $this->sdk->lang->get('month_long_' . $to_month) . ' ' . $from_year . '</strong>';
 				} else {
 					$output .= '<strong>';
 					if ($from_month > 0) {
-						$output .= $this->api->lang->get('month_long_' . $from_month) . ' ';
+						$output .= $this->sdk->lang->get('month_long_' . $from_month) . ' ';
 					}
 					$output .= $from_year . '</strong>';
 				}
 			}
 		} else if ($is_overview == false) {
-			$output = $this->api->lang->get('offer_project_no_duration');
+			$output = $this->sdk->lang->get('offer_project_no_duration');
 		}
 
 		// Return string
 		if (! empty($output)) {
 			if ($is_overview == false) {
-				return $this->renderDetailBlock($this->api->lang->get('offer_project_duration'), $output, 'block project_duration');
+				return $this->renderDetailBlock($this->sdk->lang->get('offer_project_duration'), $output, 'block project_duration');
 			} else {
 				return $output;
 			}

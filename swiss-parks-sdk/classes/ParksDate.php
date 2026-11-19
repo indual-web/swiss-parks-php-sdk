@@ -85,7 +85,7 @@ class ParksDate
 	 */
 	public static function formatOfferDateLabel(string $date, ParksLanguage $lang): string {
 
-		if (($lang->api->config['display_weekday_short'] ?? true) === true) {
+		if (($lang->sdk->config['display_weekday_short'] ?? true) === true) {
 			return self::formatDateWithWeekdayShort($date, $lang);
 		}
 

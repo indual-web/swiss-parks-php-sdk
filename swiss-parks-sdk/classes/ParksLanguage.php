@@ -13,9 +13,9 @@ class ParksLanguage
 
 
 	/**
-	 * API
+	 * SDK instance
 	 */
-	public ParksAPI $api;
+	public ParksSDK $sdk;
 
 
 	/**
@@ -40,31 +40,30 @@ class ParksLanguage
 	/**
 	 * Constructor
 	 */
-	public function __construct(string $langId, ParksAPI $api)
+	public function __construct(string $langId, ParksSDK $sdk)
 	{
 
-		// Api instance
-		$this->api = $api;
+		$this->sdk = $sdk;
 
 		// Load language file
-		if (! empty($langId) && in_array($langId, $this->api->config['available_languages']) && file_exists($this->api->config['absolute_path'] . '/lang/' . strtolower($langId) . '.php')) {
-			$labels = require($this->api->config['absolute_path'] . '/lang/' . strtolower($langId) . '.php');
+		if (! empty($langId) && in_array($langId, $this->sdk->config['available_languages']) && file_exists($this->sdk->config['absolute_path'] . '/lang/' . strtolower($langId) . '.php')) {
+			$labels = require($this->sdk->config['absolute_path'] . '/lang/' . strtolower($langId) . '.php');
 		}
 
 		// Load default language file
-		elseif (file_exists($this->api->config['absolute_path'] . '/lang/de.php')) {
-			$labels = require($this->api->config['absolute_path'] . '/lang/de.php');
+		elseif (file_exists($this->sdk->config['absolute_path'] . '/lang/de.php')) {
+			$labels = require($this->sdk->config['absolute_path'] . '/lang/de.php');
 			$langId = 'de';
 		}
 
 		// Error, no language file found
 		else {
-			$this->api->abort('The language file does not exist.');
+			$this->sdk->abort('The language file does not exist.');
 		}
 
 		// Check language labels
 		if (! is_array($labels)) {
-			$this->api->abort('Your language file does not appear to be formatted correctly.');
+			$this->sdk->abort('Your language file does not appear to be formatted correctly.');
 		}
 
 		// Set labels

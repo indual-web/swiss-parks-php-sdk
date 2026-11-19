@@ -26,8 +26,8 @@ fi
 
 HASH="$(php -r '
 require $argv[1];
-$api = ParksAPI::forScript();
-echo (string) ($api->config["api_hash"] ?? "");
+$sdk = ParksSDK::forScript();
+echo (string) ($sdk->config["api_hash"] ?? "");
 ' "$SDK_ROOT/autoload.php" 2>/dev/null || true)"
 
 if [[ -z "$HASH" || "$HASH" == "insert-your-hash-here" ]]; then
@@ -37,10 +37,10 @@ fi
 
 DB_PATH="$(php -r '
 require $argv[1];
-$api = ParksAPI::forScript();
-$path = (string) ($api->config["db_path"] ?? "");
+$sdk = ParksSDK::forScript();
+$path = (string) ($sdk->config["db_path"] ?? "");
 if ($path !== "" && $path[0] !== "/") {
-	$path = rtrim((string) ($api->config["absolute_path"] ?? ""), "/") . "/" . ltrim($path, "/");
+	$path = rtrim((string) ($sdk->config["absolute_path"] ?? ""), "/") . "/" . ltrim($path, "/");
 }
 echo $path;
 ' "$SDK_ROOT/autoload.php" 2>/dev/null || true)"

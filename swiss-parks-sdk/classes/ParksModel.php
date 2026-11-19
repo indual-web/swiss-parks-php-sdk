@@ -13,9 +13,9 @@ class ParksModel
 
 
 	/**
-	 * API
+	 * SDK instance
 	 */
-	public ParksAPI $api;
+	public ParksSDK $sdk;
 
 
 	/**
@@ -53,18 +53,17 @@ class ParksModel
 	/**
 	 * Constructor
 	 */
-	public function __construct(ParksAPI $api)
+	public function __construct(ParksSDK $sdk)
 	{
 
-		// Api instance
-		$this->api = $api;
+		$this->sdk = $sdk;
 
 		// Set levels
 		$this->levels = [
 			0 => '',
-			1 => $this->api->lang->get('offer_easy'),
-			2 => $this->api->lang->get('offer_average'),
-			3 => $this->api->lang->get('offer_difficult'),
+			1 => $this->sdk->lang->get('offer_easy'),
+			2 => $this->sdk->lang->get('offer_average'),
+			3 => $this->sdk->lang->get('offer_difficult'),
 		];
 
 		$this->reloadTargetGroups();
@@ -82,9 +81,9 @@ class ParksModel
 
 		$this->fieldsOfActivity = [];
 
-		$q_fields = $this->api->db->get(
+		$q_fields = $this->sdk->db->get(
 			'field_of_activity',
-			['language' => $this->api->lang->langId],
+			['language' => $this->sdk->lang->langId],
 			['field_of_activity_i18n' => 'field_of_activity.field_of_activity_id = field_of_activity_i18n.field_of_activity_id'],
 			null,
 			null,
@@ -111,7 +110,7 @@ class ParksModel
 
 		$this->targetGroups = [];
 
-		$q_target_group = $this->api->db->get('target_group', ['language' => $this->api->lang->langId], ['target_group_i18n' => 'target_group.target_group_id = target_group_i18n.target_group_id'], null, null, null, null, 'target_group.sort');
+		$q_target_group = $this->sdk->db->get('target_group', ['language' => $this->sdk->lang->langId], ['target_group_i18n' => 'target_group.target_group_id = target_group_i18n.target_group_id'], null, null, null, null, 'target_group.sort');
 		if ($q_target_group->numRows > 0) {
 			while ($row = $q_target_group->fetchObject()) {
 				$this->targetGroups[$row->target_group_id] = $row->body;
@@ -130,7 +129,7 @@ class ParksModel
 
 		$this->categories = [];
 
-		$q_category = $this->api->db->get('category', ['language' => $this->api->lang->langId], ['category_i18n' => 'category.category_id = category_i18n.category_id']);
+		$q_category = $this->sdk->db->get('category', ['language' => $this->sdk->lang->langId], ['category_i18n' => 'category.category_id = category_i18n.category_id']);
 		if ($q_category->numRows > 0) {
 			while ($row = $q_category->fetchObject()) {
 				$this->categories[$row->category_id] = $row;
@@ -147,7 +146,7 @@ class ParksModel
 	public function offerExists(int $offer_id): bool
 	{
 
-		$q_offer = $this->api->db->query("SELECT offer_id FROM offer WHERE offer_id = " . $offer_id);
+		$q_offer = $this->sdk->db->query("SELECT offer_id FROM offer WHERE offer_id = " . $offer_id);
 		if ($q_offer->numRows > 0) {
 			return true;
 		}
@@ -164,10 +163,10 @@ class ParksModel
 	public function getCustomLayers(): array|false
 	{
 
-		$q_layers = $this->api->db->query("
+		$q_layers = $this->sdk->db->query("
 			SELECT * 
 			FROM map_layer 
-			WHERE languages LIKE '%" . $this->api->lang->langId . "%'
+			WHERE languages LIKE '%" . $this->sdk->lang->langId . "%'
 		");
 
 		if ($q_layers->numRows > 0) {
@@ -180,7 +179,7 @@ class ParksModel
 				}
 
 				// Get i18n data
-				$q_layers_i18n = $this->api->db->query("
+				$q_layers_i18n = $this->sdk->db->query("
 					SELECT * 
 					FROM map_layer_i18n 
 					WHERE map_layer_id = " . $row->map_layer_id . "
@@ -229,7 +228,7 @@ class ParksModel
 						$urls[$language] = $fields['url'];
 					}
 				}
-				$row->url = ParksMap::resolveI18nUrl($urls, $this->api->lang->langId, $row->languages ?? '');
+				$row->url = ParksMap::resolveI18nUrl($urls, $this->sdk->lang->langId, $row->languages ?? '');
 
 				$layers[$row->map_layer_id] = $row;
 			}
@@ -587,7 +586,7 @@ class ParksModel
 		if ($needs_subscription_join) {
 			$join .= "
 				LEFT OUTER JOIN subscription ON subscription.offer_id = main_offer.offer_id
-				LEFT OUTER JOIN subscription_i18n ON subscription_i18n.offer_id = main_offer.offer_id AND subscription_i18n.language = '" . $this->api->lang->langId . "'
+				LEFT OUTER JOIN subscription_i18n ON subscription_i18n.offer_id = main_offer.offer_id AND subscription_i18n.language = '" . $this->sdk->lang->langId . "'
 			";
 		}
 
@@ -682,10 +681,10 @@ class ParksModel
 		}
 
 		// Select language and show every entry, no matter which language is available
-		if (empty($filter['force_language']) && isset($this->api->config['language_independence']) && ($this->api->config['language_independence'] == true) && isset($this->api->config['language_priority'])) {
+		if (empty($filter['force_language']) && isset($this->sdk->config['language_independence']) && ($this->sdk->config['language_independence'] == true) && isset($this->sdk->config['language_priority'])) {
 
 			// Get language priorities
-			$language_priority = $this->api->config['language_priority'][$this->api->lang->langId];
+			$language_priority = $this->sdk->config['language_priority'][$this->sdk->lang->langId];
 			if (! empty($language_priority) && is_array($language_priority)) {
 
 				$where[] = "
@@ -708,7 +707,7 @@ class ParksModel
 								WHERE main_offer.offer_id = sub_offer.offer_id
 							) END
 						FROM offer sub_offer
-						LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $this->api->lang->langId . "'
+						LEFT JOIN offer_i18n sub_offer_i18n ON sub_offer_i18n.offer_id = sub_offer.offer_id AND sub_offer_i18n.language = '" . $this->sdk->lang->langId . "'
 						WHERE main_offer.offer_id = sub_offer.offer_id
 					)
 				";
@@ -717,7 +716,7 @@ class ParksModel
 
 		// Select only offers which are available in the current language
 		else {
-			$where[] = "offer_i18n.language = '" . ($filter['force_language'] ?: $this->api->lang->langId) . "'";
+			$where[] = "offer_i18n.language = '" . ($filter['force_language'] ?: $this->sdk->lang->langId) . "'";
 		}
 
 		// Filter: offer settings
@@ -728,28 +727,28 @@ class ParksModel
 		}
 
 		// Filter: target groups
-		if (! empty($filter['target_groups']) || ! empty($this->api->systemFilter['target_groups'])) {
+		if (! empty($filter['target_groups']) || ! empty($this->sdk->systemFilter['target_groups'])) {
 			$join .= "
 				LEFT JOIN target_group_link ON target_group_link.offer_id = main_offer.offer_id
 			";
 			if (! empty($filter['target_groups'])) {
 				$where[] = "(target_group_link.target_group_id IN (" . implode(',', $filter['target_groups']) . "))";
 			}
-			if (! empty($this->api->systemFilter['target_groups'])) {
-				$where[] = "(target_group_link.target_group_id IN (" . implode(',', $this->api->systemFilter['target_groups']) . "))";
+			if (! empty($this->sdk->systemFilter['target_groups'])) {
+				$where[] = "(target_group_link.target_group_id IN (" . implode(',', $this->sdk->systemFilter['target_groups']) . "))";
 			}
 		}
 
 		// Filter: fields of activity
-		if (! empty($filter['fields_of_activity']) || ! empty($this->api->systemFilter['fields_of_activity'])) {
+		if (! empty($filter['fields_of_activity']) || ! empty($this->sdk->systemFilter['fields_of_activity'])) {
 			$join .= "
 				LEFT JOIN field_of_activity_link ON field_of_activity_link.offer_id = main_offer.offer_id
 			";
 			if (! empty($filter['fields_of_activity'])) {
 				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . implode(',', $filter['fields_of_activity']) . "))";
 			}
-			if (! empty($this->api->systemFilter['fields_of_activity'])) {
-				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . implode(',', $this->api->systemFilter['fields_of_activity']) . "))";
+			if (! empty($this->sdk->systemFilter['fields_of_activity'])) {
+				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . implode(',', $this->sdk->systemFilter['fields_of_activity']) . "))";
 			}
 		}
 
@@ -883,7 +882,7 @@ class ParksModel
 			$search_words = array_values(array_filter(explode(' ', $filter['search']), fn($word) => $word !== ''));
 			if (! empty($search_words)) {
 				$fts_match = $this->buildFtsMatchQuery($search_words);
-				if ($fts_match !== '' && $this->api->db->isOfferFtsAvailable()) {
+				if ($fts_match !== '' && $this->sdk->db->isOfferFtsAvailable()) {
 
 					// Numeric tokens also match offer_id directly (handy for support lookups)
 					$id_matches = [];
@@ -895,7 +894,7 @@ class ParksModel
 					$fts_clause = "main_offer.offer_id IN (
 						SELECT offer_fts.offer_id
 						FROM offer_fts
-						WHERE offer_fts MATCH '" . $this->api->db->escape($fts_match) . "'
+						WHERE offer_fts MATCH '" . $this->sdk->db->escape($fts_match) . "'
 							AND offer_fts.language = offer_i18n.language
 					)";
 					$where[] = ! empty($id_matches)
@@ -906,7 +905,7 @@ class ParksModel
 					// No FTS table: AND across words, OR across many i18n/keyword columns
 					$search_query = "(";
 					foreach ($search_words as $word) {
-						$word = $this->api->db->escape($word);
+						$word = $this->sdk->db->escape($word);
 						$search_query .= "(
 									(main_offer.offer_id = '" . $word . "')
 									OR main_offer.keywords LIKE '%" . $word . "%'
@@ -944,7 +943,7 @@ class ParksModel
 			$keywords = explode(' ', $filter['keywords']);
 			if (! empty($keywords)) {
 				$restriction = 'OR';
-				if ($this->api->config['filter_keywords_with_and'] == true) {
+				if ($this->sdk->config['filter_keywords_with_and'] == true) {
 					$restriction = 'AND';
 				}
 				$keywords_query = "(";
@@ -1176,7 +1175,7 @@ class ParksModel
 		}
 
 		// Run query
-		$q_offers = $this->api->db->query($select . $join . $where . $group_by . $having . $order_by . $limit_sql);
+		$q_offers = $this->sdk->db->query($select . $join . $where . $group_by . $having . $order_by . $limit_sql);
 
 		if ($mode === 'filter_meta') {
 			if ($q_offers && $q_offers->numRows > 0) {
@@ -1224,7 +1223,7 @@ class ParksModel
 						" . $icon_urls_select . "
 					FROM offer main_offer
 				";
-				$q_count = $this->api->db->query(
+				$q_count = $this->sdk->db->query(
 					"SELECT COUNT(*) AS total FROM (" . $count_select . $join . $where . $group_by . $having . ") AS counted"
 				);
 				$offers['total'] = ($q_count && $q_count->numRows > 0) ? (int) $q_count->fetchObject()->total : count($offers['data']);
@@ -1295,7 +1294,7 @@ class ParksModel
 
 		// Categories (always needed, including map mode)
 		$categories_by_offer = [];
-		$q_categories = $this->api->db->query("
+		$q_categories = $this->sdk->db->query("
 			SELECT offer_id, category_id
 			FROM category_link
 			WHERE offer_id IN (" . $ids_sql . ")
@@ -1330,7 +1329,7 @@ class ParksModel
 
 		// Target groups
 		$target_group_ids_by_offer = [];
-		$q_target_groups = $this->api->db->query("
+		$q_target_groups = $this->sdk->db->query("
 			SELECT offer_id, target_group_id
 			FROM target_group_link
 			WHERE offer_id IN (" . $ids_sql . ")
@@ -1345,8 +1344,8 @@ class ParksModel
 
 		// Dates
 		$dates_by_offer = [];
-		$date_format = $this->api->config['db_date_format'];
-		$q_dates = $this->api->db->query("
+		$date_format = $this->sdk->config['db_date_format'];
+		$q_dates = $this->sdk->db->query("
 			SELECT
 				offer_id,
 				DATE_FORMAT(date_from, '" . $date_format . "') AS date_from,
@@ -1363,7 +1362,7 @@ class ParksModel
 
 		// Images
 		$images_by_offer = [];
-		$q_images = $this->api->db->query("
+		$q_images = $this->sdk->db->query("
 			SELECT *
 			FROM image
 			WHERE offer_id IN (" . $ids_sql . ")
@@ -1425,7 +1424,7 @@ class ParksModel
 	{
 
 		// Documents
-		$q_documents = $this->api->db->get('document', ['offer_id' => $offer->offer_id, 'language' => $this->api->lang->langId]);
+		$q_documents = $this->sdk->db->get('document', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
 		if ($q_documents->numRows > 0) {
 			$offer->documents = [];
 			while ($row = $q_documents->fetchObject()) {
@@ -1434,7 +1433,7 @@ class ParksModel
 		}
 
 		// Documents intern
-		$q_documents = $this->api->db->get('document_intern', ['offer_id' => $offer->offer_id, 'language' => $this->api->lang->langId]);
+		$q_documents = $this->sdk->db->get('document_intern', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
 		if ($q_documents->numRows > 0) {
 			$offer->documents_intern = [];
 			while ($row = $q_documents->fetchObject()) {
@@ -1443,7 +1442,7 @@ class ParksModel
 		}
 
 		// Hyperlinks
-		$q_hyperlinks = $this->api->db->get('hyperlink', ['offer_id' => $offer->offer_id, 'language' => $this->api->lang->langId]);
+		$q_hyperlinks = $this->sdk->db->get('hyperlink', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
 		if ($q_hyperlinks->numRows > 0) {
 			$offer->hyperlinks = [];
 			while ($row = $q_hyperlinks->fetchObject()) {
@@ -1452,7 +1451,7 @@ class ParksModel
 		}
 
 		// Hyperlinks intern
-		$q_hyperlinks = $this->api->db->get('hyperlink_intern', ['offer_id' => $offer->offer_id, 'language' => $this->api->lang->langId]);
+		$q_hyperlinks = $this->sdk->db->get('hyperlink_intern', ['offer_id' => $offer->offer_id, 'language' => $this->sdk->lang->langId]);
 		if ($q_hyperlinks->numRows > 0) {
 			$offer->hyperlinks_intern = [];
 			while ($row = $q_hyperlinks->fetchObject()) {
@@ -1461,7 +1460,7 @@ class ParksModel
 		}
 
 		// Accessibilities
-		$q_accessibilities = $this->api->db->query("
+		$q_accessibilities = $this->sdk->db->query("
 			SELECT *
 			FROM accessibility
 			WHERE accessibility.offer_id = " . $offer->offer_id . "
@@ -1469,7 +1468,7 @@ class ParksModel
 		");
 		if ($q_accessibilities->numRows > 0) {
 			$offer->accessibilities = $q_accessibilities->fetchObject();
-			$q_ratings = $this->api->db->query("
+			$q_ratings = $this->sdk->db->query("
 				SELECT *
 				FROM accessibility_rating
 				WHERE accessibility_rating.accessibility_id = " . $offer->accessibilities->accessibility_id . "
@@ -1484,7 +1483,7 @@ class ParksModel
 		// Product
 		if ($offer->root_category == CATEGORY_PRODUCT) {
 
-			$q_suppliers = $this->api->db->get('supplier', ['offer_id' => $offer->offer_id]);
+			$q_suppliers = $this->sdk->db->get('supplier', ['offer_id' => $offer->offer_id]);
 			if ($q_suppliers->numRows > 0) {
 				$offer->suppliers = [];
 				while ($row = $q_suppliers->fetchObject()) {
@@ -1493,11 +1492,11 @@ class ParksModel
 			}
 
 			if ($offer->online_shop_enabled == true) {
-				$language_priority = $this->api->config['language_priority'][$this->api->lang->langId];
+				$language_priority = $this->sdk->config['language_priority'][$this->sdk->lang->langId];
 				if (! empty($language_priority) && is_array($language_priority)) {
 
 					// Nested CASE picks the best available article language for the current UI lang
-					$q_articles = $this->api->db->query("
+					$q_articles = $this->sdk->db->query("
 
 						SELECT *
 						FROM product_article AS main_article
@@ -1524,7 +1523,7 @@ class ParksModel
 									WHERE main_article.product_article_id = sub_article.product_article_id
 								) END
 								FROM product_article AS sub_article
-								LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $this->api->lang->langId . "'
+								LEFT JOIN product_article_i18n sub_article_i18n ON sub_article_i18n.product_article_id = sub_article.product_article_id AND sub_article_i18n.language = '" . $this->sdk->lang->langId . "'
 								WHERE main_article.product_article_id = sub_article.product_article_id
 								
 							)
@@ -1534,12 +1533,12 @@ class ParksModel
 					if ($q_articles->numRows > 0) {
 						$offer->articles = [];
 						while ($article = $q_articles->fetchObject()) {
-							$q_article_labels = $this->api->db->query("
+							$q_article_labels = $this->sdk->db->query("
 								SELECT *
 								FROM product_article_label
 								WHERE 
 									product_article_id = " . $article->product_article_id . "
-									AND language = '" . $this->api->lang->langId . "'
+									AND language = '" . $this->sdk->lang->langId . "'
 							");
 							if ($q_article_labels->numRows > 0) {
 								$article->labels = [];
@@ -1556,7 +1555,7 @@ class ParksModel
 
 		// Booking
 		else if ($offer->root_category == CATEGORY_BOOKING) {
-			$q_accommodations = $this->api->db->get('accommodation', ['offer_id' => $offer->offer_id]);
+			$q_accommodations = $this->sdk->db->get('accommodation', ['offer_id' => $offer->offer_id]);
 			if ($q_accommodations->numRows > 0) {
 				$offer->accommodations = [];
 				while ($row = $q_accommodations->fetchObject()) {
@@ -1572,7 +1571,7 @@ class ParksModel
 			if (! empty($poi) && is_array($poi)) {
 				$poi_ids = array_values(array_filter(array_map('intval', $poi)));
 				if (! empty($poi_ids)) {
-					$q_poi = $this->api->db->query("
+					$q_poi = $this->sdk->db->query("
 						SELECT offer_id
 						FROM offer
 						WHERE offer_id IN (" . implode(',', $poi_ids) . ")
@@ -1589,7 +1588,7 @@ class ParksModel
 
 		// Activities that list this offer in their poi CSV are reverse-linked routes
 		$linked_routes = [];
-		$q_linked_routes = $this->api->db->query("
+		$q_linked_routes = $this->sdk->db->query("
 			SELECT offer_id
 			FROM activity
 			WHERE 
@@ -1609,7 +1608,7 @@ class ParksModel
 
 			// Drop candidates whose offer row was removed after the activity link was stored
 			if (! empty($candidate_ids)) {
-				$q_poi = $this->api->db->query("
+				$q_poi = $this->sdk->db->query("
 					SELECT offer_id
 					FROM offer
 					WHERE offer_id IN (" . implode(',', $candidate_ids) . ")
@@ -1683,7 +1682,7 @@ class ParksModel
 				CONCAT_WS(',', c1.parent_id, c2.parent_id, c3.parent_id, c4.parent_id) AS parents,
 				c1.sort
 			FROM category c1
-			INNER JOIN category_i18n ON category_i18n.category_id = c1.category_id AND category_i18n.language = '" . $this->api->lang->langId . "'
+			INNER JOIN category_i18n ON category_i18n.category_id = c1.category_id AND category_i18n.language = '" . $this->sdk->lang->langId . "'
 			LEFT JOIN category c2 ON c1.parent_id = c2.category_id
 			LEFT JOIN category c3 ON c2.parent_id = c3.category_id
 			LEFT JOIN category c4 ON c3.parent_id = c4.category_id
@@ -1710,7 +1709,7 @@ class ParksModel
 		$q_categories_string .= "GROUP BY c1.category_id ";
 		$q_categories_string .= "ORDER BY c1.sort ";
 
-		$q_categories = $this->api->db->query($q_categories_string);
+		$q_categories = $this->sdk->db->query($q_categories_string);
 
 		if ($q_categories->numRows > 0) {
 			$categories = [];
@@ -1719,7 +1718,7 @@ class ParksModel
 				$categories[$row->category_id] = (object) [
 					'category_id' => $row->category_id,
 					'parent_id' => $row->parent_id,
-					'language' => $this->api->lang->langId,
+					'language' => $this->sdk->lang->langId,
 					'body' => $row->body,
 					'marker' => $row->marker,
 					'parents' => explode(",", $row->parents),
@@ -1741,7 +1740,7 @@ class ParksModel
 	public function getAllCategoryLinks(): array|false
 	{
 
-		$q_category_links = $this->api->db->query("SELECT category_id FROM category_link GROUP BY category_link.category_id");
+		$q_category_links = $this->sdk->db->query("SELECT category_id FROM category_link GROUP BY category_link.category_id");
 
 		if ($q_category_links->numRows > 0) {
 			
@@ -1805,7 +1804,7 @@ class ParksModel
 	{
 
 		$categories = [];
-		$q_categories = $this->api->db->query("
+		$q_categories = $this->sdk->db->query("
 
 			SELECT
 				category.category_id,
@@ -1823,7 +1822,7 @@ class ParksModel
 				LEFT JOIN category AS c3 ON c2.parent_id = c3.category_id
 				INNER JOIN category_i18n ON category_i18n.category_id = category.category_id
 
-				WHERE category_i18n.language = '" . $this->api->lang->langId . "'
+				WHERE category_i18n.language = '" . $this->sdk->lang->langId . "'
 				ORDER BY category.sort
 
 		");
@@ -1848,8 +1847,8 @@ class ParksModel
 		if (! empty($targetGroups) && is_array($targetGroups)) {
 
 			// Delete existing target groups
-			$this->api->db->delete('target_group');
-			$this->api->db->delete('target_group_i18n');
+			$this->sdk->db->delete('target_group');
+			$this->sdk->db->delete('target_group_i18n');
 
 			// Insert target groups
 			foreach ($targetGroups as $lang => $items) {
@@ -1859,14 +1858,14 @@ class ParksModel
 
 					// Table target_group – only once
 					if ($lang == 'de') {
-						$this->api->db->insert('target_group', [
+						$this->sdk->db->insert('target_group', [
 							'target_group_id' => $target_group_id,
 							'sort' => $sort,
 						]);
 					}
 
 					// Table target_group_i18n
-					$this->api->db->insert('target_group_i18n', [
+					$this->sdk->db->insert('target_group_i18n', [
 						'target_group_id' => $target_group_id,
 						'language' => $lang,
 						'body' => $target_group,
@@ -1891,8 +1890,8 @@ class ParksModel
 		if (! empty($categories) && is_array($categories)) {
 
 			// Delete existing categories
-			$this->api->db->delete('category');
-			$this->api->db->delete('category_i18n');
+			$this->sdk->db->delete('category');
+			$this->sdk->db->delete('category_i18n');
 
 			// Insert categories
 			foreach ($categories as $lang => $items) {
@@ -1900,7 +1899,7 @@ class ParksModel
 
 					// Table category – only once
 					if ($lang == 'de') {
-						$this->api->db->insert('category', [
+						$this->sdk->db->insert('category', [
 							'category_id' => $category_id,
 							'parent_id' => $category['parent_id'],
 							'stnet_id' => $category['stnet_id'],
@@ -1912,7 +1911,7 @@ class ParksModel
 					}
 
 					// Table category_i18n
-					$this->api->db->insert('category_i18n', [
+					$this->sdk->db->insert('category_i18n', [
 						'category_id' => $category_id,
 						'language' => $lang,
 						'body' => $category['body'],
@@ -1937,8 +1936,8 @@ class ParksModel
 		if (! empty($fieldsOfActivity) && is_array($fieldsOfActivity)) {
 
 			// Delete existing fields of activity
-			$this->api->db->delete('field_of_activity');
-			$this->api->db->delete('field_of_activity_i18n');
+			$this->sdk->db->delete('field_of_activity');
+			$this->sdk->db->delete('field_of_activity_i18n');
 
 			// Insert fields of activity
 			foreach ($fieldsOfActivity as $lang => $items) {
@@ -1948,14 +1947,14 @@ class ParksModel
 
 					// Table field_of_activity – only once
 					if ($lang == 'de') {
-						$this->api->db->insert('field_of_activity', [
+						$this->sdk->db->insert('field_of_activity', [
 							'field_of_activity_id' => $field_of_activity_id,
 							'sort' => $sort,
 						]);
 					}
 
 					// Table field_of_activity_i18n
-					$this->api->db->insert('field_of_activity_i18n', [
+					$this->sdk->db->insert('field_of_activity_i18n', [
 						'field_of_activity_id' => $field_of_activity_id,
 						'language' => $lang,
 						'body' => $field_of_activity,
@@ -1978,7 +1977,7 @@ class ParksModel
 	{
 
 		// Get the municipalities
-		$q_municipalities = $this->api->db->get('municipality', $filter);
+		$q_municipalities = $this->sdk->db->get('municipality', $filter);
 
 		// Return empty array if there are no municipalities
 		if ($q_municipalities->numRows <= 0) {
@@ -2037,7 +2036,7 @@ class ParksModel
 			return $this->categories[$category_id];
 		}
 
-		$q_category = $this->api->db->get('category', ['category_id' => $category_id]);
+		$q_category = $this->sdk->db->get('category', ['category_id' => $category_id]);
 		if ($q_category->numRows <= 0) {
 			return false;
 		}
@@ -2158,7 +2157,7 @@ class ParksModel
 		$filter_options = [];
 
 		// Get all possible dropdown options
-		$options = $this->api->db->query("
+		$options = $this->sdk->db->query("
 			SELECT *
 			FROM accessibility_dropdown
 		");
@@ -2169,10 +2168,10 @@ class ParksModel
 		}
 
 		// Get accessiblity options
-		$select_result = $this->api->db->query("
+		$select_result = $this->sdk->db->query("
 			SELECT 
 				icon_url, 
-				MIN(description_" . $this->api->lang->langId . ") AS description
+				MIN(description_" . $this->sdk->lang->langId . ") AS description
 			FROM accessibility_rating
 			GROUP BY icon_url
 			ORDER BY description
@@ -2180,7 +2179,7 @@ class ParksModel
 
 		// Populate accessibilities
 		if ($select_result->numRows > 0) {
-			$accessibilites[GINTO_INFOS_AVAILABLE] = $this->api->lang->get('offer_accessibility_available');
+			$accessibilites[GINTO_INFOS_AVAILABLE] = $this->sdk->lang->get('offer_accessibility_available');
 			while ($row = $select_result->fetchArray()) {
 				if (in_array($row['icon_url'], $filter_options)) {
 					$accessibilites[$row['icon_url']] = $row['description'];
@@ -2202,13 +2201,13 @@ class ParksModel
 		if (! empty($options) && is_array($options)) {
 
 			// Delete existing list
-			$this->api->db->delete('accessibility_dropdown');
+			$this->sdk->db->delete('accessibility_dropdown');
 
 			// Iterate each option
 			foreach ($options as $option) {
 
 				// Insert option
-				$this->api->db->insert('accessibility_dropdown', [
+				$this->sdk->db->insert('accessibility_dropdown', [
 					'icon_url' => $option,
 				]);
 			}

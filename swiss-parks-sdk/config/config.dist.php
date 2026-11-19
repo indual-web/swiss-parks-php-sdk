@@ -249,7 +249,7 @@ $config['interactive_map_url'] = 'https://map.parks.swiss';
 | Enable favorites module to list all favorites
 | If enabled, set favorites_script_path to the public favorites endpoint
 | directory, e.g. /plugins/swiss-parks-sdk/public (without an ending slash),
-| or to a CMS/plugin URL that calls ParksAPI::toggleFavorite().
+| or to a CMS/plugin URL that calls ParksSDK::toggleFavorite().
 |
 */
 $config['favorites_extension_available'] = false;

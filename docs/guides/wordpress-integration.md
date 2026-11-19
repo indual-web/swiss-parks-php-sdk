@@ -119,26 +119,26 @@ add_shortcode('swiss_parks_offers', function () {
 
 	try {
 		// $page_url scopes the PHP session to this offers page (use_sessions)
-		$api = new ParksAPI($language, '', $page_url);
+		$sdk = new ParksSDK($language, '', $page_url);
 
 		// Pin forms/links to the page path when not using SEO URLs.
 		// Call this after construct: it affects HTML rendered below.
 		// Filter POST redirects during bootstrap still use REQUEST_URI
 		// (with pretty permalinks that is usually the same page path).
-		if (empty($api->config['seo_urls'])) {
+		if (empty($sdk->config['seo_urls'])) {
 			$path = parse_url($page_url, PHP_URL_PATH);
-			$api->setScriptUrl(is_string($path) && $path !== '' ? $path : '/');
+			$sdk->setScriptUrl(is_string($path) && $path !== '' ? $path : '/');
 		}
 
-		if ($api->isOfferDetail()) {
-			return $api->showOfferDetail();
+		if ($sdk->isOfferDetail()) {
+			return $sdk->showOfferDetail();
 		}
 
 		// List only (no map). For list+map tabs, copy the markup from index.php
 		// (ul.tab_list with tab_1 / tab_2) — parks.min.js expects that structure.
-		$html = $api->showOffersFilter();
-		$html .= $api->showOffersList();
-		$html .= $api->showOffersPagination();
+		$html = $sdk->showOffersFilter();
+		$html .= $sdk->showOffersList();
+		$html .= $sdk->showOffersPagination();
 
 		return $html;
 	} catch (RuntimeException $e) {
@@ -241,7 +241,7 @@ WordPress rewrites are internal; `$_SERVER['REQUEST_URI']` normally still contai
 ### Filter or session state lost
 
 - Set `use_sessions = true` and start the session on `init` (see sketch), before any HTML output.
-- Pass a stable `$page_url` into `ParksAPI` for session scope.
+- Pass a stable `$page_url` into `ParksSDK` for session scope.
 - Use unique `url_param_prefix` / `form_prefix`.
 
 ### Detail page never opens (SEO mode)

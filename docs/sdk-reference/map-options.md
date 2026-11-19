@@ -2,7 +2,7 @@
 
 # Map options
 
-Reference for keys that can be passed in `$api->mapOptions`.
+Reference for keys that can be passed in `$sdk->mapOptions`.
 
 ## Options
 
@@ -79,13 +79,13 @@ Base URL comes from `interactive_map_url` in `config.php` (default: `https://map
 
 ## Compatibility notes
 
-- Set `$api->mapOptions` in your integration page; full keys are listed above.
+- Set `$sdk->mapOptions` in your integration page; full keys are listed above.
 - Some keys depend on the frontend map bundle/version in use. Validate behavior in your project runtime before relying on it for behavior-critical features.
 
 ## Example
 
 ```php
-$api->mapOptions = [
+$sdk->mapOptions = [
     'map_initialize_on_load' => false,
     'show_layers_at_start' => true,
     'parkperimeter_visibility' => true,
@@ -106,4 +106,4 @@ $api->mapOptions = [
 ## Related docs
 
 - [SDK reference index](./index.md)
-- [ParksAPI methods](./parks-api.md)
+- [ParksSDK methods](./parks-sdk.md)

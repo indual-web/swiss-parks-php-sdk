@@ -13,9 +13,9 @@ class ParksLog
 
 
 	/**
-	 * API
+	 * SDK instance
 	 */
-	public ParksAPI $api;
+	public ParksSDK $sdk;
 
 
 	/**
@@ -28,14 +28,13 @@ class ParksLog
 	/**
 	 * Constructor
 	 */
-	public function __construct(ParksAPI $api)
+	public function __construct(ParksSDK $sdk)
 	{
 
-		// Api instance
-		$this->api = $api;
+		$this->sdk = $sdk;
 
 		// Set log path
-		$this->logfile = $this->api->config['absolute_path'] . '/' . $this->api->config['log_directory'] . date("Y_m_d") . '.log';
+		$this->logfile = $this->sdk->config['absolute_path'] . '/' . $this->sdk->config['log_directory'] . date("Y_m_d") . '.log';
 
 	}
 

@@ -42,7 +42,7 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 ## Reference
 
 - [SDK reference index](./sdk-reference/index.md)
-- [ParksAPI methods](./sdk-reference/parks-api.md)
+- [ParksSDK methods](./sdk-reference/parks-sdk.md)
 - [Filter options](./sdk-reference/filter-options.md)
 - [Map options](./sdk-reference/map-options.md)
 

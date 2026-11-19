@@ -51,7 +51,7 @@ resolve_download_urls()
 			$repo = getenv("GITHUB_REPO");
 			$ctx = stream_context_create([
 				"http" => [
-					"header" => "User-Agent: parks-api-upgrade-sdk\r\nAccept: application/vnd.github+json\r\n",
+					"header" => "User-Agent: parks-sdk-upgrade-sdk\r\nAccept: application/vnd.github+json\r\n",
 					"timeout" => 30,
 				],
 			]);

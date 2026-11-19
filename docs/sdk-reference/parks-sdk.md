@@ -1,14 +1,14 @@
-[Docs](../index.md) › [SDK reference](./index.md) › ParksAPI methods
+[Docs](../index.md) › [SDK reference](./index.md) › ParksSDK methods
 
-# ParksAPI methods
+# ParksSDK methods
 
-Integrator-facing methods from `ParksAPI`, grouped by purpose. Parameter names match the PHP signatures.
+Integrator-facing methods from `ParksSDK`, grouped by purpose. Parameter names match the PHP signatures. `ParksAPI` is a `class_alias` of `ParksSDK` for backward compatibility.
 
 ## Constructor
 
 ### `__construct($language = '', $hash = '', $page_url = '', $bootstrap_rendering = true, $bootstrap_setup = true)`
 
-Creates the API instance, loads config, and optionally bootstraps sessions/filters and view rendering.
+Creates the SDK instance, loads config, and optionally bootstraps sessions/filters and view rendering.
 
 Parameters:
 
@@ -22,8 +22,8 @@ CMS tip: pass `$page_url` for session scope and call `setScriptUrl()` with the o
 
 Static factories without page rendering:
 
-- `ParksAPI::forScript()` — CLI sync (`bin/sync.php`)
-- `ParksAPI::forMigration()` — CLI migrate (`bin/migrate.php`)
+- `ParksSDK::forScript()` — CLI sync (`bin/sync.php`)
+- `ParksSDK::forMigration()` — CLI migrate (`bin/migrate.php`)
 
 ## Rendering methods
 
@@ -54,7 +54,7 @@ Parameters:
 ### `showOffersMap($categories = [], $filter = [], $parkId = null)`
 
 - Renders the overview map for the current result set.
-- Uses `$api->mapOptions` for map runtime configuration.
+- Uses `$sdk->mapOptions` for map runtime configuration.
 
 Parameters:
 
@@ -87,7 +87,7 @@ Parameters:
 ### `showTotal()`
 
 - Returns/prints the total **offer count** for the current list context, with a localized `offer` / `offers` label (for example `12 Offers`).
-- Useful after list rendering when `$api->total` is set. Returns `null` when the total is `0`.
+- Useful after list rendering when `$sdk->total` is set. Returns `null` when the total is `0`.
 
 ### `showOfferPoiList($poi = null)`
 
@@ -103,7 +103,7 @@ Relevant for custom views; see [Templating and custom view](../guides/templating
 
 ### `loadTemplate()`
 
-- Loads `detail.tpl` and `filter.tpl` from the configured `template_folder` into `$api->template`.
+- Loads `detail.tpl` and `filter.tpl` from the configured `template_folder` into `$sdk->template`.
 
 ### `compileTemplate($section, $template_data = [], $conditions = [])`
 
@@ -192,7 +192,7 @@ Parameters:
 ### `setScriptUrl($url)`
 
 - Sets the view `script_url` / `script_url_with_params` used for forms and links.
-- Does not change session scoping; pass `$page_url` to the `ParksAPI` constructor for that.
+- Does not change session scoping; pass `$page_url` to the `ParksSDK` constructor for that.
 - Useful in CMS embeds where `REQUEST_URI` is not the offers page permalink.
 
 Parameters:
@@ -225,8 +225,8 @@ Parameters:
 
 Static factories for CLI scripts (no page rendering bootstrap):
 
-- `ParksAPI::forScript()` — used by `sync.php` (`--force` for full import)
-- `ParksAPI::forMigration()` — used by `migrate.php` (also skips page setup)
+- `ParksSDK::forScript()` — used by `sync.php` (`--force` for full import)
+- `ParksSDK::forMigration()` — used by `migrate.php` (also skips page setup)
 
 ### `migrate()`
 
@@ -237,7 +237,7 @@ Static factories for CLI scripts (no page rendering bootstrap):
 
 ## Output behavior note
 
-Rendering methods honor `config['return_output']` (runtime `$api->returnOutput`):
+Rendering methods honor `config['return_output']` (runtime `$sdk->returnOutput`):
 
 - `false` (default): HTML is printed directly.
 - `true`: HTML is returned as string (useful for CMS composition/output buffering).
@@ -247,16 +247,16 @@ Rendering methods honor `config['return_output']` (runtime `$api->returnOutput`)
 ## Minimal integration example
 
 ```php
-$api = new ParksAPI('en');
+$sdk = new ParksSDK('en');
 $categories = [];
 $filter = [];
 
-if ($api->isOfferDetail()) {
-    echo $api->showOfferDetail();
+if ($sdk->isOfferDetail()) {
+    echo $sdk->showOfferDetail();
 } else {
-    echo $api->showOffersFilter($categories, $filter);
-    echo $api->showOffersList($categories, $filter);
-    echo $api->showOffersPagination();
+    echo $sdk->showOffersFilter($categories, $filter);
+    echo $sdk->showOffersList($categories, $filter);
+    echo $sdk->showOffersPagination();
 }
 ```
 
