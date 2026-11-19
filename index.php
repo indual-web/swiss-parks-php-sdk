@@ -49,8 +49,8 @@ $sdk->mapOptions = [];
 		- parks.min.js must target container id "swiss-parks-map"
 		  Older builds still look for "mapContainer" and the map tab stays empty
 	-->
-	<link href="https://angebote.paerke.ch/dist/frontend/v22/css/parks.min.css" rel="stylesheet">
-	<script type="module" src="https://angebote.paerke.ch/dist/frontend/v22/parks.min.js"></script>
+	<link href="https://hub.parks.swiss/dist/frontend/v22/css/parks.min.css" rel="stylesheet">
+	<script type="module" src="https://hub.parks.swiss/dist/frontend/v22/parks.min.js"></script>
 
 </head>
 <body>

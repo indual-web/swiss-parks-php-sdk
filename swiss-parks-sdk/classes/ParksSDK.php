@@ -1781,7 +1781,7 @@ class ParksSDK
 
 		// Base url (overridable via config / config.local.php)
 		if (empty($this->config['base_url'])) {
-			$this->config['base_url'] = 'https://angebote.paerke.ch/';
+			$this->config['base_url'] = 'https://hub.parks.swiss/';
 		}
 		$this->config['base_url'] = rtrim($this->config['base_url'], '/') . '/';
 
@@ -2065,7 +2065,7 @@ class ParksSDK
 	/**
 	 * Report successful migration to central log server
 	 *
-	 * Payload must match log_sdk_migration() on angebote.paerke.ch
+	 * Payload must match log_sdk_migration() on hub.parks.swiss
 	 * (required: sdk_version, url, hash). Body is signed with HMAC-SHA256
 	 * using api_hash (header X-Api-Migration-Signature).
 	 */
@@ -2090,7 +2090,7 @@ class ParksSDK
 			return false;
 		}
 
-		// Payload contract must stay in sync with log_sdk_migration() on angebote.paerke.ch
+		// Payload contract must stay in sync with log_sdk_migration() on hub.parks.swiss
 		$payload = [
 			'sdk_version' => $sdkVersion,
 			'php_version' => PHP_VERSION,
@@ -2108,7 +2108,7 @@ class ParksSDK
 		}
 
 		$signature = hash_hmac('sha256', $body, $apiHash);
-		$url = $this->config['migration_log_url'] ?? 'https://angebote.paerke.ch/migrate/log_sdk_migration';
+		$url = $this->config['migration_log_url'] ?? 'https://hub.parks.swiss/migrate/log_sdk_migration';
 		$verifySsl = $this->config['curl_verify_ssl'] ?? true;
 
 		$ch = curl_init();

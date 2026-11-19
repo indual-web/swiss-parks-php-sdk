@@ -9,7 +9,7 @@ For developers integrating the SDK into a park website. Full documentation: [`do
 - PHP `>= 8.2` and `<= 8.5`
 - PHP `pdo_sqlite` (SQLite `>= 3.25`)
 - Write access for `swiss-parks-sdk/writable/data/` and `writable/log/` (or your configured paths)
-- PHP cURL and outbound HTTPS to `angebote.paerke.ch`
+- PHP cURL and outbound HTTPS to `hub.parks.swiss`
 
 ## Developer paths
 

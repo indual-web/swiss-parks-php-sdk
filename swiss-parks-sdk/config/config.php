@@ -16,7 +16,7 @@ $config = [];
 |--------------------------------------------------------------------------
 |
 | This hash is needed to import the data via XML.
-| Create an export configuration on https://angebote.paerke.ch and
+| Create an export configuration on https://hub.parks.swiss and
 | put your Hashkey in here.
 |
 */
@@ -81,7 +81,7 @@ $config['db_path'] = "writable/data/park-offers.sqlite";
 | cURL SSL verification
 |--------------------------------------------------------------------------
 |
-| Verify SSL certificates for export requests to angebote.paerke.ch.
+| Verify SSL certificates for export requests to hub.parks.swiss.
 | Set to false only when your environment cannot validate HTTPS.
 |
 */
@@ -96,7 +96,7 @@ $config['curl_verify_ssl'] = true;
 | URL for reporting successful SDK migrations to the central log server.
 |
 */
-$config['migration_log_url'] = 'https://angebote.paerke.ch/migrate/log_sdk_migration';
+$config['migration_log_url'] = 'https://hub.parks.swiss/migrate/log_sdk_migration';
 
 
 /*
@@ -166,7 +166,7 @@ $config['n_th_point_min_count'] = 100;
 $config['pagination_max_numbers'] = 5;
 $config['overview_thumbnail_size'] = 'medium';
 $config['detail_thumbnail_size'] = 'large';
-$config['placeholder_image'] = 'https://angebote.paerke.ch/img/placeholder.png';
+$config['placeholder_image'] = 'https://hub.parks.swiss/img/placeholder.png';
 $config['image_enlargement'] = true;
 $config['detail_limit_dates'] = 5;
 $config['filter_keywords_with_and'] = false;

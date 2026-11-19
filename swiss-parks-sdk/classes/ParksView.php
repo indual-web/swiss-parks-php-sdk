@@ -1524,7 +1524,7 @@ class ParksView
 			// Set checkout button
 			$templateData['OFFER_ONLINE_SHOP_CHECKOUT_BUTTON'] = '
 				<div class="button_wrap">
-					<a href="https://angebote.paerke.ch/' . $this->sdk->langId . '/online_shop/checkout/' . $offer->offer_id . '" class="button buy_button" target="_blank">' . $this->sdk->lang->get('offer_product_shop_now') . '</a>
+					<a href="https://hub.parks.swiss/' . $this->sdk->langId . '/online_shop/checkout/' . $offer->offer_id . '" class="button buy_button" target="_blank">' . $this->sdk->lang->get('offer_product_shop_now') . '</a>
 				</div>
 			';
 			$description .= $templateData['OFFER_ONLINE_SHOP_CHECKOUT_BUTTON'];

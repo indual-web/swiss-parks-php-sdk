@@ -28,7 +28,7 @@ A complete example including tabs and map is available in `index.php`.
 
 Load the SDK `v22` frontend bundle (see `index.php`):
 
-- Production CDN: `https://angebote.paerke.ch/dist/frontend/v22/css/parks.min.css` and `…/v22/parks.min.js`
+- Production CDN: `https://hub.parks.swiss/dist/frontend/v22/css/parks.min.css` and `…/v22/parks.min.js`
 - The JS build must use map container id `swiss-parks-map` (not legacy `mapContainer`)
 
 ## List/map tab and back navigation

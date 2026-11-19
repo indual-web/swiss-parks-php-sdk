@@ -9,7 +9,7 @@ Full reference for runtime settings in `swiss-parks-sdk/config/config.php`. Keys
 Set these on the server:
 
 - `api_hash`
-  - Hash from your export configuration on `angebote.paerke.ch`.
+  - Hash from your export configuration on `hub.parks.swiss`.
 - `park_id`
   - Park ID from the park or export settings. `> 0` scopes one park; `0` or empty is network-wide (all parks).
 - `db_path` (default: `writable/data/park-offers.sqlite`)
@@ -21,11 +21,11 @@ Optional: create `config.local.php` next to `config.php` to override keys such a
 
 ## Network settings
 
-- `base_url` (optional override; runtime default `https://angebote.paerke.ch/`)
+- `base_url` (optional override; runtime default `https://hub.parks.swiss/`)
   - Base URL of the offer database for XML/JSON exports and related asset links. Not set in shipped `config.php`; `ParksSDK` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
 - `curl_verify_ssl` (default: `true`)
-  - Verifies SSL certificates for export requests to `angebote.paerke.ch`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
-- `migration_log_url` (default: `https://angebote.paerke.ch/migrate/log_sdk_migration`)
+  - Verifies SSL certificates for export requests to `hub.parks.swiss`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
+- `migration_log_url` (default: `https://hub.parks.swiss/migrate/log_sdk_migration`)
   - Endpoint contacted after a successful `migrate.php` run so the offer platform can record the SDK version in use. Uses `curl_verify_ssl` and your `api_hash`. Leave the default unless you were told otherwise.
 
 ## SEO URLs
@@ -74,7 +74,7 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
   - Image size for overview cards.
 - `detail_thumbnail_size` (default: `large`)
   - Image size for detail pages.
-- `placeholder_image` (default: `https://angebote.paerke.ch/img/placeholder.png`)
+- `placeholder_image` (default: `https://hub.parks.swiss/img/placeholder.png`)
   - Fallback image when an offer has no image.
 - `image_enlargement` (default: `true`)
   - Enables enlarged image links (lightbox/fancybox-style integrations).

@@ -85,8 +85,8 @@ add_action('wp_enqueue_scripts', function () {
 		return;
 	}
 
-	$css = 'https://angebote.paerke.ch/dist/frontend/v22/css/parks.min.css';
-	$js = 'https://angebote.paerke.ch/dist/frontend/v22/parks.min.js';
+	$css = 'https://hub.parks.swiss/dist/frontend/v22/css/parks.min.css';
+	$js = 'https://hub.parks.swiss/dist/frontend/v22/parks.min.js';
 
 	wp_enqueue_style('swiss-parks-sdk', $css, [], null);
 	wp_enqueue_script('swiss-parks-sdk', $js, [], null, true);
