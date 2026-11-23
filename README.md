@@ -33,7 +33,7 @@ v22 is not a drop-in replace. Plan for:
 - Frontend `…/dist/frontend/v22/` as `type="module"`; map container `swiss-parks-map`
 - Cron `bin/sync.sh` (shared hosting without SSH: `public/sync.php` + `sync_secret`); favorites `public/favorites.php`
 
-Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
+Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md). This also applies to v14–v20: jump directly to v22, without installing the versions in between.
 
 Older packages (v14–v21.1) are archived at [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy).
 

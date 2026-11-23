@@ -4,9 +4,9 @@
 
 How to upgrade an existing SDK installation on a park website.
 
-## From v21
+## From v14–v21
 
-Use [v21 → v22](./migrations/21-to-22.md).
+Jump directly to v22 with [v21 → v22](./migrations/21-to-22.md). Versions in between do not need to be installed. From v14–v20, also check [coming from v14–v20](./migrations/21-to-22.md#coming-from-v14v20).
 
 ## Already on v22
 
@@ -29,10 +29,6 @@ bash bin/migrate.sh
 Then check filter, list, map, detail, console, and logs.
 
 Do not edit core SDK files. Keep customizations in `config/config.php`, `custom/`, and your own template folder.
-
-## Older than v21
-
-ZIPs for v14–v21.1: [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy). Upgrade to **v21.1**, then follow [v21 → v22](./migrations/21-to-22.md).
 
 ## Related docs
 
