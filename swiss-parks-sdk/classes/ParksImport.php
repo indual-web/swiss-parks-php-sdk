@@ -1215,13 +1215,19 @@ class ParksImport
 	{
 		if (! empty($categoryId)) {
 
+			$lastCategoryId = false;
+
 			while ($categoryId > 0) {
+
+				// Unknown category (e.g. taxonomy sync failed): stop instead of looping forever
 				$qCategory = $this->sdk->db->get('category', ['category_id' => $categoryId]);
-				if ($qCategory->numRows > 0) {
-					$category = $qCategory->fetchObject();
-					$categoryId = $category->parent_id;
-					$lastCategoryId = $category->category_id;
+				if ($qCategory->numRows <= 0) {
+					break;
 				}
+
+				$category = $qCategory->fetchObject();
+				$categoryId = (int) $category->parent_id;
+				$lastCategoryId = (int) $category->category_id;
 			}
 
 			return $lastCategoryId;
