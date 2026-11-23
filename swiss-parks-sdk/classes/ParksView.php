@@ -460,7 +460,8 @@ class ParksView
 								<span class="all">' . $this->sdk->lang->get('offer_accessibility') . '</span>
 								<i class="arrow_icon" aria-hidden="true">b</i>
 							</h4>
-							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">';
+							<div class="form_group_dropdown" role="listbox" aria-multiselectable="true">
+								<span class="label_wrapper" role="group" aria-label="' . $this->sdk->lang->get('offer_accessibility') . '">';
 				foreach ($accessibilities as $accessibilityId => $accessibility) {
 					$checked = isset($params['selected']['accessibilities']) && in_array($accessibilityId, $params['selected']['accessibilities']) ? 'checked' : '';
 					$templateData['FILTER_ACCESSIBILITIES'] .= '
@@ -472,6 +473,7 @@ class ParksView
 									';
 				}
 				$templateData['FILTER_ACCESSIBILITIES'] .= '
+								</span>
 							</div>
 						</div>
 					</div>
