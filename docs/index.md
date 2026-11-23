@@ -34,7 +34,7 @@ Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-url
 
 ## Upgrade
 
-- From v14–v21 (directly, no steps in between): [v21 → v22](./guides/migrations/21-to-22.md)
+- From v21 or older (directly, no steps in between): [v21 → v22](./guides/migrations/21-to-22.md)
 - Already on v22: [Upgrade](./guides/upgrading.md)
 - Older packages (v14–v21.1, archive only): [migrations index](./guides/migrations/index.md) · [legacy archive](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
 - Sync/cron: [import and update lifecycle](./guides/import-update-lifecycle.md)

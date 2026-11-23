@@ -4,13 +4,13 @@
 
 Version-specific steps when an upgrade needs more than replacing core files and running `migrate.php`.
 
-From v14–v21: jump directly to v22 with [21 to 22](./21-to-22.md). Later updates within v22: [Upgrade](../upgrading.md).
+From v21 or older: jump directly to v22 with [21 to 22](./21-to-22.md). Later updates within v22: [Upgrade](../upgrading.md).
 
 ## Available migrations
 
 | From | To | Guide | Breaking changes |
 | --- | --- | --- | --- |
-| v14–v21 (MySQL) | v22 (SQLite) | [21 to 22](./21-to-22.md) | SQLite + folder layout, `config/config.php`, camelCase API, frontend `v22`, cron/favorites paths |
+| v21 or older (MySQL) | v22 (SQLite) | [21 to 22](./21-to-22.md) | SQLite + folder layout, `config/config.php`, camelCase API, frontend `v22`, cron/favorites paths |
 
 ## Older packages (v14–v21.1)
 

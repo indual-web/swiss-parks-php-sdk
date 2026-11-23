@@ -23,7 +23,9 @@ For developers integrating the SDK into a park website. Full documentation: [`do
 
 First install: [`docs/guides/new-installation.md`](docs/guides/new-installation.md) · Config: [`docs/guides/configuration.md`](docs/guides/configuration.md) · Reference: [`docs/sdk-reference/index.md`](docs/sdk-reference/index.md)
 
-## Coming from v21?
+## Coming from v21 or older?
+
+Upgrade directly to v22, no matter which version you are on. You do not need to install the versions in between.
 
 v22 is not a drop-in replace. Plan for:
 
@@ -32,10 +34,11 @@ v22 is not a drop-in replace. Plan for:
 - Public API camelCase (`show_offers_filter` → `showOffersFilter`)
 - Frontend `…/dist/frontend/v22/` as `type="module"`; map container `swiss-parks-map`
 - Cron `bin/sync.sh` (shared hosting without SSH: `public/sync.php` + `sync_secret`); favorites `public/favorites.php`
+- From v20 or older only: update custom templates (new and removed placeholders), see [coming from v20 or older](docs/guides/migrations/21-to-22.md#coming-from-v20-or-older)
 
-Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md). This also applies to v14–v20: jump directly to v22, without installing the versions in between.
+Step-by-step: [`docs/guides/migrations/21-to-22.md`](docs/guides/migrations/21-to-22.md)
 
-Older packages (v14–v21.1) are archived at [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy).
+Older packages (v14–v21.1) are archived for reference only at [swiss-parks-php-sdk-legacy](https://github.com/indual-web/swiss-parks-php-sdk-legacy).
 
 ## Contact
 
