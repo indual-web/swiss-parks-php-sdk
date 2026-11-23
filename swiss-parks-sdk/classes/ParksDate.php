@@ -331,8 +331,8 @@ class ParksDate
 
 			}
 
-			// Return hours and minutes
-			$return = $hours . $minutes; 
+			// Minutes carry a leading space for the hours separator; drop it when hours are missing
+			$return = trim($hours . $minutes);
 
 		} 
 
