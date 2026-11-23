@@ -1421,13 +1421,13 @@ class ParksSDK
 			// Post data
 			elseif (! empty($postData)) {
 				$this->filter = true;
-				$this->filterData[$field] = isset($postData[$field]) ? $postData[$field] : null;
+				$this->filterData[$field] = isset($postData[$field]) ? $this->sanitizeFilterValue($field, $postData[$field]) : null;
 			}
 
-			// Session data
+			// Session data (sanitized again, it may stem from requests before this check existed)
 			elseif ($this->config['use_sessions'] && (isset($_SESSION[$this->sessionName]['filter'][$field]) && ! empty($_SESSION[$this->sessionName]['filter'][$field]))) {
 				$this->filter = true;
-				$this->filterData[$field] = $_SESSION[$this->sessionName]['filter'][$field];
+				$this->filterData[$field] = $this->sanitizeFilterValue($field, $_SESSION[$this->sessionName]['filter'][$field]);
 			}
 		}
 
@@ -1440,6 +1440,55 @@ class ParksSDK
 		if (! empty($postData) || ($getParams === true)) {
 			$this->reloadPage();
 		}
+	}
+
+
+
+	/**
+	 * Normalize a visitor filter value (POST or session) to the type the model expects; null drops it
+	 */
+	private function sanitizeFilterValue(string $field, mixed $value): mixed
+	{
+
+		switch ($field) {
+
+			// Checkbox ID lists: positive integers only, always an array for the filter view
+			case 'categories':
+			case 'park_id':
+			case 'target_groups':
+			case 'fields_of_activity':
+			case 'municipalities':
+			case 'level_technics':
+			case 'level_condition':
+			case 'project_status':
+				$ids = array_values(array_filter(array_map('intval', array_filter((array) $value, 'is_scalar')), fn($id) => $id > 0));
+				return ! empty($ids) ? $ids : null;
+
+			// Accessibility options are icon URLs (or GINTO_INFOS_AVAILABLE), not IDs; the model escapes them
+			case 'accessibilities':
+				$values = array_values(array_filter(array_map('strval', array_filter((array) $value, 'is_scalar')), fn($option) => $option !== ''));
+				return ! empty($values) ? $values : null;
+
+			case 'route_length_min':
+			case 'route_length_max':
+				return is_scalar($value) ? intval($value) : null;
+
+			// Same parser the model uses, so only dates it can handle are kept
+			case 'date_from':
+			case 'date_to':
+				return (is_string($value) && (date_create($value) !== false)) ? $value : null;
+
+			// Options are rendered decoded from route_times, so compare against the decoded labels
+			case 'time_required':
+				$allowed = array_map('html_entity_decode', $this->config['route_times'] ?? []);
+				$values = array_values(array_intersect(array_filter((array) $value, 'is_scalar'), $allowed));
+				return ! empty($values) ? $values : null;
+
+			case 'search':
+				return is_scalar($value) ? mb_substr((string) $value, 0, 200) : null;
+		}
+
+		return null;
 	}
 
 

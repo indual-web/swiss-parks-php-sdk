@@ -171,7 +171,7 @@ class ParksView
 		$templateData['FILTER_SHOW_LINK'] = '<a class="show_filter"><i aria-hidden="true">a</i>' . $this->sdk->lang->get('offer_filter_show') . '</a>';
 		$templateData['FILTER_FORM_START'] = '<form action="' . $action . '" method="post" autocomplete="off">';
 		$templateData['FILTER_FORM_STOP'] = '</form>';
-		$searchVal = (isset($params['selected']['search']) ? ' value="' . (isset($params['selected']['search']) ? $params['selected']['search'] : '') . '"' : '');
+		$searchVal = (isset($params['selected']['search']) ? ' value="' . htmlspecialchars((string) $params['selected']['search'], ENT_QUOTES) . '"' : '');
 
 		// Filter: free text search
 		$templateData['FILTER_TEXT_SEARCH'] = '
@@ -264,8 +264,8 @@ class ParksView
 
 		// Filter: date from and date to
 		if (isset($params['show_event_filter']) && ($params['show_event_filter'] == true)) {
-			$dateFromVal = (isset($params['selected']['date_from']) && ! empty($params['selected']['date_from']) ? ' value="' . $params['selected']['date_from'] . '"' : '');
-			$dateToVal = (isset($params['selected']['date_to']) && ! empty($params['selected']['date_to']) ? ' value="' . $params['selected']['date_to'] . '"' : '');
+			$dateFromVal = (isset($params['selected']['date_from']) && ! empty($params['selected']['date_from']) ? ' value="' . htmlspecialchars((string) $params['selected']['date_from'], ENT_QUOTES) . '"' : '');
+			$dateToVal = (isset($params['selected']['date_to']) && ! empty($params['selected']['date_to']) ? ' value="' . htmlspecialchars((string) $params['selected']['date_to'], ENT_QUOTES) . '"' : '');
 			$templateData['FILTER_DATES'] = '
 				<div class="form_element date_wrap">
 					<span class="element_wrap">
@@ -558,8 +558,8 @@ class ParksView
 			// Route length
 			$templateData['FILTER_ROUTE_LENGTH'] = '
 				<div class="form_element range_wrap">
-					<input id="route_min" name="' . $fieldname . '[route_length_min]" type="hidden" value="' . (isset($params['selected']['route_length_min']) ? $params['selected']['route_length_min'] : '0') . '">
-					<input id="route_max" name="' . $fieldname . '[route_length_max]" type="hidden" value="' . (isset($params['selected']['route_length_max']) ? $params['selected']['route_length_max'] : '50') . '">
+					<input id="route_min" name="' . $fieldname . '[route_length_min]" type="hidden" value="' . (isset($params['selected']['route_length_min']) ? intval($params['selected']['route_length_min']) : '0') . '">
+					<input id="route_max" name="' . $fieldname . '[route_length_max]" type="hidden" value="' . (isset($params['selected']['route_length_max']) ? intval($params['selected']['route_length_max']) : '50') . '">
 					<div class="range"></div>
 					<span class="range_text" aria-live="polite">
 						<span class="minimum" aria-hidden="true" data-label="' . $this->sdk->lang->get('offer_routes_length') . '"></span>

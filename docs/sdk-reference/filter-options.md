@@ -59,12 +59,12 @@ Additional structured filters supported by the model/query layer:
 
 - `offer_settings` (`array<string, mixed>`)
   - Attribute-level constraints merged into SQL filtering.
-- `accessibilities` (`int[]`)
-  - Match selected accessibility IDs.
+- `accessibilities` (`string[]`)
+  - Match selected accessibility icon URLs; `1` (`GINTO_INFOS_AVAILABLE`) requires any accessibility information.
 - `date_from` (`string`)
-  - Lower bound for date filter (`Y-m-d` expected by runtime).
+  - Lower bound for date filter (`Y-m-d` expected by runtime). Unparsable values are ignored.
 - `date_to` (`string`)
-  - Upper bound for date filter (`Y-m-d` expected by runtime).
+  - Upper bound for date filter (`Y-m-d` expected by runtime). Unparsable values are ignored.
 - `time_required` (`string|string[]`)
   - Route/activity time filters.
 - `route_length_min` (`int`)
@@ -96,6 +96,14 @@ Additional structured filters supported by the model/query layer:
 - Filter values can be sourced from POST, allowed GET params, and session state.
 - Allowed GET params in runtime initialization are: `categories`, `target_groups`, `fields_of_activity`, `accessibilities`.
 - If `use_sessions` is enabled, active filter state is persisted in session.
+- Visitor values from POST and session are normalized before use:
+  - ID filters (`categories`, `park_id`, `target_groups`, `fields_of_activity`, `municipalities`, `level_technics`, `level_condition`, `project_status`) keep positive integers only, as an array; other values are dropped.
+  - `route_length_min` / `route_length_max` are cast to integers.
+  - `date_from` / `date_to` are kept only when they parse as a date.
+  - `time_required` keeps only the labels offered in the filter UI.
+  - `search` is cut to 200 characters.
+  - Unknown keys are not taken over.
+- ID filters passed in `$filter` by integrators are cast to integers in the query layer (`intval`); `user` and `accessibilities` are escaped.
 
 ## Related docs
 

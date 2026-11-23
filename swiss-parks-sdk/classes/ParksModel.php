@@ -398,6 +398,14 @@ class ParksModel
 		$filterDateFrom = ! empty($filter['date_from']) ? $this->formatDatetime($filter['date_from']) : '';
 		$filterDateTo = ! empty($filter['date_to']) ? $this->formatDatetime($filter['date_to']) : '';
 
+		// Unparsable dates are ignored instead of limiting the list to events
+		if ($filterDateFrom === '') {
+			unset($filter['date_from']);
+		}
+		if ($filterDateTo === '') {
+			unset($filter['date_to']);
+		}
+
 		// Accessibility joins only when filtering by accessibility
 		$needsAccessibilityJoin = (
 			(isset($filter['has_accessibility_informations']) && ($filter['has_accessibility_informations'] == true))
@@ -611,6 +619,7 @@ class ParksModel
 		if (! empty($categories)) {
 			$categoryConditions = [];
 			foreach ($categories as $categoryId) {
+				$categoryId = intval($categoryId);
 				$categoryConditions[] = "
 					(
 						c1.category_id = " . $categoryId . "
@@ -675,7 +684,7 @@ class ParksModel
 				if ($accessibilityId == GINTO_INFOS_AVAILABLE) {
 					$where[] = "accessibility.accessibility_id IS NOT NULL";
 				} else {
-					$having[] = "icon_urls LIKE '%" . $accessibilityId . "%'";
+					$having[] = "icon_urls LIKE '%" . $this->sdk->db->escape($accessibilityId) . "%'";
 				}
 			}
 		}
@@ -732,10 +741,10 @@ class ParksModel
 				LEFT JOIN target_group_link ON target_group_link.offer_id = main_offer.offer_id
 			";
 			if (! empty($filter['target_groups'])) {
-				$where[] = "(target_group_link.target_group_id IN (" . implode(',', $filter['target_groups']) . "))";
+				$where[] = "(target_group_link.target_group_id IN (" . $this->intList($filter['target_groups']) . "))";
 			}
 			if (! empty($this->sdk->systemFilter['target_groups'])) {
-				$where[] = "(target_group_link.target_group_id IN (" . implode(',', $this->sdk->systemFilter['target_groups']) . "))";
+				$where[] = "(target_group_link.target_group_id IN (" . $this->intList($this->sdk->systemFilter['target_groups']) . "))";
 			}
 		}
 
@@ -745,10 +754,10 @@ class ParksModel
 				LEFT JOIN field_of_activity_link ON field_of_activity_link.offer_id = main_offer.offer_id
 			";
 			if (! empty($filter['fields_of_activity'])) {
-				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . implode(',', $filter['fields_of_activity']) . "))";
+				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . $this->intList($filter['fields_of_activity']) . "))";
 			}
 			if (! empty($this->sdk->systemFilter['fields_of_activity'])) {
-				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . implode(',', $this->sdk->systemFilter['fields_of_activity']) . "))";
+				$where[] = "(field_of_activity_link.field_of_activity_id IN (" . $this->intList($this->sdk->systemFilter['fields_of_activity']) . "))";
 			}
 		}
 
@@ -758,10 +767,10 @@ class ParksModel
 				LEFT OUTER JOIN offer_municipality_link ON offer_municipality_link.offer_id = main_offer.offer_id
 			";
 			if (is_array($filter['municipalities'])) {
-				$where[] = "(offer_municipality_link.municipality_id IN (" . implode(', ', $filter['municipalities']) . "))";
+				$where[] = "(offer_municipality_link.municipality_id IN (" . $this->intList($filter['municipalities']) . "))";
 			}
 			else {
-				$where[] = "offer_municipality_link.municipality_id = " . $filter['municipalities'];
+				$where[] = "offer_municipality_link.municipality_id = " . intval($filter['municipalities']);
 			}
 		}
 
@@ -770,17 +779,16 @@ class ParksModel
 			if (! is_array($filter['park_id'])) {
 				$where[] = "main_offer.park_id = " . intval($filter['park_id']);
 			} else {
-				$whereInParkIds = implode(",", $filter['park_id']);
-				$where[] = "main_offer.park_id IN (" . $whereInParkIds . ")";
+				$where[] = "main_offer.park_id IN (" . $this->intList($filter['park_id']) . ")";
 			}
 		}
 		if (! empty($filter['user'])) {
-			$where[] = "main_offer.park = '" . $filter['user'] . "'";
+			$where[] = "main_offer.park = '" . $this->sdk->db->escape($filter['user']) . "'";
 		}
 
 		// Filter: exlcude parks
 		if (! empty($filter['exclude_park_ids']) && is_array($filter['exclude_park_ids'])) {
-			$where[] = "main_offer.park NOT IN (" . implode(",", $filter['exclude_park_ids']) . ")";
+			$where[] = "main_offer.park NOT IN (" . $this->intList($filter['exclude_park_ids']) . ")";
 		}
 
 		// Filter: offers of today
@@ -1015,30 +1023,27 @@ class ParksModel
 		// Filter: level_technics
 		if (! empty($filter['level_technics'])) {
 			if (is_array($filter['level_technics'])) {
-				$whereInLevelTechnics = implode(",", $filter['level_technics']);
-				$where[] = " (activity.level_technics IN (" . $whereInLevelTechnics . "))";
+				$where[] = " (activity.level_technics IN (" . $this->intList($filter['level_technics']) . "))";
 			} else {
-				$where[] = " (activity.level_technics = " . $filter['level_technics'] . ")";
+				$where[] = " (activity.level_technics = " . intval($filter['level_technics']) . ")";
 			}
 		}
 
 		// Filter: time_required
 		if (! empty($filter['level_condition'])) {
 			if (is_array($filter['level_condition'])) {
-				$whereInLevelCondition = implode(",", $filter['level_condition']);
-				$where[] = " (activity.level_condition IN (" . $whereInLevelCondition . "))";
+				$where[] = " (activity.level_condition IN (" . $this->intList($filter['level_condition']) . "))";
 			} else {
-				$where[] = " (activity.level_condition = " . $filter['level_condition'] . "L)";
+				$where[] = " (activity.level_condition = " . intval($filter['level_condition']) . ")";
 			}
 		}
 
 		// Filter: project status
 		if (! empty($filter['project_status'])) {
 			if (is_array($filter['project_status'])) {
-				$whereInLevelCondition = implode(",", $filter['project_status']);
-				$where[] = " (project.status IN (" . $whereInLevelCondition . "))";
+				$where[] = " (project.status IN (" . $this->intList($filter['project_status']) . "))";
 			} else {
-				$where[] = " (project.status = " . $filter['project_status'] . "L)";
+				$where[] = " (project.status = " . intval($filter['project_status']) . ")";
 			}
 		}
 
@@ -1068,7 +1073,7 @@ class ParksModel
 			if (! empty($filter['offers'])) {
 				$whereOffer = "";
 				foreach ($filter['offers'] as $offer) {
-					$whereOffer .= " main_offer.offer_id = " . $offer . " OR ";
+					$whereOffer .= " main_offer.offer_id = " . intval($offer) . " OR ";
 				}
 				$whereOffer = substr($whereOffer, 0, -4);
 				$where[] = "(" . $whereOffer . ")";
@@ -2079,13 +2084,27 @@ class ParksModel
 
 
 	/**
-	 * Format date/time value for SQL filters
+	 * Format date/time value for SQL filters, empty string for unparsable values
 	 */
 	private function formatDatetime(mixed $value, string $format = 'Y-m-d H:i:s'): string
 	{
 
-		$datetime = new DateTime($value);
-		return $datetime->format($format);
+		$datetime = is_string($value) ? date_create($value) : false;
+
+		return ($datetime !== false) ? $datetime->format($format) : '';
+	}
+
+
+
+	/**
+	 * Comma-separated integer list for SQL IN clauses ("0" when nothing is left, which matches no ID)
+	 */
+	private function intList(mixed $value): string
+	{
+
+		$ids = array_map('intval', array_filter((array) $value, 'is_scalar'));
+
+		return ! empty($ids) ? implode(',', $ids) : '0';
 	}
 
 

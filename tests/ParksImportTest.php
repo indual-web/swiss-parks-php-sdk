@@ -145,6 +145,50 @@ final class ParksImportTest extends TestCase
 
 
 	/**
+	 * SQL fragments in ID, accessibility and park name filters neither break nor widen the query
+	 */
+	public function testFiltersIgnoreSqlFragments(): void
+	{
+
+		$this->importFixture();
+		$payload = '0) OR (1=1';
+		$filters = [
+			'categories' => [[$payload], $payload],
+			'level_technics' => [[$payload], $payload],
+			'level_condition' => [[$payload], $payload],
+			'project_status' => [[$payload], $payload],
+			'municipalities' => [[$payload], $payload],
+			'park_id' => [[$payload], $payload],
+			'target_groups' => [[$payload]],
+			'fields_of_activity' => [[$payload]],
+			'accessibilities' => [["x' OR '1'='1"]],
+			'user' => ["x' OR '1'='1"],
+		];
+
+		foreach ($filters as $field => $values) {
+			foreach ($values as $value) {
+				$this->assertFalse($this->sdk->model->filterOffers([$field => $value]), $field);
+				$this->assertSame('', $this->sdk->db->getLastError(), $field);
+			}
+		}
+	}
+
+
+
+	/**
+	 * Unparsable dates are ignored instead of throwing
+	 */
+	public function testInvalidDateFilterIsIgnored(): void
+	{
+
+		$this->importFixture();
+
+		$this->assertEquals($this->sdk->model->filterOffers([]), $this->sdk->model->filterOffers(['date_from' => 'no date', 'date_to' => '31.02.2099<x>']));
+	}
+
+
+
+	/**
 	 * Forced re-import deletes offers that are no longer in the export
 	 */
 	public function testForcedReimportDeletesMissingOffers(): void
