@@ -130,6 +130,21 @@ final class ParksImportTest extends TestCase
 
 
 	/**
+	 * Quotes in keyword filters are escaped, so they cannot widen the query
+	 */
+	public function testKeywordFiltersEscapeQuotes(): void
+	{
+
+		$this->importFixture();
+		$injection = "x'OR'1'LIKE'1";
+
+		$this->assertFalse($this->sdk->model->filterOffers(['keywords' => $injection]));
+		$this->assertSame([1, 4], array_keys($this->sdk->model->getAllCategories(['keywords' => $injection])));
+	}
+
+
+
+	/**
 	 * Forced re-import deletes offers that are no longer in the export
 	 */
 	public function testForcedReimportDeletesMissingOffers(): void

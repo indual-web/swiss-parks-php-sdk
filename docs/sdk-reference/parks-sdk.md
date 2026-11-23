@@ -166,6 +166,18 @@ Parameters:
 - Returns `true` if current request resolves to a detail page.
 - Supports both parameter-based and SEO URL detail detection.
 
+### `enforceOfferDetailCanonicalUrl($pageBaseUrl = '')`
+
+- Only acts when `seo_urls = true` and the current URL contains `/{seo_url_detail_slug}/`; otherwise returns `true` and does nothing.
+- Sends `301` to the canonical detail path when the request uses an outdated title slug, a pagination segment or another prefix. Query strings are ignored. The `Location` is always a relative path.
+- Unknown offer IDs get a `404`: by default a plain HTML page and `exit`; with `soft_errors = true` only the status code is set and the method returns `false`, so the CMS can render its own 404 page.
+- Returns `true` when the URL is canonical, or when headers were already sent (then no redirect is attempted).
+- Call it before any output; no `isOfferDetail()` check is needed. See [SEO URLs](../guides/seo-urls.md#canonical-detail-urls).
+
+Parameters:
+
+- `$pageBaseUrl` (`string`): trusted URL or path of the offers page (for example the CMS permalink). Its path becomes the canonical base. Empty uses the current path without the pagination and detail segments.
+
 ### `isFilterActivated()`
 
 - Returns whether a filter is currently active in runtime state.

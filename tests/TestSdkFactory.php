@@ -9,7 +9,7 @@ final class TestSdkFactory
 	/**
 	 * Build a ParksSDK with language only, isolated from config.local.php and the real database
 	 */
-	public static function create(array $configOverrides = [], string $language = 'de'): ParksSDK
+	public static function create(array $configOverrides = [], string $language = 'de', string $sdkClass = ParksSDK::class): ParksSDK
 	{
 
 		$sdkPath = dirname(__DIR__) . '/swiss-parks-sdk';
@@ -19,7 +19,7 @@ final class TestSdkFactory
 		require $sdkPath . '/config/config.php';
 
 		// Skip the constructor: it bootstraps the configured database and renders views
-		$sdk = (new ReflectionClass(ParksSDK::class))->newInstanceWithoutConstructor();
+		$sdk = (new ReflectionClass($sdkClass))->newInstanceWithoutConstructor();
 		$sdk->config = array_merge($config, ['absolute_path' => $sdkPath], $configOverrides);
 		$sdk->lang = new ParksLanguage($language, $sdk);
 		$sdk->langId = $sdk->lang->langId;

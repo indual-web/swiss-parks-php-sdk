@@ -948,7 +948,7 @@ class ParksModel
 				}
 				$keywordsQuery = "(";
 				foreach ($keywords as $word) {
-					$keywordsQuery .= " main_offer.keywords LIKE '%" . $word . "%' " . $restriction . " ";
+					$keywordsQuery .= " main_offer.keywords LIKE '%" . $this->sdk->db->escape($word) . "%' " . $restriction . " ";
 				}
 				$keywordsQuery = substr($keywordsQuery, 0, -4) . ")";
 				$where[] = $keywordsQuery;
@@ -2100,6 +2100,7 @@ class ParksModel
 			foreach ($filter as $key => $value) {
 
 				if (! is_array($value) && ! empty($value)) {
+					$value = $this->sdk->db->escape($value);
 					$key = str_replace('offers_', '', $key);
 					if (! empty($key) && is_string($key)) {
 						switch ($key) {

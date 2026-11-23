@@ -34,6 +34,11 @@ $filter = [];
 // https://github.com/indual-web/swiss-parks-php-sdk/blob/main/docs/sdk-reference/map-options.md
 $sdk->mapOptions = [];
 
+
+// SEO URLs only: redirect outdated detail URLs (301) and answer unknown offers with 404
+// Must run before any HTML output
+$sdk->enforceOfferDetailCanonicalUrl();
+
 ?>
 <!DOCTYPE html>
 <html lang="<?= $language ?>">

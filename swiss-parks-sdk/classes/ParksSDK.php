@@ -847,7 +847,6 @@ class ParksSDK
 			$originalOfferId = 0;
 			$paramName = $this->config['url_param_prefix'] . 'offer';
 			$detailSlug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
-			$poiSlug = ! empty($this->config['seo_url_poi_slug']) ? $this->config['seo_url_poi_slug'] : '';
 
 			// Single offer mode
 			if (! empty($singleOfferId) && (intval($singleOfferId) > 0)) {
@@ -859,32 +858,9 @@ class ParksSDK
 
 				// Handle seo urls
 				if (! empty($this->config['seo_urls']) && ($this->config['seo_urls'] === true) && strstr($this->view->scriptUrl, '/' . $detailSlug . '/')) {
-
-					// Remove slash on last string position
-					$scriptUrl = rtrim($this->view->scriptUrl, '/');
-
-					// Split url by slashes
-					$seoUrl = explode('/', $scriptUrl);
-
-					// Handle poi details
-					if (in_array($poiSlug, $seoUrl)) {
-
-						// Get original offer id
-						$lastSegmentPosition = count($seoUrl) - 1;
-						$originalOfferId = intval($seoUrl[$lastSegmentPosition]);
-
-						// Remove poi id from seo url
-						$seoUrl = array_slice($seoUrl, 0, -2);
-
-					}
-
-					// Split last url segment by dashes
-					$lastSegmentPosition = count($seoUrl) - 1;
-					$titleSlug = explode('-', $seoUrl[$lastSegmentPosition]);
-
-					// Get offer id from last url segment
-					$offerIdPosition = count($titleSlug) - 1;
-					$offerId = intval($titleSlug[$offerIdPosition]);
+					$parsedDetail = $this->parseOfferDetailFromUrl($this->view->scriptUrl);
+					$offerId = $parsedDetail['offer_id'];
+					$originalOfferId = $parsedDetail['poi_id'];
 				}
 
 				// Default urls
@@ -916,13 +892,7 @@ class ParksSDK
 						return '';
 					}
 
-					// Show 404 error
-					header('HTTP/1.0 404 Not Found');
-					echo '
-						<h1>404 Not Found</h1>
-						The page that you have requested could not be found.
-					';
-					exit();
+					$this->sendOfferDetailNotFound();
 				}
 			}
 		}
@@ -1035,6 +1005,153 @@ class ParksSDK
 		}
 
 		return $isOfferDetail;
+	}
+
+
+
+	/**
+	 * Redirect SEO detail URLs to their canonical path (301) and answer unknown offers with 404
+	 * Call before any output; returns false only for unknown offers with soft_errors
+	 */
+	public function enforceOfferDetailCanonicalUrl(string $pageBaseUrl = ''): bool
+	{
+
+		$detailSlug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
+		$pageSlug = ! empty($this->config['seo_url_page_slug']) ? $this->config['seo_url_page_slug'] : '';
+
+		if (empty($this->config['seo_urls']) || ($this->config['seo_urls'] !== true) || ! strstr($this->view->scriptUrl, '/' . $detailSlug . '/')) {
+			return true;
+		}
+
+		$parsedDetail = $this->parseOfferDetailFromUrl($this->view->scriptUrl);
+		$offer = ($parsedDetail['offer_id'] > 0) ? $this->model->getOffer($parsedDetail['offer_id'], true) : false;
+		if (empty($offer) || empty($offer->title)) {
+			return $this->sendOfferDetailNotFound();
+		}
+
+		$currentPath = $this->normalizeUrlPath($this->view->scriptUrl);
+
+		// Trusted page URL from the CMS, so junk prefixes never become canonical
+		if ($pageBaseUrl !== '') {
+			$basePath = $this->normalizeUrlPath($pageBaseUrl);
+		}
+
+		// Fallback: current path without pagination and everything from the detail segment on
+		else {
+			$basePath = preg_replace('/\/' . preg_quote($pageSlug, '/') . '\/\d+/', '', $currentPath);
+			$basePath = (string) strstr($basePath, '/' . $detailSlug . '/', true);
+		}
+
+		// Base path is already normalized; re-parsing the decoded path would cut it at a literal "?" or "#"
+		$canonicalPath = $basePath . $this->view->getSeoDetailUrl($parsedDetail['offer_id'], $offer->title, $parsedDetail['poi_id'] ?: null, false);
+		if ($currentPath === $canonicalPath) {
+			return true;
+		}
+
+		// Encode each segment so the Location stays a relative path without "\", control chars or a "//host" prefix
+		$location = implode('/', array_map('rawurlencode', explode('/', $canonicalPath)));
+		if ($this->sendHeader('Location: ' . $location, 301)) {
+			$this->terminate();
+		}
+
+		return true;
+	}
+
+
+
+	/**
+	 * Extract offer id and optional POI id from an SEO detail URL
+	 */
+	private function parseOfferDetailFromUrl(string $url): array
+	{
+
+		$detailSlug = ! empty($this->config['seo_url_detail_slug']) ? $this->config['seo_url_detail_slug'] : '';
+		$poiSlug = ! empty($this->config['seo_url_poi_slug']) ? $this->config['seo_url_poi_slug'] : '';
+		$poiId = 0;
+
+		$path = $this->normalizeUrlPath($url);
+		if (! strstr($path, '/' . $detailSlug . '/')) {
+			return ['offer_id' => 0, 'poi_id' => 0];
+		}
+
+		// POI URLs end with /{poi_slug}/{id} after the offer segment
+		$segments = explode('/', $path);
+		if (in_array($poiSlug, $segments, true)) {
+			$poiId = intval(end($segments));
+			$segments = array_slice($segments, 0, -2);
+		}
+
+		// Offer id is the number after the last dash of the title slug
+		$titleSlug = explode('-', (string) end($segments));
+
+		return ['offer_id' => intval(end($titleSlug)), 'poi_id' => $poiId];
+	}
+
+
+
+	/**
+	 * Get the decoded URL path with single slashes and without trailing slash
+	 */
+	private function normalizeUrlPath(string $url): string
+	{
+
+		$path = parse_url($url, PHP_URL_PATH);
+
+		// Malformed URLs such as "///host/path" make parse_url fail
+		if ($path === false) {
+			$path = strtok((string) strtok($url, '?'), '&');
+		}
+
+		// Collapse slashes after decoding so "%2F%2F" or "///" cannot form a "//host" prefix
+		$path = preg_replace('#/+#', '/', '/' . rawurldecode((string) $path));
+
+		return rtrim($path, '/');
+	}
+
+
+
+	/**
+	 * Answer an unknown offer with 404
+	 * Prints a plain page and exits by default; with soft_errors returns false so the CMS can render its own 404 page
+	 */
+	private function sendOfferDetailNotFound(): bool
+	{
+
+		$this->sendHeader('HTTP/1.0 404 Not Found', 404);
+		if (! empty($this->config['soft_errors'])) {
+			return false;
+		}
+
+		$this->terminate('<h1>404 Not Found</h1> The page that you have requested could not be found.');
+	}
+
+
+
+	/**
+	 * Send an HTTP header unless output has already started
+	 */
+	protected function sendHeader(string $header, int $statusCode): bool
+	{
+
+		if (headers_sent()) {
+			return false;
+		}
+
+		header($header, true, $statusCode);
+
+		return true;
+	}
+
+
+
+	/**
+	 * Print output and end the request
+	 */
+	protected function terminate(string $output = ''): never
+	{
+
+		echo $output;
+		exit();
 	}
 
 

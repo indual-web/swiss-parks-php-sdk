@@ -213,6 +213,35 @@ add_action('init', function () {
 
 WordPress rewrites are internal; `$_SERVER['REQUEST_URI']` normally still contains the SEO path, which the SDK needs. Patterns: [SEO URLs](./seo-urls.md).
 
+To redirect outdated detail URLs and answer unknown offers with a real 404, call `enforceOfferDetailCanonicalUrl()` with the permalink as `$pageBaseUrl`. The shortcode runs too late for headers, so use `template_redirect` (this bootstraps the SDK a second time per detail request). With `soft_errors = true` an unknown offer returns `false` and WordPress renders its own 404 template:
+
+```php
+add_action('template_redirect', function () {
+
+	$post = get_queried_object();
+	if (! $post instanceof WP_Post || ! has_shortcode($post->post_content, 'swiss_parks_offers')) {
+		return;
+	}
+
+	require_once SWISS_PARKS_SDK_DIR . 'autoload.php';
+
+	try {
+		$pageUrl = get_permalink($post);
+		$sdk = new ParksSDK('de', '', $pageUrl);
+		if (! $sdk->enforceOfferDetailCanonicalUrl($pageUrl)) {
+			global $wp_query;
+			$wp_query->set_404();
+			status_header(404);
+			nocache_headers();
+		}
+	} catch (RuntimeException $e) {
+		return;
+	}
+});
+```
+
+See [canonical detail URLs](./seo-urls.md#canonical-detail-urls).
+
 ## Checklist
 
 - [ ] `api_hash` / `park_id` set; first `bin/sync.sh` succeeded
