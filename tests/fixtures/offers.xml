@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Offers>
+	<Offer identifier="101" status="2" createdAt="2026-01-01T10:00:00" modifiedAt="2026-01-02T10:00:00">
+		<ParkId>5</ParkId>
+		<Park>Testpark</Park>
+		<Institution>
+			<Company>Testpark AG</Company>
+			<ZipCode>3000</ZipCode>
+			<Locality>Bern</Locality>
+			<ParkPartner>0</ParkPartner>
+		</Institution>
+		<Contact>
+			<FirstName>Anna</FirstName>
+			<LastName>Muster</LastName>
+			<Email>anna@example.org</Email>
+			<ParkPartner>1</ParkPartner>
+		</Contact>
+		<Latitude>46.9</Latitude>
+		<Longitude>7.4</Longitude>
+		<Keywords>Wald</Keywords>
+		<Categories>
+			<Category identifier="1"/>
+		</Categories>
+		<Title language="de">Waldfest</Title>
+		<Title language="fr">Fête de la forêt</Title>
+		<Abstract language="de">Ein Fest im Wald</Abstract>
+		<Dates>
+			<Date>
+				<DateFrom>2099-06-01</DateFrom>
+				<TimeFrom>10:00:00</TimeFrom>
+				<DateTo>2099-06-01</DateTo>
+				<TimeTo>16:00:00</TimeTo>
+			</Date>
+		</Dates>
+		<TargetGroups>
+			<TargetGroup identifier="1"/>
+		</TargetGroups>
+		<Images>
+			<Image>
+				<Small>https://example.org/small.jpg</Small>
+				<Medium>https://example.org/medium.jpg</Medium>
+				<Large>https://example.org/large.jpg</Large>
+				<Original>https://example.org/original.jpg</Original>
+				<Copyright>Testpark</Copyright>
+			</Image>
+		</Images>
+		<Municipalities>
+			<Municipality identifier="351">Bern</Municipality>
+		</Municipalities>
+		<Subscription>
+			<SubscriptionMandatory>0</SubscriptionMandatory>
+			<OnlineSubscriptionEnabled>0</OnlineSubscriptionEnabled>
+			<SubscriptionContact/>
+		</Subscription>
+		<ParkEvent>1</ParkEvent>
+		<Kind>Fest</Kind>
+	</Offer>
+	<Offer identifier="102" status="2" createdAt="2026-01-01T10:00:00" modifiedAt="2026-01-02T10:00:00">
+		<ParkId>5</ParkId>
+		<Park>Testpark</Park>
+		<Institution>
+			<Company>Testpark AG</Company>
+		</Institution>
+		<Contact>
+			<Company>Testpark AG</Company>
+		</Contact>
+		<Categories>
+			<Category identifier="50"/>
+		</Categories>
+		<Title language="de">Panoramaweg</Title>
+		<FieldsOfActivity>
+			<FieldOfActivity identifier="1"/>
+		</FieldsOfActivity>
+		<RouteLength>12.5</RouteLength>
+		<TimeRequiredMinutes>135</TimeRequiredMinutes>
+		<LevelTechnics>medium</LevelTechnics>
+		<LevelCondition>easy</LevelCondition>
+		<SeasonMonths>
+			<Month>6</Month>
+			<Month>7</Month>
+		</SeasonMonths>
+	</Offer>
+	<Offer identifier="103" status="1" createdAt="2026-01-01T10:00:00" modifiedAt="2026-01-02T10:00:00">
+		<ParkId>5</ParkId>
+		<Park>Testpark</Park>
+		<Categories>
+			<Category identifier="1"/>
+		</Categories>
+		<Title language="de">Inaktives Angebot</Title>
+	</Offer>
+</Offers>

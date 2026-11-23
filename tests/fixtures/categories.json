@@ -1,0 +1,12 @@
+{
+	"de": {
+		"1": {"parent_id": 0, "stnet_id": null, "alpstein_id": null, "contact_visible_for_alpstein": 1, "marker": null, "sort": 1, "body": "Veranstaltungen"},
+		"4": {"parent_id": 0, "stnet_id": null, "alpstein_id": null, "contact_visible_for_alpstein": 1, "marker": null, "sort": 2, "body": "Aktivitäten"},
+		"50": {"parent_id": 4, "stnet_id": null, "alpstein_id": null, "contact_visible_for_alpstein": 1, "marker": null, "sort": 3, "body": "Sommeraktivitäten"}
+	},
+	"fr": {
+		"1": {"parent_id": 0, "stnet_id": null, "alpstein_id": null, "contact_visible_for_alpstein": 1, "marker": null, "sort": 1, "body": "Manifestations"},
+		"4": {"parent_id": 0, "stnet_id": null, "alpstein_id": null, "contact_visible_for_alpstein": 1, "marker": null, "sort": 2, "body": "Activités"},
+		"50": {"parent_id": 4, "stnet_id": null, "alpstein_id": null, "contact_visible_for_alpstein": 1, "marker": null, "sort": 3, "body": "Activités estivales"}
+	}
+}
