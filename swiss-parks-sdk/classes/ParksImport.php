@@ -88,9 +88,9 @@ class ParksImport
 			$this->sdk->db->delete('map_layer');
 
 			// Import custom layers
-			if (count($this->xml->MapLayer) > 0) {
+			if (count($this->xml->MapLayers) > 0) {
 
-				foreach ($this->xml->MapLayer as $layer) {
+				foreach ($this->xml->MapLayers->MapLayer as $layer) {
 
 					if (empty($layer->URL)) {
 						continue;
