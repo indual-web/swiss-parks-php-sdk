@@ -87,9 +87,9 @@ class ParksView
 
 		// Set script url with all params
 		if (! empty($_SERVER['REQUEST_URL'])) {
-			$this->scriptUrlWithParams = $_SERVER['REQUEST_URL'];
+			$this->scriptUrlWithParams = self::encodeUnsafeUrlChars($_SERVER['REQUEST_URL']);
 		} elseif (! empty($_SERVER['REQUEST_URI'])) {
-			$this->scriptUrlWithParams = $_SERVER['REQUEST_URI'];
+			$this->scriptUrlWithParams = self::encodeUnsafeUrlChars($_SERVER['REQUEST_URI']);
 		}
 
 		// Set script url without params
@@ -98,6 +98,17 @@ class ParksView
 		if ($paramStart > 0) {
 			$this->scriptUrl = substr($this->scriptUrlWithParams, 0, $paramStart);
 		}
+	}
+
+
+
+	/**
+	 * Percent-encode characters that could break out of an HTML attribute
+	 * The script url is printed into href/action attributes and sent as Location header, so it cannot be HTML-escaped
+	 */
+	public static function encodeUnsafeUrlChars(string $url): string
+	{
+		return strtr($url, ['"' => '%22', "'" => '%27', '<' => '%3C', '>' => '%3E', '`' => '%60', ' ' => '%20']);
 	}
 
 

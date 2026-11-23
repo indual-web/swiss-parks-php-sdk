@@ -206,6 +206,7 @@ Parameters:
 - Sets the view `script_url` / `script_url_with_params` used for forms and links.
 - Does not change session scoping; pass `$pageUrl` to the `ParksSDK` constructor for that.
 - Useful in CMS embeds where `REQUEST_URI` is not the offers page permalink.
+- Percent-encodes `"`, `'`, `<`, `>`, `` ` `` and spaces, because the URL is printed into HTML attributes. The same applies to the `REQUEST_URI` read by the view.
 
 Parameters:
 

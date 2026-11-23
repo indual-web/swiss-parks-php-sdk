@@ -1393,21 +1393,8 @@ class ParksSDK
 			// Get categories from URL
 			if (empty($postData) && ($getParams === true) && in_array($field, $allowedGetParams)) {
 				foreach ($allowedGetParams as $param) {
-					if (! empty($_GET[$param])) {
-
-						// Prepare get params
-						$getValues = explode(',', $_GET[$param]);
-						foreach ($getValues as $key => $value) {
-
-							// Only allow integers
-							if ($value > 0) {
-								$getValues[$key] = intval($value);
-							}
-							// Otherwise, remove param
-							else {
-								unset($getValues[$key]);
-							}
-						}
+					if (! empty($_GET[$param]) && is_string($_GET[$param])) {
+						$getValues = $this->sanitizeFilterValue($param, explode(',', $_GET[$param]));
 
 						// Set filter by params
 						if (! empty($getValues)) {
@@ -1569,8 +1556,7 @@ class ParksSDK
 		if ($ignoreFilter == false) {
 			foreach ($this->filterData as $field => $value) {
 				if (! empty($value)) {
-					$fieldname = substr($field, strlen($this->config['form_prefix']), strlen($field));
-					$filter[$fieldname] = $value;
+					$filter[$field] = $value;
 				}
 			}
 		}
@@ -1929,6 +1915,7 @@ class ParksSDK
 		}
 
 		// Keep full URL including query string
+		$url = ParksView::encodeUnsafeUrlChars($url);
 		$this->view->scriptUrlWithParams = $url;
 
 		// Strip query string for form/action base path

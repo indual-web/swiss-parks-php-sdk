@@ -20,7 +20,7 @@ final class ParksFilterSanitizeTest extends TestCase
 	protected function setUp(): void
 	{
 
-		$this->sdk = TestSdkFactory::create(['use_sessions' => true]);
+		$this->sdk = TestSdkFactory::create(['use_sessions' => true], 'de', FilterTestSdk::class);
 		$this->sdk->config['route_times'] = ['&lt; 2h', '2 - 4h', '4 - 6h', '&gt; 6h'];
 		$this->sdk->sessionName = 'parks_test';
 		$this->sanitize = new ReflectionMethod(ParksSDK::class, 'sanitizeFilterValue');
@@ -91,4 +91,75 @@ final class ParksFilterSanitizeTest extends TestCase
 		$this->assertSame('Wald', $this->sdk->filterData['search']);
 		$this->assertSame($this->sdk->filterData, $_SESSION['parks_test']['filter']);
 	}
+
+
+
+	/**
+	 * GET filters use the same sanitizing, so accessibility icon URLs survive
+	 */
+	public function testInitFilterSanitizesGetValues(): void
+	{
+
+		$_GET = ['categories' => '3,abc,0', 'accessibilities' => 'https://example.org/icon.svg,1'];
+
+		try {
+			(new ReflectionMethod(ParksSDK::class, 'initFilter'))->invoke($this->sdk);
+			$this->fail('Expected a reload after GET filters');
+		} catch (FilterReloaded) {
+			$this->assertSame([3], $this->sdk->filterData['categories']);
+			$this->assertSame(['https://example.org/icon.svg', '1'], $this->sdk->filterData['accessibilities']);
+		}
+	}
+
+
+
+	/**
+	 * Visitor filter keys reach the query unchanged when a form_prefix is set
+	 */
+	public function testFormPrefixKeepsFilterKeys(): void
+	{
+
+		$this->sdk->config['form_prefix'] = 'sp_';
+		$this->sdk->filterData = ['categories' => [3]];
+
+		$filter = (new ReflectionMethod(ParksSDK::class, 'normalizeOffersFilter'))->invoke($this->sdk);
+
+		$this->assertSame([3], $filter['categories']);
+	}
+
+
+
+	/**
+	 * Script urls cannot break out of href/action attributes
+	 */
+	public function testScriptUrlEncodesAttributeBreakingChars(): void
+	{
+
+		$this->sdk->view = new ParksView($this->sdk);
+		$this->sdk->setScriptUrl("/offers/\"><script>alert('x')</script> a?b=`1`");
+
+		$this->assertSame('/offers/%22%3E%3Cscript%3Ealert(%27x%27)%3C/script%3E%20a?b=%601%60', $this->sdk->view->scriptUrlWithParams);
+		$this->assertSame('/offers/%22%3E%3Cscript%3Ealert(%27x%27)%3C/script%3E%20a', $this->sdk->view->scriptUrl);
+	}
+}
+
+
+
+/**
+ * Throws instead of redirecting after filter input
+ */
+final class FilterTestSdk extends ParksSDK
+{
+
+
+	protected function reloadPage(bool $resetMode = false): never
+	{
+		throw new FilterReloaded();
+	}
+}
+
+
+
+final class FilterReloaded extends RuntimeException
+{
 }

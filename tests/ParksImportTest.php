@@ -176,6 +176,36 @@ final class ParksImportTest extends TestCase
 
 
 	/**
+	 * Excluded park IDs match the park_id column
+	 */
+	public function testExcludeParkIdsFiltersByParkId(): void
+	{
+
+		$this->importFixture();
+
+		$this->assertFalse($this->sdk->model->filterOffers(['exclude_park_ids' => [5]]));
+		$this->assertCount(2, $this->sdk->model->filterOffers(['exclude_park_ids' => [99]])['data']);
+	}
+
+
+
+	/**
+	 * Offer settings accept plain column names only and escape their values
+	 */
+	public function testOfferSettingsRejectUnsafeColumnsAndEscapeValues(): void
+	{
+
+		$this->importFixture();
+
+		$this->assertCount(2, $this->sdk->model->filterOffers(['offer_settings' => ['park_id = 0 OR 1' => '1']])['data']);
+		$this->assertFalse($this->sdk->model->filterOffers(['offer_settings' => ['park' => "x' OR '1'='1"]]));
+		$this->assertSame('', $this->sdk->db->getLastError());
+		$this->assertCount(2, $this->sdk->model->filterOffers(['offer_settings' => ['park' => 'Testpark']])['data']);
+	}
+
+
+
+	/**
 	 * Unparsable dates are ignored instead of throwing
 	 */
 	public function testInvalidDateFilterIsIgnored(): void

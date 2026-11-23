@@ -725,13 +725,17 @@ class ParksModel
 
 		// Select only offers which are available in the current language
 		else {
-			$where[] = "offer_i18n.language = '" . ($filter['force_language'] ?: $this->sdk->lang->langId) . "'";
+			$where[] = "offer_i18n.language = '" . $this->sdk->db->escape($filter['force_language'] ?: $this->sdk->lang->langId) . "'";
 		}
 
 		// Filter: offer settings
 		if (! empty($filter['offer_settings'])) {
 			foreach ($filter['offer_settings'] as $key => $value) {
-				$where[] = "main_offer." . $key . " = '" . $value . "'";
+
+				// Keys are column names and cannot be escaped, so allow plain identifiers only
+				if (preg_match('/^\w+$/', (string) $key)) {
+					$where[] = "main_offer." . $key . " = '" . $this->sdk->db->escape($value) . "'";
+				}
 			}
 		}
 
@@ -788,7 +792,7 @@ class ParksModel
 
 		// Filter: exlcude parks
 		if (! empty($filter['exclude_park_ids']) && is_array($filter['exclude_park_ids'])) {
-			$where[] = "main_offer.park NOT IN (" . $this->intList($filter['exclude_park_ids']) . ")";
+			$where[] = "main_offer.park_id NOT IN (" . $this->intList($filter['exclude_park_ids']) . ")";
 		}
 
 		// Filter: offers of today
@@ -2150,8 +2154,8 @@ class ParksModel
 
 							default:
 
-								// Remaining keys map 1:1 to offer columns (callers must pass known fields only)
-								if (! empty($key) && is_string($key) && (strlen($key) > 2)) {
+								// Remaining keys map 1:1 to offer columns; plain identifiers only, since they cannot be escaped
+								if (! empty($key) && is_string($key) && (strlen($key) > 2) && preg_match('/^\w+$/', $key)) {
 									$additionalQuery .= " AND offer." . $key . " = '" . $value . "'";
 								}
 								break;

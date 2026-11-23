@@ -58,7 +58,7 @@ Reference for keys that can be passed in `$filter`.
 Additional structured filters supported by the model/query layer:
 
 - `offer_settings` (`array<string, mixed>`)
-  - Attribute-level constraints merged into SQL filtering.
+  - Attribute-level constraints merged into SQL filtering. Keys are `offer` column names (letters, digits, `_` only; other keys are ignored), values are escaped.
 - `accessibilities` (`string[]`)
   - Match selected accessibility icon URLs; `1` (`GINTO_INFOS_AVAILABLE`) requires any accessibility information.
 - `date_from` (`string`)
@@ -96,8 +96,9 @@ Additional structured filters supported by the model/query layer:
 - Filter values can be sourced from POST, allowed GET params, and session state.
 - Allowed GET params in runtime initialization are: `categories`, `target_groups`, `fields_of_activity`, `accessibilities`.
 - If `use_sessions` is enabled, active filter state is persisted in session.
-- Visitor values from POST and session are normalized before use:
+- Visitor values from POST, allowed GET params and session are normalized before use (comma-separated lists in GET, for example `?categories=3,4`):
   - ID filters (`categories`, `park_id`, `target_groups`, `fields_of_activity`, `municipalities`, `level_technics`, `level_condition`, `project_status`) keep positive integers only, as an array; other values are dropped.
+  - `accessibilities` keep non-empty strings (icon URLs or `1`).
   - `route_length_min` / `route_length_max` are cast to integers.
   - `date_from` / `date_to` are kept only when they parse as a date.
   - `time_required` keeps only the labels offered in the filter UI.
