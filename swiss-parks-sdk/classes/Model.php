@@ -54,6 +54,12 @@ class Model
 	private array|false|null $filterMetaCache = null;
 
 
+	/**
+	 * SQL expression for the root category of a joined category chain (c1 → c2 → c3)
+	 */
+	private const MAIN_CATEGORY_SQL = 'COALESCE(c3.category_id, c2.category_id, c1.category_id)';
+
+
 
 	/**
 	 * Constructor
@@ -449,38 +455,15 @@ class Model
 				MAX(offer_date.date_to) AS date_to,
 				main_offer.offer_id,
 				
-				MIN(
-					CASE
-						WHEN c3.category_id IS NOT NULL THEN c3.category_id
-						WHEN c2.category_id IS NOT NULL THEN c2.category_id
-						WHEN c1.category_id IS NOT NULL THEN c1.category_id
-						ELSE NULL
-					END
-				) AS main_category_id,
+				MIN(" . self::MAIN_CATEGORY_SQL . ") AS main_category_id,
 
-				CASE 
-					MIN(
-						CASE
-							WHEN c3.category_id IS NOT NULL THEN c3.category_id
-							WHEN c2.category_id IS NOT NULL THEN c2.category_id
-							WHEN c1.category_id IS NOT NULL THEN c1.category_id
-							ELSE NULL
-						END
-					)
+				CASE MIN(" . self::MAIN_CATEGORY_SQL . ")
 					WHEN " . Category::EVENT . " THEN event.public_transport_stop
 					WHEN " . Category::PRODUCT . " THEN product.public_transport_stop
 					WHEN " . Category::BOOKING . " THEN booking.public_transport_stop
 				END AS public_transport_stop,
 			
-				CASE 
-					MIN(
-						CASE
-							WHEN c3.category_id IS NOT NULL THEN c3.category_id
-							WHEN c2.category_id IS NOT NULL THEN c2.category_id
-							WHEN c1.category_id IS NOT NULL THEN c1.category_id
-							ELSE NULL
-						END
-					)
+				CASE MIN(" . self::MAIN_CATEGORY_SQL . ")
 					WHEN " . Category::BOOKING . " THEN booking.season_months
 					WHEN " . Category::PRODUCT . " THEN product.season_months
 					WHEN " . Category::ACTIVITY . " THEN activity.season_months
@@ -488,26 +471,12 @@ class Model
 
 				CASE 
 					WHEN 
-						MIN(
-							CASE
-								WHEN c3.category_id IS NOT NULL THEN c3.category_id
-								WHEN c2.category_id IS NOT NULL THEN c2.category_id
-								WHEN c1.category_id IS NOT NULL THEN c1.category_id
-								ELSE NULL
-							END
-						) = " . Category::EVENT . "
+						MIN(" . self::MAIN_CATEGORY_SQL . ") = " . Category::EVENT . "
 						AND MIN(offer_date.date_from) < " . (! empty($filterDateFrom) ? "'" . $filterDateFrom . "'" : "NOW()") . "
 						AND MIN(offer_date.date_from) IS NOT NULL
 						THEN " . (! empty($filterDateFrom) ? "'" . $filterDateFrom . "'" : "CURDATE()") . "
 					WHEN 
-						MIN(
-							CASE
-								WHEN c3.category_id IS NOT NULL THEN c3.category_id
-								WHEN c2.category_id IS NOT NULL THEN c2.category_id
-								WHEN c1.category_id IS NOT NULL THEN c1.category_id
-								ELSE NULL
-							END
-						) = " . Category::EVENT . "
+						MIN(" . self::MAIN_CATEGORY_SQL . ") = " . Category::EVENT . "
 						THEN DATE_FORMAT(MIN(offer_date.date_from), '%Y-%m-%d')
 					ELSE 
 						MIN(offer_i18n.title)
@@ -524,27 +493,12 @@ class Model
 							OR MAX(offer_date.date_to) = '0000-00-00 00:00:00'
 							OR MAX(offer_date.date_to) IS NULL
 						)
-						AND MIN(
-							CASE
-								WHEN c3.category_id IS NOT NULL THEN c3.category_id
-								WHEN c2.category_id IS NOT NULL THEN c2.category_id
-								WHEN c1.category_id IS NOT NULL THEN c1.category_id
-								ELSE NULL
-							END
-						) = " . Category::EVENT . "
+						AND MIN(" . self::MAIN_CATEGORY_SQL . ") = " . Category::EVENT . "
 					THEN GROUP_CONCAT(DISTINCT DATE_FORMAT(offer_date.date_from, '%H:%i') || ' - ' || DATE_FORMAT(offer_date.date_to, '%H:%i'))
 					ELSE ''
 				END AS times,
 
-				CASE 
-					MIN(
-						CASE
-							WHEN c3.category_id IS NOT NULL THEN c3.category_id
-							WHEN c2.category_id IS NOT NULL THEN c2.category_id
-							WHEN c1.category_id IS NOT NULL THEN c1.category_id
-							ELSE NULL
-						END
-					)
+				CASE MIN(" . self::MAIN_CATEGORY_SQL . ")
 					WHEN " . Category::ACTIVITY . " THEN activity.poi
 					WHEN " . Category::PROJECT . " THEN project.poi
 				END AS poi,
@@ -1117,12 +1071,7 @@ class Model
 					CASE 
 						WHEN (
 							offer_date.date_from IS NOT NULL 
-							AND CASE
-								WHEN c3.category_id IS NOT NULL THEN c3.category_id
-								WHEN c2.category_id IS NOT NULL THEN c2.category_id
-								WHEN c1.category_id IS NOT NULL THEN c1.category_id
-								ELSE NULL
-							END IN (" . Category::EVENT . ")
+							AND " . self::MAIN_CATEGORY_SQL . " IN (" . Category::EVENT . ")
 						)
 						THEN DATE_FORMAT(offer_date.date_from, '%Y-%m-%d')
 						ELSE main_offer.offer_id
@@ -1150,14 +1099,7 @@ class Model
 						is_hint DESC, 
 						CASE
 							WHEN 
-								MIN(
-									CASE
-										WHEN c3.category_id IS NOT NULL THEN c3.category_id
-										WHEN c2.category_id IS NOT NULL THEN c2.category_id
-										WHEN c1.category_id IS NOT NULL THEN c1.category_id
-										ELSE NULL
-									END
-								) IN (" . Category::PROJECT . ", " . Category::RESEARCH . ")
+								MIN(" . self::MAIN_CATEGORY_SQL . ") IN (" . Category::PROJECT . ", " . Category::RESEARCH . ")
 							THEN project.duration_from 
 							ELSE NULL
 							END DESC,
@@ -1165,14 +1107,7 @@ class Model
 							WHEN 
 								MIN(offer_date.date_from) IS NOT NULL 
 								AND 
-								MIN(
-									CASE
-										WHEN c3.category_id IS NOT NULL THEN c3.category_id
-										WHEN c2.category_id IS NOT NULL THEN c2.category_id
-										WHEN c1.category_id IS NOT NULL THEN c1.category_id
-										ELSE NULL
-									END
-								) = " . Category::EVENT . " 
+								MIN(" . self::MAIN_CATEGORY_SQL . ") = " . Category::EVENT . " 
 							THEN MIN(offer_date.date_from)
 							ELSE MIN(offer_i18n.title)
 							END,
@@ -1225,14 +1160,7 @@ class Model
 				$countSelect = "
 					SELECT
 						main_offer.offer_id,
-						MIN(
-							CASE
-								WHEN c3.category_id IS NOT NULL THEN c3.category_id
-								WHEN c2.category_id IS NOT NULL THEN c2.category_id
-								WHEN c1.category_id IS NOT NULL THEN c1.category_id
-								ELSE NULL
-							END
-						) AS main_category_id,
+						MIN(" . self::MAIN_CATEGORY_SQL . ") AS main_category_id,
 						MIN(offer_date.date_from) AS date_from,
 						" . $iconUrlsSelect . "
 					FROM offer main_offer
