@@ -2233,9 +2233,10 @@ class SwissParksSdk
 		curl_setopt($ch, CURLOPT_FAILONERROR, true);
 
 		// No total timeout (large exports take long), but abort stalled transfers so CLI syncs without time limit cannot hang forever
+		// The hub sends no bytes while it builds a full export, which takes several minutes for large parks
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
 		curl_setopt($ch, CURLOPT_LOW_SPEED_LIMIT, 1);
-		curl_setopt($ch, CURLOPT_LOW_SPEED_TIME, 60);
+		curl_setopt($ch, CURLOPT_LOW_SPEED_TIME, 600);
 
 		// Integrators may disable verify for local/dev endpoints via curl_verify_ssl
 		$verifySsl = $this->config['curl_verify_ssl'] ?? true;

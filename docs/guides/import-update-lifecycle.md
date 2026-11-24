@@ -67,7 +67,7 @@ Depending on the export configuration, the XML export lists either all levels of
 ## Performance
 
 - CLI and HTTP sync disable the time limit and raise `memory_limit` to `512M`. Very large exports may need more.
-- Downloads give up after 10 seconds without a connection or 60 seconds without data, so a network drop cannot block cron forever.
+- Downloads give up after 10 seconds without a connection or 10 minutes without data, so a network drop cannot block cron forever.
 - Place `db_path` on fast local storage, not on a network filesystem.
 - Pages keep reading the database while a sync runs (SQLite WAL mode).
 - Use `--force` only when needed; incremental syncs are much faster.

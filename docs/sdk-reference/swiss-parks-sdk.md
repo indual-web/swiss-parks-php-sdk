@@ -175,7 +175,7 @@ Parameters:
 ### `loadExternalXml($url)`
 
 - Downloads an XML URL via cURL and returns `SimpleXMLElement` or `false`. Normally used by the import pipeline, not by page templates.
-- Gives up after 10 seconds without a connection, or when the transfer stalls for 60 seconds (for example after a network drop). There is no total time limit, so large exports can still finish.
+- Gives up after 10 seconds without a connection, or when the transfer stalls for 10 minutes (for example after a network drop; the hub may need several minutes before it starts sending a full export). There is no total time limit, so large exports can still finish.
 
 ## Runtime and state methods
 
