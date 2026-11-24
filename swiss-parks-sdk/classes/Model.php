@@ -1990,28 +1990,37 @@ class Model
 
 
 	/**
-	 * Get the root category ID by walking up the parent chain
+	 * Get the category ID and all its parent IDs up to the root category
 	 */
-	public function getRootCategory(int $categoryId): int|false
+	public function getCategoryPath(int $categoryId): array
 	{
 
-		if (empty($categoryId)) {
-			return false;
-		}
+		$path = [];
 
-		$lastCategoryId = false;
-
-		while ($categoryId > 0) {
+		while (($categoryId > 0) && ! in_array($categoryId, $path)) {
 			$category = $this->getCategoryRecord($categoryId);
 			if ($category === false) {
 				break;
 			}
 
+			$path[] = (int) $category->category_id;
 			$categoryId = (int) $category->parent_id;
-			$lastCategoryId = (int) $category->category_id;
 		}
 
-		return $lastCategoryId;
+		return $path;
+	}
+
+
+
+	/**
+	 * Get the root category ID by walking up the parent chain
+	 */
+	public function getRootCategory(int $categoryId): int|false
+	{
+
+		$path = $this->getCategoryPath($categoryId);
+
+		return ! empty($path) ? end($path) : false;
 	}
 
 

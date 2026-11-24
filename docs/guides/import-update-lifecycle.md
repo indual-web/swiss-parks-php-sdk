@@ -60,6 +60,10 @@ The header `X-Sync-Token: YOUR_SYNC_SECRET` can replace the `token` parameter.
 
 Leave `sync_secret` empty on servers with CLI cron so the endpoint stays closed.
 
+## Categories
+
+Depending on the export configuration, the XML export lists either all levels of an offer's categories or only the assigned ones. The import always stores the assigned categories together with all their parent categories up to the root, so the category filter and the main category of an offer work with both export variants.
+
 ## Performance
 
 - CLI and HTTP sync disable the time limit and raise `memory_limit` to `512M`. Very large exports may need more.

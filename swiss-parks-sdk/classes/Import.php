@@ -365,10 +365,17 @@ class Import
 								continue;
 							}
 
-							// Categories
-							$this->sdk->db->delete('category_link', ['offer_id' => $offerId]);
+							// Categories, most park exports only contain the assigned categories but queries need the full chain up to the root
+							$categoryIds = [];
 							foreach ($offer->Categories->Category as $category) {
-								$categoryId = $category->attributes()->identifier;
+								$categoryId = (int) $category->attributes()->identifier;
+								$categoryIds = array_merge($categoryIds, [$categoryId], $this->sdk->model->getCategoryPath($categoryId));
+							}
+							$categoryIds = array_unique($categoryIds);
+							sort($categoryIds);
+
+							$this->sdk->db->delete('category_link', ['offer_id' => $offerId]);
+							foreach ($categoryIds as $categoryId) {
 								$this->sdk->db->insert('category_link', ['offer_id' => $offerId, 'category_id' => $categoryId]);
 							}
 
