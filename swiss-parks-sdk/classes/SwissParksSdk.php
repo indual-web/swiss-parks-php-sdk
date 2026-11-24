@@ -1835,9 +1835,9 @@ class SwissParksSdk
 			}
 		}
 
-		// Return flat (non structured) categories
+		// Return flat (non structured) categories, empty array before the first import
 		else {
-			$return = $categories;
+			$return = is_array($categories) ? $categories : [];
 		}
 
 		return $return;
