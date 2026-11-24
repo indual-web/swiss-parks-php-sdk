@@ -243,7 +243,6 @@ $lang['offer_misc'] = 'Verschiedenes';
 $lang['offer_delete_date_confirm'] = 'Sind Sie sicher, dass Sie dieses Datum entfernen wollen?';
 $lang['offer_location_details'] = "Ortsdetails";
 $lang['offer_subscription_subscribe_now'] = 'Jetzt online anmelden';
-$lang['offer_subscription_send_request'] = 'Anfrage senden';
 
 
 
