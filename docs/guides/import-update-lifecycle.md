@@ -1,96 +1,69 @@
-[Docs](../index.md) › [Guides](./index.md) › Import and update lifecycle
+[Docs](../index.md) › Import and update lifecycle
 
 # Import and update lifecycle
 
-This guide documents sync, forced full import, SDK upgrades, and migration.
+How offer data gets into the local SQLite database and how to keep it current. Commands, options and exit codes: [CLI scripts](./bin-scripts.md).
 
-## Directory layout
+## Where things live
 
-- `swiss-parks-sdk/bin/` — CLI only (`sync`, `sync-smoke`, `migrate`, `upgrade-sdk`); full reference: [CLI scripts (`bin/`)](./bin-scripts.md)
-- `swiss-parks-sdk/public/` — HTTP endpoints (`favorites.php`, optional `sync.php`)
-- `swiss-parks-sdk/config/` — `config.dist.php` + `config.php` (+ optional `config.local.php` for local overrides)
-- `swiss-parks-sdk/writable/` — SQLite DB and logs
+| | ZIP installation | Composer installation |
+| --- | --- | --- |
+| CLI | `swiss-parks-sdk/bin/` | `vendor/bin/swiss-parks-sdk` |
+| Config | `swiss-parks-sdk/config/config.local.php` | Project config, for example `config/parks.php` |
+| Database and logs | `swiss-parks-sdk/writable/` (default) | `db_path` / `log_directory` in your project |
+| HTTP endpoints | `swiss-parks-sdk/public/` (`sync.php`, `favorites.php`) | Own wrappers ([public endpoints](./new-installation.md#public-endpoints)) |
 
-## Sync
+## Which action when
 
-- Commands:
-  - `bash swiss-parks-sdk/bin/sync.sh` — incremental (`?since=` when `last_import` is set)
-  - `bash swiss-parks-sdk/bin/sync.sh --force` — full import (no `?since=`)
-  - `php swiss-parks-sdk/bin/sync.php`
-  - `php swiss-parks-sdk/bin/sync.php --force`
-- Exit code: `0` on success, `1` on import failure or exception (for cron monitoring).
-- Stdout: one plain-text line such as `sync: ok (mode=incremental, imported=5, deleted=1, offers=120, map_layers=3, cleanup=0)`.
+| Situation | Action |
+| --- | --- |
+| Regular updates | Incremental sync from cron, for example every 4 hours. It fetches only offers changed since the last import |
+| Local data incomplete or a sync failed | Full sync with `--force` (HTTP: `force=1`) |
+| SDK update | Migration: deletes the SQLite file, recreates the schema from `database/schema.sql` and runs a full import. `upgrade-sdk.sh` and the Composer scripts run it automatically ([upgrade](./upgrading.md)) |
+| Check after install or in monitoring | `sync-smoke.sh` (ZIP installations) |
 
-Use `--force` when the local DB is incomplete or after a bad incremental run.
+Every release raises `SwissParksSdk::VERSION` and needs one migration. There are no incremental schema migrations.
 
-Prefer CLI cron. On shared hosting without SSH, use [HTTP sync](#http-sync-shared-hosting).
+## Cron
+
+Prefer CLI cron. Both commands exit with `1` on failure, so cron monitoring can alert on it.
+
+```cron
+# ZIP installation
+0 */4 * * * bash /path/to/swiss-parks-sdk/bin/sync.sh >> /path/to/swiss-parks-sdk/writable/log/cron-sync.log 2>&1
+
+# Composer installation
+0 */4 * * * cd /path/to/project && vendor/bin/swiss-parks-sdk sync --config=config/parks.php >> var/swiss-parks/log/cron-sync.log 2>&1
+```
+
+Choose an interval that matches how often offers change.
 
 ## HTTP sync (shared hosting)
 
-Use this only when the host cannot run `bin/sync.sh` (no SSH / no PHP CLI cron). `bin/sync.php` is not callable over HTTP.
+Use this only when the host cannot run CLI cron (no SSH). `bin/` is never callable over HTTP.
 
-1. Set a long random `sync_secret` in `config/config.php` or preferably `config.local.php` (see [configuration](./configuration.md)).
-2. Point the host’s URL cron at `public/sync.php` with the secret:
+1. Set a long random `sync_secret` in your config ([configuration](./configuration.md#database-and-sync)).
+2. Point the host's URL cron at `public/sync.php` (Composer: your [wrapper](./new-installation.md#public-endpoints)):
 
 ```text
 https://example.com/path/to/swiss-parks-sdk/public/sync.php?token=YOUR_SYNC_SECRET
 https://example.com/path/to/swiss-parks-sdk/public/sync.php?token=YOUR_SYNC_SECRET&force=1
 ```
 
-Optional header instead of the query parameter: `X-Sync-Token: YOUR_SYNC_SECRET`.
+The header `X-Sync-Token: YOUR_SYNC_SECRET` can replace the `token` parameter.
 
-Behaviour:
-
-- Empty or missing `sync_secret`: HTTP 403, endpoint disabled.
-- Wrong token: HTTP 403.
-- Success: HTTP 200 and the same plain-text `sync: ok (...)` line as CLI.
-- Failure: HTTP 500 and `sync: fail (...)`.
-
-Leave `sync_secret` empty on servers that use CLI cron so the URL stays closed.
-
-## SDK version upgrade
-
-- File: `swiss-parks-sdk/bin/upgrade-sdk.sh`
-- Command:
-  - `bash swiss-parks-sdk/bin/upgrade-sdk.sh latest`
-  - `bash swiss-parks-sdk/bin/upgrade-sdk.sh 22`
-- Downloads the release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases), updates SDK core files (preserves `config/config.php`, `custom/`, `writable/`), creates a backup, and runs `bin/migrate.php`.
-- Exit code: `0` on success, `1` on failure.
-- See [Upgrade](./upgrading.md) for the manual ZIP workflow and version-specific migration steps.
-
-## Migration
-
-- Commands:
-  - `bash swiss-parks-sdk/bin/migrate.sh`
-  - `php swiss-parks-sdk/bin/migrate.php`
-- Deletes the SQLite database file, recreates it with the current schema, and runs a full import. There are no incremental schema migrations anymore.
-- Exit code: `0` when import completes and the SDK is initialized, `1` otherwise.
-
-## Scripts overview
-
-| Script | Purpose |
+| Response | Meaning |
 | --- | --- |
-| `bin/sync.sh` | Incremental cron import (`--force` for full re-import) |
-| `public/sync.php` | Token-protected HTTP sync when CLI cron is unavailable |
-| `bin/sync-smoke.sh` | Smoke check after sync (or `--quick` without sync) |
-| `bin/migrate.sh` | Rebuild SQLite schema + full import after a manual core update |
-| `bin/upgrade-sdk.sh` | Download release, update core files, run migrate |
+| `403` | `sync_secret` is empty (endpoint disabled) or the token is wrong |
+| `200` and `sync: ok (...)` | Sync succeeded |
+| `500` and `sync: fail (...)` | Sync failed; see the log |
 
-Flags, exit codes, and environment variables: [CLI scripts (`bin/`)](./bin-scripts.md).
+Leave `sync_secret` empty on servers with CLI cron so the endpoint stays closed.
 
-## Recommended usage
+## Performance
 
-- Cron: `bin/sync.sh` (incremental).
-- No SSH / URL cron only: `public/sync.php` with `sync_secret`.
-- Incomplete data: `bin/sync.sh --force` (or `public/sync.php?…&force=1`).
-- Health check: `bin/sync-smoke.sh` (or `--quick` if sync already ran).
-- Schema / SDK upgrade: `bin/upgrade-sdk.sh` or `bin/migrate.sh` when core files are already updated (CLI only).
-- Favorites HTTP endpoint (optional): `public/favorites.php`.
-
-## Related docs
-
-- [CLI scripts (`bin/`)](./bin-scripts.md)
-- [Guide index](./index.md)
-- [New installation](./new-installation.md)
-- [Upgrade](./upgrading.md)
-- [Version migrations](./migrations/index.md)
+- CLI and HTTP sync disable the time limit and raise `memory_limit` to `512M`. Very large exports may need more.
+- Downloads give up after 10 seconds without a connection or 60 seconds without data, so a network drop cannot block cron forever.
+- Place `db_path` on fast local storage, not on a network filesystem.
+- Pages keep reading the database while a sync runs (SQLite WAL mode).
+- Use `--force` only when needed; incremental syncs are much faster.

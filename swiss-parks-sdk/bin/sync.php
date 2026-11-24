@@ -8,11 +8,14 @@
 | Sync offer data from XML export
 |
 | Usage:
-|   php bin/sync.php           Incremental (?since= when last_import is set)
-|   php bin/sync.php --force   Full import (no ?since=)
+|   php bin/sync.php                  Incremental (?since= when last_import is set)
+|   php bin/sync.php --force          Full import (no ?since=)
+|   php bin/sync.php --config=<path>  Use a project config file (Composer)
 |
 */
-require __DIR__ . '/../autoload.php';
+use SwissParks\Sdk\SwissParksSdk;
+
+require_once __DIR__ . '/../autoload.php';
 
 if (PHP_SAPI !== 'cli') {
 	http_response_code(403);
@@ -23,9 +26,11 @@ if (PHP_SAPI !== 'cli') {
 
 try {
 
+	SwissParksSdk::useConfigFromArgv($argv ?? []);
+
 	$force = in_array('--force', $argv ?? [], true) || in_array('force', $argv ?? [], true);
 
-	$sdk = ParksSDK::forScript();
+	$sdk = SwissParksSdk::forScript();
 	exit($sdk->update($force) ? 0 : 1);
 
 } catch (Throwable $e) {

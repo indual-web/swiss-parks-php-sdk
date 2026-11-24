@@ -1,4 +1,4 @@
-[Docs](../index.md) › [SDK reference](./index.md) › Filter options
+[Docs](../index.md) › Filter options
 
 # Filter options
 
@@ -108,6 +108,5 @@ Additional structured filters supported by the model/query layer:
 
 ## Related docs
 
-- [SDK reference index](./index.md)
-- [ParksSDK methods](./parks-sdk.md)
+- [SwissParksSdk methods](./swiss-parks-sdk.md)
 

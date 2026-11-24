@@ -1,69 +1,118 @@
-[Docs](../index.md) › [Guides](./index.md) › New installation
+[Docs](../index.md) › New installation
 
 # New installation
 
-This guide describes the first-time setup of the SDK in a new environment.
+First-time setup of the SDK on a park website.
+
+## ZIP or Composer
+
+| | ZIP | Composer |
+| --- | --- | --- |
+| Suits | Any hosting, also without SSH | Projects that already use Composer (SSH/CLI needed) |
+| SDK location | `swiss-parks-sdk/` in your project | `vendor/indual-web/swiss-parks-php-sdk/` |
+| Your settings | `swiss-parks-sdk/config/config.local.php` | Own project config file, for example `config/parks.php` |
+| Database, logs, templates, custom view | Inside `swiss-parks-sdk/` (default) | In your project, outside `vendor/` |
+| CLI | `bash swiss-parks-sdk/bin/sync.sh`, `migrate.sh` | `vendor/bin/swiss-parks-sdk sync`, `migrate` |
+| HTTP sync and favorites endpoints | Shipped in `swiss-parks-sdk/public/` | Small wrapper files in your public folder |
+| Updates | `bin/upgrade-sdk.sh` | `composer update` |
 
 ## Prerequisites
 
 - PHP `>= 8.2` and `<= 8.5`
-- PHP `pdo_sqlite` extension (bundled with PHP by default), SQLite `>= 3.25`
-- cURL extension enabled
+- PHP extensions `pdo_sqlite` (SQLite `>= 3.25`), `curl`, `simplexml` and `mbstring`
 - Outbound HTTPS to `hub.parks.swiss` (XML/JSON export)
-- Write permissions for `swiss-parks-sdk/writable/data/` (or your configured `db_path` directory)
-- Write permissions for `swiss-parks-sdk/writable/log/` (or your configured `log_directory`)
+- Write access for the web server and the cron user to the directories of `db_path` and `log_directory`
+- `api_hash` and `park_id` from `https://hub.parks.swiss/en/settings`
 
-No database server is required: the SDK stores all data in a local SQLite file that is created automatically on first run.
+The SQLite file and its schema are created automatically on the first import.
 
-## Step-by-step
+## ZIP installation
 
-1. Download the latest release ZIP from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases) (`swiss-parks-php-sdk-<version>.zip`).
-2. Upload/copy the `swiss-parks-sdk` directory into your project.
-3. Configure `swiss-parks-sdk/config/config.php`.
-   - Set `park_id` and `api_hash` from `https://hub.parks.swiss/en/settings`.
-   - Optionally adjust `db_path` (default: `writable/data/park-offers.sqlite`).
-   - See [configuration](./configuration.md) for optional keys such as `curl_verify_ssl`.
-4. Run the first import:
-   - CLI: `bash swiss-parks-sdk/bin/sync.sh` (or `bash swiss-parks-sdk/bin/sync.sh --force` for a full import)
-   - The SQLite database file and schema are created automatically.
-5. Verify import success:
-   - The SQLite file exists at the configured `db_path`.
-   - The `offer` table contains entries.
-6. Integrate SDK rendering into your project pages based on `index.php`.
-   - Add the SDK bootstrap and rendering calls (`showOffersFilter`, `showOffersList`, `showOffersMap`, `showOfferDetail`) in your own template/page code.
-   - Include the required frontend assets in your template (`parks.min.css` and `parks.min.js` from the `v22` frontend path), as shown in `index.php`.
-   - Load assets from `https://hub.parks.swiss/dist/frontend/v22/…` (see `index.php`).
-   - Use a `parks.min.js` build that looks for map container id `swiss-parks-map` (older builds expect `mapContainer` and leave the map tab empty).
-7. Configure a recurring cronjob (for example every 4 hours). Prefer CLI. See [import and update lifecycle](./import-update-lifecycle.md).
+1. Download the latest `swiss-parks-php-sdk-<version>.zip` from [GitHub Releases](https://github.com/indual-web/swiss-parks-php-sdk/releases) and copy the `swiss-parks-sdk/` folder into your project.
+2. Create `swiss-parks-sdk/config/config.local.php` with your values. Do not edit `config.php`: it holds the defaults and is replaced on every update. All keys: [configuration](./configuration.md).
+   ```php
+   <?php
 
-```cron
-0 */4 * * * bash /path/to/swiss-parks-sdk/bin/sync.sh >> /path/to/swiss-parks-sdk/writable/log/cron-sync.log 2>&1
+   return [
+   	'api_hash' => 'your-export-hash',
+   	'park_id' => 1,
+   ];
+   ```
+3. Run the first import:
+   ```bash
+   bash swiss-parks-sdk/bin/sync.sh
+   ```
+4. Add the SDK to your pages as shown in [quick start integration](./quick-start-integration.md) (complete example: `index.php` in the ZIP).
+5. Schedule the sync, for example every 4 hours:
+   ```cron
+   0 */4 * * * bash /path/to/swiss-parks-sdk/bin/sync.sh >> /path/to/swiss-parks-sdk/writable/log/cron-sync.log 2>&1
+   ```
+   Without SSH, use a URL cron against `public/sync.php` instead ([HTTP sync](./import-update-lifecycle.md#http-sync-shared-hosting)).
+
+## Composer installation
+
+1. Require the package:
+   ```bash
+   composer require indual-web/swiss-parks-php-sdk:^22.0
+   ```
+2. Create a project config outside `vendor/`, for example `config/parks.php`. Use absolute paths for everything the SDK writes or reads from your project, because `vendor/` is replaced on every update. Read secrets from the environment so they stay out of version control:
+   ```php
+   <?php
+
+   return [
+   	'api_hash' => getenv('SWISS_PARKS_API_HASH') ?: '',
+   	'park_id' => 1,
+   	'db_path' => dirname(__DIR__) . '/var/swiss-parks/park-offers.sqlite',
+   	'log_directory' => dirname(__DIR__) . '/var/swiss-parks/log/',
+   ];
+   ```
+   Own templates and a custom view: [templating and custom view](./templating-and-custom-view.md).
+3. Add the migration to the scripts in your project `composer.json`. It builds the database on the first install and after every SDK update; otherwise it skips:
+   ```json
+   "scripts": {
+   	"post-install-cmd": "swiss-parks-sdk migrate --config=config/parks.php --if-outdated",
+   	"post-update-cmd": "swiss-parks-sdk migrate --config=config/parks.php --if-outdated"
+   }
+   ```
+   Then run `composer install` once more for the first import.
+4. Load the Composer autoloader and the project config in your page code, then continue with [quick start integration](./quick-start-integration.md):
+   ```php
+   <?php
+
+   use SwissParks\Sdk\SwissParksSdk;
+
+   require __DIR__ . '/../vendor/autoload.php';
+
+   define('SWISS_PARKS_SDK_CONFIG', __DIR__ . '/../config/parks.php');
+
+   $sdk = new SwissParksSdk('de');
+   ```
+5. Schedule the sync with cron. It is separate from the Composer scripts:
+   ```cron
+   0 */4 * * * cd /path/to/project && vendor/bin/swiss-parks-sdk sync --config=config/parks.php >> var/swiss-parks/log/cron-sync.log 2>&1
+   ```
+
+### Public endpoints
+
+`vendor/` is not public. If you need [HTTP sync](./import-update-lifecycle.md#http-sync-shared-hosting) or [favorites](./favorites.md), add a small wrapper in your public folder that loads your config and includes the shipped endpoint. Example `public/swiss-parks/sync.php`:
+
+```php
+<?php
+
+require __DIR__ . '/../../vendor/autoload.php';
+
+define('SWISS_PARKS_SDK_CONFIG', __DIR__ . '/../../config/parks.php');
+
+require __DIR__ . '/../../vendor/indual-web/swiss-parks-php-sdk/swiss-parks-sdk/public/sync.php';
 ```
 
-Without SSH, set `sync_secret` and schedule a URL cron against `public/sync.php?token=…` ([HTTP sync](./import-update-lifecycle.md#http-sync-shared-hosting)).
+`favorites.php` works the same way: include `…/swiss-parks-sdk/public/favorites.php` and set `favorites_script_path` to the public folder of the wrapper (here `/swiss-parks`).
 
-## Verification checklist
+## Verification
 
-- Filter/list pages render correctly.
-- Detail page opens correctly.
-- Map loads without JS errors.
-- Logs show no critical import errors.
+- The SQLite file exists at `db_path` and the `offer` table has rows (`bash swiss-parks-sdk/bin/sync-smoke.sh --quick` checks this for ZIP installations).
+- Filter, list and detail pages render.
+- The map loads without JavaScript errors.
+- The log in `log_directory` shows no import errors.
 
-## Troubleshooting
-
-| Symptom | What to check |
-| --- | --- |
-| Empty list / empty SQLite | Run `bash swiss-parks-sdk/bin/sync.sh --force`; confirm `api_hash` / `park_id` and rows in the `offer` table. |
-| Sync fails with SSL/cURL HTTPS errors | Set `curl_verify_ssl = false` only as a hosting fallback; confirm outbound HTTPS to `hub.parks.swiss`. |
-| Cannot create DB or write logs | Fix write permissions on `db_path` and `log_directory` (web server and cron user). |
-| Map tab empty | Use the v22 `parks.min.js` as `type="module"` and container id `swiss-parks-map` (not `mapContainer`). |
-| Assets/CDN 404 or wrong host | Use `https://hub.parks.swiss/dist/frontend/v22/…` as in `index.php`. |
-
-WordPress-specific issues: [WordPress integration](./wordpress-integration.md#troubleshooting).
-
-## Related docs
-
-- [Guide index](./index.md)
-- [Documentation overview](../index.md)
-- [Import and update lifecycle](./import-update-lifecycle.md)
-- [SDK reference index](../sdk-reference/index.md)
+Problems: [troubleshooting](./troubleshooting.md).

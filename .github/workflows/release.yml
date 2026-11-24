@@ -3,9 +3,6 @@ name: Release
 on:
   push:
     tags:
-      - '[0-9]+'
-      - '[0-9]+.[0-9]+'
-      - 'v[0-9]+'
       - 'v[0-9]+.[0-9]+'
 
 permissions:
@@ -27,6 +24,14 @@ jobs:
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
           echo "Release tag=${TAG} version=${VERSION}"
+
+      - name: Check tag matches SwissParksSdk::VERSION
+        run: |
+          SDK_VERSION="$(sed -nE "s/.*const VERSION = '([^']+)'.*/\1/p" swiss-parks-sdk/classes/SwissParksSdk.php)"
+          if [ "$SDK_VERSION" != "${{ steps.meta.outputs.version }}" ]; then
+            echo "Error: tag ${{ steps.meta.outputs.tag }} does not match SwissParksSdk::VERSION ${SDK_VERSION}" >&2
+            exit 1
+          fi
 
       - name: Install zip tools
         run: sudo apt-get update && sudo apt-get install -y zip rsync

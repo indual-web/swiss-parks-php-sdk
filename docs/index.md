@@ -1,60 +1,37 @@
 # Swiss Parks PHP SDK
 
-Documentation for developers who integrate the SDK into a park website. It covers install, configuration, rendering, sync, and upgrades on your server — not SDK release or maintenance workflows.
+Documentation for developers who integrate the SDK into a park website: install, configuration, rendering, sync and upgrades on your server.
 
-The PHP SDK imports offer data from the Swiss Parks XML export into a local SQLite database file and renders filter, list, map, and detail views for server-side PHP integrations. No database server is required.
+The SDK imports offer data from the Swiss Parks XML export into a local SQLite database file and renders filter, list, map and detail views. No database server is required.
 
-## Start
+## Getting started
 
-Shared for every integration:
+1. [New installation](./guides/new-installation.md): ZIP or Composer, first import, cron
+2. [Configuration](./guides/configuration.md): config files, merge order and all settings
+3. [Quick start integration](./guides/quick-start-integration.md): page code, frontend assets, list/map tabs
 
-- [New installation](./guides/new-installation.md) (first v22 install)
-- [Core configuration](./guides/configuration.md)
-- [Upgrade](./guides/upgrading.md)
+Coming from v21 or older: [v21 → v22](./guides/migrations/21-to-22.md)
 
-Coming from v21: [v21 → v22](./guides/migrations/21-to-22.md)
+## Features
 
-Then choose a path below.
-
-## PHP integration
-
-- [Quick start integration](./guides/quick-start-integration.md)
-- [Templating and custom view](./guides/templating-and-custom-view.md)
-- [Output mode and multilingual support](./guides/output-and-language.md)
-- [SEO URLs](./guides/seo-urls.md)
-- [Favorites](./guides/favorites.md)
-
-## WordPress
-
-There is no official WordPress plugin. Wrap the SDK in your own plugin or theme:
-
-- [WordPress integration](./guides/wordpress-integration.md) (config, mini-plugin sketch, enqueue, cron, troubleshooting)
-
-Related: [configuration](./guides/configuration.md), [SEO URLs](./guides/seo-urls.md), [favorites](./guides/favorites.md), [output and language](./guides/output-and-language.md)
-
-## Upgrade
-
-- From v21 or older (directly, no steps in between): [v21 → v22](./guides/migrations/21-to-22.md)
-- Already on v22: [Upgrade](./guides/upgrading.md)
-- Older packages (v14–v21.1, archive only): [migrations index](./guides/migrations/index.md) · [legacy archive](https://github.com/indual-web/swiss-parks-php-sdk-legacy)
-- Sync/cron: [import and update lifecycle](./guides/import-update-lifecycle.md)
-
-## Reference
-
-- [SDK reference index](./sdk-reference/index.md)
-- [ParksSDK methods](./sdk-reference/parks-sdk.md)
-- [Filter options](./sdk-reference/filter-options.md)
-- [Map options](./sdk-reference/map-options.md)
+- [Templating and custom view](./guides/templating-and-custom-view.md): own templates and view class
+- [SEO URLs](./guides/seo-urls.md): path routing and canonical detail URLs
+- [Favorites](./guides/favorites.md): favorite links and favorites overview
+- [WordPress integration](./guides/wordpress-integration.md): plugin sketch, enqueue, cron, SEO rewrites
 
 ## Operations
 
-- [Import and update lifecycle](./guides/import-update-lifecycle.md) (`bin/sync.sh`, migrate, cron)
-- [CLI scripts (`bin/`)](./guides/bin-scripts.md) (all `bin/` tools, including `sync-smoke.sh`)
-- [Performance](./guides/performance-and-upgrade-strategy.md)
+- [Import and update lifecycle](./guides/import-update-lifecycle.md): when to sync, force, migrate; cron; performance
+- [Upgrade](./guides/upgrading.md): later releases for ZIP and Composer installations
+- [Troubleshooting](./guides/troubleshooting.md): common problems and fixes
 
-## All guides
+## Reference
 
-Full file list: [guides index](./guides/index.md)
+- [SwissParksSdk methods](./sdk-reference/swiss-parks-sdk.md): classes, constants and public methods
+- [CLI scripts](./guides/bin-scripts.md): commands, options, exit codes and environment variables
+- [Filter options](./sdk-reference/filter-options.md): keys for the `$filter` array
+- [Map options](./sdk-reference/map-options.md): keys for `$sdk->mapOptions`
+- [Template placeholders](./sdk-reference/template-placeholders.md): placeholders and conditions for `detail.tpl` / `filter.tpl`
 
 ## Contact
 

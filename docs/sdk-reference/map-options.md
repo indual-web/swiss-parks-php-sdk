@@ -1,4 +1,4 @@
-[Docs](../index.md) › [SDK reference](./index.md) › Map options
+[Docs](../index.md) › Map options
 
 # Map options
 
@@ -75,7 +75,7 @@ The renderer writes camelCase keys that match the interactive map schema. Notabl
 
 The SDK loads only the map CSS and the ES module JS (`type="module"`) when rendering maps. React and ArcGIS assets are bundled inside `swiss-parks-map`; do not load React 18 or ArcGIS 4.x CSS from the host page.
 
-Base URL comes from `interactive_map_url` in `config.php` (default: `https://map.parks.swiss`). Assets: `{interactive_map_url}/dist/css/style.css` and `{interactive_map_url}/dist/js/swiss-parks-map.umd.js`.
+Base URL comes from the `interactive_map_url` config key (default: `https://map.parks.swiss`). Assets: `{interactive_map_url}/dist/css/style.css` and `{interactive_map_url}/dist/js/swiss-parks-map.umd.js`.
 
 ## Compatibility notes
 
@@ -105,5 +105,4 @@ $sdk->mapOptions = [
 
 ## Related docs
 
-- [SDK reference index](./index.md)
-- [ParksSDK methods](./parks-sdk.md)
+- [SwissParksSdk methods](./swiss-parks-sdk.md)

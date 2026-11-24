@@ -6,11 +6,12 @@
 | Built by indual · www.indual.ch
 |
 */
+use SwissParks\Sdk\SwissParksSdk;
 
 
 // Include SDK
 require __DIR__ . '/../autoload.php';
-$sdk = new ParksSDK();
+$sdk = new SwissParksSdk();
 
 // Get offer id
 $offerId = 0;

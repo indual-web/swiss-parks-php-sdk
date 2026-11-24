@@ -1,32 +1,63 @@
-[Docs](../index.md) › [Guides](./index.md) › Core configuration
+[Docs](../index.md) › Configuration
 
-# Core configuration
+# Configuration
 
-Full reference for runtime settings in `swiss-parks-sdk/config/config.php`. Keys use snake_case. Keep `config.php` across SDK updates on the park server.
+Full reference for runtime settings. Keys use snake_case. The defaults live in `swiss-parks-sdk/config/config.php`; set your own values in a separate file (see below).
+
+## Config files and merge order
+
+Every config file returns a PHP array. The SDK merges them in this order, and a later file replaces whole keys of an earlier one (`array_replace`):
+
+1. `swiss-parks-sdk/config/config.php` — SDK defaults with comments. Do not edit it: SDK updates replace it.
+2. `swiss-parks-sdk/config/config.local.php` — optional, your values for ZIP installations. Not part of the release, so updates keep it.
+3. Project config — optional, a file outside the SDK folder whose absolute path is set in the `SWISS_PARKS_SDK_CONFIG` constant (or environment variable). Intended for Composer installations, where the SDK lives in `vendor/`.
+
+Put only the keys you change into your file:
+
+```php
+<?php
+
+return [
+	'api_hash' => 'your-export-hash',
+	'park_id' => 1,
+	'sync_secret' => 'a-long-random-string',
+];
+```
+
+Array values such as `language_priority` or `keyword_filter` are replaced as a whole, so repeat every entry you want to keep.
+
+Set the project config before creating the SDK. The constant takes precedence over the environment variable:
+
+```php
+define('SWISS_PARKS_SDK_CONFIG', __DIR__ . '/config/parks.php');
+```
+
+CLI scripts accept `--config=<path>` instead (see [bin scripts](./bin-scripts.md)). If `SWISS_PARKS_SDK_CONFIG` is set but the file is missing or does not return an array, the SDK aborts with an error message (or throws `RuntimeException` when `soft_errors` is already `true` in an earlier file).
 
 ## Required settings
 
-Set these on the server:
+Set these in your own config file:
 
 - `api_hash`
   - Hash from your export configuration on `hub.parks.swiss`.
 - `park_id`
   - Park ID from the park or export settings. `> 0` scopes one park; `0` or empty is network-wide (all parks).
-- `db_path` (default: `writable/data/park-offers.sqlite`)
-  - Path to the SQLite database file. Relative paths resolve from `swiss-parks-sdk/`. The file and directory are created automatically; the web server needs write access. Replaces former MySQL credentials.
-- `sync_secret` (default: empty)
-  - Shared secret for `public/sync.php` (HTTP/URL cron on shared hosting without SSH). Leave empty to disable HTTP sync. Use a long random value when enabled; prefer storing it in `config.local.php` so upgrades do not overwrite it.
 
-Optional: create `config.local.php` next to `config.php` to override keys such as `api_hash`, `park_id`, `sync_secret`, or `base_url` without editing the main config (for example on a staging copy of the site). `autoload.php` loads this file after `config.php` when it exists.
+## Database and sync
+
+- `db_path` (default: `writable/data/park-offers.sqlite`)
+  - Path to the SQLite database file. Relative paths resolve from `swiss-parks-sdk/`; use an absolute path outside `vendor/` for Composer installations. The file and directory are created automatically; the web server and the cron user need write access.
+- `sync_secret` (default: empty)
+  - Shared secret for the HTTP sync endpoint `public/sync.php` (URL cron on hosting without SSH). Leave empty to disable HTTP sync. Use a long random value when enabled. See [HTTP sync](./import-update-lifecycle.md#http-sync-shared-hosting).
 
 ## Network settings
 
 - `base_url` (optional override; runtime default `https://hub.parks.swiss/`)
-  - Base URL of the offer database for XML/JSON exports and related asset links. Not set in shipped `config.php`; `ParksSDK` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
+  - Base URL of the offer database for XML/JSON exports and related asset links. Not set in the shipped defaults; `SwissParksSdk` applies the default. Override only if you were given a different offer-database host (this is not the frontend CDN host for `parks.min.js`).
 - `curl_verify_ssl` (default: `true`)
   - Verifies SSL certificates for export requests to `hub.parks.swiss`. Set to `false` only if import fails with SSL/cURL HTTPS errors on shared hosting.
 - `migration_log_url` (default: `https://hub.parks.swiss/migrate/log_sdk_migration`)
-  - Endpoint contacted after a successful `migrate.php` run so the offer platform can record the SDK version in use. Uses `curl_verify_ssl` and your `api_hash`. Leave the default unless you were told otherwise.
+  - Endpoint that receives a signed report after a successful migration, so the offer platform knows which SDK version runs where (contents: [`migrate()`](../sdk-reference/swiss-parks-sdk.md#migrate)). Uses `curl_verify_ssl` and your `api_hash`. Leave the default unless you were told otherwise.
 
 ## SEO URLs
 
@@ -45,10 +76,10 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 
 ## View and template
 
-- `class_view` (default: `ParksView`)
-  - View class that renders output (optional subclass, for example `MyView` or `ParksSwissView`).
+- `class_view` (default: `\SwissParks\Sdk\View::class`)
+  - Fully qualified name of the view class that renders output. Set it to your own subclass of `SwissParks\Sdk\View`, for example `MyView::class`. See [Templating and custom view](./templating-and-custom-view.md).
 - `template_folder` (default: `standard`)
-  - Template set under `swiss-parks-sdk/templates/`.
+  - Name of a template set under `swiss-parks-sdk/templates/`, or an absolute path to your own template folder. Use an absolute path outside `vendor/` for Composer installations.
 
 ## Display and filter UI
 
@@ -97,9 +128,7 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 - `heading_offer_title_in_overview` (default: `h3`)
   - HTML heading tag for offer titles in overview templates.
 - `show_accessibility_filter` (default: `true`)
-  - Shows or hides accessibility filter controls. Hidden automatically for `projects_only` exports.
-- `hide_accessibility_filter` (per-request filter option, not config)
-  - Hides accessibility controls for a single page render when passed in the `$filter` array to `showOffersFilter()`.
+  - Shows or hides accessibility filter controls. Hidden automatically for `projects_only` exports. To hide them on a single page only, use the filter option `hide_accessibility_filter` ([filter options](../sdk-reference/filter-options.md#ui-toggles)).
 - `show_municipality_filter` (default: `true`)
   - Shows or hides the municipality filter.
 - `keyword_filter` (default: empty arrays per language)
@@ -108,16 +137,16 @@ See [SEO URLs](./seo-urls.md) for patterns and CMS routing.
 ## Output and CMS embeds
 
 - `return_output` (default: `false`)
-  - When `true`, rendering methods return HTML as a string (maps to runtime property `$sdk->returnOutput`). When `false`, methods print directly.
+  - When `false`, rendering methods print HTML directly. When `true`, they return it as a string, for CMS shortcodes, output buffering or layouts that inject HTML manually. Can also be changed at runtime with `$sdk->returnOutput`.
 - `soft_errors` (default: `false`)
-  - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Useful for CMS embeds (see [WordPress integration](./wordpress-integration.md)).
+  - When `true`, missing offer details return an empty string and bootstrap/language failures throw `RuntimeException` instead of `exit()`. Independent of `return_output`; CMS embeds usually set both to `true` (see [WordPress integration](./wordpress-integration.md)).
 - `prevent_css_js_include` (default: `false`)
   - When `false`, map/detail rendering prepends the interactive map library tags from `interactive_map_url` (`style.css`, `swiss-parks-map.umd.js`). When `true`, those tags are omitted and you must load the map library yourself. This does **not** affect `parks.min.css` / `parks.min.js` — those are never auto-included; always load them in your page or CMS enqueue.
 
 ## Interactive map
 
 - `interactive_map_url` (default: `https://map.parks.swiss`)
-  - Base URL for map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`). Runtime map behaviour (full height, layers, …) uses `$sdk->mapOptions`, not `config.php`. See [Map options](../sdk-reference/map-options.md).
+  - Base URL for map assets (`/dist/css/style.css`, `/dist/js/swiss-parks-map.umd.js`). Runtime map behaviour (full height, layers, …) uses `$sdk->mapOptions`, not the config. See [Map options](../sdk-reference/map-options.md).
 
 ## Favorites
 
@@ -126,7 +155,7 @@ See [Favorites](./favorites.md).
 - `favorites_extension_available` (default: `false`)
   - Enables favorite toggle links and the favorites overview.
 - `favorites_script_path` (default: `''`)
-  - URL or path to the folder that contains `favorites.php` (no trailing slash), or a CMS endpoint that calls `ParksSDK::toggleFavorite()`.
+  - URL or path to the folder that contains `favorites.php` (no trailing slash), or a CMS endpoint that calls `SwissParksSdk::toggleFavorite()`.
 
 ## API prefixes
 
@@ -137,8 +166,10 @@ See [Favorites](./favorites.md).
 
 ## Languages
 
+The active language is passed to the constructor: `new SwissParksSdk('fr')`. Missing or invalid values fall back to `de`. UI labels come from `swiss-parks-sdk/lang/<language>.php`.
+
 - `default_language` (default: `de`)
-  - Project convention for the default language; runtime language is still set via `new ParksSDK('<lang>')`.
+  - Project convention for the default language; it does not change the language passed to the constructor.
 - `available_languages` (default: `['de', 'fr', 'it', 'en']`)
   - Language files the SDK may load.
 - `language_independence` (default: `true`)
@@ -149,14 +180,14 @@ See [Favorites](./favorites.md).
 ## Sessions
 
 - `use_sessions` (default: `true`)
-  - Enables SDK session state for filter persistence and favorites (`toggleFavorite` requires this). Autoload starts a PHP session only when enabled and headers are not sent yet.
+  - Enables SDK session state for filter persistence and favorites (`toggleFavorite` requires this). The `SwissParksSdk` constructor starts a PHP session only when enabled, page rendering is bootstrapped, no session is active and headers are not sent yet.
 - `session_name` (default: `parks_api`)
   - Session/cookie namespace prefix (also used for the favorites cookie).
 
 ## Logs and date formats
 
 - `log_directory` (default: `writable/log/`)
-  - Directory for log files; must be writable by the web server / CLI user.
+  - Directory for log files, with trailing slash. Relative paths resolve from `swiss-parks-sdk/`; use an absolute path outside `vendor/` for Composer installations. Created if missing; must be writable by the web server / CLI user.
 - `db_date_format` (default: `%d.%m.%Y %H:%i`)
   - Date format used in database-related formatting.
 - `php_date_format` (default: `d.m.Y H:i`)
@@ -166,8 +197,5 @@ See [Favorites](./favorites.md).
 
 ## Related docs
 
-- [Guide index](./index.md)
+- [New installation](./new-installation.md)
 - [Quick start integration](./quick-start-integration.md)
-- [Output mode and multilingual support](./output-and-language.md)
-- [SEO URLs](./seo-urls.md)
-- [Favorites](./favorites.md)

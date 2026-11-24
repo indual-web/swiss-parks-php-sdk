@@ -1,50 +1,63 @@
-[Docs](../index.md) › [Guides](./index.md) › Quick start integration
+[Docs](../index.md) › Quick start integration
 
 # Quick start integration
 
-Minimal page integration:
+How to render the SDK on a page. A complete example with list/map tabs is `index.php` in the release ZIP.
+
+## Page code
+
+Load the SDK, then render either the detail or the overview:
 
 ```php
 <?php
-$language = 'en';
-require_once('swiss-parks-sdk/autoload.php');
-$sdk = new ParksSDK($language);
+
+use SwissParks\Sdk\SwissParksSdk;
+
+// ZIP installation
+require_once __DIR__ . '/swiss-parks-sdk/autoload.php';
+
+// Composer installation (instead of the line above)
+// require __DIR__ . '/../vendor/autoload.php';
+// define('SWISS_PARKS_SDK_CONFIG', __DIR__ . '/../config/parks.php');
+
+$sdk = new SwissParksSdk('en');
 
 $categories = [];
 $filter = [];
 
 if ($sdk->isOfferDetail()) {
-    $sdk->showOfferDetail();
+	$sdk->showOfferDetail();
 } else {
-    $sdk->showOffersFilter($categories, $filter);
-    $sdk->showOffersList($categories, $filter);
-    $sdk->showOffersPagination();
+	$sdk->showOffersFilter($categories, $filter);
+	$sdk->showOffersList($categories, $filter);
+	$sdk->showOffersPagination();
 }
 ```
 
-A complete example including tabs and map is available in `index.php`.
+- `$categories` limits the overview to category IDs, `$filter` sets filter values and UI toggles ([filter options](../sdk-reference/filter-options.md)).
+- Methods print their HTML. Set `return_output = true` to get strings instead ([configuration](./configuration.md#output-and-cms-embeds)).
+- All methods: [SwissParksSdk methods](../sdk-reference/swiss-parks-sdk.md).
 
-## Frontend assets (`parks.min.css` / `parks.min.js`)
+## Frontend assets
 
-Load the SDK `v22` frontend bundle (see `index.php`):
+The SDK never adds `parks.min.css` and `parks.min.js` itself. Load the v22 bundle on every page that renders SDK output, with the script as module:
 
-- Production CDN: `https://hub.parks.swiss/dist/frontend/v22/css/parks.min.css` and `…/v22/parks.min.js`
-- The JS build must use map container id `swiss-parks-map` (not legacy `mapContainer`)
+```html
+<link href="https://hub.parks.swiss/dist/frontend/v22/css/parks.min.css" rel="stylesheet">
+<script type="module" src="https://hub.parks.swiss/dist/frontend/v22/parks.min.js"></script>
+```
 
-## List/map tab and back navigation
+- The map container id is `swiss-parks-map`. Older builds looked for `mapContainer` and leave the map tab empty.
+- The interactive map library (`map.parks.swiss`) is added automatically when a map is rendered, unless `prevent_css_js_include = true` ([configuration](./configuration.md#output-and-cms-embeds)).
 
-`parks.min.js` stores the active overview tab in the URL hash (`#tab_1` list, `#tab_2` map) and mirrors it in `sessionStorage`. When the detail back link returns to the overview without a hash (typical in CMS embeds), the last list/map tab is restored.
+## List/map tabs and back navigation
 
-This works in plain PHP, WordPress, and other CMS embeds as long as:
+`parks.min.js` stores the active overview tab in the URL hash (`#tab_1` list, `#tab_2` map) and mirrors it in `sessionStorage`. When the detail back link returns to the overview without a hash (typical in CMS embeds), the last tab is restored.
 
-- Overview uses the list/map tab markup expected by `parks.min.js` (see `index.php`: `ul.tab_list.move_offer_total` with `tab_1` / `tab_2`)
-- Detail and overview run in the same browser tab (so `sessionStorage` is shared)
-- A current `v22` `parks.min.js` is loaded on both overview and detail pages
+This works in plain PHP, WordPress and other CMS embeds as long as:
 
-The detail back link points to the overview URL. `parks.min.js` appends `#tab_1` or `#tab_2` from `sessionStorage` when present. Detail-only hashes such as `#tab_5` (POI → route) are left unchanged.
+- The overview uses the tab markup from `index.php` (`ul.tab_list.move_offer_total` with `tab_1` / `tab_2`)
+- Detail and overview run in the same browser tab, so `sessionStorage` is shared
+- The v22 `parks.min.js` is loaded on overview and detail pages
 
-## Related docs
-
-- [Guide index](./index.md)
-- [Core configuration](./configuration.md)
-- [ParksSDK methods](../sdk-reference/parks-sdk.md)
+Detail-only hashes such as `#tab_5` (POI → route) are left unchanged.

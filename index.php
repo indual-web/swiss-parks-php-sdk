@@ -6,11 +6,12 @@
 | Built by indual · www.indual.ch
 |
 | Copy this file into your project and adapt language, filters, and layout.
-| Before first use, set api_hash and park_id in swiss-parks-sdk/config/config.php
+| Before first use, set api_hash and park_id in swiss-parks-sdk/config/config.local.php
 | and run the import:
 | https://github.com/indual-web/swiss-parks-php-sdk/blob/main/docs/guides/new-installation.md
 |
 */
+use SwissParks\Sdk\SwissParksSdk;
 
 
 // Available languages: de, fr, it, en
@@ -18,8 +19,8 @@ $language = 'de';
 
 require_once('swiss-parks-sdk/autoload.php');
 
-// Optional 2nd argument: alternative api_hash (otherwise config.php is used)
-$sdk = new ParksSDK($language);
+// Optional 2nd argument: alternative api_hash (otherwise the configured api_hash is used)
+$sdk = new SwissParksSdk($language);
 
 
 // Limit the overview to category IDs, or leave empty for all categories

@@ -1,4 +1,4 @@
-[Docs](../index.md) › [Guides](./index.md) › Favorites
+[Docs](../index.md) › Favorites
 
 # Favorites
 
@@ -21,7 +21,7 @@ This feature is optional. If enabled, each offer can show an add/remove favorite
 ## Storage and lifecycle
 
 - Favorites are stored in a cookie named `<session_name>_favorites`.
-- The cookie value is JSON (offer ID map), handled by `ParksFavorites`. Invalid or legacy non-JSON payloads are ignored (empty favorites).
+- The cookie value is JSON (offer ID map), handled by `Favorites`. Invalid or legacy non-JSON payloads are ignored (empty favorites).
 - Cookie flags: `path=/`, `SameSite=Lax`, and `Secure` when the request is HTTPS.
 - The cookie is updated when visitors add/remove favorites.
 - A clean action is available to clear all favorites.
@@ -32,6 +32,7 @@ This feature is optional. If enabled, each offer can show an add/remove favorite
 - Script endpoint: `swiss-parks-sdk/public/favorites.php`
   - Toggle favorite: `favorites.php?offer_id=<id>`
   - Clear all: `favorites.php?action=clean`
+- Composer installations: `vendor/` is not public. Add a small wrapper in your public folder that includes the shipped file, and point `favorites_script_path` to that folder ([public endpoints](./new-installation.md#public-endpoints)).
 - API methods:
   - `toggleFavorite($offerId)`
   - `showFavorites()`
@@ -39,5 +40,5 @@ This feature is optional. If enabled, each offer can show an add/remove favorite
 
 ## Related docs
 
-- [Guide index](./index.md)
-- [SEO URLs](./seo-urls.md)
+- [Configuration](./configuration.md#favorites)
+- [SwissParksSdk methods](../sdk-reference/swiss-parks-sdk.md#togglefavoriteofferid)

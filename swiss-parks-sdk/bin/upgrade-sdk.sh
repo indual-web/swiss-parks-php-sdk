@@ -1,7 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-GITHUB_REPO="${PARKS_API_GITHUB_REPO:-indual-web/swiss-parks-php-sdk}"
+# PARKS_API_* names are still read as fallback for existing setups
+GITHUB_REPO="${SWISS_PARKS_SDK_GITHUB_REPO:-${PARKS_API_GITHUB_REPO:-indual-web/swiss-parks-php-sdk}}"
+SKIP_MIGRATE="${SWISS_PARKS_SDK_SKIP_MIGRATE:-${PARKS_API_SKIP_MIGRATE:-0}}"
 VERSION="${1:-latest}"
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -15,14 +17,15 @@ show_usage()
 	cat <<EOF
 Usage: bash upgrade-sdk.sh [version]
 
-  version   Release version (e.g. 22, 21.1) or "latest" (default)
+  version   Release version (e.g. 22.0, 22.1) or "latest" (default)
 
 Downloads a Swiss Parks PHP SDK release from GitHub Releases, replaces SDK core
-files, preserves config.php, custom/, data/, and log/, then runs bin/migrate.php.
+files and config/config.php (SDK defaults), preserves config/config.local.php,
+custom/, other templates and writable/, then runs bin/migrate.php.
 
 Environment:
-  PARKS_API_GITHUB_REPO   GitHub repo (default: indual-web/swiss-parks-php-sdk)
-  PARKS_API_SKIP_MIGRATE  Set to 1 to skip bin/migrate.php after the file update
+  SWISS_PARKS_SDK_GITHUB_REPO   GitHub repo (default: indual-web/swiss-parks-php-sdk)
+  SWISS_PARKS_SDK_SKIP_MIGRATE  Set to 1 to skip bin/migrate.php after the file update
 EOF
 
 }
@@ -101,6 +104,13 @@ if [ ! -f "$SDK_DIR/autoload.php" ]; then
 	exit 1
 fi
 
+# config.php is replaced with the new defaults, so own values must live in config.local.php
+if [ ! -f "$SDK_DIR/config/config.local.php" ]; then
+	echo "Error: $SDK_DIR/config/config.local.php not found." >&2
+	echo "Move your settings (api_hash, park_id, ...) from config.php to config.local.php first." >&2
+	exit 1
+fi
+
 DOWNLOAD_URLS="$(resolve_download_urls "$VERSION")"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_DIR="$(dirname "$SDK_DIR")/swiss-parks-sdk-backup-${TIMESTAMP}"
@@ -170,29 +180,24 @@ if [ -d "$SRC_DIR/public" ]; then
 	rsync -a "$SRC_DIR/public/" "$SDK_DIR/public/"
 fi
 
-if [ -f "$SRC_DIR/config/config.dist.php" ]; then
-	mkdir -p "$SDK_DIR/config"
-	rsync -a "$SRC_DIR/config/config.dist.php" "$SDK_DIR/config/"
+if [ -f "$SRC_DIR/config/config.php" ]; then
+	rsync -a "$SRC_DIR/config/config.php" "$SDK_DIR/config/"
 fi
 
 if [ -d "$SRC_DIR/templates/standard" ]; then
 	rsync -a "$SRC_DIR/templates/standard/" "$SDK_DIR/templates/standard/"
 fi
 
-if [ -d "$SRC_DIR/templates/parks.swiss" ]; then
-	rsync -a "$SRC_DIR/templates/parks.swiss/" "$SDK_DIR/templates/parks.swiss/"
-fi
-
 # Drop legacy paths if still present
 rm -rf "$SDK_DIR/helpers" "$SDK_DIR/language" "$SDK_DIR/template"
 
-INSTALLED_VERSION="$(grep -E "define\('SDK_VERSION'," "$SDK_DIR/autoload.php" | sed -E "s/.*SDK_VERSION', *([^)]+)\).*/\1/")"
+INSTALLED_VERSION="$(sed -nE "s/.*const VERSION = '([^']+)'.*/\1/p" "$SDK_DIR/classes/SwissParksSdk.php")"
 
 echo "SDK files updated to version $INSTALLED_VERSION."
 echo "Backup: $BACKUP_DIR"
 
-if [ "${PARKS_API_SKIP_MIGRATE:-0}" = "1" ]; then
-	echo "Skipping migrate.php (PARKS_API_SKIP_MIGRATE=1)."
+if [ "$SKIP_MIGRATE" = "1" ]; then
+	echo "Skipping migrate.php (SWISS_PARKS_SDK_SKIP_MIGRATE=1)."
 	exit 0
 fi
 

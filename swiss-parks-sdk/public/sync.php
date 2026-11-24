@@ -14,6 +14,8 @@
 |   Header: X-Sync-Token: YOUR_SECRET
 |
 */
+use SwissParks\Sdk\SwissParksSdk;
+
 require __DIR__ . '/../autoload.php';
 
 header('Content-Type: text/plain; charset=UTF-8');
@@ -21,7 +23,7 @@ header('Cache-Control: no-store');
 
 try {
 
-	$sdk = ParksSDK::forScript();
+	$sdk = SwissParksSdk::forScript();
 	$secret = (string) ($sdk->config['sync_secret'] ?? '');
 
 	// Empty secret disables the endpoint

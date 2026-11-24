@@ -1,4 +1,4 @@
-[Docs](../index.md) › [Guides](./index.md) › SEO URLs
+[Docs](../index.md) › SEO URLs
 
 # SEO URLs
 
@@ -6,13 +6,7 @@ Enable SEO path routing when your site does not use query parameters for offer d
 
 ## Configuration
 
-- `seo_urls` (default: `false`) — set to `true` to enable.
-- Slug defaults (override in `config.php` if needed):
-  - `seo_url_detail_slug` — `offer-detail`
-  - `seo_url_poi_slug` — `poi`
-  - `seo_url_page_slug` — `page`
-  - `seo_url_reset_slug` — `reset`
-- `url_param_prefix` — when SEO mode is off (or for some internal params), query keys are `{prefix}offer` and `{prefix}page`.
+Set `seo_urls = true`. The path segments (`detail_slug`, `poi_slug`, `page_slug`, `reset_slug` below) come from the `seo_url_*` settings in [configuration](./configuration.md#seo-urls).
 
 ## URL patterns
 
@@ -35,16 +29,16 @@ Without SEO URLs, detail and page use query parameters such as `?offer=123` or `
 
 ## Routing requirements
 
-Your CMS or web server must forward these slug paths to the same PHP endpoint that bootstraps `ParksSDK`. The SDK detects detail/pagination from `scriptUrl` (usually `REQUEST_URI`).
+Your CMS or web server must forward these slug paths to the same PHP endpoint that bootstraps `SwissParksSdk`. The SDK detects detail/pagination from `scriptUrl` (usually `REQUEST_URI`).
 
-For CMS embeds, pass `$pageUrl` into `new ParksSDK(...)` so the session is scoped to the offers page. Do **not** replace `scriptUrl` with only the clean page path when `seo_urls` is true — that breaks `isOfferDetail()` and SEO pagination. See [WordPress integration](./wordpress-integration.md).
+For CMS embeds, pass `$pageUrl` into `new SwissParksSdk(...)` so the session is scoped to the offers page. Do **not** replace `scriptUrl` with only the clean page path when `seo_urls` is true — that breaks `isOfferDetail()` and SEO pagination. See [WordPress integration](./wordpress-integration.md).
 
 ## Canonical detail URLs
 
 The SDK reads the offer ID only from the number at the end of the detail segment. Without further checks, one offer answers with `200` under many URLs (outdated title slug, `/page/3/` prefix, junk prefix, unknown ID). Call `enforceOfferDetailCanonicalUrl()` before any output to avoid duplicate content and soft 404s:
 
 ```php
-$sdk = new ParksSDK('de');
+$sdk = new SwissParksSdk('de');
 $sdk->enforceOfferDetailCanonicalUrl('/offers');
 ```
 
@@ -58,15 +52,9 @@ Behaviour:
 
 ## WordPress
 
-Default recommendation: keep `seo_urls = false` unless you need pretty paths.
-
-If SEO mode is on, register rewrite rules so the SEO paths still load the page that contains the shortcode (adjust the `offers` slug to your page). Leave `REQUEST_URI` unchanged. Full sketch: [WordPress integration](./wordpress-integration.md#seo-urls).
-
-After adding rules: **Settings → Permalinks → Save**.
+Rewrite rules and the canonical redirect for WordPress: [WordPress integration](./wordpress-integration.md#seo-urls).
 
 ## Related docs
 
-- [Guide index](./index.md)
-- [Core configuration](./configuration.md)
-- [Favorites](./favorites.md)
-- [WordPress integration](./wordpress-integration.md)
+- [Configuration](./configuration.md#seo-urls)
+- [WordPress integration](./wordpress-integration.md#seo-urls)

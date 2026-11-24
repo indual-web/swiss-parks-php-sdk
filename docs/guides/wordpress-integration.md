@@ -1,18 +1,16 @@
-[Docs](../index.md) › [Guides](./index.md) › WordPress integration
+[Docs](../index.md) › WordPress integration
 
 # WordPress integration
 
 This SDK is CMS-agnostic. There is **no official WordPress plugin** in this repository. Wrap the SDK in your own plugin (recommended) or theme.
 
-Complete shared setup first: [new installation](./new-installation.md) and [configuration](./configuration.md). Place `swiss-parks-sdk/` inside your plugin directory (or another path your plugin can `require`).
+Complete shared setup first: [new installation](./new-installation.md) and [configuration](./configuration.md). Place `swiss-parks-sdk/` inside your plugin directory (or another path your plugin can `require`), or install it with Composer (see [Composer and Bedrock](#composer-and-bedrock)).
 
-Upgrading from v21: follow [v21 → v22](./migrations/21-to-22.md) (includes a short WordPress checklist).
-
-The host must run **PHP 8.2–8.5** with `pdo_sqlite` (same as the rest of the SDK).
+Upgrading from v21: follow [v21 → v22](./migrations/21-to-22.md).
 
 ## Recommended configuration
 
-Set these in `swiss-parks-sdk/config/config.php`:
+Set these in `swiss-parks-sdk/config/config.local.php` (ZIP) or your project config (Composer):
 
 | Key | Recommendation |
 | --- | --- |
@@ -25,21 +23,24 @@ Set these in `swiss-parks-sdk/config/config.php`:
 | `db_path` / `log_directory` | Absolute paths under a writable location (for example under `wp-content/uploads/…`) |
 | `favorites_script_path` | Public URL path to the folder that contains `favorites.php` (no trailing slash), when favorites are enabled |
 
-Important:
-
-- The SDK **never** auto-includes `parks.min.css` / `parks.min.js`. You always load those yourself (enqueue in the sketch below).
-- `prevent_css_js_include` only controls the **interactive map** assets (`interactive_map_url` → `style.css` / `swiss-parks-map.umd.js`), not the v22 frontend bundle.
+`prevent_css_js_include` only controls the interactive map assets. `parks.min.css` / `parks.min.js` are never added by the SDK; the sketch below enqueues them ([frontend assets](./quick-start-integration.md#frontend-assets)).
 
 Example paths (adjust to your server):
 
 ```php
-$config['db_path'] = '/var/www/html/wp-content/uploads/swiss-parks-sdk/park-offers.sqlite';
-$config['log_directory'] = '/var/www/html/wp-content/uploads/swiss-parks-sdk/log/';
+<?php
+
+return [
+	'return_output' => true,
+	'soft_errors' => true,
+	'db_path' => '/var/www/html/wp-content/uploads/swiss-parks-sdk/park-offers.sqlite',
+	'log_directory' => '/var/www/html/wp-content/uploads/swiss-parks-sdk/log/',
+];
 ```
 
 ## Mini plugin sketch
 
-Example layout: `wp-content/plugins/swiss-parks-offers/` containing `swiss-parks-offers.php` and the `swiss-parks-sdk/` folder. Adapt names and paths to your project.
+Example layout: `wp-content/plugins/swiss-parks-offers/` containing `swiss-parks-offers.php` and, for a ZIP installation, the `swiss-parks-sdk/` folder. Adapt names and paths to your project.
 
 This sketch assumes `seo_urls = false` (simplest). Pretty SEO URLs are covered later.
 
@@ -51,18 +52,25 @@ This sketch assumes `seo_urls = false` (simplest). Pretty SEO URLs are covered l
  * Version: 1.0.0
  */
 
+use SwissParks\Sdk\SwissParksSdk;
+
 if (! defined('ABSPATH')) {
 	exit;
 }
 
-define('SWISS_PARKS_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('SWISS_PARKS_SDK_DIR', SWISS_PARKS_PLUGIN_DIR . 'swiss-parks-sdk/');
+// ZIP installation: SDK folder inside the plugin
+require_once __DIR__ . '/swiss-parks-sdk/autoload.php';
+
+// Composer installation (instead of the line above): Bedrock loads vendor/autoload.php already,
+// a plugin with its own composer.json requires it here. Then point to the project config:
+// require_once __DIR__ . '/vendor/autoload.php';
+// define('SWISS_PARKS_SDK_CONFIG', '/path/to/config/parks.php');
 
 /**
  * Start the PHP session before WordPress prints HTML.
- * Add this only when use_sessions is true in config.php.
- * SDK autoload also calls session_start(), but only if headers are still
- * writable — a shortcode usually runs too late.
+ * Add this only when use_sessions is true in your config.
+ * The SwissParksSdk constructor also calls session_start(), but only if
+ * headers are still writable — a shortcode usually runs too late.
  */
 add_action('init', function () {
 
@@ -111,14 +119,12 @@ add_filter('script_loader_tag', function ($tag, $handle, $src) {
  */
 add_shortcode('swiss_parks_offers', function () {
 
-	require_once SWISS_PARKS_SDK_DIR . 'autoload.php';
-
-	$language = 'de'; // map from WPML/Polylang if needed — see output-and-language.md
+	$language = 'de'; // map from WPML/Polylang if needed
 	$pageUrl = get_permalink() ?: '/';
 
 	try {
 		// $pageUrl scopes the PHP session to this offers page (use_sessions)
-		$sdk = new ParksSDK($language, '', $pageUrl);
+		$sdk = new SwissParksSdk($language, '', $pageUrl);
 
 		// Pin forms/links to the page path when not using SEO URLs.
 		// Call this after construct: it affects HTML rendered below.
@@ -153,25 +159,18 @@ add_shortcode('swiss_parks_offers', function () {
 Notes:
 
 - Keep `return_output = true` so the shortcode can return HTML.
-- Map container id is `swiss-parks-map` when you render a map.
 - `has_shortcode()` does not see shortcodes inside some blocks/builders; enqueue on a known page ID if needed.
-- For multilingual sites, set `$language` from WPML/Polylang; details in [output and language](./output-and-language.md).
+- For multilingual sites, set `$language` from WPML/Polylang ([languages](./configuration.md#languages)).
+
+## Composer and Bedrock
+
+Setups such as [Bedrock](https://roots.io/bedrock/) or a plugin with its own `composer.json` can install the SDK as a Composer package. Use the Composer lines in the sketch above and follow the [Composer installation](./new-installation.md#composer-installation): project config with absolute paths outside `vendor/`, Composer scripts for the migration, cron with `vendor/bin/swiss-parks-sdk sync` and [wrappers](./new-installation.md#public-endpoints) for favorites and HTTP sync.
+
+Use only one copy of the SDK per site. If two plugins each bundle the SDK (ZIP or their own `vendor/`), the classes are loaded from whichever copy registers first, which may be an older version.
 
 ## Sync and cron
 
-Do **not** expose `bin/sync.php` over the public web (`bin/` is CLI only and returns 403 over HTTP).
-
-Prefer system cron or WP-CLI calling the SDK CLI:
-
-```bash
-bash /path/to/wp-content/plugins/swiss-parks-offers/swiss-parks-sdk/bin/sync.sh
-# full re-import:
-bash /path/to/.../swiss-parks-sdk/bin/sync.sh --force
-```
-
-On shared hosting without SSH, use `public/sync.php` with `sync_secret` (URL cron). See [HTTP sync](./import-update-lifecycle.md#http-sync-shared-hosting).
-
-See [import and update lifecycle](./import-update-lifecycle.md).
+Run the sync from system cron or WP-CLI. Commands and HTTP sync for hosting without SSH: [import and update lifecycle](./import-update-lifecycle.md#cron).
 
 ## Favorites and SEO
 
@@ -223,11 +222,9 @@ add_action('template_redirect', function () {
 		return;
 	}
 
-	require_once SWISS_PARKS_SDK_DIR . 'autoload.php';
-
 	try {
 		$pageUrl = get_permalink($post);
-		$sdk = new ParksSDK('de', '', $pageUrl);
+		$sdk = new SwissParksSdk('de', '', $pageUrl);
 		if (! $sdk->enforceOfferDetailCanonicalUrl($pageUrl)) {
 			global $wp_query;
 			$wp_query->set_404();
@@ -244,56 +241,15 @@ See [canonical detail URLs](./seo-urls.md#canonical-detail-urls).
 
 ## Checklist
 
-- [ ] `api_hash` / `park_id` set; first `bin/sync.sh` succeeded
+- [ ] `api_hash` / `park_id` set; first sync succeeded
 - [ ] Absolute writable `db_path` and `log_directory`
 - [ ] `return_output` / `soft_errors` set as above
 - [ ] `parks.min.css` / `parks.min.js` enqueued as `type="module"`
 - [ ] Session started on `init` when `use_sessions` is true
 - [ ] Shortcode on a dedicated offers page; filter submit works (PRG)
-- [ ] Cron/WP-CLI sync scheduled, or `public/sync.php` with `sync_secret`; `bin/` not public
+- [ ] Sync scheduled with system cron, or HTTP sync with `sync_secret`
 - [ ] Detail, list, and (if used) map/favorites work end-to-end
 
 ## Troubleshooting
 
-### Empty offer list
-
-- Confirm sync finished and the SQLite file has rows.
-- Check `api_hash` / `park_id` and logs under `log_directory`.
-- Re-run `bin/sync.sh --force`.
-
-### Map tab stays empty
-
-- Ensure `parks.min.js` is the v22 build and loaded as `type="module"`.
-- Container id must be `swiss-parks-map` (not `mapContainer`).
-- Overview tab markup should match `index.php` if you use list/map tabs.
-- If `prevent_css_js_include = true`, enqueue the map library assets yourself.
-
-### Filter or session state lost
-
-- Set `use_sessions = true` and start the session on `init` (see sketch), before any HTML output.
-- Pass a stable `$pageUrl` into `ParksSDK` for session scope.
-- Use unique `url_param_prefix` / `form_prefix`.
-
-### Detail page never opens (SEO mode)
-
-- Do not overwrite `scriptUrl` with only the page permalink when `seo_urls` is true.
-- Confirm rewrite rules load the offers page and `REQUEST_URI` still contains `offer-detail`.
-
-### Permission / SQLite errors
-
-- Web server user must write the directory of `db_path` (and create the `.sqlite` file).
-- Prefer a path outside the public web root when possible; `uploads` is a common writable compromise.
-
-### Fatal `exit` / white screen on missing offer
-
-- Set `soft_errors = true` and wrap bootstrap in `try/catch` as in the sketch.
-
-## Related docs
-
-- [Quick start integration](./quick-start-integration.md)
-- [Core configuration](./configuration.md)
-- [Output mode and multilingual support](./output-and-language.md)
-- [SEO URLs](./seo-urls.md)
-- [Favorites](./favorites.md)
-- [Import and update lifecycle](./import-update-lifecycle.md)
-- [v21 → v22 migration](./migrations/21-to-22.md)
+See [CMS embeds and WordPress](./troubleshooting.md#cms-embeds-and-wordpress) and the other sections in [troubleshooting](./troubleshooting.md).

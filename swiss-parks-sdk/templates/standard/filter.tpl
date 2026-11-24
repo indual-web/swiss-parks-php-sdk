@@ -1,30 +1,7 @@
 <!--
-Available Tags:
-FILTER_TEXT_SEARCH
-FILTER_CATEGORIES
-FILTER_DATES
-FILTER_TARGET_GROUPS
-FILTER_FIELDS_OF_ACTIVITY
-FILTER_ACCESSIBILITIES
-FILTER_PARKS
-FILTER_PROJECT
-FILTER_ROUTE_LENGTH
-FILTER_ROUTE_TIME
-FILTER_ROUTE_CONDITION
-FILTER_KEYWORDS
-FILTER_SHOW_LINK
-FILTER_FORM_START
-FILTER_FORM_STOP
-FILTER_RESET_BUTTON
-FILTER_SUBMIT_BUTTON
-
-
-Language variables can be printed: __LANG[name]__
-
-Conditions available:
-Check condition: [OFFER_EVENT@start] This text is rendered based on the condition [OFFER_PRODUCT@stop]
-
-Check if placeholder is set [ISSET(OFFER_PRODUCT)@start] [ISSET(OFFER_PRODUCT)@stop]
+Swiss Parks PHP SDK – filter.tpl
+Placeholders, conditions and language variables:
+https://github.com/indual-web/swiss-parks-php-sdk/blob/main/docs/sdk-reference/template-placeholders.md
 -->
 <div class="filter">
 	__FILTER_SHOW_LINK__

@@ -26,7 +26,7 @@ fi
 
 HASH="$(php -r '
 require $argv[1];
-$sdk = ParksSDK::forScript();
+$sdk = \SwissParks\Sdk\SwissParksSdk::forScript();
 echo (string) ($sdk->config["api_hash"] ?? "");
 ' "$SDK_ROOT/autoload.php" 2>/dev/null || true)"
 
@@ -37,7 +37,7 @@ fi
 
 DB_PATH="$(php -r '
 require $argv[1];
-$sdk = ParksSDK::forScript();
+$sdk = \SwissParks\Sdk\SwissParksSdk::forScript();
 $path = (string) ($sdk->config["db_path"] ?? "");
 if ($path !== "" && $path[0] !== "/") {
 	$path = rtrim((string) ($sdk->config["absolute_path"] ?? ""), "/") . "/" . ltrim($path, "/");

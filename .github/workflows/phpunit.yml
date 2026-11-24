@@ -23,6 +23,9 @@ jobs:
           php-version: ${{ matrix.php }}
           coverage: none
 
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-lock
+
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 

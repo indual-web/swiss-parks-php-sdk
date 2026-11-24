@@ -5,8 +5,17 @@
 |
 | Built by indual · www.indual.ch
 |
+| Drop SQLite DB, recreate schema, run full import
+|
+| Usage:
+|   php bin/migrate.php                       Always migrate
+|   php bin/migrate.php --if-outdated         Only when the DB is missing or older than VERSION
+|   php bin/migrate.php --config=<path>       Use a project config file (Composer)
+|
 */
-require __DIR__ . '/../autoload.php';
+use SwissParks\Sdk\SwissParksSdk;
+
+require_once __DIR__ . '/../autoload.php';
 
 if (PHP_SAPI !== 'cli') {
 	http_response_code(403);
@@ -17,8 +26,17 @@ if (PHP_SAPI !== 'cli') {
 
 try {
 
+	SwissParksSdk::useConfigFromArgv($argv ?? []);
+
 	// Rebuild database and run full import (no page rendering bootstrap)
-	$sdk = ParksSDK::forMigration();
+	$sdk = SwissParksSdk::forMigration();
+
+	// Composer post-install/update hooks run this on every install; skip when nothing changed
+	if (in_array('--if-outdated', $argv ?? [], true) && ! $sdk->isMigrationNeeded()) {
+		echo 'migrate: skip (database is up to date, sdk_version=' . SwissParksSdk::VERSION . ')' . PHP_EOL;
+		exit(0);
+	}
+
 	exit($sdk->migrate() ? 0 : 1);
 
 } catch (Throwable $e) {
