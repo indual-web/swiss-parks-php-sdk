@@ -15,7 +15,8 @@
 CREATE TABLE `meta` (
   `initialized` INTEGER DEFAULT 0,
   `version` TEXT DEFAULT '1.0',
-  `last_import` INTEGER DEFAULT NULL
+  `last_import` INTEGER DEFAULT NULL,
+  `hash_fingerprint` TEXT DEFAULT NULL
 );
 
 

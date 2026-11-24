@@ -81,6 +81,23 @@ final class ImportTest extends TestCase
 
 
 	/**
+	 * Changing the api_hash forces a full import instead of an incremental one
+	 */
+	public function testChangedApiHashForcesFullImport(): void
+	{
+
+		$this->sdk->hash = 'hash-a';
+		$this->assertTrue($this->importFixture());
+		$this->sdk->meta = $this->sdk->db->get('meta')->fetchObject();
+
+		$this->sdk->hash = 'hash-b';
+		$this->assertTrue($this->sdk->import->import('file://' . self::FIXTURES . '/offers.xml'));
+		$this->assertTrue($this->sdk->import->lastImportForced);
+	}
+
+
+
+	/**
 	 * Imported event comes back through Model with title, dates, relations and contacts
 	 */
 	public function testImportedEventIsReadableThroughModel(): void

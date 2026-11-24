@@ -269,14 +269,15 @@ class Import
 		// Sync fields of activity
 		$this->syncFieldsOfActivity();
 
-		// Add param to url with last import timestamp
+		// Add param to url with last import timestamp; a changed api_hash points to another export, so import everything
 		if ($force !== true) {
 			$lastImport = $this->sdk->meta->last_import ?? null;
-			if (! empty($lastImport)) {
+			$hashChanged = ($this->sdk->meta->hash_fingerprint ?? null) !== $this->hashFingerprint();
+			if (! empty($lastImport) && ! $hashChanged) {
 				$url .= '?since=' . $lastImport;
 			} else {
 				$force = true;
-				$this->sdk->logger->info("Enabling FORCE mode because timestamp for last import is empty");
+				$this->sdk->logger->info("Enabling FORCE mode because timestamp for last import is empty or api_hash changed");
 			}
 		} else {
 			$this->sdk->logger->info("FORCE mode is enabled");
@@ -1047,7 +1048,7 @@ class Import
 				$this->sdk->logger->info("Deleted " . $ctrDeleted . " offers.");
 			}
 
-			$this->sdk->db->update('meta', ['last_import' => time()]);
+			$this->sdk->db->update('meta', ['last_import' => time(), 'hash_fingerprint' => $this->hashFingerprint()]);
 
 			// Rebuild full-text search index after offer mutations
 			if ($this->sdk->db->rebuildOfferFts()) {
@@ -1319,6 +1320,17 @@ class Import
 		$result = $query->fetchObject();
 
 		return $result->id;
+	}
+
+
+
+	/**
+	 * Get fingerprint of the active API hash, so the key itself is not stored in the database
+	 */
+	private function hashFingerprint(): string
+	{
+
+		return hash('sha256', $this->sdk->hash);
 	}
 
 

@@ -39,7 +39,7 @@ CLI scripts accept `--config=<path>` instead (see [bin scripts](./bin-scripts.md
 Set these in your own config file:
 
 - `api_hash`
-  - Hash from your export configuration on `hub.parks.swiss`. While it is empty, the SDK skips the initial import (for example on development machines without a hash); `migrate` then exits with `1`.
+  - Hash from your export configuration on `hub.parks.swiss`. While it is empty, the SDK skips the initial import (for example on development machines without a hash); `migrate` then exits with `1`. After a change the next sync runs a full import instead of an incremental one.
 - `park_id`
   - Park ID from the park or export settings. `> 0` scopes one park; `0` or empty is network-wide (all parks).
 

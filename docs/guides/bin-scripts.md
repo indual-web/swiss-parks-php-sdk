@@ -24,7 +24,7 @@ Imports offer data into the local SQLite database.
 
 | Invocation | Behaviour |
 | --- | --- |
-| `bash swiss-parks-sdk/bin/sync.sh` | Incremental import (`?since=` when `last_import` is set) |
+| `bash swiss-parks-sdk/bin/sync.sh` | Incremental import (`?since=` when `last_import` is set and `api_hash` is unchanged, otherwise full import) |
 | `bash swiss-parks-sdk/bin/sync.sh --force` | Full import (no `?since=`); `force` is accepted as an alias |
 | `php swiss-parks-sdk/bin/sync.php` | Same as `sync.sh` |
 | `php swiss-parks-sdk/bin/sync.php --force` | Same as `sync.sh --force` |
