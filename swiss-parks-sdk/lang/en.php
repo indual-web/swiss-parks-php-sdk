@@ -244,6 +244,7 @@ $lang['offer_misc'] = 'Various';
 $lang['offer_delete_date_confirm'] = 'Are you sure you want to delete this date?';
 $lang['offer_location_details'] = "Location details";
 $lang['offer_subscription_subscribe_now'] = 'Subscribe online now';
+$lang['offer_subscription_send_request'] = 'Send request';
 
 
 /*

@@ -2696,16 +2696,17 @@ class View
 		}
 
 		// Online subscription link
+		$buttonLabel = $this->sdk->lang->get(($offer->root_category == Category::BOOKING) ? 'offer_subscription_send_request' : 'offer_subscription_subscribe_now');
 		if ($offer->online_subscription_enabled == true) {
 			$return .= '
 				<div class="text_right">
-					<a class="sign_in button" target="_blank" href="' . $this->config['base_url'] . $this->sdk->langId . '/subscription/subscriber/' . $offer->offer_id . '">' . $this->sdk->lang->get('offer_subscription_subscribe_now') . '</a>
+					<a class="sign_in button" target="_blank" href="' . $this->config['base_url'] . $this->sdk->langId . '/subscription/subscriber/' . $offer->offer_id . '">' . $buttonLabel . '</a>
 				</div>
 			';
 		} else if (! empty($offer->subscription_link)) {
 			$return .= '
 				<div class="text_right">
-					<a class="sign_in button" target="_blank" href="' . $offer->subscription_link . '">' . $this->sdk->lang->get('offer_subscription_subscribe_now') . '</a>
+					<a class="sign_in button" target="_blank" href="' . $offer->subscription_link . '">' . $buttonLabel . '</a>
 				</div>
 			';
 		}
