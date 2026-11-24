@@ -248,7 +248,7 @@ Parameters:
 - Writes a plain-text status line to stdout, for example:
   - `sync: ok (mode=incremental, imported=5, deleted=1, offers=120, map_layers=3, cleanup=0)`
   - `sync: fail (Offer import failed. Check logs and api_hash configuration.)`
-- On success, `map_layers` / `cleanup` are counts; on step failure they are `fail` (offer import may still succeed).
+- On success, `map_layers` / `cleanup` are counts; on step failure they are `fail` (offer import may still succeed). Cleanup only runs after a successful offer import, so a failed import deletes no offers.
 
 Parameters:
 

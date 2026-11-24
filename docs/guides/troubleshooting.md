@@ -10,6 +10,7 @@ Common problems and fixes. Check the log in `log_directory` first; import errors
 | --- | --- |
 | Empty offer list | Check `api_hash` and `park_id`, then run a full sync (`sync.sh --force` or `vendor/bin/swiss-parks-sdk sync --force`) and confirm rows in the `offer` table |
 | SSL or cURL errors during sync | Confirm outbound HTTPS to `hub.parks.swiss`. Set `curl_verify_ssl = false` only as a last resort on broken hosting |
+| Log shows `XML download failed` | The line contains the curl error code and HTTP status. Curl error `28` (timeout) after about 60 seconds means the export stalled; retry the sync later |
 | SQLite file or log cannot be written | Give the web server and the cron user write access to the directories of `db_path` and `log_directory`. In WordPress, a folder under `wp-content/uploads/` is a common choice |
 | `The configuration file … does not exist or does not return an array.` | Check the path in `SWISS_PARKS_SDK_CONFIG` or `--config=`, and that the file ends with `return [ … ];` |
 

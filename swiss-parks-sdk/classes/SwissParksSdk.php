@@ -339,7 +339,8 @@ class SwissParksSdk
 			// Import data from XML into database
 			$importOk = $this->import->import($xml, $force);
 			$mapLayersOk = $this->import->importMapLayers($xmlMapLayer);
-			$cleanupOk = $this->import->cleanUpOffers($xmlActiveOffers);
+			// Only clean up after a successful offer import so a failed run does not delete offers
+			$cleanupOk = $importOk && $this->import->cleanUpOffers($xmlActiveOffers);
 
 			if ($importOk) {
 				$this->updateMetaVersion();
@@ -2243,12 +2244,14 @@ class SwissParksSdk
 
 		$ok = curl_exec($ch);
 		$curlErrno = curl_errno($ch);
+		$curlError = curl_error($ch);
 		$httpCode = (int) curl_getinfo($ch, CURLINFO_HTTP_CODE);
 		unset($ch);
 		fclose($fp);
 
 		// Treat transport errors, HTTP failures and empty bodies as missing XML
 		if (($ok === false) || ($curlErrno !== 0) || ($httpCode >= 400) || (filesize($tmpPath) === 0)) {
+			$this->logger->info('XML download failed: ' . $url . ' (curl ' . $curlErrno . ': ' . $curlError . ', HTTP ' . $httpCode . ')');
 			@unlink($tmpPath);
 			return false;
 		}
