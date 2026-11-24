@@ -1103,6 +1103,13 @@ class Import
 				}
 			}
 
+			// Skip cleanup on an empty list, otherwise every offer would be deleted
+			if (empty($activeOffers)) {
+				$this->sdk->logger->error("Active offers list is empty, clean up skipped");
+
+				return false;
+			}
+
 			// Remove inactive offers
 			$this->sdk->logger->info("Clean up offers");
 			$this->sdk->db->begin();
