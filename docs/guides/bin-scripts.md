@@ -47,7 +47,7 @@ Lightweight health check for sync and the local offer store. Useful after instal
 Exit behaviour:
 
 - `0` and message `sync-smoke: ok (offers=N)` when the check passes.
-- `0` and `sync-smoke: skip (...)` when PHP is missing, `api_hash` is empty/placeholder (`insert-your-hash-here`), or the sync step fails (network/credentials). Skip is intentional so optional environments do not fail hard.
+- `0` and `sync-smoke: skip (...)` when PHP is missing, `api_hash` is empty, or the sync step fails (network/credentials). Skip is intentional so optional environments do not fail hard.
 - `1` and `sync-smoke: fail (...)` when the SQLite file is missing or the `offer` table is empty after a successful sync path.
 
 ## `migrate.sh` / `migrate.php`

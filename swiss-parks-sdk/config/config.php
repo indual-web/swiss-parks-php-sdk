@@ -25,7 +25,7 @@ return [
 	| set your hash key in your own config.
 	|
 	*/
-	'api_hash' => "insert-your-hash-here",
+	'api_hash' => '',
 
 
 	/*

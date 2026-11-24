@@ -1360,7 +1360,8 @@ class SwissParksSdk
 				$this->logger->info('The current SDK version is out of date. Please run: bash bin/migrate.sh');
 			}
 
-			if (! $this->meta->initialized) {
+			// Without an API hash there is nothing to fetch; skip instead of failing on every request
+			if (! $this->meta->initialized && ! empty($this->hash)) {
 
 				// First successful import marks the SDK as initialized
 				$xml = $this->config['xml_export_offer_url'] . $this->hash;

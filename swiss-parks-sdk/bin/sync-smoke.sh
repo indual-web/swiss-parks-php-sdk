@@ -6,7 +6,7 @@
 #   bash bin/sync-smoke.sh           Sync then assert offer count > 0
 #   bash bin/sync-smoke.sh --quick   Assert offer count > 0 only (no sync)
 #
-# Skips with exit 0 when api_hash is unset/placeholder or network/sync is unavailable.
+# Skips with exit 0 when api_hash is unset or network/sync is unavailable.
 #
 
 set -euo pipefail
@@ -30,7 +30,7 @@ $sdk = \SwissParks\Sdk\SwissParksSdk::forScript();
 echo (string) ($sdk->config["api_hash"] ?? "");
 ' "$SDK_ROOT/autoload.php" 2>/dev/null || true)"
 
-if [[ -z "$HASH" || "$HASH" == "insert-your-hash-here" ]]; then
+if [[ -z "$HASH" ]]; then
 	echo "sync-smoke: skip (api_hash not configured)"
 	exit 0
 fi
