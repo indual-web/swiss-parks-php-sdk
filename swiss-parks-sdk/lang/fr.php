@@ -241,6 +241,7 @@ $lang['offer_misc'] = "Autre";
 $lang['offer_delete_date_confirm'] = "Etes-vous s&ucirc;r de vouloir effacer ces donn&eacute;es ?";
 $lang['offer_location_details'] = "Situation détaillée";
 $lang['offer_subscription_subscribe_now'] = 'S\'inscrire maintenant';
+$lang['offer_subscription_request'] = 'Demander maintenant';
 
 
 /*

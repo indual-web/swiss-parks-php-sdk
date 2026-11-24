@@ -243,6 +243,7 @@ $lang['offer_misc'] = "Diversi";
 $lang['offer_delete_date_confirm'] = "Siete sicuro/a di voler rimuovere questa data?";
 $lang['offer_location_details'] = "Dettagli della posizione";
 $lang['offer_subscription_subscribe_now'] = 'Iscriversi online ora';
+$lang['offer_subscription_request'] = 'Richiedi ora';
 
 
 /*
