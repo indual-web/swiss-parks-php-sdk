@@ -5,7 +5,7 @@ Thank you for improving the Swiss Parks PHP SDK. External contributions are welc
 ## Before you start
 
 - Read the [documentation overview](docs/index.md) and [configuration guide](docs/guides/configuration.md).
-- This software is licensed for use by member parks of the [Network of Swiss Parks](https://www.parks.swiss). See [LICENSE](LICENSE). By opening a pull request you agree that your contribution may be included in this repository under that license.
+- This software is licensed under the [MIT License](LICENSE). By opening a pull request you agree that your contribution may be included in this repository under that license.
 
 ## How to contribute
 

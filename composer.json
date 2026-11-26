@@ -4,7 +4,7 @@
 	"type": "library",
 	"keywords": ["swiss-parks", "parks", "sdk", "sqlite", "offers"],
 	"homepage": "https://github.com/indual-web/swiss-parks-php-sdk",
-	"license": "proprietary",
+	"license": "MIT",
 	"authors": [
 		{
 			"name": "indual",
