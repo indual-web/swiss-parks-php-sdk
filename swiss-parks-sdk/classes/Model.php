@@ -518,7 +518,7 @@ class Model
 					COUNT(product.offer_id) as product_count,
 					COUNT(project.offer_id) as project_count,
 					GROUP_CONCAT(DISTINCT category_link.category_id) AS category_ids,
-					GROUP_CONCAT(DISTINCT main_offer.park_id || char(31) || main_offer.park, char(30)) AS park_pairs
+					GROUP_CONCAT(main_offer.park_id || char(31) || main_offer.park, char(30)) AS park_pairs
 				FROM offer main_offer
 			";
 		}
@@ -833,7 +833,7 @@ class Model
 				";
 			}
 		} else {
-			// Show only coming events
+			// Show only coming offers (offers without dates are always shown)
 			$having[] = "
 				(
 					date_from IS NULL
@@ -843,7 +843,6 @@ class Model
 						AND date_to != '0000-00-00 00:00:00'
 						AND CONCAT(DATE(date_to), ' 23:59:59') >= NOW()
 					)
-					OR main_category_id != " . Category::EVENT . "
 				)
 			";
 		}
