@@ -142,9 +142,9 @@ class Date
 
 
 	/**
-	 * Split a Y-m-d H:i:s value into date, hour and minute
+	 * Split a Y-m-d H:i:s value into date, hour and minute (empty array for null/empty)
 	 */
-	public static function splitDateTime(string $dateTime): array {
+	public static function splitDateTime(?string $dateTime): array {
 
 		$return = [];
 
